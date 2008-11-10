@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.1.1
+Version: 1.1.2
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -77,7 +77,7 @@ function getfilefromurl($url) {
 function jd_twit( $post_ID )  {
     $twitterURI = "/statuses/update.xml";
     $thisposttitle = urlencode( stripcslashes( $_POST['post_title'] ) );
-    $thispostlink = get_permalink( $post_ID );
+    $thispostlink = urlencode( get_permalink( $post_ID ) );
 	$thisblogtitle = urlencode( get_bloginfo( 'name' ) );
 	$cligsapi = get_option( 'cligsapi' );
     $sentence = '';
@@ -92,11 +92,14 @@ function jd_twit( $post_ID )  {
 					// Generate and grab the clig using the Cli.gs API
 					// cURL alternative contributed by Thor Erik (http://thorerik.net)
 
-					$shrink = @file_get_contents( "http://cli.gs/api/v1/cligs/create?url=".$thispostlink."&title=".$thisposttitle."&key=".$cligsapi."&appid=WP-to-Twitter" );
+					$shrink = @file_get_contents( "http://cli.gs/api/v1/cligs/create?t=fgc&appid=WP-to-Twitter&url=".$thispostlink."&title=".$thisposttitle."&key=".$cligsapi);
 					if ( $shrink === FALSE ) {
-						$shrink = getfilefromurl( "http://cli.gs/api/v1/cligs/create?url=".$thispostlink."&title=".$thisposttitle."&key=".$cligsapi."&appid=WP-to-Twitter" );
+						$shrink = getfilefromurl( "http://cli.gs/api/v1/cligs/create?t=gffu&appid=WP-to-Twitter&url=".$thispostlink."&title=".$thisposttitle."&key=".$cligsapi);
 					}	
-					if ( $shrink === FALSE ) {
+					if ( stristr( $shrink, "http://" ) === FALSE ) {
+						$shrink = FALSE;
+						}
+					if ( $shrink === FALSE) {
 					update_option('wp_cligs_failure','1');		
 					$shrink = $thispostlink;
 					}
