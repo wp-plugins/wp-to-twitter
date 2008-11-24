@@ -13,12 +13,20 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 		update_option( 'oldpost-edited-text', 'Blog post just edited: #title#' );
 		update_option( 'oldpost-edited-showlink', '1' );
 
-		update_option( 'twitterInitialised', '1' );
 		update_option( 'cligsapi','' );
 		update_option( 'jd_twit_pages','0' );
 		update_option( 'jd_functions_checked','0' );
 		update_option( 'wp_twitter_failure','0' );
 		update_option( 'wp_cligs_failure','0' );
+		// Blogroll options
+		update_option ('jd-use-link-title','0' );
+		update_option( 'jd-use-link-description','1' );
+		update_option( 'newlink-published-text', 'New link posted: ' );
+		update_option( 'jd_twit_blogroll', '1');
+		
+		update_option( 'jd_tweet_default', '0' );
+		update_option( 'twitterInitialised', '1' );
+
 		$message = "Set your Twitter login information and Cli.gs API to use this plugin!";
 	}
 
@@ -33,7 +41,9 @@ if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_cligs_failure'
 	}
 	if ( get_option( 'wp_twitter_failure' ) == '1' ) {
 		$wp_to_twitter_failure .= "<div class='error'><p>Sorry! I couldn't get in touch with the Twitter servers. Your tweet has been stored in a custom field attached to your post, so you can Tweet it manually if you wish!</p></div>";
-	}		
+	} else if ( get_option( 'wp_twitter_failure' ) == '2') {
+		$wp_to_twitter_failure .= "<div class='error'><p>Sorry! I couldn't get in touch with the Twitter servers to post your new link! You'll have to post it manually, I'm afraid.</p></div>";
+	}
 } else {
 $wp_to_twitter_failure = '';
 }
@@ -44,11 +54,23 @@ $wp_to_twitter_failure = '';
 		update_option( 'newpost-published-update', $_POST['newpost-published-update'] );
 		update_option( 'newpost-published-text', $_POST['newpost-published-text'] );
 		update_option( 'newpost-published-showlink', $_POST['newpost-published-showlink'] );
-
+		update_option( 'jd_tweet_default', $_POST['jd_tweet_default'] );
 		update_option( 'oldpost-edited-update', $_POST['oldpost-edited-update'] );
 		update_option( 'oldpost-edited-text', $_POST['oldpost-edited-text'] );
 		update_option( 'oldpost-edited-showlink', $_POST['oldpost-edited-showlink'] );
 		update_option( 'jd_twit_pages',$_POST['jd_twit_pages'] );
+		
+		if ( $_POST['jd-use-link-field'] == '2' ) {
+		update_option( 'jd-use-link-description', '1' );
+		update_option( 'jd-use-link-title', '0' );
+		
+		} else if ( $_POST['jd-use-link-field'] == '1' ) {
+		update_option( 'jd-use-link-title', '1' );	
+		update_option( 'jd-use-link-description', '0' );
+		}
+		update_option( 'newlink-published-text', $_POST['newlink-published-text'] );
+		update_option( 'jd_twit_blogroll',$_POST['jd_twit_blogroll'] );
+		
 		$message = "WP to Twitter Options Updated";
 
 	}else if ( $_POST['submit-type'] == 'login' ){
@@ -72,7 +94,7 @@ $wp_to_twitter_failure = '';
 	// FUNCTION to see if checkboxes should be checked
 	function jd_checkCheckbox( $theFieldname ){
 		if( get_option( $theFieldname ) == '1'){
-			echo 'checked="true"';
+			echo 'checked="checked"';
 		}
 	}
 	// Check whether the server has supported for needed functions.
@@ -137,7 +159,7 @@ echo $wp_to_twitter_failure;
 
 <div class="wrap" id="wp-to-twitter">
 <?php if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_cligs_failure' ) == '1' ) { ?>
-	<form method="post">
+	<form method="post" action="">
 		<div class="error">
 		<div>
 		<input type="hidden" name="submit-type" value="clear-error">
@@ -162,18 +184,18 @@ echo $wp_to_twitter_failure;
 <p>
 For any update field, you can use the codes <code>#title#</code> for the title of your blog post or <code>#blog#</code> for the title of your blog! Given the character limit for Twitter, you may not want to include your blog title.
 </p>
-
-	<form method="post">
+		
+	<form method="post" action="">
 	<div>
 		<fieldset>
 			<legend>Wordpress to Twitter Publishing Options</legend>
 			<p>
 				<input type="checkbox" name="jd_twit_pages" id="jd_twit_pages" value="1" <?php jd_checkCheckbox('jd_twit_pages')?> />
-				<label for="jd_twit_pages">Update Twitter when new Wordpress Pages are published</label>
+				<label for="jd_twit_pages"><strong>Update Twitter when new Wordpress Pages are published</strong></label>
 			</p>		
 			<p>
 				<input type="checkbox" name="newpost-published-update" id="newpost-published-update" value="1" <?php jd_checkCheckbox('newpost-published-update')?> />
-				<label for="newpost-published-update">Update Twitter when the new post is published</label>
+				<label for="newpost-published-update"><strong>Update Twitter when the new post is published</strong></label>
 			</p>
 			<p>
 				<label for="newpost-published-text">Text for this Twitter update</label><br />
@@ -185,7 +207,7 @@ For any update field, you can use the codes <code>#title#</code> for the title o
 
 			<p>
 				<input type="checkbox" name="oldpost-edited-update" id="oldpost-edited-update" value="1" <?php jd_checkCheckbox('oldpost-edited-update')?> />
-				<label for="oldpost-edited-update">Update Twitter when the an old post has been edited</label>
+				<label for="oldpost-edited-update"><strong>Update Twitter when an old post has been edited</strong></label>
 			</p>
 			<p>
 				<label for="oldpost-edited-text">Text for this Twitter update</label><br />
@@ -194,6 +216,26 @@ For any update field, you can use the codes <code>#title#</code> for the title o
 				<input type="checkbox" name="oldpost-edited-showlink" id="oldpost-edited-showlink" value="1" <?php jd_checkCheckbox('oldpost-edited-showlink')?> />
 				<label for="oldpost-edited-showlink">Provide link to blog?</label>			
 			</p>
+			
+			<p>
+				<input type="checkbox" name="jd_twit_blogroll" id="jd_twit_blogroll" value="1" <?php jd_checkCheckbox('jd_twit_blogroll')?> />
+				<label for="oldpost-edited-update"><strong>Update Twitter when you post a Blogroll link</strong></label>
+			</p>
+			<p>
+				<input type="radio" name="jd-use-link-field" id="jd-use-link-title" value="1" <?php jd_checkCheckbox('jd-use-link-title')?> /> <label for="jd-use-link-title">Use <strong>link title</strong> for Twitter updates</label> <input type="radio" name="jd-use-link-field" id="jd-use-link-description" value="2" <?php jd_checkCheckbox('jd-use-link-description')?> />	<label for="jd-use-link-description">Use <strong>link description</strong> for Twitter updates</label>			
+			</p>			
+						
+			<p>
+				<label for="newlink-published-text">Text for this Twitter update (used if above choice isn't available.)</label><br />
+				<input type="text" name="newlink-published-text" id="newlink-published-text" size="60" maxlength="146" value="<?php echo(get_option('newlink-published-text')) ?>" />
+			</p>
+	
+			<p>
+				<input type="checkbox" name="jd_tweet_default" id="jd_tweet_default" value="1" <?php jd_checkCheckbox('jd_tweet_default')?> />
+				<label for="jd_tweet_default">Set default Tweet status to 'No.'</label><br />
+				<strong>Twitter updates can be set on a post by post basis. By default, posts WILL be posted to Twitter. Check this to change the default to NO.</strong>
+			</p>
+			
 		<div>
 		<input type="hidden" name="submit-type" value="options" />
 		</div>
@@ -205,7 +247,7 @@ For any update field, you can use the codes <code>#title#</code> for the title o
 
 	<h2 class="twitter">Your Twitter account details</h2>
 	
-	<form method="post" >
+	<form method="post" action="" >
 	<div>
 		<p>
 		<label for="twitterlogin">Your Twitter username:</label>
@@ -215,21 +257,21 @@ For any update field, you can use the codes <code>#title#</code> for the title o
 		<label for="twitterpw">Your Twitter password:</label>
 		<input type="password" name="twitterpw" id="twitterpw" value="" />
 		</p>
-		<input type="hidden" name="submit-type" value="login">
+		<input type="hidden" name="submit-type" value="login" />
 		<p><input type="submit" name="submit" value="Save Twitter Login Info" /> &raquo; <small>Don't have a Twitter account? <a href="http://www.twitter.com">Get one for free here</a></small></p>
 	</div>
 	</form>
 
 <h2 class="cligs">Your Cli.gs account details</h2>
 
-	<form method="post">
+	<form method="post" action="">
 	<div>
 		<p>
 		<label for="cligsapi">Your Cli.gs API Key:</label>
 		<input type="text" name="cligsapi" id="cligsapi" size="40" value="<?php echo(get_option('cligsapi')) ?>" />
 		</p>
 		<div>
-		<input type="hidden" name="submit-type" value="cligsapi">
+		<input type="hidden" name="submit-type" value="cligsapi" />
 		</div>
 		<p><input type="submit" name="submit" value="Save Cli.gs API Key" /> &raquo; <small>Don't have a Cli.gs account or Cligs API key? <a href='http://cli.gs/user/api/'>Get one free here</a>! You'll need an API key in order to associate the Cligs you create with your Cligs account.</small></p>
 	</div>

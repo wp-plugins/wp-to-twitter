@@ -6,12 +6,16 @@ Requires at least: 2.5
 Tested up to: 2.6.3
 Stable tag: trunk
 
-Posts a Twitter status update when you update your blog, using the Cli.gs URL shortening service.
+Posts a Twitter status update when you update your blog or post to your blogroll, using the Cligs URL shortening service.
 
 == Description ==
 
 The WP-to-Twitter plugin posts a Twitter status update from your blog using the Cli.gs URL shortening service to 
 provide a link back to your post from Twitter. 
+
+New in version 1.2.0: 
+ - option to post your new blogroll links to Twitter, using the description field as your status update text.
+ - option to decide on a post level whether or not that blog post should be posted to Twitter
 
 If you have a Cli.gs API key, the shortened URL will also be filed in your Cli.gs account so that you can track
 statistics for the shortened URL. 
@@ -57,6 +61,14 @@ If Cli.gs isn't available, your tweet will be sent using it's normal post permal
 = What if my server doesn't support the methods you use to contact these other sites? =
 
 Well, there isn't much I can do about that - but the plugin will check and see whether or not the needed methods work. If they don't, you will find a warning message on your settings page. 
+
+= If I mark a blogroll link as private, will it be posted to Twitter? =
+
+No. Private. 
+
+= What are the changes between version 1.1 and 1.2? =
+
+There are several additional functions available in version 1.2. First, you can now post links you add to your blogroll to Twitter. Second, you can configure whether or not you want to Tweet posts on an individual basis. Third, you can globally set whether you'd rather have posts default to be Tweeted or NOT to be Tweeted, depending on whether you're more likely to want to Tweet most posts but not all or Tweet only the occasional post.
 
 == Screenshots ==
 
