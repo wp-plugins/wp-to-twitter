@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.2.0
+Version: 1.2.1
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -23,7 +23,7 @@ Author URI: http://www.joedolson.com/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$version = "1.2.0";
+$version = "1.2.1";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 // This function performs the API post to Twitter
 function jd_doTwitterAPIPost( $twit, $twitterURI ) {
@@ -147,7 +147,7 @@ function jd_twit( $post_ID )  {
 //add_post_meta($post_ID, 'post_cligs_text',"http://cli.gs/api/v1/cligs/create?url=".$thispostlink."&title=".$thisposttitle."&key=".$cligsapi."&appid=WP-to-Twitter"); */			
 					}
 				}
-			} else if ( ( $_POST['originalaction'] == "editpost" ) && ( $_POST['prev_status'] == 'publish' ) ) {
+			} else if ( ( $_POST['originalaction'] == "editpost" ) && ( ( $_POST['prev_status'] == 'publish' ) || ($_POST['original_post_status'] == 'publish') ) ) {
 				// if this is an old post and editing updates are enabled
 				if ( get_option( 'oldpost-edited-update') == '1' ) {
 					$sentence = get_option( 'oldpost-edited-text' );
@@ -160,7 +160,7 @@ function jd_twit( $post_ID )  {
 						$thisposttitle = $thisposttitle . ' (' . $old_post_link . ')';
 					}
 					$sentence = str_replace( '#title#', $thisposttitle, $sentence );
-					$sentence = str_replace( '#blog#',$thisblogtitle,$sentence );
+					$sentence = str_replace( '#blog#', $thisblogtitle,$sentence );
 					
 				}
 			}
@@ -294,7 +294,7 @@ function post_jd_twitter( $id ) {
 		}
 	$jd_tweet_this = $_POST[ 'jd_tweet_this' ];
 	delete_post_meta( $id, 'jd_tweet_this' );
-	if ($jd_tweet_this = 'no') {
+	if ($jd_tweet_this == 'no') {
 		add_post_meta( $id, 'jd_tweet_this', 'no');
 	} else {
 		add_post_meta( $id, 'jd_tweet_this', 'yes');
@@ -345,6 +345,9 @@ if ( get_option( 'jd_twit_blogroll') == '1') {
 	add_action( 'add_link', 'jd_twit_link' );
 }
 add_action( 'publish_post', 'jd_twit' );
+if ( get_option( 'oldpost-edited-update') == '1') {
+add_action( 'edit_post', 'jd_twit' );
+}
 add_action( 'admin_menu', 'jd_addTwitterAdminPages' );
 add_action( 'edit_post','post_jd_twitter' );
 add_action( 'publish_post','post_jd_twitter' );

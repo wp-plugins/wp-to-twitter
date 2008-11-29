@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, cligs, redirect, shortener
 Requires at least: 2.5
-Tested up to: 2.6.3
+Tested up to: 2.6.5
 Stable tag: trunk
 
 Posts a Twitter status update when you update your blog or post to your blogroll, using the Cligs URL shortening service.
