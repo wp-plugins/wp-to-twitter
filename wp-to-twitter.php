@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.2.3
+Version: 1.2.4
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -23,7 +23,7 @@ Author URI: http://www.joedolson.com/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$version = "1.2.3";
+$version = "1.2.4";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 
 global $wp_version;	
@@ -120,9 +120,10 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $cligsapi ) {
 }
 
 function jd_twit( $post_ID )  {
-	$jd_tweet_this = $_POST["jd_tweet_this"];
-	if ( $jd_tweet_this != "no" ) {
-
+		
+	$jd_tweet_this = get_post_meta( $post_ID, 'jd_tweet_this', TRUE);
+	if ( $jd_tweet_this == "yes" ) {
+	
 	    $twitterURI = "/statuses/update.xml";
 	    $thisposttitle = urlencode( stripcslashes( $_POST['post_title'] ) );
 	    $thispostlink = urlencode( get_permalink( $post_ID ) );
@@ -132,7 +133,7 @@ function jd_twit( $post_ID )  {
 		$customTweet = stripcslashes( $_POST['jd_twitter'] );
 		$oldClig = get_post_meta( $post_ID, 'wp_jd_clig', TRUE );
 
-			if ( $_POST['publish'] == 'Publish' && $_POST['prev_status'] == 'draft' ) {
+			if ( $_POST['publish'] == 'Publish' && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft')) {
 				// publish new post
 				if ( get_option( 'newpost-published-update' ) == '1' ) {
 					$sentence = stripcslashes( get_option( 'newpost-published-text' ) );
@@ -426,18 +427,18 @@ add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>
 
 if ( get_option( 'jd_twit_pages')=='1') {
 	add_action( 'publish_page', 'jd_twit' );
-	add_action( 'edit_page','post_jd_twitter' );
-	add_action( 'publish_page','post_jd_twitter' );
 }
 if ( get_option( 'jd_twit_blogroll') == '1') {
 	add_action( 'add_link', 'jd_twit_link' );
 }
-if ( get_option( 'newpost-published-update') == '1') {
-add_action( 'publish_post', 'jd_twit' );
-}
-add_action( 'future_to_publish', 'jd_twit_future' );
 
+add_action( 'publish_post', 'jd_twit', 12 );
+add_action( 'future_to_publish', 'jd_twit_future', 12 );
+#add_action( 'xmlrpc_publish_post', 'jd_twit_xmlrpc(remote?)' ); // to add later
+#add_action( 'publish_phone', 'jd_twit_email' ); // to add later
+
+
+add_action( 'save_post','post_jd_twitter' );
 add_action( 'admin_menu', 'jd_addTwitterAdminPages' );
-add_action( 'edit_post','post_jd_twitter' );
-add_action( 'publish_post','post_jd_twitter' );
+
 ?>
