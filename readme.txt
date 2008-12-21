@@ -13,6 +13,8 @@ Posts a Twitter status update when you update your blog or post to your blogroll
 The WP-to-Twitter plugin posts a Twitter status update from your blog using the Cli.gs URL shortening service to 
 provide a link back to your post from Twitter. 
 
+Note: Scheduled posting does not work at the moment. 
+
 New in version 1.2.5:
  - Support for publishing via XMLRPC
  - Corrected a couple minor bugs
