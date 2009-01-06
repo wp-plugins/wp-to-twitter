@@ -15,6 +15,8 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 
 		update_option( 'jd_twit_remote', '0' );
 		
+		update_option( 'jd_twit_custom_url', 'external_link' );
+		
 		update_option( 'cligsapi','' );
 		update_option( 'jd_twit_pages','0' );
 		update_option( 'jd_functions_checked','0' );
@@ -39,12 +41,12 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 	}
 if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_cligs_failure' ) == '1' ) {
 	if ( get_option( 'wp_cligs_failure' ) == '1' ) {
-		$wp_to_twitter_failure .= "<div class='error'><p>" . __("Cli.gs request failed! We couldn't shrink that URL, so we attached the normal URL to your Tweet.") . "</p></div>";
+		$wp_to_twitter_failure .= "<p>" . __("Cli.gs request failed! We couldn't shrink that URL, so we attached the normal URL to your Tweet.") . "</p>";
 	}
 	if ( get_option( 'wp_twitter_failure' ) == '1' ) {
-		$wp_to_twitter_failure .= "<div class='error'><p>" . __("Sorry! I couldn't get in touch with the Twitter servers. Your tweet has been stored in a custom field attached to your post, so you can Tweet it manually if you wish!") . "</p></div>";
+		$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers. Your tweet has been stored in a custom field attached to your post, so you can Tweet it manually if you wish!") . "</p>";
 	} else if ( get_option( 'wp_twitter_failure' ) == '2') {
-		$wp_to_twitter_failure .= "<div class='error'><p>" . __("Sorry! I couldn't get in touch with the Twitter servers to post your new link! You'll have to post it manually, I'm afraid.") . "</p></div>";
+		$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers to post your new link! You'll have to post it manually, I'm afraid.") . "</p>";
 	}
 } else {
 $wp_to_twitter_failure = '';
@@ -62,6 +64,7 @@ $wp_to_twitter_failure = '';
 		update_option( 'oldpost-edited-showlink', $_POST['oldpost-edited-showlink'] );
 		update_option( 'jd_twit_pages',$_POST['jd_twit_pages'] );
 		update_option( 'jd_twit_remote',$_POST['jd_twit_remote'] );
+		update_option( 'jd_twit_custom_url', $_POST['jd_twit_custom_url'] );
 		
 		if ( $_POST['jd-use-link-field'] == '2' ) {
 		update_option( 'jd-use-link-description', '1' );
@@ -153,9 +156,6 @@ echo "<div class='error'><p>";
 _e("This plugin will not work in your server environment.");
 echo "</p></div>";
 }
-if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_cligs_failure' ) == '1' ) {
-echo $wp_to_twitter_failure;
-}
 ?>
 <?php if ($message) : ?>
 <div id="message" class="updated fade"><p><?php echo $message; ?></p></div>
@@ -163,32 +163,38 @@ echo $wp_to_twitter_failure;
 <div id="dropmessage" class="updated" style="display:none;"></div>
 
 <div class="wrap" id="wp-to-twitter">
+
+<h2><?php _e("WP to Twitter Options"); ?></h2>
+<p>
+<?php _e("For any update field, you can use the codes <code>#title#</code> for the title of your blog post or <code>#blog#</code> for the title of your blog! Given the character limit for Twitter, you may not want to include your blog title."); ?>
+</p>
+		
 <?php if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_cligs_failure' ) == '1' ) { ?>
-	<form method="post" action="">
 		<div class="error">
-		<div>
-		<input type="hidden" name="submit-type" value="clear-error">
-		</div>
-		<p><input type="submit" name="submit" value="Clear 'WP to Twitter' Error" /> <strong><?php _e("Why are you seeing this field?"); ?></strong><br />
+		<p>
 		<?php if ( get_option( 'wp_twitter_failure' ) == '1' ) {
 		_e("One or more of your last posts has failed to send it's status update to Twitter. Your Tweet has been saved in the custom meta data for your post, and you can re-Tweet it at your leisure.");
 		}
 		if ( get_option( 'wp_cligs_failure' ) == '1' ) {
 		_e("The query to the Cli.gs API failed, and your URL was not shrunk. The normal post URL was attached to your Tweet.");
 		}
+		echo $wp_to_twitter_failure;
 		?>
+		</p>
+		<p>
 		If you see these errors frequently, please <a href="http://www.joedolson.com/articles/wp-to-twitter/">notify the developer</a>.
 		</p>
 		</div>
+	<form method="post" action="">
+			<div>
+		<input type="hidden" name="submit-type" value="clear-error" />
+		</div>
+		<p><input type="submit" name="submit" value="<?php _e("Clear 'WP to Twitter' Error"); ?>" /> <strong><?php _e("Why are you seeing this field?"); ?></strong>
+		</p>
 	</form>
 <?php
 }
-?>
-
-<h2><?php _e("WP to Twitter Options"); ?></h2>
-<p>
-<?php _e("For any update field, you can use the codes <code>#title#</code> for the title of your blog post or <code>#blog#</code> for the title of your blog! Given the character limit for Twitter, you may not want to include your blog title."); ?>
-</p>
+?>		
 		
 	<form method="post" action="">
 	<div>
@@ -237,12 +243,17 @@ echo $wp_to_twitter_failure;
 	
 			<p>
 				<input type="checkbox" name="jd_tweet_default" id="jd_tweet_default" value="1" <?php jd_checkCheckbox('jd_tweet_default')?> />
-				<label for="jd_tweet_default"><?php _e("Set default Tweet status to 'No.'"); ?></label><br />
+				<label for="jd_tweet_default"><?php _e("Set default Tweet status to 'No.'"); ?></label>  <?php echo get_option('jd_tweet_default'); ?><br />
 				<strong><?php _e("Twitter updates can be set on a post by post basis. By default, posts WILL be posted to Twitter. Check this to change the default to NO."); ?></strong>
 			</p>
 			<p>
 				<input type="checkbox" name="jd_twit_remote" id="jd_twit_remote" value="1" <?php jd_checkCheckbox('jd_twit_remote')?> />
-				<label for="jd_twit_remote"><?php _e("Send Twitter Updates on remote publication (Post by Email or XMLRPC Client)"); ?></label>
+				<label for="jd_twit_remote"><?php _e("Send Twitter Updates on remote publication (Post by Email or XMLRPC Client)"); ?></label> <?php echo get_option('jd_twit_remote'); ?>
+			</p>
+			<p>
+				<label for="jd_twit_custom_url"><?php _e("Custom field containing an alternate URL to be shortened and Tweeted."); ?></label><br />
+				<input type="text" name="jd_twit_custom_url" id="jd_twit_custom_url" size="60" maxlength="146" value="<?php echo(get_option('jd_twit_custom_url')) ?>" /><br />
+				<strong><?php _e("You can use a custom field to send Cli.gs and Twitter an alternate URL from the permalink provided by WordPress. The value is the name of the custom field you're using to add an external URL."); ?></strong>
 			</p>
 			
 			

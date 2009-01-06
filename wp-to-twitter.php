@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.2.5
+Version: 1.2.6
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -23,7 +23,7 @@ Author URI: http://www.joedolson.com/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$version = "1.2.5";
+$version = "1.2.6";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 
 global $wp_version;	
@@ -34,6 +34,14 @@ $exit_msg='WP to Twitter requires WordPress 2.3 or more recent. <a href="http://
 	exit ($exit_msg);
 	}
 
+// Function checks for an alternate URL to be tweeted. Contribution by Bill Berry.	
+function external_or_permalink( $post_ID ) {
+       $wtb_extlink_custom_field = get_option('jd_twit_custom_url'); 
+       $perma_link = get_permalink( $post_ID );
+       $ex_link = get_post_meta($post_ID, $wtb_extlink_custom_field, true);
+       return ( $ex_link ) ? $ex_link : $perma_link;
+}
+	
 // This function performs the API post to Twitter
 function jd_doTwitterAPIPost( $twit, $twitterURI ) {
 	$host = 'twitter.com';
@@ -126,7 +134,7 @@ function jd_twit( $post_ID )  {
 	
 	    $twitterURI = "/statuses/update.xml";
 	    $thisposttitle = urlencode( stripcslashes( $_POST['post_title'] ) );
-	    $thispostlink = urlencode( get_permalink( $post_ID ) );
+	    $thispostlink = urlencode( external_or_permalink( $post_ID ) );
 		$thisblogtitle = urlencode( get_bloginfo( 'name' ) );
 		$cligsapi = get_option( 'cligsapi' );
 	    $sentence = '';
@@ -265,7 +273,7 @@ function jd_twit_future( $post_ID ) {
 	$post_status = $get_post_info->post_status;
 	if ( $jd_tweet_this == "yes" ) {
 		$twitterURI = "/statuses/update.xml";
-		$thispostlink = urlencode( get_permalink( $post_ID ) );
+		$thispostlink = urlencode( external_or_permalink( $post_ID ) );
 		$thisposttitle = urlencode( $get_post_info->post_title );		
 		$thisblogtitle = urlencode( get_bloginfo( 'name' ) );
 		$cligsapi = get_option( 'cligsapi' );
@@ -311,13 +319,14 @@ function jd_twit_future( $post_ID ) {
 	}	
 } // END jd_twit_future
 
-// HANDLES SCHEDULED POSTS
+// HANDLES xmlrpc POSTS
 function jd_twit_xmlrpc( $post_ID ) {
-	add_post_meta( $post_ID, 'wp_jd_ran', 'ran' );	
 	$get_post_info = get_post( $post_ID );
 	$post_status = $get_post_info->post_status;
+
+	if ( get_option('jd_tweet_default') != '1' && get_option('jd_twit_remote') == '1' ) {
 		$twitterURI = "/statuses/update.xml";
-		$thispostlink = urlencode( get_permalink( $post_ID ) );
+		$thispostlink = urlencode( external_or_permalink( $post_ID ) );
 		$thisposttitle = urlencode( $get_post_info->post_title );		
 		$thisblogtitle = urlencode( get_bloginfo( 'name' ) );
 		$cligsapi = get_option( 'cligsapi' );
@@ -338,6 +347,7 @@ function jd_twit_xmlrpc( $post_ID ) {
 				update_option('wp_twitter_failure','1');
 				}
 			}
+	}
 	return $post_ID;
 
 } // END jd_twit_xmlrpc
@@ -446,7 +456,7 @@ if ( substr( get_bloginfo( 'version' ), 0, 3 ) >= '2.5' ) {
 	}
 }
 if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_cligs_failure' ) == '1' ) {
-	add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>'._e('There\'s been an error posting your Twitter status! <a href=\"".get_bloginfo('wpurl')."/wp-admin/options-general.php?page=wp-to-twitter/wp-to-twitter.php\">Visit your WP to Twitter settings page</a> to get more information and to clear this error message.').'</div>';" ) );
+	add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>';_e('There\'s been an error posting your Twitter status! <a href=\"".get_bloginfo('wpurl')."/wp-admin/options-general.php?page=wp-to-twitter/wp-to-twitter.php\">Visit your WP to Twitter settings page</a> to get more information and to clear this error message.'); echo '</p></div>';" ) );
 }
 if ( get_option( 'jd_twit_pages' )=='1' ) {
 	add_action( 'publish_page', 'jd_twit' );

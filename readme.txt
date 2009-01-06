@@ -15,11 +15,16 @@ provide a link back to your post from Twitter.
 
 Note: Scheduled posting does not work at the moment. 
 
-New in version 1.2.5:
- - Support for publishing via XMLRPC
- - Corrected a couple minor bugs
- - Added internationalization support
+New in version 1.2.6:
+ - Bugfix with XMLRPC publishing -- controls to disable XMLRPC publishing now work correctly.
+ - Bugfix with error reporting and clearing.
+ - Added the option to supply an alternate URL along with your post, to be tweeted in place of the WP permalink.
 
+New in version 1.2.5: 
+ - Support for publishing via XMLRPC 
+ - Corrected a couple minor bugs 
+ - Added internationalization support
+ 
 New in version 1.2.0: 
  - option to post your new blogroll links to Twitter, using the description field as your status update text.
  - option to decide on a post level whether or not that blog post should be posted to Twitter
@@ -33,9 +38,9 @@ of your message, so you should keep that in mind when writing your custom Tweet.
 
 Any status update you write which is longer than the available space will automatically be truncated by the plugin. This applies to both the default messages and to your custom messages.
 
-This plugin is based loosely on the Twitter Updater plugin by Jonathan Dingman (http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by Thor Erik (http://www.thorerik.net)
+This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net) and Bill Berry.
 
-(As a side note, this plugin more or less works with WordPress 2.3. It's not fully tested, however. Make a request at http://www.joedolson.com/articles/wp-to-twitter/ if this is something you need!)
+(As a side note, this plugin more or less works with WordPress 2.3. It's not fully tested, however. Make a request at [http://www.joedolson.com/articles/wp-to-twitter/](http://www.joedolson.com/articles/wp-to-twitter/) if this is something you need!)
 
 == Installation ==
 
