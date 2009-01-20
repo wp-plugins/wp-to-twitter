@@ -14,7 +14,9 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 		update_option( 'oldpost-edited-showlink', '1' );
 
 		update_option( 'jd_twit_remote', '0' );
-		
+		// Use Google Analytics with Twitter
+		update_option( 'twitter-analytics-campaign', '' );
+		update_option( 'use-twitter-analytics', '0' );
 		update_option( 'jd_twit_custom_url', 'external_link' );
 		
 		update_option( 'cligsapi','' );
@@ -77,12 +79,16 @@ $wp_to_twitter_failure = '';
 		update_option( 'newlink-published-text', $_POST['newlink-published-text'] );
 		update_option( 'jd_twit_blogroll',$_POST['jd_twit_blogroll'] );
 		
+		update_option( 'use-twitter-analytics', $_POST['use-twitter-analytics'] );
+		update_option( 'twitter-analytics-campaign', $_POST['twitter-analytics-campaign'] );
+		
 		$message = "WP to Twitter Options Updated";
 
-	}else if ( $_POST['submit-type'] == 'login' ){
+	} else if ( $_POST['submit-type'] == 'login' ){
 		//UPDATE LOGIN
 		if( ( $_POST['twitterlogin'] != '' ) AND ( $_POST['twitterpw'] != '' ) ) {
 			update_option(  'twitterlogin', $_POST['twitterlogin'] );
+			update_option( 'twitterpw', $_POST['twitterpw'] );
 			update_option(  'twitterlogin_encrypted', base64_encode( $_POST['twitterlogin'].':'.$_POST['twitterpw'] ) );
 			$message = __("Twitter login and password updated.");
 		} else {
@@ -104,18 +110,24 @@ $wp_to_twitter_failure = '';
 		}
 	}
 	// Check whether the server has supported for needed functions.
+	
+	if ( $_POST['submit-type'] == 'check-support' ) {
+	update_option('jd-functions-checked', '0');
+	}
+	
 	if ( get_option('jd-functions-checked') == '0') {
 		$wp_twitter_error = FALSE;
 		if ( !function_exists( 'fputs' ) ) {
 			$wp_twitter_error = TRUE;
 			$message = __("Your server does not support <code>fputs</code>, the function used to send information to Twitter.");
 		} 
-		if ( !function_exists( 'curl_init' ) && ( file_get_contents ( "http://www.joedolson.com/scripts/wp-to-twitter-check.txt"  ) != 1 ) ) {
+		if ( !function_exists( 'curl_init' ) && ( file_get_contents ( "http://www.joedolson.com/scripts/wp-to-twitter-check.txt"  ) != 1 ) && ( $snoopy->fetchtext( "http://www.joedolson.com/scripts/wp-to-twitter-check.txt" ) != 1 ) ) {
 			$wp_twitter_error = TRUE;
-			$message .= __("Your server does not support the <code>file_get_contents</code> or <code>cURL</code> functions which this plugin uses to send information to Cli.gs. At least one of the above is required for this plugin to work.");
+			$message .= __("Your server does not support the <code>file_get_contents</code> or <code>cURL</code> functions which this plugin uses to send information to Cli.gs. Your server is also unable to access the WordPress file wrapper, <code>Snoopy</code>. At least one of the above is required for this plugin to work.");
 		}
 		// If everything's OK, there's  no reason to do this again.
 		if ($wp_twitter_error == FALSE) {
+		$message = __("Your server appears to support the required PHP functions and classes for WP-To-Twitter to function.");
 			update_option( 'jd-functions-checked','1' );		
 		}
 	}
@@ -243,19 +255,27 @@ echo "</p></div>";
 	
 			<p>
 				<input type="checkbox" name="jd_tweet_default" id="jd_tweet_default" value="1" <?php jd_checkCheckbox('jd_tweet_default')?> />
-				<label for="jd_tweet_default"><?php _e("Set default Tweet status to 'No.'"); ?></label>  <?php echo get_option('jd_tweet_default'); ?><br />
-				<strong><?php _e("Twitter updates can be set on a post by post basis. By default, posts WILL be posted to Twitter. Check this to change the default to NO."); ?></strong>
+				<label for="jd_tweet_default"><strong><?php _e("Set default Tweet status to 'No.'"); ?></strong></label>  <?php echo get_option('jd_tweet_default'); ?><br />
+				<small><?php _e("Twitter updates can be set on a post by post basis. By default, posts WILL be posted to Twitter. Check this to change the default to NO."); ?></small>
 			</p>
 			<p>
 				<input type="checkbox" name="jd_twit_remote" id="jd_twit_remote" value="1" <?php jd_checkCheckbox('jd_twit_remote')?> />
-				<label for="jd_twit_remote"><?php _e("Send Twitter Updates on remote publication (Post by Email or XMLRPC Client)"); ?></label> <?php echo get_option('jd_twit_remote'); ?>
+				<label for="jd_twit_remote"><strong><?php _e("Send Twitter Updates on remote publication (Post by Email or XMLRPC Client)"); ?></strong></label>
 			</p>
 			<p>
 				<label for="jd_twit_custom_url"><?php _e("Custom field containing an alternate URL to be shortened and Tweeted."); ?></label><br />
 				<input type="text" name="jd_twit_custom_url" id="jd_twit_custom_url" size="60" maxlength="146" value="<?php echo(get_option('jd_twit_custom_url')) ?>" /><br />
-				<strong><?php _e("You can use a custom field to send Cli.gs and Twitter an alternate URL from the permalink provided by WordPress. The value is the name of the custom field you're using to add an external URL."); ?></strong>
+				<small><?php _e("You can use a custom field to send Cli.gs and Twitter an alternate URL from the permalink provided by WordPress. The value is the name of the custom field you're using to add an external URL."); ?></small>
 			</p>
-			
+			<p>
+				<label for="twitter-analytics-campaign"><?php _e("Campaign identifier for Google Analytics"); ?></label><br />
+				<input type="text" name="twitter-analytics-campaign" id="twitter-analytics-campaign" size="60" maxlength="146" value="<?php echo(get_option('twitter-analytics-campaign')) ?>" /><br />
+				<small><?php _e("You can track the response from Twitter using Google Analytics by defining a campaign identifier here."); ?></small>
+			</p>
+			<p>
+				<input type="checkbox" name="use-twitter-analytics" id="use-twitter-analytics" value="1" <?php jd_checkCheckbox('use-twitter-analytics')?> />
+				<label for="jd_twit_remote"><strong><?php _e("Use Google Analytics with WP-to-Twitter"); ?></strong></label>
+			</p>
 			
 		<div>
 		<input type="hidden" name="submit-type" value="options" />
@@ -276,7 +296,7 @@ echo "</p></div>";
 		</p>
 		<p>
 		<label for="twitterpw"><?php _e("Your Twitter password:"); ?></label>
-		<input type="password" name="twitterpw" id="twitterpw" value="" />
+		<input type="password" name="twitterpw" id="twitterpw" value="<?php echo(get_option('twitterpw')) ?>" />
 		</p>
 		<input type="hidden" name="submit-type" value="login" />
 		<p><input type="submit" name="submit" value="<?php _e("Save Twitter Login Info"); ?>" /> <?php _e("&raquo; <small>Don't have a Twitter account? <a href='http://www.twitter.com'>Get one for free here</a>"); ?></small></p>
@@ -297,7 +317,6 @@ echo "</p></div>";
 		<p><input type="submit" name="submit" value="Save Cli.gs API Key" /> &raquo; <small><?php _e("Don't have a Cli.gs account or Cligs API key? <a href='http://cli.gs/user/api/'>Get one free here</a>! You'll need an API key in order to associate the Cligs you create with your Cligs account."); ?></small></p>
 	</div>
 	<div>
-	
 
 	</div>
 	</form>

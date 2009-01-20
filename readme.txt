@@ -15,6 +15,10 @@ provide a link back to your post from Twitter.
 
 Note: Scheduled posting does not work at the moment. 
 
+New in version 1.2.7: 
+ - Uses the Snoopy class to retrieve information from Cligs and to post Twitter updates. Hopefully this will solve a variety of issues.
+ - Added an option to track traffic from your Tweeted Posts using Google Analytics (Thanks to [Joost](http://yoast.com/twitter-analytics/))
+
 New in version 1.2.6:
  - Bugfix with XMLRPC publishing -- controls to disable XMLRPC publishing now work correctly.
  - Bugfix with error reporting and clearing.
