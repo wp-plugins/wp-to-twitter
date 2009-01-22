@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.2.7
+Version: 1.2.8
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -24,18 +24,16 @@ Author URI: http://www.joedolson.com/
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 global $wp_version,$version,$jd_plugin_url;	
 
 define('JDWP_API_POST_STATUS', 'http://twitter.com/statuses/update.json');
 
-$version = "1.2.7";
+$version = "1.2.8";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 
-require_once( ABSPATH . 'wp-includes/class-snoopy.php');
+require_once( ABSPATH.WPINC.'/class-snoopy.php' );
 
-
-$exit_msg='WP to Twitter requires WordPress 2.3 or more recent. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>';
+$exit_msg='WP to Twitter requires WordPress 2.3 or a more recent version. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>';
 
 	if ( version_compare( $wp_version,"2.3","<" )) {
 	exit ($exit_msg);
@@ -49,6 +47,42 @@ function external_or_permalink( $post_ID ) {
        return ( $ex_link ) ? $ex_link : $perma_link;
 }
 	
+// This function used to perform the API post to Twitter and now serves as a fallback.
+function jd_old_doTwitterAPIPost( $twit, $twitterURI="/statuses/update.xml" ) {
+	$host = 'twitter.com';
+	$port = 80;
+	$fp = @fsockopen($host, $port, $err_num, $err_msg, 10);
+
+	//check if user login details have been entered on admin page
+	$thisLoginDetails = get_option( 'twitterlogin_encrypted' );
+
+	if ( $thisLoginDetails != '' )	{
+		if ( !is_resource($fp) ) {
+			#echo "$err_msg ($err_num)<br>\n"; // Fail Silently, but you could turn these back on...
+			return FALSE;
+		} else {
+			if (!fputs( $fp, "POST $twitterURI HTTP/1.1\r\n" )) {
+			return FALSE;
+			}
+			fputs( $fp, "Authorization: Basic ".$thisLoginDetails."\r\n" );
+			fputs( $fp, "User-Agent: ".$agent."\n" );
+			fputs( $fp, "Host: $host\n" );
+			fputs( $fp, "Content-type: application/x-www-form-urlencoded\n" );
+			fputs( $fp, "Content-length: ".strlen( $twit )."\n" );
+			fputs( $fp, "Connection: close\n\n" );
+			fputs( $fp, $twit );
+			for ( $i = 1; $i < 10; $i++ ) {
+				$reply = fgets( $fp, 256 );
+				}
+			fclose( $fp );
+			return TRUE;
+		}
+	} else {
+		// no username/password: return an empty string
+		return FALSE;
+	}
+}	
+	
 // This function performs the API post to Twitter
 function jd_doTwitterAPIPost( $twit ) {
 	global $version, $jd_plugin_url;
@@ -60,6 +94,7 @@ function jd_doTwitterAPIPost( $twit ) {
 	} else {
 	$twit = urldecode($twit);
 	$tweet = new Snoopy;
+        if (!empty($tweet)) {
 	$tweet->agent = 'WP to Twitter $jd_plugin_url';
 	$tweet->rawheaders = array(
 		'X-Twitter-Client' => 'WP to Twitter'
@@ -78,8 +113,19 @@ function jd_doTwitterAPIPost( $twit ) {
 		if (strpos($tweet->response_code, '200')) {
 		return TRUE;
 		} else {
-		return FALSE;
+			if (jd_old_doTwitterAPIPost( $twit ) == TRUE) {
+			return TRUE;
+			} else {
+			return FALSE;
+			}
 		}
+        } else {
+		if (jd_old_doTwitterAPIPost( $twit ) == TRUE) {
+		return TRUE;
+		} else {
+		return FALSE;
+		}         
+        }
 	}
 }
 
@@ -213,7 +259,7 @@ function jd_twit( $post_ID )  {
 						$thisposttitle = $thisposttitle . ' ' . $old_post_link;
 					}
 					$sentence = str_replace( '#title#', $thisposttitle, $sentence );
-					$sentence = str_replace( '#blog#', $thisblogtitle,$sentence );
+					$sentence = str_replace( '#blog#', $thisblogtitle, $sentence );
 					
 				}
 			}

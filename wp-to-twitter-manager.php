@@ -35,7 +35,10 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 
 		$message = __("Set your Twitter login information and Cli.gs API to use this plugin!");
 	}
-
+	if( get_option( 'twitterInitialised') == '1' && get_option( 'twitter_pw' ) == "" ) {
+		$message .= __("Please add your Twitter password.");
+	}
+	
 	if ( $_POST['submit-type'] == 'clear-error' ) {
 		update_option( 'wp_twitter_failure','0' );
 		update_option( 'wp_cligs_failure','0' );
@@ -114,21 +117,24 @@ $wp_to_twitter_failure = '';
 	if ( $_POST['submit-type'] == 'check-support' ) {
 	update_option('jd-functions-checked', '0');
 	}
-	
+
 	if ( get_option('jd-functions-checked') == '0') {
+	$checker = new Snoopy;
 		$wp_twitter_error = FALSE;
-		if ( !function_exists( 'fputs' ) ) {
+		if ( function_exists( 'fputs' ) || $checker->fetch( "http://twitter.com/help/test.json" ) == "ok" ) {
+		} else {
 			$wp_twitter_error = TRUE;
-			$message = __("Your server does not support <code>fputs</code>, the function used to send information to Twitter.");
+			$message .= __("Your server does not support <code>fputs</code> or <code>Snoopy</code>, the basic and fallback functions used to send information to Twitter.");
 		} 
-		if ( !function_exists( 'curl_init' ) && ( file_get_contents ( "http://www.joedolson.com/scripts/wp-to-twitter-check.txt"  ) != 1 ) && ( $snoopy->fetchtext( "http://www.joedolson.com/scripts/wp-to-twitter-check.txt" ) != 1 ) ) {
+		if ( function_exists( 'curl_init' ) || ( file_get_contents( "http://twitter.com/help/test.xml"  ) == "<ok>true</ok>" ) ) {
+		} else {
 			$wp_twitter_error = TRUE;
 			$message .= __("Your server does not support the <code>file_get_contents</code> or <code>cURL</code> functions which this plugin uses to send information to Cli.gs. Your server is also unable to access the WordPress file wrapper, <code>Snoopy</code>. At least one of the above is required for this plugin to work.");
 		}
 		// If everything's OK, there's  no reason to do this again.
 		if ($wp_twitter_error == FALSE) {
 		$message = __("Your server appears to support the required PHP functions and classes for WP-To-Twitter to function.");
-			update_option( 'jd-functions-checked','1' );		
+		update_option( 'jd-functions-checked','1' );		
 		}
 	}
 
@@ -169,9 +175,9 @@ _e("This plugin will not work in your server environment.");
 echo "</p></div>";
 }
 ?>
-<?php if ($message) : ?>
+<?php if ($message) { ?>
 <div id="message" class="updated fade"><p><?php echo $message; ?></p></div>
-<?php endif; ?>
+<?php } ?>
 <div id="dropmessage" class="updated" style="display:none;"></div>
 
 <div class="wrap" id="wp-to-twitter">
@@ -255,7 +261,7 @@ echo "</p></div>";
 	
 			<p>
 				<input type="checkbox" name="jd_tweet_default" id="jd_tweet_default" value="1" <?php jd_checkCheckbox('jd_tweet_default')?> />
-				<label for="jd_tweet_default"><strong><?php _e("Set default Tweet status to 'No.'"); ?></strong></label>  <?php echo get_option('jd_tweet_default'); ?><br />
+				<label for="jd_tweet_default"><strong><?php _e("Set default Tweet status to 'No.'"); ?></strong></label><br />
 				<small><?php _e("Twitter updates can be set on a post by post basis. By default, posts WILL be posted to Twitter. Check this to change the default to NO."); ?></small>
 			</p>
 			<p>
@@ -320,8 +326,18 @@ echo "</p></div>";
 
 	</div>
 	</form>
-	
+		
 </div>
+
+	<form method="post" action="">
+	<div>
+	<input type="hidden" name="submit-type" value="check-support" />
+		<p>
+		<input type="submit" name="submit" value="Check Support Level" /> <small>Check whether your server supports the functions required for the Twitter and Cli.gs API calls to work.</small>
+		</p>
+	</div>
+	</form>
+
 
 
 <div class="wrap">
