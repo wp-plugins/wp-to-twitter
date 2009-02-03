@@ -1,41 +1,48 @@
 <?php
-
-$wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dirname( plugin_basename(__FILE__) );
-
 	//update_option( 'twitterInitialised', '0' );
 	//SETS DEFAULT OPTIONS
 	if( get_option( 'twitterInitialised') != '1' ) {
 		update_option( 'newpost-published-update', '1' );
-		update_option( 'newpost-published-text', 'Published a new post: #title#' );
+		update_option( 'newpost-published-text', 'New post: #title#' );
 		update_option( 'newpost-published-showlink', '1' );
 
 		update_option( 'oldpost-edited-update', '1' );
-		update_option( 'oldpost-edited-text', 'Blog post just edited: #title#' );
+		update_option( 'oldpost-edited-text', 'Post Edited: #title#' );
 		update_option( 'oldpost-edited-showlink', '1' );
 
+		update_option( 'jd_twit_pages','0' );
+		
 		update_option( 'jd_twit_remote', '0' );
+		
 		// Use Google Analytics with Twitter
 		update_option( 'twitter-analytics-campaign', '' );
 		update_option( 'use-twitter-analytics', '0' );
+		
+		// Use custom external URLs to point elsewhere. 
 		update_option( 'jd_twit_custom_url', 'external_link' );
 		
+		// Cligs API
 		update_option( 'cligsapi','' );
-		update_option( 'jd_twit_pages','0' );
+		
+		// Error checking
 		update_option( 'jd_functions_checked','0' );
 		update_option( 'wp_twitter_failure','0' );
 		update_option( 'wp_cligs_failure','0' );
+		
 		// Blogroll options
 		update_option ('jd-use-link-title','0' );
 		update_option( 'jd-use-link-description','1' );
 		update_option( 'newlink-published-text', 'New link posted: ' );
 		update_option( 'jd_twit_blogroll', '1');
 		
+		// Default publishing options.
 		update_option( 'jd_tweet_default', '0' );
+		// Note that default options are set.
 		update_option( 'twitterInitialised', '1' );
 
 		$message = __("Set your Twitter login information and Cli.gs API to use this plugin!");
 	}
-	if( get_option( 'twitterInitialised') == '1' && get_option( 'twitter_pw' ) == "" ) {
+	if( get_option( 'twitterInitialised') == '1' && get_option( 'twitterpw' ) == "" ) {
 		$message .= __("Please add your Twitter password.");
 	}
 	
@@ -85,6 +92,8 @@ $wp_to_twitter_failure = '';
 		update_option( 'use-twitter-analytics', $_POST['use-twitter-analytics'] );
 		update_option( 'twitter-analytics-campaign', $_POST['twitter-analytics-campaign'] );
 		
+		update_option( 'jd_individual_twitter_users', $_POST['jd_individual_twitter_users'] );
+		
 		$message = "WP to Twitter Options Updated";
 
 	} else if ( $_POST['submit-type'] == 'login' ){
@@ -98,9 +107,12 @@ $wp_to_twitter_failure = '';
 			$message = __("You need to provide your twitter login and password!");
 		}
 	} else if ( $_POST['submit-type'] == 'cligsapi' ) {
-		if ( $_POST['cligsapi'] != '' ) {
+		if ( $_POST['cligsapi'] != '' && isset( $_POST['submit'] ) ) {
 			update_option( 'cligsapi',$_POST['cligsapi'] );
 			$message = __("Cligs API Key Updated");
+		} else if ( isset( $_POST['clear'] ) ) {
+			update_option( 'cligsapi','' );
+			$message = __("Cli.gs API Key deleted. Cli.gs created by WP to Twitter will no longer be associated with your account.");
 		} else {
 			$message = __("Cli.gs API Key not added - <a href='http://cli.gs/user/api/'>get one here</a>!");
 		}
@@ -119,59 +131,61 @@ $wp_to_twitter_failure = '';
 	}
 
 	if ( get_option('jd-functions-checked') == '0') {
-	$checker = new Snoopy;
-		$wp_twitter_error = FALSE;
-		if ( function_exists( 'fputs' ) || $checker->fetch( "http://twitter.com/help/test.json" ) == "ok" ) {
-		} else {
-			$wp_twitter_error = TRUE;
-			$message .= __("Your server does not support <code>fputs</code> or <code>Snoopy</code>, the basic and fallback functions used to send information to Twitter.");
-		} 
-		if ( function_exists( 'curl_init' ) || ( file_get_contents( "http://twitter.com/help/test.xml"  ) == "<ok>true</ok>" ) ) {
-		} else {
-			$wp_twitter_error = TRUE;
-			$message .= __("Your server does not support the <code>file_get_contents</code> or <code>cURL</code> functions which this plugin uses to send information to Cli.gs. Your server is also unable to access the WordPress file wrapper, <code>Snoopy</code>. At least one of the above is required for this plugin to work.");
-		}
+	$cligs_checker = new Snoopy;
+	$twit_checker = new Snoopy;
+	$testurl = urlencode("http://www.joedolson.com/articles/wp-to-twitter/");
+	
+	$cligs_checker->fetchtext( "http://cli.gs/api/v2/cligs/create?url=$testurl&appid=WP-to-Twitter&key=&output=&test=1" );
+	$twit_checker->fetch( "http://twitter.com/help/test.json" );
+	$wp_twitter_error = TRUE;	
+	$wp_cligs_error = TRUE;
+			if ( strlen(getfilefromurl("http://cli.gs/api/v2/cligs/create?url=$testurl&appid=WP-to-Twitter&key=&output=&test=1")) == 20 || strlen($cligs_checker->results) == 20 ) {
+				$wp_cligs_error = FALSE;
+				$message .= __("Successfully contacted the Cli.gs API. ");
+				//$message .= "Twit: " . $twit_checker->results;			
+			} else {
+				$message .=__("Failed to contact the Cli.gs API. ");
+			}
+			if ( $twit_checker->results == "\"ok\"" || getfilefromurl("http://twitter.com/help/test.xml") == "<ok>true</ok>" ) {
+				$wp_twitter_error = FALSE;
+				$message .= __("Successfully contacted the Twitter API. ");
+			} else {
+				$message .= __("Failed to contact the Twitter API. ");
+			}
 		// If everything's OK, there's  no reason to do this again.
-		if ($wp_twitter_error == FALSE) {
-		$message = __("Your server appears to support the required PHP functions and classes for WP-To-Twitter to function.");
+		if ($wp_twitter_error == FALSE && $wp_cligs_error == FALSE) {
+		$message .= __("Your server appears to support the required PHP functions and classes for WP to Twitter to function.");
 		update_option( 'jd-functions-checked','1' );		
+		} else { 
+			if ( !function_exists( 'fputs' ) ) {
+				$wp_function_error = TRUE;
+				$message .= __("Your server does not support <code>fputs</code>.");
+			} 
+			if ( !function_exists( 'curl_init' ) || !function_exists( 'file_get_contents' ) ) {
+				$wp_function_error = TRUE;
+				$message .= __("Your server does not support <code>file_get_contents</code> or <code>cURL</code> functions.");
+			}
+			if ( !class_exists( 'Snoopy' ) ) {
+				$wp_function_error = TRUE;
+				$message .= __("Your server does not support <code>Snoopy</code>.");			
+			}
+		
+		$message .= __("Your server does not appear to support the required PHP functions and classes for WP to Twitter to function. Despite this test, you should try the plugin -- the Twitter <code>test</code> API is a bit buggy.");
+		/*
+		$message .= $cligs_checker->results;
+		$message .= " | " . strlen($cligs_checker->results);
+		$message .= " | ";
+		$message .= $twit_checker->results;
+		*/
+		update_option( 'jd-functions-checked','1' );		
+			
 		}
 	}
 
 ?>
-<style type="text/css">
-<!-- 
-#wp-to-twitter fieldset {
-margin: 0;
-padding:0;
-border: none;
-}
-#wp-to-twitter form p {
-background: #eaf3fa;
-padding: 10px 5px;
-margin: 4px 0;
-border: 1px solid #eee;
-}
-#wp-to-twitter form .error p {
-background: none;
-border: none;
-}
-.floatright {
-float: right;
-}
-.cligs {
-background: #efecdb url(<?php echo $wp_to_twitter_directory; ?>/images/cligs.png)  right 50% no-repeat;
-padding: 2px!important;
-}
-.twitter {
-background: url(<?php echo $wp_to_twitter_directory; ?>/images/twitter.png)  right 50% no-repeat;
-padding: 2px!important;
-}
--->
-</style>
-<?php if ($wp_twitter_error == TRUE) {
+<?php if ( $wp_twitter_error == TRUE || $wp_cligs_error == TRUE ) {
 echo "<div class='error'><p>";
-_e("This plugin will not work in your server environment.");
+_e("This plugin may not work in your server environment.");
 echo "</p></div>";
 }
 ?>
@@ -224,7 +238,7 @@ echo "</p></div>";
 			</p>		
 			<p>
 				<input type="checkbox" name="newpost-published-update" id="newpost-published-update" value="1" <?php jd_checkCheckbox('newpost-published-update')?> />
-				<label for="newpost-published-update"><strong><?php _e("Update Twitter when the new post is published"); ?></strong></label>
+				<label for="newpost-published-update"><strong><?php _e("Update Twitter when a new post is published"); ?></strong></label>
 			</p>
 			<p>
 				<label for="newpost-published-text"><?php _e("Text for this Twitter update"); ?></label><br />
@@ -280,8 +294,12 @@ echo "</p></div>";
 			</p>
 			<p>
 				<input type="checkbox" name="use-twitter-analytics" id="use-twitter-analytics" value="1" <?php jd_checkCheckbox('use-twitter-analytics')?> />
-				<label for="jd_twit_remote"><strong><?php _e("Use Google Analytics with WP-to-Twitter"); ?></strong></label>
+				<label for="use-twitter-analytics"><strong><?php _e("Use Google Analytics with WP-to-Twitter"); ?></strong></label>
 			</p>
+			<p>
+				<input type="checkbox" name="jd_individual_twitter_users" id="jd_individual_twitter_users" value="1" <?php jd_checkCheckbox('jd_individual_twitter_users')?> />
+				<label for="jd_individual_twitter_users"><strong><?php _e("Authors have individual Twitter accounts"); ?></strong></label> <small><?php _e('Each author can set their own Twitter username and password in their user profile. Their posts will be sent to their own Twitter accounts.'); ?></small>
+			</p>			
 			
 		<div>
 		<input type="hidden" name="submit-type" value="options" />
@@ -320,10 +338,7 @@ echo "</p></div>";
 		<div>
 		<input type="hidden" name="submit-type" value="cligsapi" />
 		</div>
-		<p><input type="submit" name="submit" value="Save Cli.gs API Key" /> &raquo; <small><?php _e("Don't have a Cli.gs account or Cligs API key? <a href='http://cli.gs/user/api/'>Get one free here</a>! You'll need an API key in order to associate the Cligs you create with your Cligs account."); ?></small></p>
-	</div>
-	<div>
-
+		<p><input type="submit" name="submit" value="Save Cli.gs API Key" /> <input type="submit" name="clear" value="Clear Cli.gs API Key" /><br />&raquo; <small><?php _e("Don't have a Cli.gs account or Cligs API key? <a href='http://cli.gs/user/api/'>Get one free here</a>! You'll need an API key in order to associate the Cligs you create with your Cligs account."); ?></small></p>
 	</div>
 	</form>
 		

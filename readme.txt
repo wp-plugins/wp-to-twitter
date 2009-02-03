@@ -13,7 +13,25 @@ Posts a Twitter status update when you update your blog or post to your blogroll
 The WP-to-Twitter plugin posts a Twitter status update from your blog using the Cli.gs URL shortening service to 
 provide a link back to your post from Twitter. 
 
-Note: Scheduled posting does not work at the moment. 
+* **Note**: Scheduled posts will not be Tweeted. 
+* **Note**: QuickPress posts will not be Tweeted.
+
+New in version 1.3.0: Support for multiple authors with independent Twitter & Cligs accounts. Other minor textual revisions, addition of API availability check in the Settings panel. Bugfixes: If editing a post by XMLRPC, you could not disable tweeting your edits. FIXED. 
+
+If you have a Cli.gs API key, the shortened URL will also be filed in your Cli.gs account so that you can track
+statistics for the shortened URL. 
+
+The plugin can send a default message for updating or editing posts or pages, but also allows you to write a custom
+Tweet for your post which says whatever you want. By default, the shortened URL from Cli.gs is appended to the end
+of your message, so you should keep that in mind when writing your custom Tweet. 
+
+Any status update you write which is longer than the available space will automatically be truncated by the plugin. This applies to both the default messages and to your custom messages.
+
+This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net) and Bill Berry.
+
+(As a side note, this plugin more or less works with WordPress 2.3. It's not fully tested, however. Make a request at [http://www.joedolson.com/articles/wp-to-twitter/](http://www.joedolson.com/articles/wp-to-twitter/) if this is something you need!)
+
+== Version Notes ==
 
 New in version 1.2.8: Bug fix to 1.2.7.
 
@@ -34,19 +52,6 @@ New in version 1.2.5:
 New in version 1.2.0: 
  - option to post your new blogroll links to Twitter, using the description field as your status update text.
  - option to decide on a post level whether or not that blog post should be posted to Twitter
-
-If you have a Cli.gs API key, the shortened URL will also be filed in your Cli.gs account so that you can track
-statistics for the shortened URL. 
-
-The plugin can send a default message for updating or editing posts or pages, but also allows you to write a custom
-Tweet for your post which says whatever you want. By default, the shortened URL from Cli.gs is appended to the end
-of your message, so you should keep that in mind when writing your custom Tweet. 
-
-Any status update you write which is longer than the available space will automatically be truncated by the plugin. This applies to both the default messages and to your custom messages.
-
-This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net) and Bill Berry.
-
-(As a side note, this plugin more or less works with WordPress 2.3. It's not fully tested, however. Make a request at [http://www.joedolson.com/articles/wp-to-twitter/](http://www.joedolson.com/articles/wp-to-twitter/) if this is something you need!)
 
 == Installation ==
 
@@ -82,7 +87,7 @@ Well, there isn't much I can do about that - but the plugin will check and see w
 
 = If I mark a blogroll link as private, will it be posted to Twitter? =
 
-No. Private. 
+No. They're private. 
 
 = What are the changes between version 1.1 and 1.2? =
 
@@ -90,5 +95,6 @@ There are several additional functions available in version 1.2. First, you can 
 
 == Screenshots ==
 
-1. WP to Twitter custom Tweet box
-2. WP to Twitter options page
+1. WP to Twitter main settings page.
+2. WP to Twitter custom Tweet settings.
+3. WP to Twitter user settings.

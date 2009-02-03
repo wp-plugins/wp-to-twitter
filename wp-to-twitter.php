@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.2.8
+Version: 1.3.0
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -28,14 +28,15 @@ global $wp_version,$version,$jd_plugin_url;
 
 define('JDWP_API_POST_STATUS', 'http://twitter.com/statuses/update.json');
 
-$version = "1.2.8";
+$version = "1.3.0";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
+
 
 require_once( ABSPATH.WPINC.'/class-snoopy.php' );
 
-$exit_msg='WP to Twitter requires WordPress 2.3 or a more recent version. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>';
+$exit_msg='WP to Twitter requires WordPress 2.5 or a more recent version. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>';
 
-	if ( version_compare( $wp_version,"2.3","<" )) {
+	if ( version_compare( $wp_version,"2.5","<" )) {
 	exit ($exit_msg);
 	}
 
@@ -48,13 +49,21 @@ function external_or_permalink( $post_ID ) {
 }
 	
 // This function used to perform the API post to Twitter and now serves as a fallback.
-function jd_old_doTwitterAPIPost( $twit, $twitterURI="/statuses/update.xml" ) {
+function jd_old_doTwitterAPIPost( $twit, $authID=FALSE, $twitterURI="/statuses/update.xml" ) {
 	$host = 'twitter.com';
 	$port = 80;
 	$fp = @fsockopen($host, $port, $err_num, $err_msg, 10);
 
 	//check if user login details have been entered on admin page
+	if ($authID === FALSE || ( get_option( 'jd_individual_twitter_users' ) != '1' ) ) {
 	$thisLoginDetails = get_option( 'twitterlogin_encrypted' );
+	} else {
+		if ( get_usermeta( $authID, 'wp-to-twitter-enable-user' ) == 'true' && get_usermeta( $authID, 'wp-to-twitter-encrypted' )!="" ) {
+		$thisLoginDetails = get_usermeta( $authID, 'wp-to-twitter-encrypted' );
+		} else {
+		$thisLoginDetails = get_option( 'twitterlogin_encrypted' );		
+		}
+	}
 
 	if ( $thisLoginDetails != '' )	{
 		if ( !is_resource($fp) ) {
@@ -84,11 +93,21 @@ function jd_old_doTwitterAPIPost( $twit, $twitterURI="/statuses/update.xml" ) {
 }	
 	
 // This function performs the API post to Twitter
-function jd_doTwitterAPIPost( $twit ) {
+function jd_doTwitterAPIPost( $twit, $authID=FALSE ) {
 	global $version, $jd_plugin_url;
 	//check if user login details have been entered on admin page
+	if ($authID == FALSE || ( get_option( 'jd_individual_twitter_users' ) != '1' ) ) {
 	$thisuser = get_option( 'twitterlogin' );
 	$thispass = get_option( 'twitterpw' );
+	} else {
+		if ( get_usermeta( $authID, 'wp-to-twitter-enable-user' ) == 'true' && ( get_usermeta( $authID, 'wp-to-twitter-user-username' ) != "" && get_usermeta( $authID, 'wp-to-twitter-user-password' ) != "" ) ) {	
+			$thisuser = get_usermeta( $authID, 'wp-to-twitter-user-username' );
+			$thispass = get_usermeta( $authID, 'wp-to-twitter-user-password' );
+		} else {
+			$thisuser = get_option( 'twitterlogin' );
+			$thispass = get_option( 'twitterpw' );		
+		}
+	}
 	if ($thisuser == '' || $thispass == '' || $twit == '' ) {
 	return FALSE;
 	} else {
@@ -113,7 +132,7 @@ function jd_doTwitterAPIPost( $twit ) {
 		if (strpos($tweet->response_code, '200')) {
 		return TRUE;
 		} else {
-			if (jd_old_doTwitterAPIPost( $twit ) == TRUE) {
+			if (jd_old_doTwitterAPIPost( $twit, $authID ) == TRUE) {
 			return TRUE;
 			} else {
 			return FALSE;
@@ -196,7 +215,8 @@ function jd_twit( $post_ID )  {
 		
 	$jd_tweet_this = get_post_meta( $post_ID, 'jd_tweet_this', TRUE);
 	if ( $jd_tweet_this == "yes" ) {
-	
+		$get_post_info = get_post( $post_ID );
+		$authID = $get_post_info->post_author;
 	    //$twitterURI = "/statuses/update.xml";
 	    $thisposttitle = urlencode( stripcslashes( $_POST['post_title'] ) );
 	    $thispostlink = urlencode( external_or_permalink( $post_ID ) );
@@ -205,7 +225,10 @@ function jd_twit( $post_ID )  {
 	    $sentence = '';
 		$customTweet = stripcslashes( $_POST['jd_twitter'] );
 		$oldClig = get_post_meta( $post_ID, 'wp_jd_clig', TRUE );
-
+		// this is a test string
+		$test = $_POST['publish']  . '|' . $_POST['prev_status'] . '|' . $_POST['original_post_status'];		
+		add_post_meta ( $post_ID, 'jd_test_wp' , $test );		
+		// end test string
 			if ( $_POST['publish'] == 'Publish' && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft')) {
 				// publish new post
 				if ( get_option( 'newpost-published-update' ) == '1' ) {
@@ -265,8 +288,7 @@ function jd_twit( $post_ID )  {
 			}
 			
 			if ( $sentence != '' ) {
-				//$sendToTwitter = jd_doTwitterAPIPost( 'source=wptotwitter&status='.$sentence, $twitterURI );
-				$sendToTwitter = jd_doTwitterAPIPost( $sentence );				
+				$sendToTwitter = jd_doTwitterAPIPost( $sentence, $authID );				
 				if ($sendToTwitter === FALSE) {
 				add_post_meta( $post_ID,'jd_wp_twitter',urldecode($sentence));
 				update_option('wp_twitter_failure','1');
@@ -327,7 +349,8 @@ function jd_twit_future( $post_ID ) {
 	$post_status = $get_post_info->post_status;
 	if ( $jd_tweet_this == "yes" ) {
 		$thispostlink = urlencode( external_or_permalink( $post_ID ) );
-		$thisposttitle = urlencode( $get_post_info->post_title );		
+		$thisposttitle = urlencode( $get_post_info->post_title );	
+		$authID = $get_post_info->post_author;		
 		$thisblogtitle = urlencode( get_bloginfo( 'name' ) );
 		$cligsapi = get_option( 'cligsapi' );
 		$sentence = '';
@@ -361,10 +384,10 @@ function jd_twit_future( $post_ID ) {
 				add_post_meta( $post_ID, 'wp_jd_clig', $shrink );	
 			}
 			if ( $sentence != '' ) {
-				$sendToTwitter = jd_doTwitterAPIPost( $sentence );				
+				$sendToTwitter = jd_doTwitterAPIPost( $sentence, $authID );				
 				if ($sendToTwitter === FALSE) {
-				add_post_meta( $post_ID,'jd_wp_twitter',urldecode($sentence));
-				update_option('wp_twitter_failure','1');
+				add_post_meta( $post_ID,'jd_wp_twitter',urldecode($sentence) );
+				update_option( 'wp_twitter_failure','1' );
 				}
 			}
 		return $post_ID;
@@ -376,7 +399,11 @@ function jd_twit_xmlrpc( $post_ID ) {
 	$get_post_info = get_post( $post_ID );
 	$post_status = $get_post_info->post_status;
 
+	if ( get_option('oldpost-edited-update') != 1 && get_post_meta ( $post_ID, 'wp_jd_clig', TRUE ) != '' ) {
+	return;
+	} else {	
 	if ( get_option('jd_tweet_default') != '1' && get_option('jd_twit_remote') == '1' ) {
+		$authID = $get_post_info->post_author;	
 		$thispostlink = urlencode( external_or_permalink( $post_ID ) );
 		$thisposttitle = urlencode( $get_post_info->post_title );		
 		$thisblogtitle = urlencode( get_bloginfo( 'name' ) );
@@ -392,7 +419,7 @@ function jd_twit_xmlrpc( $post_ID ) {
 				add_post_meta ( $post_ID, 'wp_jd_clig', $shrink );	
 			}
 			if ( $sentence != '' ) {
-				$sendToTwitter = jd_doTwitterAPIPost( $sentence );				
+				$sendToTwitter = jd_doTwitterAPIPost( $sentence, $authID );				
 				if ($sendToTwitter === FALSE) {
 				add_post_meta( $post_ID,'jd_wp_twitter',urldecode($sentence));
 				update_option('wp_twitter_failure','1');
@@ -400,7 +427,7 @@ function jd_twit_xmlrpc( $post_ID ) {
 			}
 	}
 	return $post_ID;
-
+	}
 } // END jd_twit_xmlrpc
 
 // Add custom Tweet field on Post & Page write/edit forms
@@ -475,11 +502,87 @@ function post_jd_twitter( $id ) {
 	}
 }
 
+
+function jd_twitter_profile() {
+		global $user_ID;
+		get_currentuserinfo();
+		if( $_GET['user_id'] ) $user_ID = $_GET['user_id'];
+		
+			$is_enabled = get_usermeta( $user_ID, 'wp-to-twitter-enable-user' );
+			if ($is_enabled==TRUE) { $this_enabled = " checked=\"checked\""; }
+			$twitter_username = get_usermeta( $user_ID, 'wp-to-twitter-user-username' );
+			$twitter_password = get_usermeta( $user_ID, 'wp-to-twitter-user-password' );
+	
+		?>
+		<h3><?php _e('WP to Twitter User Settings'); ?></h3>
+		
+		<table class="form-table">
+		<tr>
+			<th scope="row"><label for="wp-to-twitter-enable-user"><?php _e('Use My Twitter Account'); ?></th>
+			<td><input type="checkbox" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user" value="true"<?php echo $this_enabled; ?> /> Check this box if you would like your posts to be Tweeted into your own Twitter account. If unchecked, your posts will be Tweeted into the account set in the WP to Twitter settings.</td>
+		</tr>
+		<tr>
+			<th scope="row"><label for="wp-to-twitter-user-username"><?php _e('Your Twitter Username'); ?></th>
+			<td><input type="text" name="wp-to-twitter-user-username" id="wp-to-twitter-user-username" value="<?php echo $twitter_username; ?>" /> Enter your own Twitter username.</td>
+		</tr>
+		<tr>
+			<th scope="row"><label for="wp-to-twitter-user-password"><?php _e('Your Twitter Password'); ?></th>
+			<td><input type="password" name="wp-to-twitter-user-password" id="wp-to-twitter-user-password" value="<?php echo $twitter_password; ?>" /> Enter your own Twitter password.</td>
+		</tr>
+		</table>
+		<?php
+}
+	
+function jd_twitter_save_profile(){
+	global $user_ID;
+	get_currentuserinfo();
+	if( $_GET['user_id'] ) { $user_ID = $_GET['user_id']; }
+	update_usermeta($user_ID ,'wp-to-twitter-enable-user' , $_POST['wp-to-twitter-enable-user'] );
+	update_usermeta($user_ID ,'wp-to-twitter-user-username' , $_POST['wp-to-twitter-user-username'] );
+	update_usermeta($user_ID ,'wp-to-twitter-user-password' , $_POST['wp-to-twitter-user-password'] );
+	update_usermeta($user_ID ,'wp-to-twitter-encrypted' , base64_encode( $_POST['wp-to-twitter-user-username'].':'.$_POST['wp-to-twitter-user-password'] ) ); 	
+}
+
 // Add the administrative settings to the "Settings" menu.
 function jd_addTwitterAdminPages() {
     if ( function_exists( 'add_submenu_page' ) ) {
-		 add_options_page( 'WP -> Twitter', 'WP -> Twitter', 8, __FILE__, 'jd_wp_Twitter_manage_page' );
+		 $plugin_page = add_options_page( 'WP -> Twitter', 'WP -> Twitter', 8, __FILE__, 'jd_wp_Twitter_manage_page' );
+		 add_action( 'admin_head-'. $plugin_page, 'jd_addTwitterAdminStyles' );
     }
+ }
+ function jd_addTwitterAdminStyles() {
+ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dirname( plugin_basename(__FILE__) );
+	echo "
+<style type=\"text/css\">
+<!-- 
+#wp-to-twitter fieldset {
+margin: 0;
+padding:0;
+border: none;
+}
+#wp-to-twitter form p {
+background: #eaf3fa;
+padding: 10px 5px;
+margin: 4px 0;
+border: 1px solid #eee;
+}
+#wp-to-twitter form .error p {
+background: none;
+border: none;
+}
+.floatright {
+float: right;
+}
+.cligs {
+background: #fff url($wp_to_twitter_directory/cligs.png)  right 50% no-repeat;
+padding: 2px!important;
+}
+.twitter {
+background: url($wp_to_twitter_directory/twitter.png)  right 50% no-repeat;
+padding: 2px!important;
+}
+-->
+</style>";
  }
 // Include the Manager page
 function jd_wp_Twitter_manage_page() {
@@ -494,6 +597,12 @@ function plugin_action($links, $file) {
 //Add Plugin Actions to WordPress
 
 add_filter('plugin_action_links', 'plugin_action', -10, 2);
+
+if ( get_option( 'jd_individual_twitter_users')=='1') {
+	add_action( 'show_user_profile', 'jd_twitter_profile' );
+	add_action( 'edit_user_profile', 'jd_twitter_profile' );
+	add_action( 'profile_update', 'jd_twitter_save_profile');
+}
 
 if ( substr( get_bloginfo( 'version' ), 0, 3 ) >= '2.5' ) {
 	add_action( 'edit_form_advanced','jd_add_twitter_textinput' );
@@ -517,6 +626,7 @@ if ( get_option( 'jd_twit_blogroll' ) == '1' ) {
 }
 
 add_action( 'publish_post', 'jd_twit', 12 );
+//add_action( 'new_to_publish', 'jd_twit_test', 12 ); Placeholder for QuickPress, which doesn't appear to support add_post_meta.
 
 if ( get_option( 'jd_twit_remote' ) == '1' ) {
 	add_action( 'xmlrpc_publish_post', 'jd_twit_xmlrpc' ); // to add later
