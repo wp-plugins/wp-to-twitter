@@ -372,9 +372,7 @@ global $version;
 
 // HANDLES SCHEDULED POSTS
 function jd_twit_future( $post_ID ) {
-   // delete_option( 'jd_this_happened' );
     $post_ID = $post_ID->ID;
-	update_option( 'jd_this_happened',$post_ID );
 	
 	$get_post_info = get_post( $post_ID );
 	$jd_tweet_this = get_post_meta( $post_ID, 'jd_tweet_this', TRUE );

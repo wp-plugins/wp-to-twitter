@@ -370,7 +370,5 @@ echo "</p></div>";
 <div class="wrap">
 	<h3><?php _e("Need help?"); ?></h3>
 	<p><?php _e("Visit the <a href='http://www.joedolson.com/articles/wp-to-twitter/'>WP to Twitter plugin page</a>."); ?></p>
-	
-	<?php echo get_option('jd_this_happened'); ?>
-	
+		
 </div>
