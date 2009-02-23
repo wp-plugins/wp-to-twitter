@@ -14,10 +14,13 @@ The WP-to-Twitter plugin posts a Twitter status update from your blog using the 
 provide a link back to your post from Twitter. 
 
 **New in version 1.3.1**: 
-* Modification for multiple authors with independent Twitter accounts -- there are now three options: 
+
+* Modification for multiple authors with independent Twitter accounts -- there are now three options:
+ 
 	1. Tweet to your own account, instead of the blog account. 
 	1. Tweet to your account with an @ reference to the main blog account. 
 	1. Tweet to the main blog account with an @ reference to your own account.  
+	
 * Added an option to enable or disable Tweeting of Pages when edited. 
 * **Fixed scheduled posting and posting from QuickPress, so both of these options will now be Tweeted.**
 
