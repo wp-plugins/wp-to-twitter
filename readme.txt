@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, cligs, redirect, shortener, post, links
 Requires at least: 2.5
-Tested up to: 2.7.0
+Tested up to: 2.7.1
 Stable tag: trunk
 
 Posts a Twitter status update when you update your blog or post to your blogroll, using the Cligs URL shortening service.
@@ -13,10 +13,13 @@ Posts a Twitter status update when you update your blog or post to your blogroll
 The WP-to-Twitter plugin posts a Twitter status update from your blog using the Cli.gs URL shortening service to 
 provide a link back to your post from Twitter. 
 
-* **Note**: Scheduled posts will not be Tweeted. 
-* **Note**: QuickPress posts will not be Tweeted.
-
-New in version 1.3.0: Support for multiple authors with independent Twitter & Cligs accounts. Other minor textual revisions, addition of API availability check in the Settings panel. Bugfixes: If editing a post by XMLRPC, you could not disable tweeting your edits. FIXED. 
+**New in version 1.3.1**: 
+* Modification for multiple authors with independent Twitter accounts -- there are now three options: 
+	1. Tweet to your own account, instead of the blog account. 
+	1. Tweet to your account with an @ reference to the main blog account. 
+	1. Tweet to the main blog account with an @ reference to your own account.  
+* Added an option to enable or disable Tweeting of Pages when edited. 
+* **Fixed scheduled posting and posting from QuickPress, so both of these options will now be Tweeted.**
 
 If you have a Cli.gs API key, the shortened URL will also be filed in your Cli.gs account so that you can track
 statistics for the shortened URL. 
@@ -32,6 +35,8 @@ This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman]
 (As a side note, this plugin more or less works with WordPress 2.3. It's not fully tested, however. Make a request at [http://www.joedolson.com/articles/wp-to-twitter/](http://www.joedolson.com/articles/wp-to-twitter/) if this is something you need!)
 
 == Version Notes ==
+
+New in version 1.3.0: Support for multiple authors with independent Twitter & Cligs accounts. Other minor textual revisions, addition of API availability check in the Settings panel. Bugfixes: If editing a post by XMLRPC, you could not disable tweeting your edits. FIXED. 
 
 New in version 1.2.8: Bug fix to 1.2.7.
 

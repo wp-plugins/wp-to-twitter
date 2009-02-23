@@ -5,12 +5,14 @@
 		update_option( 'newpost-published-update', '1' );
 		update_option( 'newpost-published-text', 'New post: #title#' );
 		update_option( 'newpost-published-showlink', '1' );
-
+		update_option( 'jd_twit_quickpress', '1' );
+		
 		update_option( 'oldpost-edited-update', '1' );
 		update_option( 'oldpost-edited-text', 'Post Edited: #title#' );
 		update_option( 'oldpost-edited-showlink', '1' );
 
 		update_option( 'jd_twit_pages','0' );
+		update_option( 'jd_twit_edited_pages','0' );
 		
 		update_option( 'jd_twit_remote', '0' );
 		
@@ -75,8 +77,10 @@ $wp_to_twitter_failure = '';
 		update_option( 'oldpost-edited-text', $_POST['oldpost-edited-text'] );
 		update_option( 'oldpost-edited-showlink', $_POST['oldpost-edited-showlink'] );
 		update_option( 'jd_twit_pages',$_POST['jd_twit_pages'] );
+		update_option( 'jd_twit_edited_pages',$_POST['jd_twit_edited_pages'] );
 		update_option( 'jd_twit_remote',$_POST['jd_twit_remote'] );
 		update_option( 'jd_twit_custom_url', $_POST['jd_twit_custom_url'] );
+		update_option( 'jd_twit_quickpress', $_POST['jd_twit_quickpress'] );
 		
 		if ( $_POST['jd-use-link-field'] == '2' ) {
 		update_option( 'jd-use-link-description', '1' );
@@ -235,7 +239,11 @@ echo "</p></div>";
 			<p>
 				<input type="checkbox" name="jd_twit_pages" id="jd_twit_pages" value="1" <?php jd_checkCheckbox('jd_twit_pages')?> />
 				<label for="jd_twit_pages"><strong><?php _e("Update Twitter when new Wordpress Pages are published"); ?></strong></label>
-			</p>		
+			</p>
+			<p>
+				<input type="checkbox" name="jd_twit_edited_pages" id="jd_twit_edited_pages" value="1" <?php jd_checkCheckbox('jd_twit_edited_pages')?> />
+				<label for="jd_twit_edited_pages"><strong><?php _e("Update Twitter when WordPress Pages are edited"); ?></strong></label>
+			</p>
 			<p>
 				<input type="checkbox" name="newpost-published-update" id="newpost-published-update" value="1" <?php jd_checkCheckbox('newpost-published-update')?> />
 				<label for="newpost-published-update"><strong><?php _e("Update Twitter when a new post is published"); ?></strong></label>
@@ -282,6 +290,10 @@ echo "</p></div>";
 				<input type="checkbox" name="jd_twit_remote" id="jd_twit_remote" value="1" <?php jd_checkCheckbox('jd_twit_remote')?> />
 				<label for="jd_twit_remote"><strong><?php _e("Send Twitter Updates on remote publication (Post by Email or XMLRPC Client)"); ?></strong></label>
 			</p>
+			<p>
+				<input type="checkbox" name="jd_twit_quickpress" id="jd_twit_quickpress" value="1" <?php jd_checkCheckbox('jd_twit_quickpress')?> />
+				<label for="jd_twit_quickpress"><strong><?php _e("Update Twitter when a post is published using QuickPress"); ?></strong></label>
+			</p>			
 			<p>
 				<label for="jd_twit_custom_url"><?php _e("Custom field containing an alternate URL to be shortened and Tweeted."); ?></label><br />
 				<input type="text" name="jd_twit_custom_url" id="jd_twit_custom_url" size="60" maxlength="146" value="<?php echo(get_option('jd_twit_custom_url')) ?>" /><br />
@@ -358,4 +370,7 @@ echo "</p></div>";
 <div class="wrap">
 	<h3><?php _e("Need help?"); ?></h3>
 	<p><?php _e("Visit the <a href='http://www.joedolson.com/articles/wp-to-twitter/'>WP to Twitter plugin page</a>."); ?></p>
+	
+	<?php echo get_option('jd_this_happened'); ?>
+	
 </div>
