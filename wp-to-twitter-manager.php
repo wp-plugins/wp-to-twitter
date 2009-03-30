@@ -1,14 +1,23 @@
 <?php
 	//update_option( 'twitterInitialised', '0' );
+	// FUNCTION to see if checkboxes should be checked
+	function jd_checkCheckbox( $theFieldname ) {
+		if( get_option( $theFieldname ) == '1'){
+			echo 'checked="checked"';
+		}
+	}	
+	$wp_twitter_error = FALSE;
+	$wp_cligs_error = FALSE;
+	$message = "";
 	//SETS DEFAULT OPTIONS
 	if( get_option( 'twitterInitialised') != '1' ) {
 		update_option( 'newpost-published-update', '1' );
-		update_option( 'newpost-published-text', 'New post: #title#' );
+		update_option( 'newpost-published-text', 'New post: #title# (#url#)' );
 		update_option( 'newpost-published-showlink', '1' );
 		update_option( 'jd_twit_quickpress', '1' );
 		
 		update_option( 'oldpost-edited-update', '1' );
-		update_option( 'oldpost-edited-text', 'Post Edited: #title#' );
+		update_option( 'oldpost-edited-text', 'Post Edited: #title# (#url#)' );
 		update_option( 'oldpost-edited-showlink', '1' );
 
 		update_option( 'jd_twit_pages','0' );
@@ -42,32 +51,35 @@
 		// Note that default options are set.
 		update_option( 'twitterInitialised', '1' );
 
-		$message = __("Set your Twitter login information and Cli.gs API to use this plugin!");
+		$message = __("Set your Twitter login information and Cli.gs API to use this plugin! ");
 	}
 	if( get_option( 'twitterInitialised') == '1' && get_option( 'twitterpw' ) == "" ) {
-		$message .= __("Please add your Twitter password.");
+		$message .= __("Please add your Twitter password. ");
 	}
 	
-	if ( $_POST['submit-type'] == 'clear-error' ) {
+	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'clear-error' ) {
 		update_option( 'wp_twitter_failure','0' );
 		update_option( 'wp_cligs_failure','0' );
 		$message =  __("WP to Twitter Errors Cleared");
 	}
+
+// Error messages on failures	
 if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_cligs_failure' ) == '1' ) {
-	if ( get_option( 'wp_cligs_failure' ) == '1' ) {
-		$wp_to_twitter_failure .= "<p>" . __("Cli.gs request failed! We couldn't shrink that URL, so we attached the normal URL to your Tweet.") . "</p>";
-	}
-	if ( get_option( 'wp_twitter_failure' ) == '1' ) {
-		$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers. Your tweet has been stored in a custom field attached to your post, so you can Tweet it manually if you wish!") . "</p>";
-	} else if ( get_option( 'wp_twitter_failure' ) == '2') {
-		$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers to post your new link! You'll have to post it manually, I'm afraid.") . "</p>";
-	}
-} else {
-$wp_to_twitter_failure = '';
+		if ( get_option( 'wp_cligs_failure' ) == '1' ) {
+			$wp_to_twitter_failure .= "<p>" . __("Cli.gs request failed! We couldn't shrink that URL, so we attached the normal URL to your Tweet. Check the <a href='http://blog.cli.gs'>Cli.gs blog</a> to see if there are any known issues. ") . "</p>";
+		}
+		
+		if ( get_option( 'wp_twitter_failure' ) == '1' ) {
+			$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers to post your new blog post. Your tweet has been stored in a custom field attached to the post, so you can Tweet it manually if you wish! ") . "</p>";
+		} else if ( get_option( 'wp_twitter_failure' ) == '2') {
+			$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers to post your <strong>new link</strong>! You'll have to post it manually, I'm afraid. ") . "</p>";
+		}
+		
+	} else {
+	$wp_to_twitter_failure = '';
 }
 
-	
-	if ( $_POST['submit-type'] == 'options' ) {
+	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'options' ) {
 		//UPDATE OPTIONS
 		update_option( 'newpost-published-update', $_POST['newpost-published-update'] );
 		update_option( 'newpost-published-text', $_POST['newpost-published-text'] );
@@ -100,37 +112,30 @@ $wp_to_twitter_failure = '';
 		
 		$message = "WP to Twitter Options Updated";
 
-	} else if ( $_POST['submit-type'] == 'login' ){
+	} else if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'login' ) {
 		//UPDATE LOGIN
 		if( ( $_POST['twitterlogin'] != '' ) AND ( $_POST['twitterpw'] != '' ) ) {
 			update_option(  'twitterlogin', $_POST['twitterlogin'] );
 			update_option( 'twitterpw', $_POST['twitterpw'] );
 			update_option(  'twitterlogin_encrypted', base64_encode( $_POST['twitterlogin'].':'.$_POST['twitterpw'] ) );
-			$message = __("Twitter login and password updated.");
+			$message = __("Twitter login and password updated. ");
 		} else {
-			$message = __("You need to provide your twitter login and password!");
+			$message = __("You need to provide your twitter login and password! ");
 		}
-	} else if ( $_POST['submit-type'] == 'cligsapi' ) {
+	} else if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'cligsapi' ) {
 		if ( $_POST['cligsapi'] != '' && isset( $_POST['submit'] ) ) {
 			update_option( 'cligsapi',$_POST['cligsapi'] );
 			$message = __("Cligs API Key Updated");
 		} else if ( isset( $_POST['clear'] ) ) {
 			update_option( 'cligsapi','' );
-			$message = __("Cli.gs API Key deleted. Cli.gs created by WP to Twitter will no longer be associated with your account.");
+			$message = __("Cli.gs API Key deleted. Cli.gs created by WP to Twitter will no longer be associated with your account. ");
 		} else {
-			$message = __("Cli.gs API Key not added - <a href='http://cli.gs/user/api/'>get one here</a>!");
+			$message = __("Cli.gs API Key not added - <a href='http://cli.gs/user/api/'>get one here</a>! ");
 		}
 	}
 
-	// FUNCTION to see if checkboxes should be checked
-	function jd_checkCheckbox( $theFieldname ){
-		if( get_option( $theFieldname ) == '1'){
-			echo 'checked="checked"';
-		}
-	}
 	// Check whether the server has supported for needed functions.
-	
-	if ( $_POST['submit-type'] == 'check-support' ) {
+	if (  isset($_POST['submit-type']) && $_POST['submit-type'] == 'check-support' ) {
 	update_option('jd-functions-checked', '0');
 	}
 
@@ -174,13 +179,7 @@ $wp_to_twitter_failure = '';
 				$message .= __("Your server does not support <code>Snoopy</code>.");			
 			}
 		
-		$message .= __("Your server does not appear to support the required PHP functions and classes for WP to Twitter to function. Despite this test, you should try the plugin -- the Twitter <code>test</code> API is a bit buggy.");
-		/*
-		$message .= $cligs_checker->results;
-		$message .= " | " . strlen($cligs_checker->results);
-		$message .= " | ";
-		$message .= $twit_checker->results;
-		*/
+		$message .= __("Your server does not appear to support the required PHP functions and classes for WP to Twitter to function. You can try it anyway - these tests aren't perfect - but no guarantees.");
 		update_option( 'jd-functions-checked','1' );		
 			
 		}
@@ -202,7 +201,7 @@ echo "</p></div>";
 
 <h2><?php _e("WP to Twitter Options"); ?></h2>
 <p>
-<?php _e("For any update field, you can use the codes <code>#title#</code> for the title of your blog post or <code>#blog#</code> for the title of your blog! Given the character limit for Twitter, you may not want to include your blog title."); ?>
+<?php _e("For any update field, you can use the codes <code>#title#</code> for the title of your blog post, <code>#blog#</code> for the title of your blog, or <code>#url#</code> for the post URL! Given the character limit for Twitter, you may not want to include your blog title."); ?>
 </p>
 		
 <?php if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_cligs_failure' ) == '1' ) { ?>
@@ -310,13 +309,13 @@ echo "</p></div>";
 			</p>
 			<p>
 				<input type="checkbox" name="jd_individual_twitter_users" id="jd_individual_twitter_users" value="1" <?php jd_checkCheckbox('jd_individual_twitter_users')?> />
-				<label for="jd_individual_twitter_users"><strong><?php _e("Authors have individual Twitter accounts"); ?></strong></label> <small><?php _e('Each author can set their own Twitter username and password in their user profile. Their posts will be sent to their own Twitter accounts.'); ?></small>
+				<label for="jd_individual_twitter_users"><strong><?php _e("Authors have individual Twitter accounts"); ?></strong></label><br /><small><?php _e('Each author can set their own Twitter username and password in their user profile. Their posts will be sent to their own Twitter accounts.'); ?></small>
 			</p>			
 			
 		<div>
 		<input type="hidden" name="submit-type" value="options" />
 		</div>
-		<input type="submit" name="submit" value="<?php _e("Save WP->Twitter Options"); ?>" />
+		<input type="submit" name="submit" value="<?php _e("Save WP->Twitter Options"); ?>" class="button-primary" />
 	</fieldset>
 
 	</div>
@@ -335,7 +334,7 @@ echo "</p></div>";
 		<input type="password" name="twitterpw" id="twitterpw" value="<?php echo(get_option('twitterpw')) ?>" />
 		</p>
 		<input type="hidden" name="submit-type" value="login" />
-		<p><input type="submit" name="submit" value="<?php _e("Save Twitter Login Info"); ?>" /> <?php _e("&raquo; <small>Don't have a Twitter account? <a href='http://www.twitter.com'>Get one for free here</a>"); ?></small></p>
+		<p><input type="submit" name="submit" value="<?php _e("Save Twitter Login Info"); ?>" class="button-primary" /> <?php _e("&raquo; <small>Don't have a Twitter account? <a href='http://www.twitter.com'>Get one for free here</a>"); ?></small></p>
 	</div>
 	</form>
 
@@ -350,7 +349,7 @@ echo "</p></div>";
 		<div>
 		<input type="hidden" name="submit-type" value="cligsapi" />
 		</div>
-		<p><input type="submit" name="submit" value="Save Cli.gs API Key" /> <input type="submit" name="clear" value="Clear Cli.gs API Key" /><br />&raquo; <small><?php _e("Don't have a Cli.gs account or Cligs API key? <a href='http://cli.gs/user/api/'>Get one free here</a>! You'll need an API key in order to associate the Cligs you create with your Cligs account."); ?></small></p>
+		<p><input type="submit" name="submit" value="Save Cli.gs API Key" class="button-primary" /> <input type="submit" name="clear" value="Clear Cli.gs API Key" />&raquo; <small><?php _e("Don't have a Cli.gs account or Cligs API key? <a href='http://cli.gs/user/api/'>Get one free here</a>!<br />You'll need an API key in order to associate the Cligs you create with your Cligs account."); ?></small></p>
 	</div>
 	</form>
 		
@@ -360,7 +359,7 @@ echo "</p></div>";
 	<div>
 	<input type="hidden" name="submit-type" value="check-support" />
 		<p>
-		<input type="submit" name="submit" value="Check Support Level" /> <small>Check whether your server supports the functions required for the Twitter and Cli.gs API calls to work.</small>
+		<input type="submit" name="submit" value="Check Support Level" class="button-primary" /> <small>Check whether your server supports the functions required for the Twitter and Cli.gs API calls to work.</small>
 		</p>
 	</div>
 	</form>

@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.3.1
+Version: 1.3.2
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -23,14 +23,14 @@ Author URI: http://www.joedolson.com/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
+// Reporting E_NOTICE can be good too (to report uninitialized
+// variables or catch variable name misspellings ...)
 global $wp_version,$version,$jd_plugin_url;	
 
 define('JDWP_API_POST_STATUS', 'http://twitter.com/statuses/update.json');
 
-$version = "1.3.1";
+$version = "1.3.2";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
-
 
 require_once( ABSPATH.WPINC.'/class-snoopy.php' );
 
@@ -246,8 +246,14 @@ function jd_twit( $post_ID )  {
 						$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $cligsapi );
 						}
 					
-					$sentence = $sentence . " " . $shrink;
-						
+					//$sentence = $sentence . " " . $shrink;
+					// TRIAL 
+						if (!strpos($sentence,"#url#")) {
+						$sentence = $sentence . " " . $shrink;
+						} else {
+						$sentence = str_replace("#url#",$shrink,$sentence);
+						}
+					
 						if ( $customTweet != "" ) {
 						// Get the custom Tweet message if it's been supplied. Truncate it to fit if necessary.
 							if ( get_option( 'newpost-published-showlink') == '1' ) {
@@ -355,8 +361,11 @@ global $version;
 			// cURL alternative contributed by Thor Erik (http://thorerik.net)
 			$shrink = jd_shorten_link( $thispostlink, $thislinkname, $cligsapi );
 			
-		$sentence = $sentence . " " . $shrink;
-						
+				if (!strpos($sentence,"#url#")) {
+				$sentence = $sentence . " " . $shrink;
+				} else {
+				$sentence = str_replace("#url#",$shrink,$sentence);
+				}						
 			if ( $sentence != '' ) {
 				$sendToTwitter = jd_doTwitterAPIPost( $sentence );				
 				if ($sendToTwitter === FALSE) {
@@ -389,8 +398,12 @@ function jd_twit_future( $post_ID ) {
 		$sentence = stripcslashes(get_option( 'newpost-published-text' ));
 			if ( get_option( 'newpost-published-showlink') == '1' ) {
 			$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $cligsapi );
-			$sentence = $sentence . " " . $shrink;
-				if ( $customTweet != "" ) {
+						if (!strpos($sentence,"#url#")) {
+						$sentence = $sentence . " " . $shrink;
+						} else {
+						$sentence = str_replace("#url#",$shrink,$sentence);
+						}
+			if ( $customTweet != "" ) {
 				// Get the custom Tweet message if it's been supplied. Truncate it to fit if necessary.
 					if ( get_option( 'newpost-published-showlink') == '1' ) {
 						if ( ( strlen( $customTweet ) + 21) > 140 ) {
@@ -442,7 +455,11 @@ function jd_twit_quickpress( $post_ID ) {
 		$sentence = stripcslashes(get_option( 'newpost-published-text' ));
 			if ( get_option( 'newpost-published-showlink') == '1' ) {
 			$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $cligsapi );
-			$sentence = $sentence . " " . $shrink;
+						if (!strpos($sentence,"#url#")) {
+						$sentence = $sentence . " " . $shrink;
+						} else {
+						$sentence = str_replace("#url#",$shrink,$sentence);
+						}
 			$sentence = jd_truncate_tweet($sentence, $thisposttitle, $thisblogtitle, $authID);
 				// Stores the posts CLIG in a custom field for later use as needed.
 				add_post_meta( $post_ID, 'wp_jd_clig', $shrink );	
@@ -475,7 +492,11 @@ function jd_twit_xmlrpc( $post_ID ) {
 		$sentence = stripcslashes(get_option( 'newpost-published-text' ));
 			if ( get_option( 'newpost-published-showlink') == '1' ) {
 			$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $cligsapi );
-			$sentence = $sentence . " " . $shrink;
+						if (!strpos($sentence,"#url#")) {
+						$sentence = $sentence . " " . $shrink;
+						} else {
+						$sentence = str_replace("#url#",$shrink,$sentence);
+						}
 				// Check the length of the tweet and truncate parts as necessary.
 				$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $authID );
 				// Stores the posts CLIG in a custom field for later use as needed.
@@ -648,21 +669,27 @@ float: right;
 .cligs {
 background: #fff url($wp_to_twitter_directory/cligs.png)  right 50% no-repeat;
 padding: 2px!important;
+margin-top: 1.5em!important;
 }
 .twitter {
 background: url($wp_to_twitter_directory/twitter.png)  right 50% no-repeat;
 padding: 2px!important;
+margin-top: 1.5em!important;
 }
 -->
 </style>";
  }
 // Include the Manager page
 function jd_wp_Twitter_manage_page() {
-    include(dirname(__FILE__).'/wp-to-twitter-manager.php' );
+	if ( file_exists ( dirname(__FILE__).'/wp-to-twitter-manager.php' )) {
+    include( dirname(__FILE__).'/wp-to-twitter-manager.php' );
+	} else {
+	echo "<p>Couldn't locate the settings page.</p>";
+	}
 }
 function plugin_action($links, $file) {
 	if ($file == plugin_basename(dirname(__FILE__).'/wp-to-twitter.php'))
-		$links[] = "<a href='options-general.php?page=wp-to-twitter/wp-to-twitter-manager.php'>" . __('Settings', 'wp-to-twitter') . "</a>";
+		$links[] = "<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>" . __('Settings', 'wp-to-twitter') . "</a>";
 	return $links;
 }
 
