@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.3.2
+Version: 1.3.3
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -183,6 +183,9 @@ $at_append = "";
 	$twit_length = strlen( $sentence );
 	}
 	if ( ( ( $twit_length + $blog_length ) -  6 ) < 140 ) {
+	$sentence = str_replace ( '#blog#',$thisblogtitle,$sentence );
+	$twit_length = strlen( $sentence );
+	} else {
 	$thisblogtitle = substr( $thisblogtitle, 0, ( 140-( $twit_length-3 ) ) ) . "...";				
 	$sentence = str_replace ( '#blog#',$thisblogtitle,$sentence );
 	}
@@ -247,33 +250,24 @@ function jd_twit( $post_ID )  {
 						}
 					
 					//$sentence = $sentence . " " . $shrink;
-					// TRIAL 
-						if (!strpos($sentence,"#url#")) {
+						if ( strpos( $sentence, "#url#" ) === FALSE ) {
 						$sentence = $sentence . " " . $shrink;
 						} else {
-						$sentence = str_replace("#url#",$shrink,$sentence);
+						$sentence = str_replace( "#url#", $shrink, $sentence );
 						}
 					
 						if ( $customTweet != "" ) {
-						// Get the custom Tweet message if it's been supplied. Truncate it to fit if necessary.
-							if ( get_option( 'newpost-published-showlink') == '1' ) {
-								if ( ( strlen( $customTweet ) + 21) > 140 ) {
-								$customTweet = substr( $customTweet, 0, 119 );
-								}
-							} else {
-								if ( strlen( $customTweet ) > 140 ) {
-								$customTweet = substr( $customTweet, 0, 140 );
-								}						
-							}
 							if ( get_option( 'newpost-published-showlink') == '1' ) {						
-							$sentence = $customTweet . " " . $shrink;							
+								if ( strpos( $customTweet, "#url#" ) === FALSE ) {
+								$sentence = $customTweet . " " . $shrink;
+								} else {
+								$sentence = str_replace( "#url#", $shrink, $customTweet );
+								}						
 							} else {
 							$sentence = $customTweet;
 							}
-						} else {
-						    // Check the length of the tweet and truncate parts as necessary.
-							$sentence = jd_truncate_tweet($sentence, $thisposttitle, $thisblogtitle, $authID );
-						}
+						} 
+						$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $authID );
 						// Stores the posts CLIG in a custom field for later use as needed.
 						add_post_meta ( $post_ID, 'wp_jd_clig', $shrink );
 /* This is for testing. Creates a post meta field containing the Cli.gs API request string
@@ -295,28 +289,20 @@ function jd_twit( $post_ID )  {
 					$sentence = $sentence . " " . $old_post_link;
 					
 					if ( $customTweet != "" ) {
-					// Get the custom Tweet message if it's been supplied. Truncate it to fit if necessary.
-						if ( get_option( 'oldpost-edited-showlink') == '1' ) {
-							if ( ( strlen( $customTweet ) + 21) > 140 ) {
-							$customTweet = substr( $customTweet, 0, 119 );
-							}
-						} else {
-							if ( strlen( $customTweet ) > 140 ) {
-							$customTweet = substr( $customTweet, 0, 140 );
-							}						
-						}
 						if ( get_option( 'oldpost-edited-showlink') == '1' ) {						
-						$sentence = $customTweet . " " . $old_post_link;							
+								if ( strpos( $customTweet, "#url#" ) === FALSE ) {
+								$sentence = $customTweet . " " . $old_post_link;
+								} else {
+								$sentence = str_replace( "#url#", $old_post_link, $customTweet );
+								}						
 						} else {
-						$sentence = $customTweet;
+						$sentence = $customTweet; 
 						}
-					} else {
-						// Check the length of the tweet and truncate parts as necessary.
-						$sentence = jd_truncate_tweet($sentence, $thisposttitle, $thisblogtitle, $authID );
-					}					
+					}
+					$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $authID );		
 					
-					$sentence = str_replace( '#title#', $thisposttitle, $sentence );
-					$sentence = str_replace( '#blog#', $thisblogtitle, $sentence );
+					//$sentence = str_replace( '#title#', $thisposttitle, $sentence );
+					//$sentence = str_replace( '#blog#', $thisblogtitle, $sentence );
 					
 				}
 			}
@@ -361,7 +347,7 @@ global $version;
 			// cURL alternative contributed by Thor Erik (http://thorerik.net)
 			$shrink = jd_shorten_link( $thispostlink, $thislinkname, $cligsapi );
 			
-				if (!strpos($sentence,"#url#")) {
+				if ( strpos($sentence,"#url#") === FALSE ) {
 				$sentence = $sentence . " " . $shrink;
 				} else {
 				$sentence = str_replace("#url#",$shrink,$sentence);
@@ -398,7 +384,7 @@ function jd_twit_future( $post_ID ) {
 		$sentence = stripcslashes(get_option( 'newpost-published-text' ));
 			if ( get_option( 'newpost-published-showlink') == '1' ) {
 			$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $cligsapi );
-						if (!strpos($sentence,"#url#")) {
+						if ( strpos($sentence,"#url#") === FALSE ) {
 						$sentence = $sentence . " " . $shrink;
 						} else {
 						$sentence = str_replace("#url#",$shrink,$sentence);
@@ -415,15 +401,16 @@ function jd_twit_future( $post_ID ) {
 						}						
 					}
 					if ( get_option( 'newpost-published-showlink') == '1' ) {						
-					$sentence = $customTweet . " " . $shrink;							
+								if ( strpos( $customTweet, "#url#" ) === FALSE ) {
+								$sentence = $customTweet . " " . $shrink;
+								} else {
+								$sentence = str_replace( "#url#", $shrink, $customTweet );
+								}							
 					} else {
 					$sentence = $customTweet;
 					}
-				} else {
-				// Check the length of the tweet and truncate parts as necessary.
-					$sentence .= $customTweet;
-					$sentence = jd_truncate_tweet($sentence, $thisposttitle, $thisblogtitle, $authID);
-				}
+				} 
+				$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $authID );
 				// Stores the posts CLIG in a custom field for later use as needed.
 				add_post_meta( $post_ID, 'wp_jd_clig', $shrink );	
 			}
@@ -455,7 +442,7 @@ function jd_twit_quickpress( $post_ID ) {
 		$sentence = stripcslashes(get_option( 'newpost-published-text' ));
 			if ( get_option( 'newpost-published-showlink') == '1' ) {
 			$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $cligsapi );
-						if (!strpos($sentence,"#url#")) {
+						if ( strpos($sentence,"#url#") === FALSE ) {
 						$sentence = $sentence . " " . $shrink;
 						} else {
 						$sentence = str_replace("#url#",$shrink,$sentence);
@@ -492,7 +479,7 @@ function jd_twit_xmlrpc( $post_ID ) {
 		$sentence = stripcslashes(get_option( 'newpost-published-text' ));
 			if ( get_option( 'newpost-published-showlink') == '1' ) {
 			$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $cligsapi );
-						if (!strpos($sentence,"#url#")) {
+						if ( strpos($sentence,"#url#") === FALSE) {
 						$sentence = $sentence . " " . $shrink;
 						} else {
 						$sentence = str_replace("#url#",$shrink,$sentence);
@@ -516,7 +503,7 @@ function jd_twit_xmlrpc( $post_ID ) {
 
 // Add custom Tweet field on Post & Page write/edit forms
 function jd_add_twitter_textinput() {
-	global $post;
+	global $post, $jd_plugin_url;
 	$post_id = $post;
 	if (is_object($post_id)) {
 		$post_id = $post_id->ID;
@@ -550,12 +537,13 @@ function jd_add_twitter_textinput() {
 	<div class="dbx-c-ontent-wrapper">
 	<div class="dbx-content">
 	<?php } ?>
-
+    <p>
 	<label for="jd_twitter"><?php _e('Twitter Post', 'wp-to-twitter') ?></label><br /><textarea name="jd_twitter" id="jd_twitter" rows="2" cols="60"
 	onKeyDown="countChars(document.post.jd_twitter,document.post.twitlength)"
 	onKeyUp="countChars(document.post.jd_twitter,document.post.twitlength)"><?php echo $jd_twitter ?></textarea>
+	</p>
 	<p><input readonly type="text" name="twitlength" size="3" maxlength="3" value="<?php echo strlen( $description); ?>" />
-	<?php _e(' characters. Twitter posts are a maximum of 140 characters; if your Cli.gs URL is appended to the end of your document, you have 119 characters available.', 'wp-to-twitter') ?> <a target="__blank" href="<?php echo $jd_plugin_url; ?>"><?php _e('Get Support', 'wp-to-twitter') ?></a> &raquo;
+	<?php _e(' characters.<br />Twitter posts are a maximum of 140 characters; if your Cli.gs URL is appended to the end of your document, you have 119 characters available. You can use <code>#url#</code>, <code>#title#</code>, or <code>#blog#</code> to insert the shortened URL, post title, or blog name into the Tweet.', 'wp-to-twitter') ?> <a target="__blank" href="<?php echo $jd_plugin_url; ?>"><?php _e('Get Support', 'wp-to-twitter') ?></a> &raquo;
 </p>
 <p>
 	<input type="checkbox" name="jd_tweet_this" value="no"<?php echo $jd_selected; ?> id="jd_tweet_this" /> <label for="jd_tweet_this"><?php _e("Don't Tweet this post."); ?></label>

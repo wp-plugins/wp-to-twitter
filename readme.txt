@@ -12,11 +12,11 @@ Posts a Twitter status update when you update your blog or post to your blogroll
 
 The WP-to-Twitter plugin posts a Twitter status update from your blog using the Cli.gs URL shortening service to provide a link back to your post from Twitter. 
 
-**New in version 1.3.2**: 
+**New in version 1.3.3**: 
 
-* Added a #url# shortcode so you can decide where your short URL will appear in the tweet.
-* Couple small bug fixes.
-* Small changes to the settings page.
+* Added support for shortcodes in custom Tweet fields.
+* Bug fix when #url# is the first element in a Tweet string.
+* Minor interface changes.
 
 If you have a Cli.gs API key, the shortened URL will also be filed in your Cli.gs account so that you can track
 statistics for the shortened URL. 
@@ -31,6 +31,11 @@ This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman]
 
 == Version Notes ==
 
+**New in version 1.3.2**:
+
+* Added a #url# shortcode so you can decide where your short URL will appear in the tweet.
+* Couple small bug fixes.
+* Small changes to the settings page.
 
 **New in version 1.3.1**: 
 
