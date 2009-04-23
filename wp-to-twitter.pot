@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/wp-to-twitter\n"
-"POT-Creation-Date: 2009-03-30 20:54+0000\n"
+"POT-Creation-Date: 2009-04-23 19:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -304,46 +304,48 @@ msgstr ""
 
 #. #-#-#-#-#  plugin.pot (PACKAGE VERSION)  #-#-#-#-#
 #. Plugin Name of an extension
-#: wp-to-twitter.php:541 wp-to-twitter.php:548
+#: wp-to-twitter.php:528 wp-to-twitter.php:535
 msgid "WP to Twitter"
 msgstr ""
 
-#: wp-to-twitter.php:554
+#: wp-to-twitter.php:541
 msgid "Twitter Post"
 msgstr ""
 
-#: wp-to-twitter.php:558
+#: wp-to-twitter.php:546
 msgid ""
-" characters. Twitter posts are a maximum of 140 characters; if your Cli.gs "
-"URL is appended to the end of your document, you have 119 characters "
-"available."
+" characters.<br />Twitter posts are a maximum of 140 characters; if your Cli."
+"gs URL is appended to the end of your document, you have 119 characters "
+"available. You can use <code>#url#</code>, <code>#title#</code>, or "
+"<code>#blog#</code> to insert the shortened URL, post title, or blog name "
+"into the Tweet."
 msgstr ""
 
-#: wp-to-twitter.php:558
+#: wp-to-twitter.php:546
 msgid "Get Support"
 msgstr ""
 
-#: wp-to-twitter.php:561
+#: wp-to-twitter.php:549
 msgid "Don't Tweet this post."
 msgstr ""
 
-#: wp-to-twitter.php:608
+#: wp-to-twitter.php:596
 msgid "WP to Twitter User Settings"
 msgstr ""
 
-#: wp-to-twitter.php:612
+#: wp-to-twitter.php:600
 msgid "Use My Twitter Account"
 msgstr ""
 
-#: wp-to-twitter.php:618
+#: wp-to-twitter.php:606
 msgid "Your Twitter Username"
 msgstr ""
 
-#: wp-to-twitter.php:622
+#: wp-to-twitter.php:610
 msgid "Your Twitter Password"
 msgstr ""
 
-#: wp-to-twitter.php:692
+#: wp-to-twitter.php:680
 msgid "Settings"
 msgstr ""
 
