@@ -94,6 +94,10 @@ if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_cligs_failure'
 		update_option( 'jd_twit_custom_url', $_POST['jd_twit_custom_url'] );
 		update_option( 'jd_twit_quickpress', $_POST['jd_twit_quickpress'] );
 		
+		update_option( 'jd_twit_prepend', $_POST['jd_twit_prepend'] );	
+		update_option( 'jd_twit_append', $_POST['jd_twit_append'] );
+		
+		
 		if ( $_POST['jd-use-link-field'] == '2' ) {
 		update_option( 'jd-use-link-description', '1' );
 		update_option( 'jd-use-link-title', '0' );
@@ -249,7 +253,7 @@ echo "</p></div>";
 			</p>
 			<p>
 				<label for="newpost-published-text"><?php _e("Text for this Twitter update"); ?></label><br />
-				<input type="text" name="newpost-published-text" id="newpost-published-text" size="60" maxlength="146" value="<?php echo(get_option('newpost-published-text')) ?>" />
+				<input type="text" name="newpost-published-text" id="newpost-published-text" size="60" maxlength="120" value="<?php echo(get_option('newpost-published-text')) ?>" />
 				&nbsp;&nbsp;
 				<input type="checkbox" name="newpost-published-showlink" id="newpost-published-showlink" value="1" <?php jd_checkCheckbox('newpost-published-showlink')?> />
 				<label for="newpost-published-showlink"><?php _e("Provide link to blog?"); ?></label>
@@ -261,7 +265,7 @@ echo "</p></div>";
 			</p>
 			<p>
 				<label for="oldpost-edited-text">Text for this Twitter update</label><br />
-				<input type="text" name="oldpost-edited-text" id="oldpost-edited-text" size="60" maxlength="146" value="<?php echo(get_option('oldpost-edited-text')) ?>" />
+				<input type="text" name="oldpost-edited-text" id="oldpost-edited-text" size="60" maxlength="120" value="<?php echo(get_option('oldpost-edited-text')) ?>" />
 				&nbsp;&nbsp;
 				<input type="checkbox" name="oldpost-edited-showlink" id="oldpost-edited-showlink" value="1" <?php jd_checkCheckbox('oldpost-edited-showlink')?> />
 				<label for="oldpost-edited-showlink"><?php _e("Provide link to blog?"); ?></label>			
@@ -277,7 +281,7 @@ echo "</p></div>";
 						
 			<p>
 				<label for="newlink-published-text"><?php _e("Text for this Twitter update (used if above choice isn't available.)"); ?></label><br />
-				<input type="text" name="newlink-published-text" id="newlink-published-text" size="60" maxlength="146" value="<?php echo(get_option('newlink-published-text')) ?>" />
+				<input type="text" name="newlink-published-text" id="newlink-published-text" size="60" maxlength="120" value="<?php echo(get_option('newlink-published-text')) ?>" />
 			</p>
 	
 			<p>
@@ -292,15 +296,26 @@ echo "</p></div>";
 			<p>
 				<input type="checkbox" name="jd_twit_quickpress" id="jd_twit_quickpress" value="1" <?php jd_checkCheckbox('jd_twit_quickpress')?> />
 				<label for="jd_twit_quickpress"><strong><?php _e("Update Twitter when a post is published using QuickPress"); ?></strong></label>
+			</p>
+			
+			<p>
+				<label for="jd_twit_prepend"><?php _e("Custom text to be prepended on every Tweet"); ?></label><br />
+				<input type="text" name="jd_twit_prepend" id="jd_twit_prepend" size="60" maxlength="20" value="<?php echo(get_option('jd_twit_prepend')) ?>" />
+			</p>	
+
+			<p>
+				<label for="jd_twit_append"><?php _e("Custom text to be appended on every Tweet"); ?></label><br />
+				<input type="text" name="jd_twit_append" id="jd_twit_append" size="60" maxlength="20" value="<?php echo(get_option('jd_twit_append')) ?>" />
 			</p>			
+			
 			<p>
 				<label for="jd_twit_custom_url"><?php _e("Custom field containing an alternate URL to be shortened and Tweeted."); ?></label><br />
-				<input type="text" name="jd_twit_custom_url" id="jd_twit_custom_url" size="60" maxlength="146" value="<?php echo(get_option('jd_twit_custom_url')) ?>" /><br />
+				<input type="text" name="jd_twit_custom_url" id="jd_twit_custom_url" size="60" maxlength="120" value="<?php echo(get_option('jd_twit_custom_url')) ?>" /><br />
 				<small><?php _e("You can use a custom field to send Cli.gs and Twitter an alternate URL from the permalink provided by WordPress. The value is the name of the custom field you're using to add an external URL."); ?></small>
 			</p>
 			<p>
 				<label for="twitter-analytics-campaign"><?php _e("Campaign identifier for Google Analytics"); ?></label><br />
-				<input type="text" name="twitter-analytics-campaign" id="twitter-analytics-campaign" size="60" maxlength="146" value="<?php echo(get_option('twitter-analytics-campaign')) ?>" /><br />
+				<input type="text" name="twitter-analytics-campaign" id="twitter-analytics-campaign" size="60" maxlength="120" value="<?php echo(get_option('twitter-analytics-campaign')) ?>" /><br />
 				<small><?php _e("You can track the response from Twitter using Google Analytics by defining a campaign identifier here."); ?></small>
 			</p>
 			<p>

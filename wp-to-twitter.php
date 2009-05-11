@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.3.3
+Version: 1.3.4
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -29,7 +29,7 @@ global $wp_version,$version,$jd_plugin_url;
 
 define('JDWP_API_POST_STATUS', 'http://twitter.com/statuses/update.json');
 
-$version = "1.3.2";
+$version = "1.3.4";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 
 require_once( ABSPATH.WPINC.'/class-snoopy.php' );
@@ -170,7 +170,13 @@ $at_append = "@" . get_usermeta( $authID, 'wp-to-twitter-user-username' );
 $at_append = "";
 }
 	$sentence = $at_append . " " . $sentence;
-
+	if ( get_option( 'jd_twit_prepend' ) != "" ) {
+	$sentence = get_option( 'jd_twit_prepend' ) . " " . $sentence;
+	}
+	if ( get_option( 'jd_twit_append' ) != "" ) {
+	$sentence = $sentence . " " . get_option( 'jd_twit_append' );
+	}
+	
 	$twit_length = strlen( $sentence );
 	$title_length = strlen( $thisposttitle );
 	$blog_length = strlen( $thisblogtitle );
@@ -230,7 +236,7 @@ function jd_twit( $post_ID )  {
 	if ( $jd_tweet_this == "yes" ) {
 		$get_post_info = get_post( $post_ID );
 		$authID = $get_post_info->post_author;
-	    $thisposttitle = urlencode( stripcslashes( $_POST['post_title'] ) );
+	    $thisposttitle = urlencode( stripcslashes( strip_tags( $_POST['post_title'] ) ) );
 	    $thispostlink = urlencode( external_or_permalink( $post_ID ) );
 		$thisblogtitle = urlencode( get_bloginfo( 'name' ) );
 		$cligsapi = get_option( 'cligsapi' );
@@ -238,7 +244,7 @@ function jd_twit( $post_ID )  {
 		$customTweet = stripcslashes( $_POST['jd_twitter'] );
 		$oldClig = get_post_meta( $post_ID, 'wp_jd_clig', TRUE );
 
-			if ( $_POST['publish'] == 'Publish' && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft')) {
+			if (($get_post_info->post_status == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft')) {
 				// publish new post
 				if ( get_option( 'newpost-published-update' ) == '1' ) {
 					$sentence = stripcslashes( get_option( 'newpost-published-text' ) );
@@ -274,7 +280,7 @@ function jd_twit( $post_ID )  {
 //add_post_meta($post_ID, 'post_cligs_text',"http://cli.gs/api/v1/cligs/create?url=".$thispostlink."&title=".$thisposttitle."&key=".$cligsapi."&appid=WP-to-Twitter"); */			
 					}
 				}
-			} else if ( ( $_POST['originalaction'] == "editpost" ) && ( ( $_POST['prev_status'] == 'publish' ) || ($_POST['original_post_status'] == 'publish') ) ) {
+			} else if ( (( $_POST['originalaction'] == "editpost" ) && ( ( $_POST['prev_status'] == 'publish' ) || ($_POST['original_post_status'] == 'publish') ) ) && $get_post_info->post_status == 'publish'){
 				// if this is an old post and editing updates are enabled
 				if ( get_option( 'oldpost-edited-update') == '1' || get_option( 'jd_twit_edited_pages' ) == '1' ) {
 					$sentence = stripcslashes( get_option( 'oldpost-edited-text' ) );					
@@ -375,7 +381,7 @@ function jd_twit_future( $post_ID ) {
 	
 	if ( $jd_tweet_this == "yes" ) {
 		$thispostlink = urlencode( external_or_permalink( $post_ID ) );
-		$thisposttitle = urlencode( $get_post_info->post_title );	
+		$thisposttitle = urlencode( strip_tags( $get_post_info->post_title ) );	
 		$authID = $get_post_info->post_author;		
 		$thisblogtitle = urlencode( get_bloginfo( 'name' ) );
 		$cligsapi = get_option( 'cligsapi' );
@@ -433,7 +439,7 @@ function jd_twit_quickpress( $post_ID ) {
 	$post_status = $get_post_info->post_status;
 	
 		$thispostlink = urlencode( external_or_permalink( $post_ID ) );
-		$thisposttitle = urlencode( $get_post_info->post_title );	
+		$thisposttitle = urlencode( strip_tags( $get_post_info->post_title ) );	
 		$authID = $get_post_info->post_author;		
 		$thisblogtitle = urlencode( get_bloginfo( 'name' ) );
 		$cligsapi = get_option( 'cligsapi' );
@@ -472,7 +478,7 @@ function jd_twit_xmlrpc( $post_ID ) {
 	if ( get_option('jd_tweet_default') != '1' && get_option('jd_twit_remote') == '1' ) {
 		$authID = $get_post_info->post_author;	
 		$thispostlink = urlencode( external_or_permalink( $post_ID ) );
-		$thisposttitle = urlencode( $get_post_info->post_title );		
+		$thisposttitle = urlencode( strip_tags( $get_post_info->post_title ) );		
 		$thisblogtitle = urlencode( get_bloginfo( 'name' ) );
 		$cligsapi = get_option( 'cligsapi' );
 		$sentence = '';
@@ -631,11 +637,20 @@ function jd_addTwitterAdminPages() {
 		 add_action( 'admin_head-'. $plugin_page, 'jd_addTwitterAdminStyles' );
     }
  }
- function jd_addTwitterAdminStyles() {
+function jd_addTwitterAdminStyles() {
  $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dirname( plugin_basename(__FILE__) );
 	echo "
 <style type=\"text/css\">
-<!-- 
+<!--
+#wp-to-twitter h2 {
+background: #fff url(http://dev.joedolson.com/wp-2.7/wp-content/plugins/wp-to-twitter/wp-to-twitter-logo.png) right center no-repeat;
+padding: 16px 2px;
+margin: 25px 0;
+border: 1px solid #ddd;
+-moz-border-radius: 3px;
+-webkit-border-radius: 3px;
+border-radius: 3px;
+} 
 #wp-to-twitter fieldset {
 margin: 0;
 padding:0;
@@ -715,7 +730,13 @@ if ( get_option( 'jd_twit_blogroll' ) == '1' ) {
 	add_action( 'add_link', 'jd_twit_link' );
 }
 add_action( 'future_to_publish', 'jd_twit_future' );
+
+if ( version_compare( $wp_version,"2.7","<" )) {
+add_action( 'edit_post', 'jd_twit', 12 );
+
+} else {
 add_action( 'publish_post', 'jd_twit', 12 );
+}
 
 if ( get_option( 'jd_twit_quickpress' ) == '1' ) {
 add_action( 'new_to_publish', 'jd_twit_quickpress', 12 ); 
