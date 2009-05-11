@@ -15,7 +15,7 @@ The WP-to-Twitter plugin posts a Twitter status update from your blog using the 
 **New in version 1.3.4**: 
 
 * Bug fix: html tags in titles are stripped from tweets
-* Bug fix: thanks to [Andrea Baccega] (http://www.andreabaccega.com), some problems related to WP 2.7.1 should be fixed. 
+* Bug fix: thanks to [Andrea Baccega](http://www.andreabaccega.com), some problems related to WP 2.7.1 should be fixed. 
 * Added optional prepend/append text fields.
 
 If you have a Cli.gs API key, the shortened URL will also be filed in your Cli.gs account so that you can track
