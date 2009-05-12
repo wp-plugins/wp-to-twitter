@@ -116,6 +116,10 @@ No. They're private.
 
 There are several additional functions available in version 1.2. First, you can now post links you add to your blogroll to Twitter. Second, you can configure whether or not you want to Tweet posts on an individual basis. Third, you can globally set whether you'd rather have posts default to be Tweeted or NOT to be Tweeted, depending on whether you're more likely to want to Tweet most posts but not all or Tweet only the occasional post.
 
+= I can't see the settings page! =
+
+There’s an unresolved bug which effects some servers which causes the WP-to-Twitter settings page to fail. You can get around this problem by commenting out lines 145 - 190 in wp-to-twitter/wp-to-twitter-manager.php. (Version 1.3.4.)
+
 == Screenshots ==
 
 1. WP to Twitter main settings page.
