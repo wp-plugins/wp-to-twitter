@@ -12,24 +12,25 @@ Posts a Twitter status update when you update your blog or post to your blogroll
 
 The WP-to-Twitter plugin posts a Twitter status update from your blog using the Cli.gs URL shortening service to provide a link back to your post from Twitter. 
 
-**New in version 1.3.4**: 
+**New in version 1.3.5**: 
 
-* Bug fix: html tags in titles are stripped from tweets
-* Bug fix: thanks to [Andrea Baccega](http://www.andreabaccega.com), some problems related to WP 2.7.1 should be fixed. 
-* Added optional prepend/append text fields.
+* Bug fix: when "Send link to Twitter" is disabled, Twitter status and shortcodes were not parsed correctly.
 
-If you have a Cli.gs API key, the shortened URL will also be filed in your Cli.gs account so that you can track
-statistics for the shortened URL. 
+If you have a Cli.gs API key, the shortened URL will also be filed in your Cli.gs account so that you can track statistics for the shortened URL. 
 
 The plugin can send a default message for updating or editing posts or pages, but also allows you to write a custom Tweet for your post which says whatever you want. By default, the shortened URL from Cli.gs is appended to the end of your message, so you should keep that in mind when writing your custom Tweet. 
 
 Any status update you write which is longer than the available space will automatically be truncated by the plugin. This applies to both the default messages and to your custom messages.
 
-This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net) and Bill Berry.
-
-(As a side note, this plugin more or less works with WordPress 2.3. It's not fully tested, however. Make a request at [http://www.joedolson.com/articles/wp-to-twitter/](http://www.joedolson.com/articles/wp-to-twitter/) if this is something you need!)
+This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).
 
 == Version Notes ==
+
+**New in version 1.3.4**: 
+
+* Bug fix: html tags in titles are stripped from tweets
+* Bug fix: thanks to [Andrea Baccega](http://www.andreabaccega.com), some problems related to WP 2.7.1 should be fixed. 
+* Added optional prepend/append text fields.
 
 **New in version 1.3.3**: 
 
