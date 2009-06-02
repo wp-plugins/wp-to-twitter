@@ -118,10 +118,10 @@ if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_cligs_failure'
 
 	} else if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'login' ) {
 		//UPDATE LOGIN
-		if( ( $_POST['twitterlogin'] != '' ) AND ( $_POST['twitterpw'] != '' ) ) {
-			update_option(  'twitterlogin', $_POST['twitterlogin'] );
+		if( ( $_POST['twitterlogin'] != '' ) && ( $_POST['twitterpw'] != '' ) ) {
+			update_option( 'twitterlogin', $_POST['twitterlogin'] );
 			update_option( 'twitterpw', $_POST['twitterpw'] );
-			update_option(  'twitterlogin_encrypted', base64_encode( $_POST['twitterlogin'].':'.$_POST['twitterpw'] ) );
+			update_option( 'twitterlogin_encrypted', base64_encode( $_POST['twitterlogin'].':'.$_POST['twitterpw'] ) );
 			$message = __("Twitter login and password updated. ");
 		} else {
 			$message = __("You need to provide your twitter login and password! ");
@@ -343,7 +343,7 @@ echo "</p></div>";
 		</p>
 		<p>
 		<label for="twitterpw"><?php _e("Your Twitter password:"); ?></label>
-		<input type="password" name="twitterpw" id="twitterpw" value="<?php echo(get_option('twitterpw')) ?>" />
+		<input type="password" name="twitterpw" id="twitterpw" value="" />
 		</p>
 		<input type="hidden" name="submit-type" value="login" />
 		<p><input type="submit" name="submit" value="<?php _e("Save Twitter Login Info"); ?>" class="button-primary" /> <?php _e("&raquo; <small>Don't have a Twitter account? <a href='http://www.twitter.com'>Get one for free here</a>"); ?></small></p>

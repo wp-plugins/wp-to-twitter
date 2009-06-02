@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.3.6
+Version: 1.3.7
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -29,7 +29,7 @@ global $wp_version,$version,$jd_plugin_url;
 
 define('JDWP_API_POST_STATUS', 'http://twitter.com/statuses/update.json');
 
-$version = "1.3.6";
+$version = "1.3.7";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 
 require_once( ABSPATH.WPINC.'/class-snoopy.php' );
@@ -632,7 +632,7 @@ function jd_twitter_profile() {
 		</tr>
 		<tr>
 			<th scope="row"><label for="wp-to-twitter-user-password"><?php _e('Your Twitter Password'); ?></th>
-			<td><input type="password" name="wp-to-twitter-user-password" id="wp-to-twitter-user-password" value="<?php echo $twitter_password; ?>" /> Enter your own Twitter password.</td>
+			<td><input type="password" name="wp-to-twitter-user-password" id="wp-to-twitter-user-password" value="" /> Enter your own Twitter password.</td>
 		</tr>
 		</table>
 		<?php
@@ -644,7 +644,9 @@ function jd_twitter_save_profile(){
 	if( $_GET['user_id'] ) { $user_ID = $_GET['user_id']; }
 	update_usermeta($user_ID ,'wp-to-twitter-enable-user' , $_POST['wp-to-twitter-enable-user'] );
 	update_usermeta($user_ID ,'wp-to-twitter-user-username' , $_POST['wp-to-twitter-user-username'] );
+	if ( $_POST['wp-to-twitter-user-password'] != '' ) {
 	update_usermeta($user_ID ,'wp-to-twitter-user-password' , $_POST['wp-to-twitter-user-password'] );
+	}
 	update_usermeta($user_ID ,'wp-to-twitter-encrypted' , base64_encode( $_POST['wp-to-twitter-user-username'].':'.$_POST['wp-to-twitter-user-password'] ) ); 	
 }
 
