@@ -6,11 +6,11 @@ Requires at least: 2.5
 Tested up to: 2.7.1
 Stable tag: trunk
 
-Posts a Twitter status update when you update your blog or post to your blogroll, using the Cligs URL shortening service.
+Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using the Cligs URL shortening service.
 
 == Description ==
 
-The WP-to-Twitter plugin posts a Twitter status update from your blog using the Cli.gs URL shortening service to provide a link back to your post from Twitter. 
+The WP-to-Twitter plugin posts a Twitter status update from your WordPress blog using the Cli.gs URL shortening service to provide a link back to your post from Twitter. 
 
 **New in version 1.3.6**: 
 
