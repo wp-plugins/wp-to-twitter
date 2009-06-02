@@ -12,9 +12,10 @@ Posts a Twitter status update when you update your blog or post to your blogroll
 
 The WP-to-Twitter plugin posts a Twitter status update from your blog using the Cli.gs URL shortening service to provide a link back to your post from Twitter. 
 
-**New in version 1.3.5**: 
+**New in version 1.3.6**: 
 
-* Bug fix: when "Send link to Twitter" is disabled, Twitter status and shortcodes were not parsed correctly.
+* Revised interface to take advantage of features added in versions 2.5 and 2.7. You can now drag and drop the WP to Twitter configuration panel in Post and Page authoring pages.
+* Fixed bug where post titles were not Tweeted when using the "Press This" bookmarklet
 
 If you have a Cli.gs API key, the shortened URL will also be filed in your Cli.gs account so that you can track statistics for the shortened URL. 
 
@@ -25,6 +26,10 @@ Any status update you write which is longer than the available space will automa
 This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).
 
 == Version Notes ==
+
+**New in version 1.3.5**: 
+
+* Bug fix: when "Send link to Twitter" is disabled, Twitter status and shortcodes were not parsed correctly.
 
 **New in version 1.3.4**: 
 

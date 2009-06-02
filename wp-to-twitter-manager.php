@@ -220,9 +220,6 @@ echo "</p></div>";
 		echo $wp_to_twitter_failure;
 		?>
 		</p>
-		<p>
-		If you see these errors frequently, please <a href="http://www.joedolson.com/articles/wp-to-twitter/">notify the developer</a>.
-		</p>
 		</div>
 	<form method="post" action="">
 			<div>

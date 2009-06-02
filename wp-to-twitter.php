@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.3.5
+Version: 1.3.6
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -29,7 +29,7 @@ global $wp_version,$version,$jd_plugin_url;
 
 define('JDWP_API_POST_STATUS', 'http://twitter.com/statuses/update.json');
 
-$version = "1.3.5";
+$version = "1.3.6";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 
 require_once( ABSPATH.WPINC.'/class-snoopy.php' );
@@ -237,6 +237,9 @@ function jd_twit( $post_ID )  {
 		$get_post_info = get_post( $post_ID );
 		$authID = $get_post_info->post_author;
 	    $thisposttitle = urlencode( stripcslashes( strip_tags( $_POST['post_title'] ) ) );
+		if ($thisposttitle == "") {
+			$thisposttitle = urlencode( stripcslashes( strip_tags( $_POST['title'] ) ) );
+		}
 	    $thispostlink = urlencode( external_or_permalink( $post_ID ) );
 		$thisblogtitle = urlencode( get_bloginfo( 'name' ) );
 		$cligsapi = get_option( 'cligsapi' );
@@ -308,10 +311,7 @@ function jd_twit( $post_ID )  {
 						}
 					}
 					$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $authID );		
-					
-					//$sentence = str_replace( '#title#', $thisposttitle, $sentence );
-					//$sentence = str_replace( '#blog#', $thisblogtitle, $sentence );
-					
+										
 				}
 			}
 			
@@ -513,10 +513,31 @@ function jd_twit_xmlrpc( $post_ID ) {
 	return $post_ID;
 	}
 } // END jd_twit_xmlrpc
+// NEW IF ADD
+add_action('admin_menu','jd_add_twitter_outer_box');
 
-// Add custom Tweet field on Post & Page write/edit forms
-function jd_add_twitter_textinput() {
-	global $post, $jd_plugin_url;
+function jd_add_twitter_old_box() {
+?>
+
+<div class="dbx-b-ox-wrapper">
+<fieldset id="twitdiv" class="dbx-box">
+<div class="dbx-h-andle-wrapper">
+<h3 class="dbx-handle"><?php _e('WP to Twitter', 'wp-to-twitter') ?></h3>
+</div>
+<div class="dbx-c-ontent-wrapper">
+<div class="dbx-content">
+<?php
+jd_add_twitter_inner_box();
+?>
+</div>
+</fieldset>
+</div>
+<?php
+}
+
+function jd_add_twitter_inner_box() {
+
+global $post, $jd_plugin_url;
 	$post_id = $post;
 	if (is_object($post_id)) {
 		$post_id = $post_id->ID;
@@ -528,38 +549,23 @@ function jd_add_twitter_textinput() {
 		}
 	$jd_clig = get_post_meta($post_id, 'wp_jd_clig', true);
 	?>
-	<script type="text/javascript">
-	<!-- Begin
-	function countChars(field,cntfield) {
-	cntfield.value = field.value.length;
-	}
-	//  End -->
-	</script>
-	<?php /* Compatibility with version 2.3 and below (needs to be tested.) */ ?>
-	<?php if (substr(get_bloginfo('version'), 0, 3) >= '2.5') { ?>
-	<div id="wp-to-twitter" class="postbox closed">
-	<h3><?php _e('WP to Twitter', 'wp-to-twitter') ?></h3>
-	<div class="inside">
-	<div id="jd-twitter">
-	<?php } else { ?>
-	<div class="dbx-b-ox-wrapper">
-	<fieldset id="twitdiv" class="dbx-box">
-	<div class="dbx-h-andle-wrapper">
-	<h3 class="dbx-handle"><?php _e('WP to Twitter', 'wp-to-twitter') ?></h3>
-	</div>
-	<div class="dbx-c-ontent-wrapper">
-	<div class="dbx-content">
-	<?php } ?>
-    <p>
-	<label for="jd_twitter"><?php _e('Twitter Post', 'wp-to-twitter') ?></label><br /><textarea name="jd_twitter" id="jd_twitter" rows="2" cols="60"
+<script type="text/javascript">
+<!-- Begin
+function countChars(field,cntfield) {
+cntfield.value = field.value.length;
+}
+//  End -->
+</script>
+<p>
+<label for="jd_twitter"><?php _e('Twitter Post', 'wp-to-twitter') ?></label><br /><textarea style="width:95%;" name="jd_twitter" id="jd_twitter" rows="2" cols="60"
 	onKeyDown="countChars(document.post.jd_twitter,document.post.twitlength)"
 	onKeyUp="countChars(document.post.jd_twitter,document.post.twitlength)"><?php echo $jd_twitter ?></textarea>
-	</p>
-	<p><input readonly type="text" name="twitlength" size="3" maxlength="3" value="<?php echo strlen( $description); ?>" />
-	<?php _e(' characters.<br />Twitter posts are a maximum of 140 characters; if your Cli.gs URL is appended to the end of your document, you have 119 characters available. You can use <code>#url#</code>, <code>#title#</code>, or <code>#blog#</code> to insert the shortened URL, post title, or blog name into the Tweet.', 'wp-to-twitter') ?> <a target="__blank" href="<?php echo $jd_plugin_url; ?>"><?php _e('Get Support', 'wp-to-twitter') ?></a> &raquo;
+</p>
+<p><input readonly type="text" name="twitlength" size="3" maxlength="3" value="<?php echo strlen( $description); ?>" />
+<?php _e(' characters.<br />Twitter posts are a maximum of 140 characters; if your Cli.gs URL is appended to the end of your document, you have 119 characters available. You can use <code>#url#</code>, <code>#title#</code>, or <code>#blog#</code> to insert the shortened URL, post title, or blog name into the Tweet.', 'wp-to-twitter') ?> <a target="__blank" href="<?php echo $jd_plugin_url; ?>"><?php _e('Get Support', 'wp-to-twitter') ?></a> &raquo;
 </p>
 <p>
-	<input type="checkbox" name="jd_tweet_this" value="no"<?php echo $jd_selected; ?> id="jd_tweet_this" /> <label for="jd_tweet_this"><?php _e("Don't Tweet this post."); ?></label>
+<input type="checkbox" name="jd_tweet_this" value="no"<?php echo $jd_selected; ?> id="jd_tweet_this" /> <label for="jd_tweet_this"><?php _e("Don't Tweet this post."); ?></label>
 </p>
 <?php if ($jd_clig != "") { ?>
 <p>
@@ -567,17 +573,22 @@ function jd_add_twitter_textinput() {
 _e("The previously-posted Cl.ig URL for this post is <code>$jd_clig</code>");
 ?>
 </p>
-<?php } ?>
-	<?php if (substr(get_bloginfo('version'), 0, 3) >= '2.5') { ?>
-	</div></div></div>
-	<?php } else { ?>
-	</div>
-	</fieldset>
-	</div>
-	<?php } ?>
-
-	<?php
+<?php } 
 }
+function jd_add_twitter_outer_box() {
+	if ( function_exists( 'add_meta_box' )) {
+    add_meta_box( 'wptotwitter_div','WP to Twitter', 'jd_add_twitter_inner_box', 'post', 'advanced' );
+		if (  get_option( 'jd_twit_pages') == 1 ) {
+			add_meta_box( 'wptotwitter_div','WP to Twitter', 'jd_add_twitter_inner_box', 'page', 'advanced' );
+		}
+   } else {
+    add_action('dbx_post_advanced', 'jd_add_twitter_old_box' );
+		if ( get_option( 'jd_twit_pages') == 1 ) {
+			add_action('dbx_page_advanced', 'jd_add_twitter_old_box' );
+		}
+  }
+}
+
 // Post the Custom Tweet into the post meta table
 function post_jd_twitter( $id ) {
 	$jd_twitter = $_POST[ 'jd_twitter' ];
@@ -713,17 +724,6 @@ if ( get_option( 'jd_individual_twitter_users')=='1') {
 	add_action( 'profile_update', 'jd_twitter_save_profile');
 }
 
-if ( substr( get_bloginfo( 'version' ), 0, 3 ) >= '2.5' ) {
-	add_action( 'edit_form_advanced','jd_add_twitter_textinput' );
-	if ( get_option( 'jd_twit_pages')=='1') {
-	add_action( 'edit_page_form','jd_add_twitter_textinput' );
-	}
-} else {
-	add_action( 'dbx_post_advanced','jd_add_twitter_textinput' );
-	if ( get_option( 'jd_twit_pages')=='1') {
-	add_action( 'dbx_page_advanced','jd_add_twitter_textinput' );
-	}
-}
 if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_cligs_failure' ) == '1' ) {
 	add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>';_e('There\'s been an error posting your Twitter status! <a href=\"".get_bloginfo('wpurl')."/wp-admin/options-general.php?page=wp-to-twitter/wp-to-twitter.php\">Visit your WP to Twitter settings page</a> to get more information and to clear this error message.'); echo '</p></div>';" ) );
 }
