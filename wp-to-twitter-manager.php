@@ -142,7 +142,7 @@ if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_cligs_failure'
 	if (  isset($_POST['submit-type']) && $_POST['submit-type'] == 'check-support' ) {
 	update_option('jd-functions-checked', '0');
 	}
-
+// If you're attempting to solve the "settings page doesn't display" problem, begin your comment here. 
 	if ( get_option('jd-functions-checked') == '0') {
 	$cligs_checker = new Snoopy;
 	$twit_checker = new Snoopy;
@@ -188,7 +188,7 @@ if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_cligs_failure'
 			
 		}
 	}
-
+// CLOSE BUG FIX COMMENT HERE
 ?>
 <?php if ( $wp_twitter_error == TRUE || $wp_cligs_error == TRUE ) {
 echo "<div class='error'><p>";

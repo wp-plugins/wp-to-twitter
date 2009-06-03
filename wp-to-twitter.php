@@ -142,6 +142,8 @@ function jd_doTwitterAPIPost( $twit, $authID=FALSE ) {
 		if (jd_old_doTwitterAPIPost( $twit ) == TRUE) {
 		return TRUE;
 		} else {
+// If you're attempting to solve the "settings page doesn't display" problem, you're in the wrong file. 
+// Please open /wp-to-twitter-manager.php to make your edits.		
 		return FALSE;
 		}         
         }
