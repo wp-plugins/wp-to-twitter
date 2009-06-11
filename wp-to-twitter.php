@@ -623,18 +623,18 @@ function jd_twitter_profile() {
 		
 		<table class="form-table">
 		<tr>
-			<th scope="row"><label for="wp-to-twitter-enable-user"><?php _e('Use My Twitter Account'); ?></th>
-			<td><input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user" value="userTwitter"<?php if ($is_enabled == "userTwitter" || $is_enabled == "true" ) { echo " checked='checked'"; } ?> /> Select this option if you would like your posts to be Tweeted into your own Twitter account with no @ references.<br />
-<input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user" value="userAtTwitter"<?php if ($is_enabled == "userAtTwitter") { echo " checked='checked'"; } ?> /> Tweet my posts into my Twitter account with an @ reference to the site's main Twitter account.<br />
-<input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user" value="mainAtTwitter"<?php if ($is_enabled == "mainAtTwitter") { echo " checked='checked'"; } ?> /> Tweet my posts into the main site Twitter account with an @ reference to my username.</td>
+			<th scope="row"><?php _e('Use My Twitter Account'); ?></th>
+			<td><input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user" value="userTwitter"<?php if ($is_enabled == "userTwitter" || $is_enabled == "true" ) { echo " checked='checked'"; } ?> /> <label for="wp-to-twitter-enable-user"><?php _e('Select this option if you would like your posts to be Tweeted into your own Twitter account with no @ references.'); ?></label><br />
+<input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user-2" value="userAtTwitter"<?php if ($is_enabled == "userAtTwitter") { echo " checked='checked'"; } ?> /> <label for="wp-to-twitter-enable-user-2"><?php _e('Tweet my posts into my Twitter account with an @ reference to the site\'s main Twitter account.'); ?></label><br />
+<input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user-3" value="mainAtTwitter"<?php if ($is_enabled == "mainAtTwitter") { echo " checked='checked'"; } ?> /> <label for="wp-to-twitter-enable-user-3"><?php _e('Tweet my posts into the main site Twitter account with an @ reference to my username. (Password not required with this option.)'); ?></label></td>
 		</tr>
 		<tr>
-			<th scope="row"><label for="wp-to-twitter-user-username"><?php _e('Your Twitter Username'); ?></th>
-			<td><input type="text" name="wp-to-twitter-user-username" id="wp-to-twitter-user-username" value="<?php echo $twitter_username; ?>" /> Enter your own Twitter username.</td>
+			<th scope="row"><label for="wp-to-twitter-user-username"><?php _e('Your Twitter Username'); ?></label></th>
+			<td><input type="text" name="wp-to-twitter-user-username" id="wp-to-twitter-user-username" value="<?php echo $twitter_username; ?>" /> <?php _e('Enter your own Twitter username.'); ?></td>
 		</tr>
 		<tr>
-			<th scope="row"><label for="wp-to-twitter-user-password"><?php _e('Your Twitter Password'); ?></th>
-			<td><input type="password" name="wp-to-twitter-user-password" id="wp-to-twitter-user-password" value="" /> Enter your own Twitter password.</td>
+			<th scope="row"><label for="wp-to-twitter-user-password"><?php _e('Your Twitter Password'); ?></label></th>
+			<td><input type="password" name="wp-to-twitter-user-password" id="wp-to-twitter-user-password" value="" /> <?php _e('Enter your own Twitter password.'); ?></td>
 		</tr>
 		</table>
 		<?php
