@@ -149,7 +149,7 @@ No. They're private.
 
 = I can't see the settings page! =
 
-There’s an unresolved bug which effects some servers which causes the WP-to-Twitter settings page to fail. You can get around this problem by commenting out lines 145 - 190 in wp-to-twitter/wp-to-twitter-manager.php. (Version 1.3.4.)
+There’s an unresolved bug which effects some servers which causes the WP-to-Twitter settings page to fail. You can get around this problem by commenting out lines 191 - 256 in wp-to-twitter/wp-to-twitter-manager.php. (Version 1.4.0.) 
 
 = Scheduled posting doesn't work. What's wrong? =
 
