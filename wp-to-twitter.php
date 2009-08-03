@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.4.0
+Version: 1.4.1
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -30,10 +30,17 @@ global $wp_version,$version,$jd_plugin_url;
 
 define('JDWP_API_POST_STATUS', 'http://twitter.com/statuses/update.json');
 
-$version = "1.4.0";
+$version = "1.4.1";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 
+if ( !defined( 'WP_PLUGIN_DIR' ) ) {
+      define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
+	  }
+
 require_once( ABSPATH.WPINC.'/class-snoopy.php' );
+if ( !function_exists('json_decode') ) {
+	require_once( ABSPATH.WP_PLUGIN_DIR.'/wp-to-twitter/json.class.php' );
+}
 
 $exit_msg='WP to Twitter requires WordPress 2.5 or a more recent version. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>';
 
@@ -47,6 +54,13 @@ function external_or_permalink( $post_ID ) {
        $perma_link = get_permalink( $post_ID );
        $ex_link = get_post_meta($post_ID, $wtb_extlink_custom_field, true);
        return ( $ex_link ) ? $ex_link : $perma_link;
+}
+
+if ( !function_exists( 'str_ireplace' ) ) {
+	function str_ireplace( $needle, $str, $haystack ) {
+		$needle = preg_quote( $needle, '/' );
+		return preg_replace( "/$needle/i", $str, $haystack );
+	}
 }
 	
 // This function used to perform the API post to Twitter and now serves as a fallback.
@@ -569,6 +583,7 @@ function store_url($post_ID, $url) {
 }
 
 function generate_hash_tags($post_ID) {
+global $wp_version;
 	if ( version_compare( $wp_version,"2.8",">=" )) {
 		$tags = $_POST['tax_input']['post_tag'] . "," . $_POST['newtag']['post_tag'];
 		} else {
