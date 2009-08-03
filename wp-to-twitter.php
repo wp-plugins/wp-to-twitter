@@ -39,7 +39,7 @@ if ( !defined( 'WP_PLUGIN_DIR' ) ) {
 
 require_once( ABSPATH.WPINC.'/class-snoopy.php' );
 if ( !function_exists('json_decode') ) {
-	require_once( ABSPATH.WP_PLUGIN_DIR.'/wp-to-twitter/json.class.php' );
+	require_once( WP_PLUGIN_DIR.'/wp-to-twitter/json.class.php' );
 }
 
 $exit_msg='WP to Twitter requires WordPress 2.5 or a more recent version. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>';
