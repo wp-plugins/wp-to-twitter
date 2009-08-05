@@ -18,7 +18,7 @@ The plugin can send a default message for updating or editing posts or pages, bu
 
 Any status update you write which is longer than the available space will automatically be truncated by the plugin. This applies to both the default messages and to your custom messages.
 
-This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com). Thanks to [Cory LaViska](http://abeautifulsite.net/notebook/71) for PHP 4 compatible json_decode and json_encode. Thanks to [Michal Migurski] (http://mike.teczno.com) for authoring the JSON class.
+This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com). Thanks to [Cory LaViska](http://abeautifulsite.net/notebook/71) for PHP 4 compatible `json_decode` and `json_encode`. Thanks to [Michal Migurski](http://mike.teczno.com) for authoring the JSON class.
 
 == Changelog ==
 
