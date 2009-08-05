@@ -22,6 +22,10 @@ This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman]
 
 == Changelog ==
 
+= 1.4.3 = 
+
+* Resolved plugin conflict with pre-existing function name.
+
 = 1.4.2 =
 
 * No changes, just adding a missing file from previous commit.

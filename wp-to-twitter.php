@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.4.2
+Version: 1.4.3
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -30,16 +30,28 @@ global $wp_version,$version,$jd_plugin_url;
 
 define('JDWP_API_POST_STATUS', 'http://twitter.com/statuses/update.json');
 
-$version = "1.4.2";
+$version = "1.4.3";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 
 if ( !defined( 'WP_PLUGIN_DIR' ) ) {
       define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 	  }
-
 require_once( ABSPATH.WPINC.'/class-snoopy.php' );
-if ( !function_exists('json_decode') ) {
+
+if ( !class_exists('SERVICES_JSON') ) {
 	require_once( WP_PLUGIN_DIR.'/wp-to-twitter/json.class.php' );
+}
+if (!function_exists('json_encode')) {
+	function json_encode($data) {
+		$json = new Services_JSON();
+		return( $json->encode($data) );
+	}
+}
+if (!function_exists('json_decode')) {
+	function json_decode($data) {
+		$json = new Services_JSON();
+		return( $json->decode($data) );
+	}
 }
 
 $exit_msg='WP to Twitter requires WordPress 2.5 or a more recent version. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>';
