@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.4.3
+Version: 1.4.4
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -30,7 +30,7 @@ global $wp_version,$version,$jd_plugin_url;
 
 define('JDWP_API_POST_STATUS', 'http://twitter.com/statuses/update.json');
 
-$version = "1.4.3";
+$version = "1.4.4";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 
 if ( !defined( 'WP_PLUGIN_DIR' ) ) {
@@ -370,11 +370,11 @@ if (($get_post_info->post_status == 'publish' || $_POST['publish'] == 'Publish')
 			}
 			
 		}
-		if ( get_option( 'use_tags_as_hashtags' ) == '1' ) {
-			$sentence = $sentence . " " . generate_hash_tags( $post_ID );
-		}
-		
+	
 		if ( $sentence != '' ) {
+			if ( get_option( 'use_tags_as_hashtags' ) == '1' ) {
+				$sentence = $sentence . " " . generate_hash_tags( $post_ID );
+			}		
 			$sendToTwitter = jd_doTwitterAPIPost( $sentence, $authID );				
 			if ( $sendToTwitter === FALSE ) {
 			add_post_meta( $post_ID,'jd_wp_twitter',urldecode( $sentence ) );
@@ -481,10 +481,11 @@ function jd_twit_future( $post_ID ) {
 				} else {
 			$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $authID );
 			}
-		if ( get_option( 'use_tags_as_hashtags' ) == '1' ) {
-			$sentence = $sentence . " " . generate_hash_tags( $post_ID );
-		}			
+		
 			if ( $sentence != '' ) {
+				if ( get_option( 'use_tags_as_hashtags' ) == '1' ) {
+		$sentence = $sentence . " " . generate_hash_tags( $post_ID );
+				}	
 				$sendToTwitter = jd_doTwitterAPIPost( $sentence, $authID );				
 				if ($sendToTwitter === FALSE) {
 				add_post_meta( $post_ID,'jd_wp_twitter',urldecode($sentence) );
@@ -522,10 +523,11 @@ function jd_twit_quickpress( $post_ID ) {
 			} else {
 			$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $authID );
 			}
-			if ( get_option( 'use_tags_as_hashtags' ) == '1' ) {
-				$sentence = $sentence . " " . generate_hash_tags( $post_ID );
-			}			
+
 			if ( $sentence != '' ) {
+				if ( get_option( 'use_tags_as_hashtags' ) == '1' ) {
+					$sentence = $sentence . " " . generate_hash_tags( $post_ID );	
+				}
 				$sendToTwitter = jd_doTwitterAPIPost( $sentence, $authID );				
 				if ($sendToTwitter === FALSE) {
 				add_post_meta( $post_ID,'jd_wp_twitter',urldecode($sentence) );
@@ -564,10 +566,11 @@ function jd_twit_xmlrpc( $post_ID ) {
 			} else {
 			$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $authID );
 			}
-			if ( get_option( 'use_tags_as_hashtags' ) == '1' ) {
-				$sentence = $sentence . " " . generate_hash_tags( $post_ID );
-			}			
+			
 			if ( $sentence != '' ) {
+				if ( get_option( 'use_tags_as_hashtags' ) == '1' ) {
+					$sentence = $sentence . " " . generate_hash_tags( $post_ID );
+				}			
 				$sendToTwitter = jd_doTwitterAPIPost( $sentence, $authID );				
 				$sendToTwitter = jd_doTwitterAPIPost( $sentence, $authID );				
 				if ($sendToTwitter === FALSE) {
@@ -603,8 +606,8 @@ global $wp_version;
 		}
 	$tags = explode(",",$tags);
 		foreach ($tags as $value) {
-		$value = trim($value);
-			if ($value != "Add new tag") { 
+		$value = str_ireplace( " ","_",trim( $value ) );
+			if ($value != "Add_new_tag") { 
 			$hashtags .= "#$value ";
 			}
 		}

@@ -22,6 +22,10 @@ This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman]
 
 == Changelog ==
 
+= 1.4.4 =
+
+* Resolved two bugs with hashtag support: spaces in multi-word tags and the posting of hashtag-only status updates when posting shouldn't happen.
+
 = 1.4.3 = 
 
 * Resolved plugin conflict with pre-existing function name.
