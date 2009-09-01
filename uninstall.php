@@ -15,6 +15,8 @@ delete_option( 'jd_twit_edited_pages' );
 
 delete_option( 'jd_twit_remote' );
 
+delete_option( 'jd_post_excerpt' );
+
 // Use Google Analytics with Twitter
 delete_option( 'twitter-analytics-campaign' );
 delete_option( 'use-twitter-analytics' );
@@ -26,9 +28,11 @@ delete_option( 'jd_twit_custom_url' );
 delete_option( 'cligsapi' );
 
 // Error checking
-delete_option( 'jd_functions_checked' );
+delete_option( 'jd-functions-checked' );
 delete_option( 'wp_twitter_failure' );
 delete_option( 'wp_cligs_failure' );
+delete_option( 'wp_url_failure' );
+delete_option( 'wp_bitly_failure' );
 
 // Blogroll options
 delete_option( 'jd-use-link-title' );
@@ -47,5 +51,23 @@ delete_option( 'twitterpw' );
 delete_option( 'twitterlogin_encrypted' );
 delete_option( 'cligsapi' );
 delete_option( 'jd_twit_quickpress' );
+delete_option( 'jd-use-cligs' );
+delete_option( 'jd-use-none' );
+
+// Special Options
+delete_option( 'jd_twit_prepend' );
+delete_option( 'jd_twit_remote' );
+delete_option( 'twitter-analytics-campaign' );
+delete_option( 'use-twitter-analytics' );
+delete_option( 'jd_twit_custom_url' );
+delete_option( 'jd_shortener' );
+delete_option( 'jd_twit_append' );
+delete_option( 'jd_individual_twitter_users' );
+delete_option( 'use_tags_as_hashtags' );
+
+// Bitly Settings
+delete_option( 'bitlylogin' );
+delete_option( 'jd-use-bitly' );
+delete_option( 'bitlyapi' );
 }
 ?>

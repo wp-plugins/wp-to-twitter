@@ -1,7 +1,5 @@
 <?php
-	//update_option( 'twitterInitialised', '0' );
 	// FUNCTION to see if checkboxes should be checked
-
 	function jd_checkCheckbox( $theFieldname ) {
 		if( get_option( $theFieldname ) == '1'){
 			echo 'checked="checked"';
@@ -11,7 +9,7 @@
 	$wp_cligs_error = FALSE;
 	$message = "";
 	//SETS DEFAULT OPTIONS
-	if( get_option( 'twitterInitialised') != '1' ) {
+	if ( get_option( 'twitterInitialised') != '1' ) {
 		update_option( 'newpost-published-update', '1' );
 		update_option( 'newpost-published-text', 'New post: #title# (#url#)' );
 		update_option( 'newpost-published-showlink', '1' );
@@ -27,7 +25,7 @@
 		update_option( 'jd_twit_edited_pages','0' );
 		
 		update_option( 'jd_twit_remote', '0' );
-		
+		update_option( 'jd_post_excerpt', '30' );
 		// Use Google Analytics with Twitter
 		update_option( 'twitter-analytics-campaign', '' );
 		update_option( 'use-twitter-analytics', '0' );
@@ -56,7 +54,8 @@
 
 		$message = __("Set your Twitter login information and URL shortener API information to use this plugin!");
 	}
-	if( get_option( 'twitterInitialised') == '1' && get_option( 'twitterpw' ) == "" ) {
+	
+	if ( get_option( 'twitterInitialised') == '1' && get_option( 'twitterpw' ) == "" ) {
 		$message .= __("Please add your Twitter password. ");
 	}
 	
@@ -66,24 +65,24 @@
 		$message =  __("WP to Twitter Errors Cleared");
 	}
 
-// Error messages on failures	
-if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_url_failure' ) == '1' ) {
-		if ( get_option( 'wp_url_failure' ) == '1' ) {
-			$wp_to_twitter_failure .= "<p>" . __("URL shortener request failed! We couldn't shrink that URL, so we attached the normal URL to your Tweet. Check with your URL shortening provider to see if there are any known issues. [<a href=\"http://blog.cli.gs\">Cli.gs Blog</a>] [<a href=\"http://blog.bit.ly\">Bit.ly Blog</a>]") . "</p>";
-		}
-		
-		if ( get_option( 'wp_twitter_failure' ) == '1' ) {
-			$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers to post your new blog post. Your tweet has been stored in a custom field attached to the post, so you can Tweet it manually if you wish! ") . "</p>";
-		} else if ( get_option( 'wp_twitter_failure' ) == '2') {
-			$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers to post your <strong>new link</strong>! You'll have to post it manually, I'm afraid. ") . "</p>";
-		}
-		
-	} else {
-	$wp_to_twitter_failure = '';
-}
+	// Error messages on status update or url shortener failures	
+	if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_url_failure' ) == '1' ) {
+			if ( get_option( 'wp_url_failure' ) == '1' ) {
+				$wp_to_twitter_failure .= "<p>" . __("URL shortener request failed! We couldn't shrink that URL, so we attached the normal URL to your Tweet. Check with your URL shortening provider to see if there are any known issues. [<a href=\"http://blog.cli.gs\">Cli.gs Blog</a>] [<a href=\"http://blog.bit.ly\">Bit.ly Blog</a>]") . "</p>";
+			}
+			
+			if ( get_option( 'wp_twitter_failure' ) == '1' ) {
+				$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers to post your new blog post. Your tweet has been stored in a custom field attached to the post, so you can Tweet it manually if you wish! ") . "</p>";
+			} else if ( get_option( 'wp_twitter_failure' ) == '2') {
+				$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers to post your <strong>new link</strong>! You'll have to post it manually, I'm afraid. ") . "</p>";
+			}
+			
+		} else {
+		$wp_to_twitter_failure = '';
+	}
 
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'options' ) {
-		//UPDATE OPTIONS
+		// UPDATE OPTIONS
 		update_option( 'newpost-published-update', $_POST['newpost-published-update'] );
 		update_option( 'newpost-published-text', $_POST['newpost-published-text'] );
 		update_option( 'newpost-published-showlink', $_POST['newpost-published-showlink'] );
@@ -100,37 +99,41 @@ if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_url_failure' )
 		update_option( 'jd_twit_prepend', $_POST['jd_twit_prepend'] );	
 		update_option( 'jd_twit_append', $_POST['jd_twit_append'] );
 		update_option( 'jd_shortener', $_POST['jd_shortener'] );
-		
+		update_option( 'jd_post_excerpt', $_POST['jd_post_excerpt'] );
 		
 		if ( $_POST['jd-use-link-field'] == '2' ) {
 		update_option( 'jd-use-link-description', '1' );
 		update_option( 'jd-use-link-title', '0' );
-		
 		} else if ( $_POST['jd-use-link-field'] == '1' ) {
 		update_option( 'jd-use-link-title', '1' );	
 		update_option( 'jd-use-link-description', '0' );
 		}
+		
 		switch ($_POST['jd_shortener']) {
-		case 1:
-			update_option( 'jd-use-cligs', '1' );
-			update_option( 'jd-use-bitly', '0' );
-			update_option( 'jd-use-none', '0' );
-			break;		
-		case 2:
-			update_option( 'jd-use-cligs', '0' );
-			update_option( 'jd-use-bitly', '1' );
-			update_option( 'jd-use-none', '0' );			
-			break;
-		case 3:
-			update_option( 'jd-use-cligs', '0' );
-			update_option( 'jd-use-bitly', '0' );
-			update_option( 'jd-use-none', '1' );
-			break;
-		default:
-			update_option( 'jd-use-cligs', '1' );
-			update_option( 'jd-use-bitly', '0' );	
-			update_option( 'jd-use-none', '0' );
+			case 1:
+				update_option( 'jd-use-cligs', '1' );
+				update_option( 'jd-use-bitly', '0' );
+				update_option( 'jd-use-none', '0' );
+				break;		
+			case 2:
+				update_option( 'jd-use-cligs', '0' );
+				update_option( 'jd-use-bitly', '1' );
+				update_option( 'jd-use-none', '0' );			
+				break;
+			case 3:
+				update_option( 'jd-use-cligs', '0' );
+				update_option( 'jd-use-bitly', '0' );
+				update_option( 'jd-use-none', '1' );
+				break;
+			default:
+				update_option( 'jd-use-cligs', '1' );
+				update_option( 'jd-use-bitly', '0' );	
+				update_option( 'jd-use-none', '0' );
 		}		
+		
+		if ( get_option( 'jd-use-bitly' ) == 1 && ( get_option( 'bitlylogin' ) == "" || get_option( 'bitlyapi' ) == "" ) ) {
+			$message .= __( 'You must add your Bit.ly login and API key in order to shorten URLs with Bit.ly.' );
+		}
 		
 		update_option( 'newlink-published-text', $_POST['newlink-published-text'] );
 		update_option( 'jd_twit_blogroll',$_POST['jd_twit_blogroll'] );
@@ -140,9 +143,11 @@ if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_url_failure' )
 		
 		update_option( 'jd_individual_twitter_users', $_POST['jd_individual_twitter_users'] );
 		
-		$message = "WP to Twitter Options Updated";
+		$message = __( 'WP to Twitter Options Updated' );
 
-	} else if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'login' ) {
+	}
+
+	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'login' ) {
 		//UPDATE LOGIN
 		if( ( $_POST['twitterlogin'] != '' ) && ( $_POST['twitterpw'] != '' ) ) {
 			update_option( 'twitterlogin', $_POST['twitterlogin'] );
@@ -152,7 +157,9 @@ if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_url_failure' )
 		} else {
 			$message = __("You need to provide your twitter login and password! ");
 		}
-	} else if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'cligsapi' ) {
+	}
+	
+	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'cligsapi' ) {
 		if ( $_POST['cligsapi'] != '' && isset( $_POST['submit'] ) ) {
 			update_option( 'cligsapi',$_POST['cligsapi'] );
 			$message = __("Cligs API Key Updated");
@@ -162,7 +169,8 @@ if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_url_failure' )
 		} else {
 			$message = __("Cli.gs API Key not added - <a href='http://cli.gs/user/api/'>get one here</a>! ");
 		}
-	} else if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'bitlyapi' ) {
+	} 
+	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'bitlyapi' ) {
 		if ( $_POST['bitlyapi'] != '' && isset( $_POST['submit'] ) ) {
 			update_option( 'bitlyapi',trim($_POST['bitlyapi']) );
 			$message = __("Bit.ly API Key Updated.");
@@ -182,77 +190,104 @@ if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_url_failure' )
 			$message = __("Bit.ly Login not added - <a href='http://bit.ly/account/'>get one here</a>! ");
 		}
 	}
-
+	///*
 	// Check whether the server has supported for needed functions.
 	if (  isset($_POST['submit-type']) && $_POST['submit-type'] == 'check-support' ) {
 	update_option('jd-functions-checked', '0');
 	}
 // If you're attempting to solve the "settings page doesn't display" problem, begin your comment here. 
+
 	if ( get_option('jd-functions-checked') == '0') {
-	$cligs_checker = new Snoopy;
-	$twit_checker = new Snoopy;
-	$bitly_checker = new Snoopy;
-	$testurl = urlencode("http://www.joedolson.com/articles/wp-to-twitter/");
-	
-	$cligs_checker->fetchtext( "http://cli.gs/api/v2/cligs/create?url=$testurl&appid=WP-to-Twitter&key=&output=&test=1" );
-	$bitlylogin = get_option( 'bitlylogin' );
-	$bitlyapi = get_option( 'bitlyapi' );
-	$bitly_checker->fetch( "http://api.bit.ly/shorten?version=2.0.1&longUrl=".$testurl."&login=".$bitlylogin."&apiKey=".$bitlyapi."&history=1" );
-	$twit_checker->fetch( "http://twitter.com/help/test.json" );
+		$message = "<ul>";
+	if ( class_exists( 'Snoopy' ) ) {
+		$cligs_checker = new Snoopy;
+		$twit_checker = new Snoopy;
+		$bitly_checker = new Snoopy;
+		$run_Snoopy_test = TRUE;
+	}
+	// grab or set necessary variables
 	$wp_twitter_error = TRUE;	
 	$wp_cligs_error = TRUE;
 	$wp_bitly_error = TRUE;
-			if ( strlen(getfilefromurl("http://cli.gs/api/v2/cligs/create?url=$testurl&appid=WP-to-Twitter&key=&output=&test=1")) == 20 || strlen($cligs_checker->results) == 20 ) {
+	$testurl = urlencode("http://www.joedolson.com/articles/wp-to-twitter/");
+	$bitlylogin = get_option( 'bitlylogin' );
+	$bitlyapi = get_option( 'bitlyapi' );	
+	
+		if ( $run_Snoopy_test == TRUE ) {	
+		$cligs_checker->fetchtext( "http://cli.gs/api/v2/cligs/create?url=$testurl&appid=WP-to-Twitter&key=&output=&test=1" );
+		$bitly_checker->fetch( "http://api.bit.ly/shorten?version=2.0.1&longUrl=".$testurl."&login=".$bitlylogin."&apiKey=".$bitlyapi."&history=1" );
+		$twit_checker->fetch( "http://twitter.com/help/test.json" );
+
+			if ( strlen($cligs_checker->results) == 20 ) {
 				$wp_cligs_error = FALSE;
-				$message .= __("Successfully contacted the Cli.gs API. ");
+				$message .= __("<li>Successfully contacted the Cli.gs API via Snoopy.</li>");
 				//$message .= "Twit: " . $twit_checker->results;			
 			} else {
-				$message .=__("Failed to contact the Cli.gs API. ");
+				$message .=__("<li>Failed to contact the Cli.gs API via Snoopy.</li>");
 			}
+			
 		$decoded = json_decode($bitly_checker->results,TRUE);
+		$bitly_decoded = $decoded['statusCode'];
+		
+			if ( $bitly_decoded == "OK" ) {
+				$wp_bitly_error = FALSE;
+				$message .= __("<li>Successfully contacted the Bit.ly API via Snoopy.</li>");
+			} else {
+				$message .=__("<li>Failed to contact the Bit.ly API via Snoopy.</li>");
+			}
+			if ( $twit_checker->results == "\"ok\"" ) {
+				$wp_twitter_error = FALSE;
+				$message .= __("<li>Successfully contacted the Twitter API via Snoopy.</li>");
+			} else {
+				$message .= __("<li>Failed to contact the Twitter API via Snoopy.</li>");
+			}
+		} else {
+		// check non-snoopy methods
+			if ( getfilefromurl("http://twitter.com/help/test.xml") == "<ok>true</ok>" ) {
+				$wp_twitter_error = FALSE;
+				$message .= __("<li>Successfully contacted the Twitter API via cURL.</li>");
+			} else {
+				$message .= __("<li>Failed to contact the Twitter API via cURL.</li>");
+			}
+		$decoded = json_decode( getfilefromurl( "http://api.bit.ly/shorten?version=2.0.1&longUrl=".$testurl."&login=".$bitlylogin."&apiKey=".$bitlyapi."&history=1") );
 		$bitly_decoded = $decoded['statusCode'];			
 			if ( $bitly_decoded == "OK" ) {
 				$wp_bitly_error = FALSE;
-				$message .= __("Successfully contacted the Bit.ly API. ");
-				//$message .= "Bit.ly: $bitly_decoded";	
-				//$message .= $bitly_decoded;
+				$message .= __("<li>Successfully contacted the Bit.ly API via Snoopy.</li>");
 			} else {
-				$message .=__("Failed to contact the Bit.ly API. ");
-				//$message .= "Bit.ly: $bitly_decoded";	
-$message .= "<pre>http://api.bit.ly/shorten?version=2.0.1&longUrl=".$testurl."&login=".$bitlylogin."&apiKey=".$bitlyapi."&history=1</pre>";	
-				//echo "<pre>";
-				//print_r($decoded);
-				//echo "</pre>";
-			}
-			if ( $twit_checker->results == "\"ok\"" || getfilefromurl("http://twitter.com/help/test.xml") == "<ok>true</ok>" ) {
-				$wp_twitter_error = FALSE;
-				$message .= __("Successfully contacted the Twitter API. ");
+				$message .=__("<li>Failed to contact the Bit.ly API via Snoopy.</li>");
+			}			
+			if ( strlen(getfilefromurl("http://cli.gs/api/v2/cligs/create?url=$testurl&appid=WP-to-Twitter&key=&output=&test=1")) == 20 ) {
+				$wp_cligs_error = FALSE;
+				$message .= __("<li>Successfully contacted the Cli.gs API via Snoopy.</li>");
+				//$message .= "Twit: " . $twit_checker->results;			
 			} else {
-				$message .= __("Failed to contact the Twitter API. ");
-			}
+				$message .=__("<li>Failed to contact the Cli.gs API via Snoopy.</li>");
+			}			
+		}
 		// If everything's OK, there's  no reason to do this again.
-		if ($wp_twitter_error == FALSE && $wp_cligs_error == FALSE) {
-		$message .= __("Your server appears to support the required PHP functions and classes for WP to Twitter to function.");
+		if ($wp_twitter_error == FALSE && ($wp_cligs_error == FALSE || $wp_bitly_error == FALSE) ) {
+		$message .= __("<li><strong>Your server should run WP to Twitter successfully.</strong></li>");
 		update_option( 'jd-functions-checked','1' );		
 		} else { 
 			if ( !function_exists( 'fputs' ) ) {
 				$wp_function_error = TRUE;
-				$message .= __("Your server does not support <code>fputs</code>.");
+				$message .= __("<li>Your server does not support <code>fputs</code>.</li>");
 			} 
 			if ( !function_exists( 'curl_init' ) || !function_exists( 'file_get_contents' ) ) {
 				$wp_function_error = TRUE;
-				$message .= __("Your server does not support <code>file_get_contents</code> or <code>cURL</code> functions.");
+				$message .= __("<li>Your server does not support <code>file_get_contents</code> or <code>cURL</code> functions.</li>");
 			}
 			if ( !class_exists( 'Snoopy' ) ) {
 				$wp_function_error = TRUE;
-				$message .= __("Your server does not support <code>Snoopy</code>.");			
+				$message .= __("<li>Your server does not support <code>Snoopy</code>.</li>");			
 			}
-		
-		$message .= __("Your server does not appear to support the required PHP functions and classes for WP to Twitter to function. You can try it anyway - these tests aren't perfect - but no guarantees.");
-		update_option( 'jd-functions-checked','1' );		
-			
+	
+		$message .= __("<li><strong>Your server does not appear to support the required PHP functions and classes for WP to Twitter to function.</strong> You can try it anyway - these tests aren't perfect - but no guarantees.</li>");
+		$message .= "</ul>";
+		update_option( 'jd-functions-checked','1' );	
 		}
-	}
+	} 
 // CLOSE BUG FIX COMMENT HERE
 ?>
 <?php if ( $wp_twitter_error == TRUE || $wp_cligs_error == TRUE ) {
@@ -261,8 +296,8 @@ _e("This plugin may not work in your server environment.");
 echo "</p></div>";
 }
 ?>
-<?php if ($message) { ?>
-<div id="message" class="updated fade"><p><?php echo $message; ?></p></div>
+<?php if ( $message ) { ?>
+<div id="message" class="updated fade"><?php echo $message; ?></div>
 <?php } ?>
 <div id="dropmessage" class="updated" style="display:none;"></div>
 
@@ -270,7 +305,7 @@ echo "</p></div>";
 
 <h2><?php _e("WP to Twitter Options"); ?></h2>
 <p>
-<?php _e("For any update field, you can use the codes <code>#title#</code> for the title of your blog post, <code>#blog#</code> for the title of your blog, or <code>#url#</code> for the post URL! Given the character limit for Twitter, you may not want to include your blog title."); ?>
+<?php _e("For any update field, you can use the codes <code>#title#</code> for the title of your blog post, <code>#blog#</code> for the title of your blog, <code>#post#</code> for a short excerpt of the post content or <code>#url#</code> for the post URL (shortened or not, depending on your preferences.)"); ?>
 </p>
 		
 <?php if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_url_failure' ) == '1' ) { ?>
@@ -305,14 +340,7 @@ echo "</p></div>";
 	<div>
 		<fieldset>
 			<legend><?php _e("Wordpress to Twitter Publishing Options"); ?></legend>
-			<p>
-				<input type="checkbox" name="jd_twit_pages" id="jd_twit_pages" value="1" <?php jd_checkCheckbox('jd_twit_pages')?> />
-				<label for="jd_twit_pages"><strong><?php _e("Update Twitter when new Wordpress Pages are published"); ?></strong></label>
-			</p>
-			<p>
-				<input type="checkbox" name="jd_twit_edited_pages" id="jd_twit_edited_pages" value="1" <?php jd_checkCheckbox('jd_twit_edited_pages')?> />
-				<label for="jd_twit_edited_pages"><strong><?php _e("Update Twitter when WordPress Pages are edited"); ?></strong></label>
-			</p>
+
 			<p>
 				<input type="checkbox" name="newpost-published-update" id="newpost-published-update" value="1" <?php jd_checkCheckbox('newpost-published-update')?> />
 				<label for="newpost-published-update"><strong><?php _e("Update when a post is published"); ?></strong></label> <label for="newpost-published-text"><br /><?php _e("Text for new post updates:"); ?></label> <input type="text" name="newpost-published-text" id="newpost-published-text" size="60" maxlength="120" value="<?php echo( attribute_escape( get_option( 'newpost-published-text' ) ) ) ?>" />
@@ -327,11 +355,19 @@ echo "</p></div>";
 				&nbsp;&nbsp;
 				<input type="checkbox" name="oldpost-edited-showlink" id="oldpost-edited-showlink" value="1" <?php jd_checkCheckbox('oldpost-edited-showlink')?> />
 				<label for="oldpost-edited-showlink"><?php _e("Provide link to blog?"); ?></label>			
-			</p>
+			</p>	
 			<p>
 				<input type="checkbox" name="use_tags_as_hashtags" id="use_tags_as_hashtags" value="1" <?php jd_checkCheckbox('use_tags_as_hashtags')?> />
 				<label for="use_tags_as_hashtags"><strong><?php _e("Add tags as hashtags on Tweets"); ?></strong></label>
 			</p>
+			<p>
+				<input type="checkbox" name="jd_twit_pages" id="jd_twit_pages" value="1" <?php jd_checkCheckbox('jd_twit_pages')?> />
+				<label for="jd_twit_pages"><strong><?php _e("Update Twitter when new Wordpress Pages are published"); ?></strong></label>
+			</p>
+			<p>
+				<input type="checkbox" name="jd_twit_edited_pages" id="jd_twit_edited_pages" value="1" <?php jd_checkCheckbox('jd_twit_edited_pages')?> />
+				<label for="jd_twit_edited_pages"><strong><?php _e("Update Twitter when WordPress Pages are edited"); ?></strong></label>
+			</p>			
 			<p>
 				<input type="checkbox" name="jd_twit_blogroll" id="jd_twit_blogroll" value="1" <?php jd_checkCheckbox('jd_twit_blogroll')?> />
 				<label for="oldpost-edited-update"><strong><?php _e("Update Twitter when you post a Blogroll link"); ?></strong></label><br /><input type="radio" name="jd-use-link-field" id="jd-use-link-title" value="1" <?php jd_checkCheckbox('jd-use-link-title')?> /> <label for="jd-use-link-title"><?php _e("Use <strong>link title</strong> for Twitter updates"); ?></label> <input type="radio" name="jd-use-link-field" id="jd-use-link-description" value="2" <?php jd_checkCheckbox('jd-use-link-description')?> />	<label for="jd-use-link-description"><?php _e("Use <strong>link description</strong> for Twitter updates"); ?></label><br /><label for="newlink-published-text"><?php _e("Text for new link updates (used if title/description isn't available.):"); ?></label> <input type="text" name="newlink-published-text" id="newlink-published-text" size="60" maxlength="120" value="<?php echo ( attribute_escape( get_option( 'newlink-published-text' ) ) ) ?>" />
@@ -352,9 +388,13 @@ echo "</p></div>";
 			</p>
 			
 			<p>
+				<label for="jd_post_excerpt"><?php _e("Length of post excerpt (in characters):"); ?></label> <input type="text" name="jd_post_excerpt" id="jd_post_excerpt" size="3" maxlength="3" value="<?php echo ( attribute_escape( get_option( 'jd_post_excerpt' ) ) ) ?>" /> <small><?php _e("By default, extracted from the post itself. If you use the 'Excerpt' field, that will be used instead."); ?>
+			</p>				
+			
+			<p>
 				<label for="jd_twit_prepend"><?php _e("Custom text prepended to Tweets:"); ?></label> <input type="text" name="jd_twit_prepend" id="jd_twit_prepend" size="20" maxlength="20" value="<?php echo ( attribute_escape( get_option( 'jd_twit_prepend' ) ) ) ?>" />
-			</p>	
-
+			</p>			
+			
 			<p>
 				<label for="jd_twit_append"><?php _e("Custom text appended to Tweets:"); ?></label> <input type="text" name="jd_twit_append" id="jd_twit_append" size="20" maxlength="20" value="<?php echo ( attribute_escape( get_option( 'jd_twit_append' ) ) ) ?>" />
 			</p>			
@@ -399,7 +439,7 @@ echo "</p></div>";
 		<input type="text" name="twitterlogin" id="twitterlogin" value="<?php echo ( attribute_escape( get_option( 'twitterlogin' ) ) ) ?>" />
 		</p>
 		<p>
-		<label for="twitterpw"><?php _e("Your Twitter password:"); ?></label>
+		<label for="twitterpw"><?php _e("Your Twitter password:"); ?><?php if ( get_option( 'twitterpw' ) != "" ) { _e('(<em>Saved</em>)' ); } ?></label>
 		<input type="password" name="twitterpw" id="twitterpw" value="" />
 		</p>
 		<input type="hidden" name="submit-type" value="login" />

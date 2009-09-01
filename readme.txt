@@ -22,6 +22,15 @@ This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman]
 
 == Changelog ==
 
+= 1.4.5 =
+
+* Resolved bug with extraneous hash sign when no tags are attached.
+* Resolved bug where #url# would appear when included in posting string but with 'link to blog' disabled.
+* Added expansion of short URL via longURL.org stored in post meta data.
+* Resolved additional uncommon bug with PHP 4.
+* Added option to incorporate optional post excerpt.
+* Better handling of multibyte character sets. 
+
 = 1.4.4 =
 
 * Resolved two bugs with hashtag support: spaces in multi-word tags and the posting of hashtag-only status updates when posting shouldn't happen.
