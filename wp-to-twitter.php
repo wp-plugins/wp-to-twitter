@@ -715,7 +715,7 @@ global $wp_version;
 	$tags = explode(",",$tags);
 		foreach ( $tags as $value ) {
 		$value = str_ireplace( " ","_",trim( $value ) );
-			if ( $value != __( "Add_new_tag" ) ) { 
+			if ( $value != __( "Add_new_tag" , 'wptotwitter') ) { 
 			$hashtags .= "#$value ";
 			}
 		}
@@ -732,7 +732,7 @@ function jd_add_twitter_old_box() {
 <div class="dbx-b-ox-wrapper">
 <fieldset id="twitdiv" class="dbx-box">
 <div class="dbx-h-andle-wrapper">
-<h3 class="dbx-handle"><?php _e('WP to Twitter', 'wp-to-twitter') ?></h3>
+<h3 class="dbx-handle"><?php _e('WP to Twitter', 'wp-to-twitter', 'wptotwitter') ?></h3>
 </div>
 <div class="dbx-c-ontent-wrapper">
 <div class="dbx-content">
@@ -773,20 +773,20 @@ cntfield.value = field.value.length;
 //  End -->
 </script>
 <p>
-<label for="jd_twitter"><?php _e('Twitter Post', 'wp-to-twitter') ?></label><br /><textarea style="width:95%;" name="jd_twitter" id="jd_twitter" rows="2" cols="60"
+<label for="jd_twitter"><?php _e('Twitter Post', 'wp-to-twitter', 'wptotwitter') ?></label><br /><textarea style="width:95%;" name="jd_twitter" id="jd_twitter" rows="2" cols="60"
 	onKeyDown="countChars(document.post.jd_twitter,document.post.twitlength)"
 	onKeyUp="countChars(document.post.jd_twitter,document.post.twitlength)"><?php echo attribute_escape( $jd_twitter ); ?></textarea>
 </p>
 <p><input readonly type="text" name="twitlength" size="3" maxlength="3" value="<?php echo attribute_escape( mb_strlen( $description) ); ?>" />
-<?php _e(' characters.<br />Twitter posts are a maximum of 140 characters; if your Cli.gs URL is appended to the end of your document, you have 119 characters available. You can use <code>#url#</code>, <code>#title#</code>, <code>#post#</code> or <code>#blog#</code> to insert the shortened URL, post title, a post excerpt or blog name into the Tweet.', 'wp-to-twitter') ?> <a target="__blank" href="<?php echo $jd_plugin_url; ?>"><?php _e('Get Support', 'wp-to-twitter') ?></a> &raquo;
+<?php _e(' characters.<br />Twitter posts are a maximum of 140 characters; if your Cli.gs URL is appended to the end of your document, you have 119 characters available. You can use <code>#url#</code>, <code>#title#</code>, <code>#post#</code> or <code>#blog#</code> to insert the shortened URL, post title, a post excerpt or blog name into the Tweet.', 'wp-to-twitter', 'wptotwitter') ?> <a target="__blank" href="<?php echo $jd_plugin_url; ?>"><?php _e('Get Support', 'wp-to-twitter', 'wptotwitter') ?></a> &raquo;
 </p>
 <p>
-<input type="checkbox" name="jd_tweet_this" value="no"<?php echo attribute_escape( $jd_selected ); ?> id="jd_tweet_this" /> <label for="jd_tweet_this"><?php _e("Don't Tweet this post."); ?></label>
+<input type="checkbox" name="jd_tweet_this" value="no"<?php echo attribute_escape( $jd_selected ); ?> id="jd_tweet_this" /> <label for="jd_tweet_this"><?php _e("Don't Tweet this post.", 'wptotwitter'); ?></label>
 </p>
 <p>
 <?php
 if ( $jd_short != "" ) {
-	_e("The previously-posted $shortener URL for this post is <code>$jd_short</code>, which points to <code>$jd_expansion</code>.");
+	_e("The previously-posted $shortener URL for this post is <code>$jd_short</code>, which points to <code>$jd_expansion</code>.", 'wptotwitter');
 }
 ?>
 </p>
@@ -833,22 +833,22 @@ function jd_twitter_profile() {
 			$twitter_password = get_usermeta( $user_ID, 'wp-to-twitter-user-password' );
 	
 		?>
-		<h3><?php _e('WP to Twitter User Settings'); ?></h3>
+		<h3><?php _e('WP to Twitter User Settings', 'wptotwitter'); ?></h3>
 		
 		<table class="form-table">
 		<tr>
-			<th scope="row"><?php _e('Use My Twitter Account'); ?></th>
-			<td><input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user" value="userTwitter"<?php if ($is_enabled == "userTwitter" || $is_enabled == "true" ) { echo " checked='checked'"; } ?> /> <label for="wp-to-twitter-enable-user"><?php _e('Select this option if you would like your posts to be Tweeted into your own Twitter account with no @ references.'); ?></label><br />
-<input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user-2" value="userAtTwitter"<?php if ($is_enabled == "userAtTwitter") { echo " checked='checked'"; } ?> /> <label for="wp-to-twitter-enable-user-2"><?php _e('Tweet my posts into my Twitter account with an @ reference to the site\'s main Twitter account.'); ?></label><br />
-<input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user-3" value="mainAtTwitter"<?php if ($is_enabled == "mainAtTwitter") { echo " checked='checked'"; } ?> /> <label for="wp-to-twitter-enable-user-3"><?php _e('Tweet my posts into the main site Twitter account with an @ reference to my username. (Password not required with this option.)'); ?></label></td>
+			<th scope="row"><?php _e('Use My Twitter Account', 'wptotwitter'); ?></th>
+			<td><input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user" value="userTwitter"<?php if ($is_enabled == "userTwitter" || $is_enabled == "true" ) { echo " checked='checked'"; } ?> /> <label for="wp-to-twitter-enable-user"><?php _e('Select this option if you would like your posts to be Tweeted into your own Twitter account with no @ references.', 'wptotwitter'); ?></label><br />
+<input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user-2" value="userAtTwitter"<?php if ($is_enabled == "userAtTwitter") { echo " checked='checked'"; } ?> /> <label for="wp-to-twitter-enable-user-2"><?php _e('Tweet my posts into my Twitter account with an @ reference to the site\'s main Twitter account.', 'wptotwitter'); ?></label><br />
+<input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user-3" value="mainAtTwitter"<?php if ($is_enabled == "mainAtTwitter") { echo " checked='checked'"; } ?> /> <label for="wp-to-twitter-enable-user-3"><?php _e('Tweet my posts into the main site Twitter account with an @ reference to my username. (Password not required with this option.)', 'wptotwitter'); ?></label></td>
 		</tr>
 		<tr>
-			<th scope="row"><label for="wp-to-twitter-user-username"><?php _e('Your Twitter Username'); ?></label></th>
-			<td><input type="text" name="wp-to-twitter-user-username" id="wp-to-twitter-user-username" value="<?php echo attribute_escape( $twitter_username ); ?>" /> <?php _e('Enter your own Twitter username.'); ?></td>
+			<th scope="row"><label for="wp-to-twitter-user-username"><?php _e('Your Twitter Username', 'wptotwitter'); ?></label></th>
+			<td><input type="text" name="wp-to-twitter-user-username" id="wp-to-twitter-user-username" value="<?php echo attribute_escape( $twitter_username ); ?>" /> <?php _e('Enter your own Twitter username.', 'wptotwitter'); ?></td>
 		</tr>
 		<tr>
-			<th scope="row"><label for="wp-to-twitter-user-password"><?php _e('Your Twitter Password'); ?></label></th>
-			<td><input type="password" name="wp-to-twitter-user-password" id="wp-to-twitter-user-password" value="" /> <?php _e('Enter your own Twitter password.'); ?></td>
+			<th scope="row"><label for="wp-to-twitter-user-password"><?php _e('Your Twitter Password', 'wptotwitter'); ?></label></th>
+			<td><input type="password" name="wp-to-twitter-user-password" id="wp-to-twitter-user-password" value="" /> <?php _e('Enter your own Twitter password.', 'wptotwitter'); ?></td>
 		</tr>
 		</table>
 		<?php
@@ -926,7 +926,7 @@ function jd_wp_Twitter_manage_page() {
 }
 function plugin_action($links, $file) {
 	if ($file == plugin_basename(dirname(__FILE__).'/wp-to-twitter.php'))
-		$links[] = "<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>" . __('Settings', 'wp-to-twitter') . "</a>";
+		$links[] = "<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>" . __('Settings', 'wp-to-twitter', 'wptotwitter') . "</a>";
 	return $links;
 }
 
