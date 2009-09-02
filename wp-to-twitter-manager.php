@@ -54,7 +54,9 @@
 
 		$message = __("Set your Twitter login information and URL shortener API information to use this plugin!", 'wptotwitter');
 	}
-	
+	if ( get_option( 'twitterInitialised') == '1' && get_option( 'jd_post_excerpt' ) == "" ) { 
+		update_option( 'jd_post_excerpt', 30 );
+	}
 	if ( get_option( 'twitterInitialised') == '1' && get_option( 'twitterpw' ) == "" ) {
 		$message .= __("Please add your Twitter password. ", 'wptotwitter');
 	}
