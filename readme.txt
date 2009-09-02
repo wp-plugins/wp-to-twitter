@@ -22,6 +22,10 @@ This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman]
 
 == Changelog ==
 
+= 1.4.8 =
+
+* Adds a function to provide PHP5s str_split functionality for PHP4 installations.
+
 = 1.4.7 = 
 
 * Actually resolves the bug which 1.4.6 was supposed to fix.

@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.4.7
+Version: 1.4.8
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -34,7 +34,7 @@ load_plugin_textdomain( 'wptotwitter', 'wp-content/plugins/' . $plugin_dir, $plu
 
 define('JDWP_API_POST_STATUS', 'http://twitter.com/statuses/update.json');
 
-$version = "1.4.7";
+$version = "1.4.8";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 
 if ( !defined( 'WP_PLUGIN_DIR' ) ) {
@@ -77,6 +77,21 @@ if ( !function_exists( 'str_ireplace' ) ) {
 		$needle = preg_quote( $needle, '/' );
 		return preg_replace( "/$needle/i", $str, $haystack );
 	}
+}
+
+if( !function_exists( 'str_split' ) ) {
+    function str_split( $string,$string_length=1 ) {
+        if( strlen( $string )>$string_length || !$string_length ) {
+            do {
+                $c = strlen($string);
+                $parts[] = substr($string,0,$string_length);
+                $string = substr($string,$string_length);
+            } while($string !== false);
+        } else {
+            $parts = array($string);
+        }
+        return $parts;
+    }
 }
 
 if ( function_exists( 'mb_substr_replace' ) === false ) {
