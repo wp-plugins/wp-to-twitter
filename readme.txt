@@ -22,6 +22,10 @@ This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman]
 
 == Changelog ==
 
+= 1.4.6 =
+
+* Hopefully resolved bug with empty value for new field in 1.4.5. It's late, so I won't know until tomorrow...
+
 = 1.4.5 =
 
 * Resolved bug with extraneous hash sign when no tags are attached.
