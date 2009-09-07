@@ -22,6 +22,12 @@ This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman]
 
 == Changelog ==
 
+= 1.4.9 =
+
+* Added German translation. Thanks to [Melvin](http://www.toxicavenger.de/)!
+* Fixed a bug relating to missing support for a function or two.
+* Fixed a bug relating to extraneous # symbols in tags
+
 = 1.4.8 =
 
 * Adds a function to provide PHP5s str_split functionality for PHP4 installations.

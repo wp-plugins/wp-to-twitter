@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.4.8
+Version: 1.4.9
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -29,12 +29,12 @@ Author URI: http://www.joedolson.com/
 global $wp_version,$version,$jd_plugin_url;	
 
 $plugin_dir = basename(dirname(__FILE__));
-load_plugin_textdomain( 'wptotwitter', 'wp-content/plugins/' . $plugin_dir, $plugin_dir );
+load_plugin_textdomain( 'wp-to-twitter', 'wp-content/plugins/' . $plugin_dir, $plugin_dir );
 
 
 define('JDWP_API_POST_STATUS', 'http://twitter.com/statuses/update.json');
 
-$version = "1.4.8";
+$version = "1.4.9";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 
 if ( !defined( 'WP_PLUGIN_DIR' ) ) {
@@ -77,21 +77,6 @@ if ( !function_exists( 'str_ireplace' ) ) {
 		$needle = preg_quote( $needle, '/' );
 		return preg_replace( "/$needle/i", $str, $haystack );
 	}
-}
-
-if( !function_exists( 'str_split' ) ) {
-    function str_split( $string,$string_length=1 ) {
-        if( strlen( $string )>$string_length || !$string_length ) {
-            do {
-                $c = strlen($string);
-                $parts[] = substr($string,0,$string_length);
-                $string = substr($string,$string_length);
-            } while($string !== false);
-        } else {
-            $parts = array($string);
-        }
-        return $parts;
-    }
 }
 
 if ( function_exists( 'mb_substr_replace' ) === false ) {
@@ -374,12 +359,11 @@ function jd_twit( $post_ID ) {
 		$get_post_info = get_post( $post_ID );
 		$authID = $get_post_info->post_author;
 		$excerpt_length = get_option( 'jd_post_excerpt' );
-		if ($get_post_info->post_excerpt == "") {
-		$thispostexcerpt = str_split( strip_tags($get_post_info->post_content), $excerpt_length );
+		if ( trim( $get_post_info->post_excerpt ) == "" ) {
+		$thispostexcerpt = @mb_substr( strip_tags($get_post_info->post_content), 0, $excerpt_length );
 		} else {
-		$thispostexcerpt = str_split( strip_tags($get_post_info->post_excerpt), $excerpt_length );	
+		$thispostexcerpt = @mb_substr( strip_tags($get_post_info->post_excerpt), 0, $excerpt_length );	
 		}
-		$thispostexcerpt = $thispostexcerpt[0];
 	    $thisposttitle = urlencode( stripcslashes( strip_tags( $_POST['post_title'] ) ) );
 		if ($thisposttitle == "") {
 			$thisposttitle = urlencode( stripcslashes( strip_tags( $_POST['title'] ) ) );
@@ -468,7 +452,7 @@ if (($get_post_info->post_status == 'publish' || $_POST['publish'] == 'Publish')
 	
 		if ( $sentence != '' ) {
 			if ( get_option( 'use_tags_as_hashtags' ) == '1' ) {
-				$sentence = $sentence . " " . generate_hash_tags( $post_ID );
+				$sentence = $sentence . " " . generate_hash_tags( $_POST );
 			}		
 			$sendToTwitter = jd_doTwitterAPIPost( $sentence, $authID );				
 			if ( $sendToTwitter === FALSE ) {
@@ -517,8 +501,7 @@ global $version;
 				if ($sendToTwitter === FALSE) {
 				update_option('wp_twitter_failure','2');
 				}
-			}
-	  
+			}	  
 		return $link_ID;
 	} else {
 	return '';
@@ -532,21 +515,18 @@ function jd_twit_future( $post_ID ) {
 	$get_post_info = get_post( $post_ID );
 	$jd_tweet_this = get_post_meta( $post_ID, 'jd_tweet_this', TRUE );
 	$post_status = $get_post_info->post_status;
-
 	
-	if ( $jd_tweet_this == "yes" ) {
-	
+	if ( $jd_tweet_this == "yes" ) {	
 		$thispostlink = urlencode( external_or_permalink( $post_ID ) );
 		$thisposttitle = urlencode( strip_tags( $get_post_info->post_title ) );	
 		$authID = $get_post_info->post_author;		
 		$thisblogtitle = urlencode( get_bloginfo( 'name' ) );
 		$excerpt_length = get_option( 'jd_post_excerpt' );
-		if ($get_post_info->post_excerpt == "") {
-		$thispostexcerpt = str_split( strip_tags($get_post_info->post_content), $excerpt_length );
+		if ( trim( $get_post_info->post_excerpt ) == "" ) {
+		$thispostexcerpt = @mb_substr( strip_tags($get_post_info->post_content), 0, $excerpt_length );
 		} else {
-		$thispostexcerpt = str_split( strip_tags($get_post_info->post_excerpt), $excerpt_length );	
+		$thispostexcerpt = @mb_substr( strip_tags($get_post_info->post_excerpt), 0, $excerpt_length );	
 		}
-		$thispostexcerpt = $thispostexcerpt[0];		
 		$sentence = '';
 		$customTweet = get_post_meta( $post_ID, 'jd_twitter', TRUE ); 
 		$sentence = stripcslashes(get_option( 'newpost-published-text' ));
@@ -589,7 +569,7 @@ function jd_twit_future( $post_ID ) {
 		
 			if ( $sentence != '' ) {
 				if ( get_option( 'use_tags_as_hashtags' ) == '1' ) {
-		$sentence = $sentence . " " . generate_hash_tags( $post_ID );
+		$sentence = $sentence . " " . generate_hash_tags( $_POST );
 				}	
 				$sendToTwitter = jd_doTwitterAPIPost( $sentence, $authID );				
 				if ($sendToTwitter === FALSE) {
@@ -612,12 +592,11 @@ function jd_twit_quickpress( $post_ID ) {
 		$thisposttitle = urlencode( strip_tags( $get_post_info->post_title ) );	
 		$authID = $get_post_info->post_author;		
 		$excerpt_length = get_option( 'jd_post_excerpt' );
-		if ($get_post_info->post_excerpt == "") {
-		$thispostexcerpt = str_split( strip_tags($get_post_info->post_content), $excerpt_length );
+		if ( trim( $get_post_info->post_excerpt ) == "" ) {
+		$thispostexcerpt = @mb_substr( strip_tags($get_post_info->post_content), 0, $excerpt_length );
 		} else {
-		$thispostexcerpt = str_split( strip_tags($get_post_info->post_excerpt), $excerpt_length );	
+		$thispostexcerpt = @mb_substr( strip_tags($get_post_info->post_excerpt), 0, $excerpt_length );	
 		}
-		$thispostexcerpt = $thispostexcerpt[0];		
 		$thisblogtitle = urlencode( get_bloginfo( 'name' ) );
 		$sentence = '';
 		$customTweet = get_post_meta( $post_ID, 'jd_twitter', TRUE ); 
@@ -639,7 +618,7 @@ function jd_twit_quickpress( $post_ID ) {
 
 			if ( $sentence != '' ) {
 				if ( get_option( 'use_tags_as_hashtags' ) == '1' ) {
-					$sentence = $sentence . " " . generate_hash_tags( $post_ID );	
+					$sentence = $sentence . " " . generate_hash_tags( $_POST );	
 				}
 				$sendToTwitter = jd_doTwitterAPIPost( $sentence, $authID );				
 				if ($sendToTwitter === FALSE) {
@@ -663,12 +642,11 @@ function jd_twit_xmlrpc( $post_ID ) {
 		$thispostlink = urlencode( external_or_permalink( $post_ID ) );
 		$thisposttitle = urlencode( strip_tags( $get_post_info->post_title ) );	
 		$excerpt_length = get_option( 'jd_post_excerpt' );
-		if ($get_post_info->post_excerpt == "") {
-		$thispostexcerpt = str_split( strip_tags($get_post_info->post_content), $excerpt_length );
+		if ( trim( $get_post_info->post_excerpt ) == "" ) {
+		$thispostexcerpt = @mb_substr( strip_tags($get_post_info->post_content), 0, $excerpt_length );
 		} else {
-		$thispostexcerpt = str_split( strip_tags($get_post_info->post_excerpt), $excerpt_length );	
+		$thispostexcerpt = @mb_substr( strip_tags($get_post_info->post_excerpt), 0, $excerpt_length );	
 		}
-		$thispostexcerpt = $thispostexcerpt[0];
 		$thisblogtitle = urlencode( get_bloginfo( 'name' ) );
 		$sentence = '';
 		$sentence = stripcslashes(get_option( 'newpost-published-text' ));
@@ -690,7 +668,7 @@ function jd_twit_xmlrpc( $post_ID ) {
 			
 			if ( $sentence != '' ) {
 				if ( get_option( 'use_tags_as_hashtags' ) == '1' ) {
-					$sentence = $sentence . " " . generate_hash_tags( $post_ID );
+					$sentence = $sentence . " " . generate_hash_tags( $_POST );
 				}			
 				$sendToTwitter = jd_doTwitterAPIPost( $sentence, $authID );				
 				$sendToTwitter = jd_doTwitterAPIPost( $sentence, $authID );				
@@ -720,18 +698,21 @@ function store_url($post_ID, $url) {
 	add_post_meta( $post_ID, 'wp_jd_target', $target );
 }
 
-function generate_hash_tags( $post_ID ) {
+function generate_hash_tags( $post ) {
 global $wp_version;
 	if ( version_compare( $wp_version,"2.8",">=" ) ) {
-		$tags = $_POST['tax_input']['post_tag'] . "," . $_POST['newtag']['post_tag'];
+		$tags = $post['tax_input']['post_tag'] . "," . $post['newtag']['post_tag'];
 		} else {
-		$tags = $_POST['tags_input'];
+		$tags = $post['tags_input'];
 		}
-	$tags = explode(",",$tags);
+	$tags = explode( ",",$tags );
 		foreach ( $tags as $value ) {
 		$value = str_ireplace( " ","_",trim( $value ) );
-			if ( $value != __( "Add_new_tag" , 'wptotwitter') ) { 
-			$hashtags .= "#$value ";
+			if ( $value != __( "Add_new_tag" , 'wp-to-twitter') && $value != "" ) { 
+			$newtag = "#$value";
+				if ( mb_strlen( $newtag ) > 2 ) {
+				$hashtags .= "$newtag ";
+				}
 			}
 		}
 	$hashtags = trim( $hashtags );
@@ -747,7 +728,7 @@ function jd_add_twitter_old_box() {
 <div class="dbx-b-ox-wrapper">
 <fieldset id="twitdiv" class="dbx-box">
 <div class="dbx-h-andle-wrapper">
-<h3 class="dbx-handle"><?php _e('WP to Twitter', 'wp-to-twitter', 'wptotwitter') ?></h3>
+<h3 class="dbx-handle"><?php _e('WP to Twitter', 'wp-to-twitter', 'wp-to-twitter') ?></h3>
 </div>
 <div class="dbx-c-ontent-wrapper">
 <div class="dbx-content">
@@ -788,20 +769,20 @@ cntfield.value = field.value.length;
 //  End -->
 </script>
 <p>
-<label for="jd_twitter"><?php _e('Twitter Post', 'wp-to-twitter', 'wptotwitter') ?></label><br /><textarea style="width:95%;" name="jd_twitter" id="jd_twitter" rows="2" cols="60"
+<label for="jd_twitter"><?php _e('Twitter Post', 'wp-to-twitter', 'wp-to-twitter') ?></label><br /><textarea style="width:95%;" name="jd_twitter" id="jd_twitter" rows="2" cols="60"
 	onKeyDown="countChars(document.post.jd_twitter,document.post.twitlength)"
 	onKeyUp="countChars(document.post.jd_twitter,document.post.twitlength)"><?php echo attribute_escape( $jd_twitter ); ?></textarea>
 </p>
 <p><input readonly type="text" name="twitlength" size="3" maxlength="3" value="<?php echo attribute_escape( mb_strlen( $description) ); ?>" />
-<?php _e(' characters.<br />Twitter posts are a maximum of 140 characters; if your Cli.gs URL is appended to the end of your document, you have 119 characters available. You can use <code>#url#</code>, <code>#title#</code>, <code>#post#</code> or <code>#blog#</code> to insert the shortened URL, post title, a post excerpt or blog name into the Tweet.', 'wp-to-twitter', 'wptotwitter') ?> <a target="__blank" href="<?php echo $jd_plugin_url; ?>"><?php _e('Get Support', 'wp-to-twitter', 'wptotwitter') ?></a> &raquo;
+<?php _e(' characters.<br />Twitter posts are a maximum of 140 characters; if your Cli.gs URL is appended to the end of your document, you have 119 characters available. You can use <code>#url#</code>, <code>#title#</code>, <code>#post#</code> or <code>#blog#</code> to insert the shortened URL, post title, a post excerpt or blog name into the Tweet.', 'wp-to-twitter', 'wp-to-twitter') ?> <a target="__blank" href="<?php echo $jd_plugin_url; ?>"><?php _e('Get Support', 'wp-to-twitter', 'wp-to-twitter') ?></a> &raquo;
 </p>
 <p>
-<input type="checkbox" name="jd_tweet_this" value="no"<?php echo attribute_escape( $jd_selected ); ?> id="jd_tweet_this" /> <label for="jd_tweet_this"><?php _e("Don't Tweet this post.", 'wptotwitter'); ?></label>
+<input type="checkbox" name="jd_tweet_this" value="no"<?php echo attribute_escape( $jd_selected ); ?> id="jd_tweet_this" /> <label for="jd_tweet_this"><?php _e("Don't Tweet this post.", 'wp-to-twitter'); ?></label>
 </p>
 <p>
 <?php
 if ( $jd_short != "" ) {
-	_e("The previously-posted $shortener URL for this post is <code>$jd_short</code>, which points to <code>$jd_expansion</code>.", 'wptotwitter');
+	_e("The previously-posted $shortener URL for this post is <code>$jd_short</code>, which points to <code>$jd_expansion</code>.", 'wp-to-twitter');
 }
 ?>
 </p>
@@ -848,22 +829,22 @@ function jd_twitter_profile() {
 			$twitter_password = get_usermeta( $user_ID, 'wp-to-twitter-user-password' );
 	
 		?>
-		<h3><?php _e('WP to Twitter User Settings', 'wptotwitter'); ?></h3>
+		<h3><?php _e('WP to Twitter User Settings', 'wp-to-twitter'); ?></h3>
 		
 		<table class="form-table">
 		<tr>
-			<th scope="row"><?php _e('Use My Twitter Account', 'wptotwitter'); ?></th>
-			<td><input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user" value="userTwitter"<?php if ($is_enabled == "userTwitter" || $is_enabled == "true" ) { echo " checked='checked'"; } ?> /> <label for="wp-to-twitter-enable-user"><?php _e('Select this option if you would like your posts to be Tweeted into your own Twitter account with no @ references.', 'wptotwitter'); ?></label><br />
-<input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user-2" value="userAtTwitter"<?php if ($is_enabled == "userAtTwitter") { echo " checked='checked'"; } ?> /> <label for="wp-to-twitter-enable-user-2"><?php _e('Tweet my posts into my Twitter account with an @ reference to the site\'s main Twitter account.', 'wptotwitter'); ?></label><br />
-<input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user-3" value="mainAtTwitter"<?php if ($is_enabled == "mainAtTwitter") { echo " checked='checked'"; } ?> /> <label for="wp-to-twitter-enable-user-3"><?php _e('Tweet my posts into the main site Twitter account with an @ reference to my username. (Password not required with this option.)', 'wptotwitter'); ?></label></td>
+			<th scope="row"><?php _e('Use My Twitter Account', 'wp-to-twitter'); ?></th>
+			<td><input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user" value="userTwitter"<?php if ($is_enabled == "userTwitter" || $is_enabled == "true" ) { echo " checked='checked'"; } ?> /> <label for="wp-to-twitter-enable-user"><?php _e('Select this option if you would like your posts to be Tweeted into your own Twitter account with no @ references.', 'wp-to-twitter'); ?></label><br />
+<input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user-2" value="userAtTwitter"<?php if ($is_enabled == "userAtTwitter") { echo " checked='checked'"; } ?> /> <label for="wp-to-twitter-enable-user-2"><?php _e('Tweet my posts into my Twitter account with an @ reference to the site\'s main Twitter account.', 'wp-to-twitter'); ?></label><br />
+<input type="radio" name="wp-to-twitter-enable-user" id="wp-to-twitter-enable-user-3" value="mainAtTwitter"<?php if ($is_enabled == "mainAtTwitter") { echo " checked='checked'"; } ?> /> <label for="wp-to-twitter-enable-user-3"><?php _e('Tweet my posts into the main site Twitter account with an @ reference to my username. (Password not required with this option.)', 'wp-to-twitter'); ?></label></td>
 		</tr>
 		<tr>
-			<th scope="row"><label for="wp-to-twitter-user-username"><?php _e('Your Twitter Username', 'wptotwitter'); ?></label></th>
-			<td><input type="text" name="wp-to-twitter-user-username" id="wp-to-twitter-user-username" value="<?php echo attribute_escape( $twitter_username ); ?>" /> <?php _e('Enter your own Twitter username.', 'wptotwitter'); ?></td>
+			<th scope="row"><label for="wp-to-twitter-user-username"><?php _e('Your Twitter Username', 'wp-to-twitter'); ?></label></th>
+			<td><input type="text" name="wp-to-twitter-user-username" id="wp-to-twitter-user-username" value="<?php echo attribute_escape( $twitter_username ); ?>" /> <?php _e('Enter your own Twitter username.', 'wp-to-twitter'); ?></td>
 		</tr>
 		<tr>
-			<th scope="row"><label for="wp-to-twitter-user-password"><?php _e('Your Twitter Password', 'wptotwitter'); ?></label></th>
-			<td><input type="password" name="wp-to-twitter-user-password" id="wp-to-twitter-user-password" value="" /> <?php _e('Enter your own Twitter password.', 'wptotwitter'); ?></td>
+			<th scope="row"><label for="wp-to-twitter-user-password"><?php _e('Your Twitter Password', 'wp-to-twitter'); ?></label></th>
+			<td><input type="password" name="wp-to-twitter-user-password" id="wp-to-twitter-user-password" value="" /> <?php _e('Enter your own Twitter password.', 'wp-to-twitter'); ?></td>
 		</tr>
 		</table>
 		<?php
@@ -941,7 +922,7 @@ function jd_wp_Twitter_manage_page() {
 }
 function plugin_action($links, $file) {
 	if ($file == plugin_basename(dirname(__FILE__).'/wp-to-twitter.php'))
-		$links[] = "<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>" . __('Settings', 'wp-to-twitter', 'wptotwitter') . "</a>";
+		$links[] = "<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>" . __('Settings', 'wp-to-twitter', 'wp-to-twitter') . "</a>";
 	return $links;
 }
 
