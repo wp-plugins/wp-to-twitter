@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, cligs, redirect, shortener, post, links
 Requires at least: 2.5
-Tested up to: 2.8.3
+Tested up to: 2.8.4
 Stable tag: trunk
 
 Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using the Cligs URL shortening service.
@@ -21,6 +21,10 @@ Any status update you write which is longer than the available space will automa
 This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com). Thanks to [Cory LaViska](http://abeautifulsite.net/notebook/71) for PHP 4 compatible `json_decode` and `json_encode`. Thanks to [Michal Migurski](http://mike.teczno.com) for authoring the JSON class.
 
 == Changelog ==
+
+= 1.4.10 =
+
+* Was never supposed to exist, except that I *forgot* to include a backup function.
 
 = 1.4.9 =
 
