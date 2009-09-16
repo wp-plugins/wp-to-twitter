@@ -22,6 +22,13 @@ This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman]
 
 == Changelog ==
 
+= 1.4.11 =
+
+* Fixed a bug which allowed editing of posts to be tweeted if status updates on editing Pages were permitted.
+* Fixed a bug in the support check routine which caused all Cli.gs tests to fail.
+* Streamlined logic controlling whether a new or edited item should be tweeted.
+* Added Italian translation. Thanks to [Gianni Diurno](http://www.gidibao.net)!
+
 = 1.4.10 =
 
 * Was never supposed to exist, except that I *forgot* to include a backup function.

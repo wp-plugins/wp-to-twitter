@@ -216,16 +216,17 @@
 	$bitlyapi = get_option( 'bitlyapi' );	
 	
 		if ( $run_Snoopy_test == TRUE ) {	
-		$cligs_checker->fetchtext( "http://cli.gs/api/v2/cligs/create?url=$testurl&appid=WP-to-Twitter&key=&output=&test=1" );
+		$cligs_checker->fetchtext( "http://cli.gs/api/v1/cligs/create?url=$testurl&appid=WP-to-Twitter&key=" );
 		$bitly_checker->fetch( "http://api.bit.ly/shorten?version=2.0.1&longUrl=".$testurl."&login=".$bitlylogin."&apiKey=".$bitlyapi."&history=1" );
 		$twit_checker->fetch( "http://twitter.com/help/test.json" );
 
-			if ( strlen($cligs_checker->results) == 20 ) {
-				$wp_cligs_error = FALSE;
-				$message .= __("<li>Successfully contacted the Cli.gs API via Snoopy.</li>", 'wp-to-twitter');
-				//$message .= "Twit: " . $twit_checker->results;			
+			if ( trim($cligs_checker->results) == "Please specify a valid URL to shorten.") {
+				$message .= __("<li>Successfully contacted the Cli.gs API via Snoopy, but the URL creation failed.</li>", 'wp-to-twitter');
+			} elseif (  trim($cligs_checker->results) == "There was a server problem creating the clig." ) {
+				$message .= __("<li>Successfully contacted the Cli.gs API via Snoopy, but a Cli.gs server error prevented the URL from being shrotened.</li>", 'wp-to-twitter');
 			} else {
-				$message .=__("<li>Failed to contact the Cli.gs API via Snoopy.</li>", 'wp-to-twitter');
+				$message .=__("<li>Successfully contacted the Cli.gs API via Snoopy and created a shortened link.</li>", 'wp-to-twitter');
+				$wp_cligs_error = FALSE;				
 			}
 			
 		$decoded = json_decode($bitly_checker->results,TRUE);
@@ -292,7 +293,7 @@
 	} 
 // CLOSE BUG FIX COMMENT HERE
 ?>
-<?php if ( $wp_twitter_error == TRUE || $wp_cligs_error == TRUE ) {
+<?php if ( $wp_twitter_error == TRUE || ( $wp_cligs_error == TRUE && $wp_bitly_error == TRUE ) ) {
 echo "<div class='error'><p>";
 _e("This plugin may not work in your server environment.", 'wp-to-twitter');
 echo "</p></div>";
@@ -390,7 +391,7 @@ echo "</p></div>";
 			</p>
 			
 			<p>
-				<label for="jd_post_excerpt"><?php _e("Length of post excerpt (in characters):", 'wp-to-twitter'); ?></label> <input type="text" name="jd_post_excerpt" id="jd_post_excerpt" size="3" maxlength="3" value="<?php echo ( attribute_escape( get_option( 'jd_post_excerpt' ) ) ) ?>" /> <small><?php _e("By default, extracted from the post itself. If you use the 'Excerpt' field, that will be used instead.", 'wp-to-twitter'); ?>
+				<label for="jd_post_excerpt"><?php _e("Length of post excerpt (in characters):", 'wp-to-twitter'); ?></label> <input type="text" name="jd_post_excerpt" id="jd_post_excerpt" size="3" maxlength="3" value="<?php echo ( attribute_escape( get_option( 'jd_post_excerpt' ) ) ) ?>" /> <small><?php _e("By default, extracted from the post itself. If you use the 'Excerpt' field, that will be used instead.", 'wp-to-twitter'); ?></small>
 			</p>				
 			
 			<p>
