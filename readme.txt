@@ -22,6 +22,16 @@ This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman]
 
 == Changelog ==
 
+= 1.5.0 =
+
+* Due to a large number of problems in the 1.4.x series, I'm launching a significant revision to the base code earlier than initially planned. This is because many of these features were already in development, and it's simply too much work to maintain both branches of the code.
+* Added option to export settings in plain text for troubleshooting.
+* Simplified some aspects of the settings page.
+* Added custom text options for WordPress Pages to match support for Posts.
+* Improved tags as hashtags handling.
+* Added the ability to use custom shortcodes to access information in custom fields.
+* Improved some error messages to clarify certain issues.
+
 = 1.4.11 =
 
 * Fixed a bug which allowed editing of posts to be tweeted if status updates on editing Pages were permitted.
@@ -193,6 +203,10 @@ If Twitter isn't available, you'll get a message telling you that there's been a
 = What if Cli.gs isn't available when I make my post? =
 
 If Cli.gs isn't available, your tweet will be sent using it's normal post permalink. You'll also get an error message letting you know that there was a problem contacting Cli.gs.
+
+= Why do my Twitter status updates show up labeled as "From WP to Twitter"? =
+
+Twitter.com allows API applications to register themselves with the service, so they can provide information about the source of your Tweet. WP to Twitter is a registered user agent with Twitter.com. The same effect is seen if you use any other registered Twitter client.
 
 = What if my server doesn't support the methods you use to contact these other sites? =
 
