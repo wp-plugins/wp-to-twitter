@@ -124,6 +124,6 @@ echo "[";echo get_option( 'jd-functions-checked' );echo " | ";echo get_option( '
 
 echo "<p>";
 _e( "[<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>Hide</a>] If you're experiencing trouble, please copy these settings into any request for support.",'wp-to-twitter'); 
-echo "</p></div>
+echo "</p></div>";
 }
 ?>

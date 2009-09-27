@@ -12,17 +12,12 @@ delete_option( 'oldpost-edited-showlink' );
 
 delete_option( 'jd_twit_pages' );
 delete_option( 'jd_twit_edited_pages' );
+delete_option( 'oldpage-edited-text' );
+delete_option( 'newpage-published-text' );
 
 delete_option( 'jd_twit_remote' );
 
 delete_option( 'jd_post_excerpt' );
-
-// Use Google Analytics with Twitter
-delete_option( 'twitter-analytics-campaign' );
-delete_option( 'use-twitter-analytics' );
-
-// Use custom external URLs to point elsewhere. 
-delete_option( 'jd_twit_custom_url' );
 
 // Cligs API
 delete_option( 'cligsapi' );
@@ -56,15 +51,17 @@ delete_option( 'jd-use-none' );
 
 // Special Options
 delete_option( 'jd_twit_prepend' );
+delete_option( 'jd_twit_append' );
 delete_option( 'jd_twit_remote' );
 delete_option( 'twitter-analytics-campaign' );
 delete_option( 'use-twitter-analytics' );
 delete_option( 'jd_twit_custom_url' );
 delete_option( 'jd_shortener' );
-delete_option( 'jd_twit_append' );
+
 delete_option( 'jd_individual_twitter_users' );
 delete_option( 'use_tags_as_hashtags' );
-
+delete_option('jd_max_tags');
+delete_option('jd_max_characters');	
 // Bitly Settings
 delete_option( 'bitlylogin' );
 delete_option( 'jd-use-bitly' );

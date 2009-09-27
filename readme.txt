@@ -22,6 +22,10 @@ This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman]
 
 == Changelog ==
 
+= 1.5.1 =
+
+* Because that's what I get for making last minute changes.
+
 = 1.5.0 =
 
 * Due to a large number of problems in the 1.4.x series, I'm launching a significant revision to the base code earlier than initially planned. This is because many of these features were already in development, and it's simply too much work to maintain both branches of the code.
