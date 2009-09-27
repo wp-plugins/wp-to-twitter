@@ -711,9 +711,11 @@ global $wp_version;
 		$tags = $post['tags_input'];
 		}
 	$tags = explode( ",",$tags );
+	$tags = array_unique($tags);
 		foreach ( $tags as $value ) {
+		$default = str_ireplace( " ", "_", __( "Add new tag" , 'wp-to-twitter') );
 		$value = str_ireplace( " ","_",trim( $value ) );
-			if ( $value != __( "Add_new_tag" , 'wp-to-twitter') && $value != "" ) { 
+			if ( $value != $default && $value != "" ) { 
 			$newtag = "#$value";
 				if ( mb_strlen( $newtag ) > 2 ) {
 				$hashtags .= "$newtag ";
@@ -724,6 +726,7 @@ global $wp_version;
 	if ( mb_strlen( $hashtags ) <= 1 ) {
 	$hashtags = "";
 	}
+	$hashtags = $post['tax_input']['post_tag'];	
 	return $hashtags;
 }
 
