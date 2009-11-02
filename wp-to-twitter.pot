@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/wp-to-twitter\n"
-"POT-Creation-Date: 2009-09-26 22:40+0000\n"
+"POT-Creation-Date: 2009-11-02 19:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,15 +16,23 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: functions.php:117
+#: functions.php:123
 msgid "Twitter Password Saved"
 msgstr ""
 
-#: functions.php:119
+#: functions.php:125
 msgid "Twitter Password Not Saved"
 msgstr ""
 
-#: functions.php:126
+#: functions.php:128
+msgid "Bit.ly API Saved"
+msgstr ""
+
+#: functions.php:130
+msgid "Bit.ly API Not Saved"
+msgstr ""
+
+#: functions.php:136
 msgid ""
 "[<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>Hide</"
 "a>] If you're experiencing trouble, please copy these settings into any "
@@ -220,7 +228,7 @@ msgstr ""
 msgid "WP to Twitter Options"
 msgstr ""
 
-#: wp-to-twitter-manager.php:320 wp-to-twitter.php:759
+#: wp-to-twitter-manager.php:320 wp-to-twitter.php:781
 msgid "Get Support"
 msgstr ""
 
@@ -232,12 +240,13 @@ msgstr ""
 msgid ""
 "For any post update field, you can use the codes <code>#title#</code> for "
 "the title of your blog post, <code>#blog#</code> for the title of your blog, "
-"<code>#post#</code> for a short excerpt of the post content or <code>#url#</"
-"code> for the post URL (shortened or not, depending on your preferences.) "
-"You can also create custom shortcodes to access WordPress custom fields. Use "
-"doubled square brackets surrounding the name of your custom field to add the "
-"value of that custom field to your status update. Example: <code>"
-"[[custom_field]]</code>"
+"<code>#post#</code> for a short excerpt of the post content, "
+"<code>#category#</code> for the first selected category for the post, or "
+"<code>#url#</code> for the post URL (shortened or not, depending on your "
+"preferences.) You can also create custom shortcodes to access WordPress "
+"custom fields. Use doubled square brackets surrounding the name of your "
+"custom field to add the value of that custom field to your status update. "
+"Example: <code>[[custom_field]]</code>"
 msgstr ""
 
 #: wp-to-twitter-manager.php:342
@@ -515,84 +524,85 @@ msgid ""
 "Twitter plugin page</a>."
 msgstr ""
 
-#: wp-to-twitter.php:691
+#: wp-to-twitter.php:713
 msgid "Add_new_tag"
 msgstr ""
 
 #. #-#-#-#-#  plugin.pot (PACKAGE VERSION)  #-#-#-#-#
 #. Plugin Name of an extension
-#: wp-to-twitter.php:713
+#: wp-to-twitter.php:735
 msgid "WP to Twitter"
 msgstr ""
 
-#: wp-to-twitter.php:754
+#: wp-to-twitter.php:776
 msgid "Twitter Post"
 msgstr ""
 
-#: wp-to-twitter.php:759
+#: wp-to-twitter.php:781
 msgid ""
 " characters.<br />Twitter posts are a maximum of 140 characters; if your Cli."
 "gs URL is appended to the end of your document, you have 119 characters "
 "available. You can use <code>#url#</code>, <code>#title#</code>, "
-"<code>#post#</code> or <code>#blog#</code> to insert the shortened URL, post "
-"title, a post excerpt or blog name into the Tweet."
+"<code>#post#</code>, <code>#category#</code> or <code>#blog#</code> to "
+"insert the shortened URL, post title, the first category selected, or a post "
+"excerpt or blog name into the Tweet."
 msgstr ""
 
-#: wp-to-twitter.php:759
+#: wp-to-twitter.php:781
 msgid "Make a Donation"
 msgstr ""
 
-#: wp-to-twitter.php:762
+#: wp-to-twitter.php:784
 msgid "Don't Tweet this post."
 msgstr ""
 
-#: wp-to-twitter.php:811
+#: wp-to-twitter.php:833
 msgid "WP to Twitter User Settings"
 msgstr ""
 
-#: wp-to-twitter.php:815
+#: wp-to-twitter.php:837
 msgid "Use My Twitter Account"
 msgstr ""
 
-#: wp-to-twitter.php:816
+#: wp-to-twitter.php:838
 msgid ""
 "Select this option if you would like your posts to be Tweeted into your own "
 "Twitter account with no @ references."
 msgstr ""
 
-#: wp-to-twitter.php:817
+#: wp-to-twitter.php:839
 msgid ""
 "Tweet my posts into my Twitter account with an @ reference to the site's "
 "main Twitter account."
 msgstr ""
 
-#: wp-to-twitter.php:818
+#: wp-to-twitter.php:840
 msgid ""
 "Tweet my posts into the main site Twitter account with an @ reference to my "
 "username. (Password not required with this option.)"
 msgstr ""
 
-#: wp-to-twitter.php:821
+#: wp-to-twitter.php:843
 msgid "Your Twitter Username"
 msgstr ""
 
-#: wp-to-twitter.php:822
+#: wp-to-twitter.php:844
 msgid "Enter your own Twitter username."
 msgstr ""
 
-#: wp-to-twitter.php:825
+#: wp-to-twitter.php:847
 msgid "Your Twitter Password"
 msgstr ""
 
-#: wp-to-twitter.php:826
+#: wp-to-twitter.php:848
 msgid "Enter your own Twitter password."
 msgstr ""
 
-#: wp-to-twitter.php:945
+#: wp-to-twitter.php:967
 msgid "<p>Couldn't locate the settings page.</p>"
 msgstr ""
 
-#: wp-to-twitter.php:950
+#: wp-to-twitter.php:972
 msgid "Settings"
 msgstr ""
 
