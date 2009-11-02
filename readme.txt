@@ -3,24 +3,36 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, cligs, redirect, shortener, post, links
 Requires at least: 2.5
-Tested up to: 2.8.4
+Tested up to: 2.9
 Stable tag: trunk
 
 Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using the Cligs URL shortening service.
 
 == Description ==
 
-The WP-to-Twitter plugin posts a Twitter status update from your WordPress blog using the Cli.gs URL shortening service to provide a link back to your post from Twitter. 
+The WP-to-Twitter plugin posts a Twitter status update from your WordPress blog using either the Cli.gs or Bit.ly URL shortening services to provide a link back to your post from Twitter. 
 
-If you have a Cli.gs API key, the shortened URL will also be filed in your Cli.gs account so that you can track statistics for the shortened URL. 
+For both services you can provide your information to maintain a list of your shortened URLs with your URL shortening service for statistics and your own records.
 
 The plugin can send a default message for updating or editing posts or pages, but also allows you to write a custom Tweet for your post which says whatever you want. By default, the shortened URL from Cli.gs is appended to the end of your message, so you should keep that in mind when writing your custom Tweet. 
 
 Any status update you write which is longer than the available space will automatically be truncated by the plugin. This applies to both the default messages and to your custom messages.
 
-This plugin is based loosely on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com). Thanks to [Cory LaViska](http://abeautifulsite.net/notebook/71) for PHP 4 compatible `json_decode` and `json_encode`. Thanks to [Michal Migurski](http://mike.teczno.com) for authoring the JSON class.
+Credits:
+
+This plugin was originally based loosely on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com). Thanks to [Cory LaViska](http://abeautifulsite.net/notebook/71) for PHP 4 compatible `json_decode` and `json_encode`. Thanks to [Michal Migurski](http://mike.teczno.com) for authoring the JSON class. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 1.5.2 = 
+
+* Minor code cleanup
+* Fixed uncommon bug where draft posts would not tweet when published.
+* Fixed bug where #title# shortcode wouldn't work due to prior URL encoding. (Also covers some other obscure bugs.) Thanks to [Daniel Chcouri](http://www.anarchy.co.il) for the great catch.
+* Added new shortcode (#category#) to fetch the first post category.
+* Provided a substitute function for hosts not supportin mb_substr().
+* Fixed a bug where a hashtag would be posted on edits when posting updates was not enabled for edits.
+* Put Cli.gs change revisions on hold barring updates from Pierre at Cli.gs
 
 = 1.5.1 =
 

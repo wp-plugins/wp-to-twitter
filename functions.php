@@ -24,6 +24,12 @@ if (!function_exists('mb_strlen')) {
 	}
 }
 
+if (!function_exists('mb_substr')) {
+	function mb_substr($data,$start,$length = null, $encoding = null) {
+		return substr($data,$start,$length);
+	}
+}
+
 // str_ireplace substitution for PHP4
 if ( !function_exists( 'str_ireplace' ) ) {
 	function str_ireplace( $needle, $str, $haystack ) {
@@ -89,28 +95,28 @@ if ( function_exists( 'curl_init' ) ) {
 	}
 }
 function print_settings() {
+global $version;
 echo "<div class=\"settings\">";
-echo "<strong>Raw Settings Output:</strong>";
+echo "<strong>Raw Settings Output: Version $version</strong>";
 echo "<pre>";
-echo get_option( 'newpost-published-update' );echo " : ";echo get_option( 'newpost-published-text' );echo " : ";echo get_option( 'newpost-published-showlink' );
+echo get_option( 'newpost-published-update' ) . " : " . get_option( 'newpost-published-text' ) . " : " . get_option( 'newpost-published-showlink' );
 echo "<br />";
-echo get_option( 'oldpost-edited-update' );echo " : ";echo get_option( 'oldpost-edited-text' );echo " : ";echo get_option( 'oldpost-edited-showlink' );
+echo get_option( 'oldpost-edited-update' ) . " : " . get_option( 'oldpost-edited-text' ) . " : " . get_option( 'oldpost-edited-showlink' );
 echo "<br />";
-echo get_option( 'jd_twit_pages' );echo " : ";echo get_option( 'newpage-published-text' );
+echo get_option( 'jd_twit_pages' ) . " : " . get_option( 'newpage-published-text' );
 echo "<br />";
-echo get_option( 'jd_twit_edited_pages' );echo " : ";echo get_option( 'oldpage-edited-text' );
+echo get_option( 'jd_twit_edited_pages' ) . " : " . get_option( 'oldpage-edited-text' );
 echo "<br />[";
-echo get_option( 'use_tags_as_hashtags' );echo " | ";echo get_option( 'jd_max_tags' );echo " | ";echo get_option( 'jd_max_characters' );echo "]<br />";
-echo get_option( 'jd_twit_blogroll' );echo " : ";echo get_option( 'newlink-published-text' );echo " : ";echo get_option( 'jd-use-link-title' );echo " : ";echo get_option( 'jd-use-link-description' );
+echo get_option( 'use_tags_as_hashtags' ) . " | " . get_option( 'jd_max_tags' ) . " | " . get_option( 'jd_max_characters' ) . "]<br />";
+echo get_option( 'jd_twit_blogroll' ) . " : " . get_option( 'newlink-published-text' ) . " : " . get_option( 'jd-use-link-title' ) . " : " . get_option( 'jd-use-link-description' );
 echo "<br />";
 echo get_option( 'jd_post_excerpt' );
-echo "<br />[";echo get_option( 'jd_twit_prepend' );echo " | ";echo get_option( 'jd_twit_append' );echo "]<br />";
+echo "<br />[" . get_option( 'jd_twit_prepend' ) . " | " . get_option( 'jd_twit_append' ) . "]<br />";
 echo get_option( 'jd_twit_custom_url' );
-echo "<br />[";echo get_option( 'jd_tweet_default' );echo " | ";echo get_option( 'jd_twit_remote' );echo " | ";echo get_option( 'jd_twit_quickpress' );echo "]<br />[";
-echo get_option( 'use-twitter-analytics' );echo " : ";echo get_option( 'twitter-analytics-campaign' );echo "]<br />Individuals:";
+echo "<br />[" . get_option( 'jd_tweet_default' ) . " | " . get_option( 'jd_twit_remote' ) . " | " . get_option( 'jd_twit_quickpress' ) . "]<br />[";
+echo get_option( 'use-twitter-analytics' ) . " : " . get_option( 'twitter-analytics-campaign' ) . "]<br />Individuals:";
 echo get_option( 'jd_individual_twitter_users' );
-echo "<br />[";echo get_option( 'jd-use-cligs' );echo " | ";echo get_option( 'jd-use-bitly' );echo " | ";echo get_option( 'jd-use-none' );echo "]<br />";
-// Use custom external URLs to point elsewhere. 
+echo "<br />[" . get_option( 'jd-use-cligs' ) . " | " . get_option( 'jd-use-bitly' ) . " | " . get_option( 'jd-use-none' ) . "]<br />";
 echo get_option( 'twitterlogin' );
 echo "<br />";
 if ( get_option('twitterpw') != "") {
@@ -118,9 +124,13 @@ _e( "Twitter Password Saved",'wp-to-twitter' );
 } else {
 _e( "Twitter Password Not Saved",'wp-to-twitter' );
 }
-echo "<br />[";echo get_option( 'cligsapi' );echo " | ";echo get_option( 'bitlylogin' );echo " | ";echo get_option( 'bitlyapi' );
-echo "]<br />";
-echo "[";echo get_option( 'jd-functions-checked' );echo " | ";echo get_option( 'wp_twitter_failure' );echo " | ";echo get_option( 'wp_cligs_failure' );echo " | ";echo get_option( 'wp_url_failure' );echo " | ";echo get_option( 'wp_bitly_failure' );echo " | ";echo get_option( 'twitterInitialised' );echo " | ";echo get_option( 'wp_cligs_failure' );echo " | ";echo get_option( 'jd_shortener' );echo "]</pre>";
+if ( get_option( 'bitlyapi' ) != "") {
+$bitlyapi = __( "Bit.ly API Saved",'wp-to-twitter' );
+} else {
+$bitlyapi = __( "Bit.ly API Not Saved",'wp-to-twitter' );
+}
+echo "<br />[" . get_option( 'cligsapi' ) . " | " . get_option( 'bitlylogin' ) . " | $bitlyapi ]<br />";
+echo "[" . get_option( 'jd-functions-checked' ) . " | " . get_option( 'wp_twitter_failure' ) . " | " . get_option( 'wp_cligs_failure' ) . " | " . get_option( 'wp_url_failure' ) . " | " . get_option( 'wp_bitly_failure' ) . " | " . get_option( 'twitterInitialised' ) ." | " . get_option( 'jd_shortener' ) . "]</pre>";
 
 echo "<p>";
 _e( "[<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>Hide</a>] If you're experiencing trouble, please copy these settings into any request for support.",'wp-to-twitter'); 

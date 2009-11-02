@@ -332,7 +332,7 @@ print_settings();
 </div>
 
 <p>
-<?php _e("For any post update field, you can use the codes <code>#title#</code> for the title of your blog post, <code>#blog#</code> for the title of your blog, <code>#post#</code> for a short excerpt of the post content or <code>#url#</code> for the post URL (shortened or not, depending on your preferences.) You can also create custom shortcodes to access WordPress custom fields. Use doubled square brackets surrounding the name of your custom field to add the value of that custom field to your status update. Example: <code>[[custom_field]]</code>", 'wp-to-twitter'); ?>
+<?php _e("For any post update field, you can use the codes <code>#title#</code> for the title of your blog post, <code>#blog#</code> for the title of your blog, <code>#post#</code> for a short excerpt of the post content, <code>#category#</code> for the first selected category for the post, or <code>#url#</code> for the post URL (shortened or not, depending on your preferences.) You can also create custom shortcodes to access WordPress custom fields. Use doubled square brackets surrounding the name of your custom field to add the value of that custom field to your status update. Example: <code>[[custom_field]]</code>", 'wp-to-twitter'); ?>
 </p>
 		
 <?php if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_url_failure' ) == '1' ) { ?>
@@ -379,7 +379,7 @@ print_settings();
 			</p>
 			<p>
 				<input type="checkbox" name="jd_twit_edited_pages" id="jd_twit_edited_pages" value="1" <?php jd_checkCheckbox('jd_twit_edited_pages')?> />
-				<label for="jd_twit_edited_pages"><strong><?php _e("Update Twitter when WordPress Pages are edited", 'wp-to-twitter'); ?></strong></label><br /><label for="oldpage-edited-text"><?php _e("Text for page edit updates:", 'wp-to-twitter'); ?></label> <input type="text" name="oldpage-edited-text" id="oldpage-edited-text" size="60" maxlength="120" value="<?php echo( attribute_escape( get_option('oldpage-edited-text' ) ) ) . $insert_edit_url; ?>" />	
+				<label for="jd_twit_edited_pages"><strong><?php _e("Update Twitter when WordPress Pages are edited", 'wp-to-twitter'); ?></strong></label><br /><label for="oldpage-edited-text"><?php _e("Text for page edit updates:", 'wp-to-twitter'); ?></label> <input type="text" name="oldpage-edited-text" id="oldpage-edited-text" size="60" maxlength="120" value="<?php echo( attribute_escape( get_option('oldpage-edited-text' ) ) ); ?>" />	
 			</p>
 			<p>
 				<input type="checkbox" name="use_tags_as_hashtags" id="use_tags_as_hashtags" value="1" <?php jd_checkCheckbox('use_tags_as_hashtags')?> />
