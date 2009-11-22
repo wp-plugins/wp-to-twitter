@@ -212,19 +212,20 @@ This plugin was originally based loosely on the Twitter Updater plugin by [Jonat
 
 = Do I have to have a Twitter.com account to use this plugin? =
 
-Yes, you need an account to use this plugin.
+Yes, you need an account with Twitter to use this plugin.
 
-= Do I have to have a Cli.gs account to use this plugin? =
+= Do I have to have a Cli.gs/Bit.ly account to use this plugin? =
 
-No, the Cli.gs account is entirely optional. Without a Cli.gs API, a "public" Clig will be generated. The redirect will work just fine, but you won't be able to access statistics on your Clig.
+A Cli.gs account is entirely optional. Without an API from Cli.gs, a "public" Clig will be generated. The redirect will work just fine, but you won't be able to access statistics on your Clig. Bit.ly does require an API key and username, however.
+Regardless, you don't need to have an account with either service to make effective use of the WP to Twitter plugin.
 
 = Twitter goes down a lot. What happens if it's not available? =
 
 If Twitter isn't available, you'll get a message telling you that there's been an error with your Twitter status update. The Tweet you were going to send will be saved in your post meta fields, so you can grab it and post it manually if you wish.
 
-= What if Cli.gs isn't available when I make my post? =
+= What if Cli.gs or Bit.ly aren't available when I make my post? =
 
-If Cli.gs isn't available, your tweet will be sent using it's normal post permalink. You'll also get an error message letting you know that there was a problem contacting Cli.gs.
+If your URL shortening service isn't available, your tweet will be sent using it's normal post permalink. You'll also get an error message letting you know that there was a problem contacting Cli.gs or Bit.ly.
 
 = Why do my Twitter status updates show up labeled as "From WP to Twitter"? =
 
@@ -240,7 +241,7 @@ No. They're private.
 
 = I can't see the settings page! =
 
-There’s an unresolved bug which effects some servers which causes the WP-to-Twitter settings page to fail. You can get around this problem by commenting out lines 191 - 256 in wp-to-twitter/wp-to-twitter-manager.php. (Version 1.4.0.) 
+There was once an unresolved bug which effected some servers causing the WP-to-Twitter settings page to fail. I haven't heard a report of this problem for quite a while, so I believe it's gone, but if it *does* show up again, you can get around the problem by commenting out approximately lines 191 - 256 in wp-to-twitter/wp-to-twitter-manager.php. (Version 1.4.0.) . (These numbers change from version to version, but there are comments in the code to help you out.)
 
 = Scheduled posting doesn't work. What's wrong? =
 
