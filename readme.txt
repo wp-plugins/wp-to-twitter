@@ -24,6 +24,12 @@ This plugin was originally based loosely on the Twitter Updater plugin by [Jonat
 
 == Changelog ==
 
+= 1.5.3 = 
+
+* Revised the function which checks whether your Tweet is under the 140 character limit imposed by Twitter. This function had a number of awkward bugs which have now (hopefully) been eradicated.
+* Revised the tags->hashtags generation for better reliability. Fixes bugs with failing to send hashtags to Twitter if they haven't been saved and allowing hashtags on scheduled posts.
+* Option to use WP default URL as a short URL. (http://yourdomain.com/yourblog/?p=id).
+
 = 1.5.2 = 
 
 * Minor code cleanup

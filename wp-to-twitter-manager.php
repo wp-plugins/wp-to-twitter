@@ -73,10 +73,7 @@
 	}
 
 	// Error messages on status update or url shortener failures	
-	if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_url_failure' ) == '1' ) {
-			if ( get_option( 'wp_url_failure' ) == '1' ) {
-				$wp_to_twitter_failure .= "<p>" . __("URL shortener request failed! We couldn't shrink that URL, so we attached the normal URL to your Tweet. Check with your URL shortening provider to see if there are any known issues. [<a href=\"http://blog.cli.gs\">Cli.gs Blog</a>] [<a href=\"http://blog.bit.ly\">Bit.ly Blog</a>]", 'wp-to-twitter') . "</p>";
-			}
+	if ( get_option( 'wp_twitter_failure' ) == '1' ) {
 			
 			if ( get_option( 'wp_twitter_failure' ) == '1' ) {
 				$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers to post your new blog post. Your tweet has been stored in a custom field attached to the post, so you can Tweet it manually if you wish! ", 'wp-to-twitter') . "</p>";
@@ -116,20 +113,30 @@
 				update_option( 'jd-use-cligs', '1' );
 				update_option( 'jd-use-bitly', '0' );
 				update_option( 'jd-use-none', '0' );
+				update_option( 'jd-use-wp','0' );
 				break;		
 			case 2:
 				update_option( 'jd-use-cligs', '0' );
 				update_option( 'jd-use-bitly', '1' );
-				update_option( 'jd-use-none', '0' );			
+				update_option( 'jd-use-none', '0' );
+				update_option( 'jd-use-wp','0' );
 				break;
 			case 3:
 				update_option( 'jd-use-cligs', '0' );
 				update_option( 'jd-use-bitly', '0' );
 				update_option( 'jd-use-none', '1' );
+				update_option( 'jd-use-wp','0' );
+				break;
+			case 4:
+				update_option( 'jd-use-cligs', '0' );
+				update_option( 'jd-use-bitly', '0' );
+				update_option( 'jd-use-none', '0' );
+				update_option( 'jd-use-wp', '1' );
 				break;
 			default:
 				update_option( 'jd-use-cligs', '1' );
 				update_option( 'jd-use-bitly', '0' );	
+				update_option( 'jd-use-wp','0' );
 				update_option( 'jd-use-none', '0' );
 		}		
 		
@@ -337,25 +344,18 @@ print_settings();
 		
 <?php if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_url_failure' ) == '1' ) { ?>
 		<div class="error">
-		<p>
 		<?php if ( get_option( 'wp_twitter_failure' ) == '1' ) {
-		_e("One or more of your last posts has failed to send it's status update to Twitter. Your Tweet has been saved in the custom meta data for your post, and you can re-Tweet it at your leisure.", 'wp-to-twitter');
+		_e("<p>One or more of your last posts has failed to send it's status update to Twitter. Your Tweet has been saved in your post custom fields, and you can re-Tweet it at your leisure.</p>", 'wp-to-twitter');
 		}
 		if ( get_option( 'wp_url_failure' ) == '1' ) {
-		_e("The query to the URL shortener API failed, and your URL was not shrunk. The full post URL was attached to your Tweet.", 'wp-to-twitter');
+		_e("<p>The query to the URL shortener API failed, and your URL was not shrunk. The full post URL was attached to your Tweet. Check with your URL shortening provider to see if there are any known issues. [<a href=\"http://blog.cli.gs\">Cli.gs Blog</a>] [<a href=\"http://blog.bit.ly\">Bit.ly Blog</a>]</p>", 'wp-to-twitter');
 		}
 		echo $wp_to_twitter_failure;
 		?>
-		</p>
 		</div>
 	<form method="post" action="">
-		
-
-			<div>
-		<input type="hidden" name="submit-type" value="clear-error" />
-		</div>
-		<p><input type="submit" name="submit" value="<?php _e("Clear 'WP to Twitter' Error Messages", 'wp-to-twitter'); ?>" />
-		</p>
+	<div><input type="hidden" name="submit-type" value="clear-error" /></div>
+	<p><input type="submit" name="submit" value="<?php _e("Clear 'WP to Twitter' Error Messages", 'wp-to-twitter'); ?>" class="button-primary" /></p>
 	</form>
 <?php
 }
@@ -442,7 +442,11 @@ print_settings();
 		<legend><?php _e("Set your preferred URL Shortener",'wp-to-twitter' ); ?></legend>
 
 		<p>
-		<input type="radio" name="jd_shortener" id="jd_shortener_cligs" value="1" <?php jd_checkCheckbox('jd-use-cligs')?>/> <label for="jd_shortener_cligs"><?php _e("Use <strong>Cli.gs</strong> for my URL shortener.", 'wp-to-twitter'); ?></label> <input type="radio" name="jd_shortener" id="jd_shortener_bitly" value="2" <?php jd_checkCheckbox('jd-use-bitly')?> /> <label for="jd_shortener_bitly"><?php _e("Use <strong>Bit.ly</strong> for my URL shortener.", 'wp-to-twitter'); ?></label> <input type="radio" name="jd_shortener" id="jd_shortener_none" value="3" <?php jd_checkCheckbox('jd-use-none')?> /> <label for="jd_shortener_none"><?php _e("Don't shorten URLs.", 'wp-to-twitter'); ?></label>
+		<input type="radio" name="jd_shortener" id="jd_shortener_cligs" value="1" <?php jd_checkCheckbox('jd-use-cligs')?>/> <label for="jd_shortener_cligs"><?php _e("Use <strong>Cli.gs</strong> for my URL shortener.", 'wp-to-twitter'); ?></label> 
+		<input type="radio" name="jd_shortener" id="jd_shortener_bitly" value="2" <?php jd_checkCheckbox('jd-use-bitly')?> /> <label for="jd_shortener_bitly"><?php _e("Use <strong>Bit.ly</strong> for my URL shortener.", 'wp-to-twitter'); ?></label><br />  
+		<input type="radio" name="jd_shortener" id="jd_shortener_wp" value="4" <?php jd_checkCheckbox('jd-use-wp')?> /> <label for="jd_shortener_wp"><?php _e("Use <strong>WordPress</strong> as a URL shortener.", 'wp-to-twitter'); ?></label> 
+		<input type="radio" name="jd_shortener" id="jd_shortener_none" value="3" <?php jd_checkCheckbox('jd-use-none')?> /> <label for="jd_shortener_none"><?php _e("Don't shorten URLs.", 'wp-to-twitter'); ?></label><br />
+		<small><?php _e("Using WordPress as a URL shortener will send URLs to Twitter in the default URL format for WordPress: <code>http://domain.com/subdir/?p=123</code>. Google Analytics is not available when using WordPress shortened URLs.", 'wp-to-twitter'); ?></small>
 		</p>			
 		<div>
 		<input type="hidden" name="submit-type" value="options" />

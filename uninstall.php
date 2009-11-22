@@ -48,6 +48,7 @@ delete_option( 'cligsapi' );
 delete_option( 'jd_twit_quickpress' );
 delete_option( 'jd-use-cligs' );
 delete_option( 'jd-use-none' );
+delete_option( 'jd-use-wp' );
 
 // Special Options
 delete_option( 'jd_twit_prepend' );

@@ -116,7 +116,7 @@ echo get_option( 'jd_twit_custom_url' );
 echo "<br />[" . get_option( 'jd_tweet_default' ) . " | " . get_option( 'jd_twit_remote' ) . " | " . get_option( 'jd_twit_quickpress' ) . "]<br />[";
 echo get_option( 'use-twitter-analytics' ) . " : " . get_option( 'twitter-analytics-campaign' ) . "]<br />Individuals:";
 echo get_option( 'jd_individual_twitter_users' );
-echo "<br />[" . get_option( 'jd-use-cligs' ) . " | " . get_option( 'jd-use-bitly' ) . " | " . get_option( 'jd-use-none' ) . "]<br />";
+echo "<br />[" . get_option( 'jd-use-cligs' ) . " | " . get_option( 'jd-use-bitly' ) . " | " . get_option( 'jd-use-wp' ) . " | " . get_option( 'jd-use-none' ) . "]<br />";
 echo get_option( 'twitterlogin' );
 echo "<br />";
 if ( get_option('twitterpw') != "") {
