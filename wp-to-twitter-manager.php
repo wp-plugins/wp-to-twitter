@@ -19,6 +19,7 @@
 		update_option( 'use_tags_as_hashtags', '0' );
 		update_option('jd_max_tags',5);
 		update_option('jd_max_characters',15);	
+		update_option('jd_replace_character','_');
 		
 		update_option( 'oldpost-edited-update', '1' );
 		update_option( 'oldpost-edited-text', 'Post Edited: #title# (#url#)' );
@@ -106,7 +107,8 @@
 		update_option( 'jd_post_excerpt', $_POST['jd_post_excerpt'] );
 		update_option( 'newlink-published-text', $_POST['newlink-published-text'] );
 		update_option('jd_max_tags',$_POST['jd_max_tags']);
-		update_option('jd_max_characters',$_POST['jd_max_characters']);			
+		update_option('jd_max_characters',$_POST['jd_max_characters']);	
+		update_option('jd_replace_character',$_POST['jd_replace_character']);
 		
 		switch ($_POST['jd_shortener']) {
 			case 1:
@@ -383,7 +385,8 @@ print_settings();
 			</p>
 			<p>
 				<input type="checkbox" name="use_tags_as_hashtags" id="use_tags_as_hashtags" value="1" <?php jd_checkCheckbox('use_tags_as_hashtags')?> />
-				<label for="use_tags_as_hashtags"><strong><?php _e("Add tags as hashtags on Tweets", 'wp-to-twitter'); ?></strong></label>
+				<label for="use_tags_as_hashtags"><strong><?php _e("Add tags as hashtags on Tweets", 'wp-to-twitter'); ?></strong></label> <label for="jd_replace_character"><?php _e("Spaces replaced with:",'wp-to-twitter'); ?></label> <input type="text" name="jd_replace_character" id="jd_replace_character" value="<?php echo attribute_escape( get_option('jd_replace_character') ); ?>" size="3" /><br />
+				<small><?php _e("Default replacement is an underscore (<code>_</code>).",'wp-to-twitter'); ?></small>					
 			<br />
 			<label for="jd_max_tags"><?php _e("Maximum number of tags to include:",'wp-to-twitter'); ?></label> <input type="text" name="jd_max_tags" id="jd_max_tags" value="<?php echo attribute_escape( get_option('jd_max_tags') ); ?>" size="3" />
 			<label for="jd_max_characters"><?php _e("Maximum length in characters for included tags:",'wp-to-twitter'); ?></label> <input type="text" name="jd_max_characters" id="jd_max_characters" value="<?php echo attribute_escape( get_option('jd_max_characters') ); ?>" size="3" /><br />

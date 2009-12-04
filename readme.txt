@@ -24,6 +24,11 @@ This plugin was originally based loosely on the Twitter Updater plugin by [Jonat
 
 == Changelog ==
 
+= 1.5.4 = 
+
+* Fixed issue with spaces in hashtags. 
+* Added configurable replacement character in hashtags.
+
 = 1.5.3 = 
 
 * Revised the function which checks whether your Tweet is under the 140 character limit imposed by Twitter. This function had a number of awkward bugs which have now (hopefully) been eradicated.

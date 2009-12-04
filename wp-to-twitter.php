@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 1.5.3
+Version: 1.5.4
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -30,7 +30,7 @@ load_plugin_textdomain( 'wp-to-twitter', 'wp-content/plugins/' . $plugin_dir, $p
 
 define('JDWP_API_POST_STATUS', 'http://twitter.com/statuses/update.json');
 
-$version = "1.5.3";
+$version = "1.5.4";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 $jd_donate_url = "http://www.joedolson.com/donate.php";
 
@@ -677,8 +677,10 @@ $max_characters = get_option( 'jd_max_characters' );
 		$i = 1;
 			foreach ( $tags as $value ) {
 			$tag = $value->name;
-			$value = str_ireplace( " ","_",trim( $tag ) );
-				$newtag = "#$tag";
+			$replace = get_option( 'jd_replace_character' );
+			if ($replace == "" || !$replace) { $replace = "_"; }
+			$value = str_ireplace( " ",$replace,trim( $tag ) );
+				$newtag = "#$value";
 					if ( mb_strlen( $newtag ) > 2 && (mb_strlen( $newtag ) <= $max_characters) && ($i <= $max_tags) ) {
 					$hashtags .= "$newtag ";
 					$i++;
