@@ -1,0 +1,562 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Joseph Dolson
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: WP to Twitter in italiano\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/wp-to-twitter\n"
+"POT-Creation-Date: 2009-11-22 20:41+0000\n"
+"PO-Revision-Date: 2009-12-04 20:49+0100\n"
+"Last-Translator: Gianni Diurno (aka gidibao) <gidibao@gmail.com>\n"
+"Language-Team: Gianni Diurno | http://gidibao.net/ <gidibao@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Italian\n"
+"X-Poedit-Country: ITALY\n"
+
+#: functions.php:123
+msgid "Twitter Password Saved"
+msgstr "La password di Twitter è stata salvata"
+
+#: functions.php:125
+msgid "Twitter Password Not Saved"
+msgstr "La password di Twitter non é stata salvata"
+
+#: functions.php:128
+msgid "Bit.ly API Saved"
+msgstr "La chiave API di Bit.ly é stata salvata."
+
+#: functions.php:130
+msgid "Bit.ly API Not Saved"
+msgstr "La chiave API di Bit.ly non é stata salvata."
+
+#: functions.php:136
+msgid "[<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>Hide</a>] If you're experiencing trouble, please copy these settings into any request for support."
+msgstr "[<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>Nascondi</a>] Qualora avessi riscontrato dei problemi, allega queste impostazioni alle richieste di supporto."
+
+#: wp-to-twitter-manager.php:60
+msgid "Set your Twitter login information and URL shortener API information to use this plugin!"
+msgstr "Per potere utilizzare questo plugin dovrai inserire i tuoi dati login di Twitter e le informazioni API per i servizi URL brevi! "
+
+#: wp-to-twitter-manager.php:66
+msgid "Please add your Twitter password. "
+msgstr "Inserisci la tua password di Twitter."
+
+#: wp-to-twitter-manager.php:72
+msgid "WP to Twitter Errors Cleared"
+msgstr "Gli errori WP to Twitter sono stati azzerati"
+
+#: wp-to-twitter-manager.php:79
+msgid "Sorry! I couldn't get in touch with the Twitter servers to post your new blog post. Your tweet has been stored in a custom field attached to the post, so you can Tweet it manually if you wish! "
+msgstr "Non é stato possibile contattare i server di Twitter per comunicare l'aggiornamento avvenuto. Il tuo messaggio é stato inserito in un campo personalizzato in allegato all'articolo in modo tale che tu possa compiere manualmente l'operazione!"
+
+#: wp-to-twitter-manager.php:81
+msgid "Sorry! I couldn't get in touch with the Twitter servers to post your <strong>new link</strong>! You'll have to post it manually, I'm afraid. "
+msgstr "Non é stato possibile contattare i server di Twitter per comunicare il tuo <strong>nuovo link</strong>. Prova a compiere manualmente l'operazione."
+
+#: wp-to-twitter-manager.php:144
+msgid "You must add your Bit.ly login and API key in order to shorten URLs with Bit.ly."
+msgstr "E' necessario che tu inserisca i dati per il login e la chiave API di Bit.ly in modo da potere abbreviare gli URL con Bit.ly."
+
+#: wp-to-twitter-manager.php:153
+msgid "WP to Twitter Options Updated"
+msgstr "Le opzioni di WP to Twitter sono state aggiornate"
+
+#: wp-to-twitter-manager.php:163
+msgid "Twitter login and password updated. "
+msgstr "Il login e la password di Twitter sono state aggiornate."
+
+#: wp-to-twitter-manager.php:165
+msgid "You need to provide your twitter login and password! "
+msgstr "E' necessario fornire i dati login e password di Twitter!"
+
+#: wp-to-twitter-manager.php:172
+msgid "Cligs API Key Updated"
+msgstr "La chiave API di Cligs é stata aggiornata."
+
+#: wp-to-twitter-manager.php:175
+msgid "Cli.gs API Key deleted. Cli.gs created by WP to Twitter will no longer be associated with your account. "
+msgstr "La chiave API di Cli.gs é stata cancellata. I Cli.gs creati da WP to Twitter non saranno più associati al tuo account. "
+
+#: wp-to-twitter-manager.php:177
+msgid "Cli.gs API Key not added - <a href='http://cli.gs/user/api/'>get one here</a>! "
+msgstr "Non é stata inserita la chiave API di Cli.gs - <a href='http://cli.gs/user/api/'>vai qui</a>! "
+
+#: wp-to-twitter-manager.php:183
+msgid "Bit.ly API Key Updated."
+msgstr "La chiave API di Bit.ly é stata aggiornata."
+
+#: wp-to-twitter-manager.php:186
+msgid "Bit.ly API Key deleted. You cannot use the Bit.ly API without an API key. "
+msgstr "La chiave API di Bit.ly é stata cancellata. Non puoi utilizzare la API di Bit.ly senza la chiave API. "
+
+#: wp-to-twitter-manager.php:188
+msgid "Bit.ly API Key not added - <a href='http://bit.ly/account/'>get one here</a>! An API key is required to use the Bit.ly URL shortening service."
+msgstr "La chiave API di Bit.ly non é stata aggiunta - <a href='http://bit.ly/account/'>vai qui</a>! E' necessaria una chiave API affinché il servizio di URL brevi Bit.ly di possa funzionare."
+
+#: wp-to-twitter-manager.php:192
+msgid " Bit.ly User Login Updated."
+msgstr " Il login utente per Bit.ly é stato aggiornato."
+
+#: wp-to-twitter-manager.php:195
+msgid "Bit.ly User Login deleted. You cannot use the Bit.ly API without providing your username. "
+msgstr "Sono stati cancellati i dati per il login utente Bit.ly. Non puoi utilizzare la API di Bit.ly senza fornire il tuo nome utente. "
+
+#: wp-to-twitter-manager.php:197
+msgid "Bit.ly Login not added - <a href='http://bit.ly/account/'>get one here</a>! "
+msgstr "Non sono stati inseriti i dati per il login a Bit.ly - <a href='http://bit.ly/account/'>vai qui</a>! "
+
+#: wp-to-twitter-manager.php:231
+msgid "<li>Successfully contacted the Cli.gs API via Snoopy, but the URL creation failed.</li>"
+msgstr "<li>Contattata con successo (via Snoopy) la API di Cli.gs. Purtroppo la creazione dell'URL é fallita.</li>"
+
+#: wp-to-twitter-manager.php:233
+msgid "<li>Successfully contacted the Cli.gs API via Snoopy, but a Cli.gs server error prevented the URL from being shrotened.</li>"
+msgstr "<li>Contattata con successo (via Snoopy) la API di Cli.gs. Purtroppo un errore del server Cli.gs non ha permesso l'abbreviazione dell'URL.</li>"
+
+#: wp-to-twitter-manager.php:235
+msgid "<li>Successfully contacted the Cli.gs API via Snoopy and created a shortened link.</li>"
+msgstr "<li>Contattata con successo (via Snoopy) la API di Cli.gs. Il link breve é stato creato.</li>"
+
+#: wp-to-twitter-manager.php:244
+#: wp-to-twitter-manager.php:269
+msgid "<li>Successfully contacted the Bit.ly API via Snoopy.</li>"
+msgstr "<li>Contattata con successo (via Snoopy) la API di Bit.ly.</li>"
+
+#: wp-to-twitter-manager.php:246
+#: wp-to-twitter-manager.php:271
+msgid "<li>Failed to contact the Bit.ly API via Snoopy.</li>"
+msgstr "<li>Non é stato possibile contattare (via Snoopy) la API di Bit.ly.</li>"
+
+#: wp-to-twitter-manager.php:249
+msgid "<li>Cannot check the Bit.ly API without a valid API key.</li>"
+msgstr "<li>Non puoi utilizzare la API di Bit.ly senza una chiave API valida.</li>"
+
+#: wp-to-twitter-manager.php:253
+msgid "<li>Successfully contacted the Twitter API via Snoopy.</li>"
+msgstr "<li>Contattata con successo (via Snoopy) la API di Twitter.</li>"
+
+#: wp-to-twitter-manager.php:255
+msgid "<li>Failed to contact the Twitter API via Snoopy.</li>"
+msgstr "<li>Non é stato possibile contattare (via Snoopy) la API di Twitter.</li>"
+
+#: wp-to-twitter-manager.php:261
+msgid "<li>Successfully contacted the Twitter API via cURL.</li>"
+msgstr "<li>Contattata con successo (via cURL) la API di Twitter.</li>"
+
+#: wp-to-twitter-manager.php:263
+msgid "<li>Failed to contact the Twitter API via cURL.</li>"
+msgstr "<li>Non é stato possibile contattare (via cURL) la API di Twitter.</li>"
+
+#: wp-to-twitter-manager.php:275
+msgid "<li>Successfully contacted the Cli.gs API via Snoopy.</li>"
+msgstr "<li>Contattata con successo (via Snoopy) la API di Cli.gs.</li>"
+
+#: wp-to-twitter-manager.php:278
+msgid "<li>Failed to contact the Cli.gs API via Snoopy.</li>"
+msgstr "<li>Non é stato possibile contattare (via Snoopy) la API di Cli.gs.</li>"
+
+#: wp-to-twitter-manager.php:283
+msgid "<li><strong>Your server should run WP to Twitter successfully.</strong></li>"
+msgstr "<li><strong>WP to Twitter funziona correttamente per il tuo server.</strong></li>"
+
+#: wp-to-twitter-manager.php:288
+msgid "<li>Your server does not support <code>fputs</code>.</li>"
+msgstr "<li>Il tuo server non supporta <code>fputs</code>.</li>"
+
+#: wp-to-twitter-manager.php:292
+msgid "<li>Your server does not support <code>file_get_contents</code> or <code>cURL</code> functions.</li>"
+msgstr "<li>Il tuo server non supporta le funzioni <code>file_get_contents</code> oppure <code>cURL</code>.</li>"
+
+#: wp-to-twitter-manager.php:296
+msgid "<li>Your server does not support <code>Snoopy</code>.</li>"
+msgstr "<li>Il tuo server non supporta <code>Snoopy</code>.</li>"
+
+#: wp-to-twitter-manager.php:299
+msgid "<li><strong>Your server does not appear to support the required PHP functions and classes for WP to Twitter to function.</strong> You can try it anyway - these tests aren't perfect - but no guarantees.</li>"
+msgstr "<li><strong>Pare che il tuo server non supporti le funzioni PHP richieste affinché WP to Twitter possa funzionare correttamente.</strong> Puoi comunque provare ugualmente - queste verifiche non sono perfette - ma non garantisco i risultati.</li>"
+
+#: wp-to-twitter-manager.php:308
+msgid "This plugin may not fully work in your server environment. The plugin failed to contact both a URL shortener API and the Twitter service API."
+msgstr "Con la configurazione del tuo server questo plugin non può funzionare al meglio. Il plugin non é stato in grado di conttatare tanto l'API di un URL breve API quanto l'API del servizio di Twitter."
+
+#: wp-to-twitter-manager.php:323
+msgid "WP to Twitter Options"
+msgstr "Opzioni WP to Twitter"
+
+#: wp-to-twitter-manager.php:327
+#: wp-to-twitter.php:790
+msgid "Get Support"
+msgstr "Supporto"
+
+#: wp-to-twitter-manager.php:328
+msgid "Export Settings"
+msgstr "Impostazioni esportazione"
+
+#: wp-to-twitter-manager.php:342
+msgid "For any post update field, you can use the codes <code>#title#</code> for the title of your blog post, <code>#blog#</code> for the title of your blog, <code>#post#</code> for a short excerpt of the post content, <code>#category#</code> for the first selected category for the post, or <code>#url#</code> for the post URL (shortened or not, depending on your preferences.) You can also create custom shortcodes to access WordPress custom fields. Use doubled square brackets surrounding the name of your custom field to add the value of that custom field to your status update. Example: <code>[[custom_field]]</code>"
+msgstr "Per aggiornare ogni campo potrai utilizzare i codici <code>#title#</code> per il titolo del tuo articolo, <code>#blog#</code> per il nome del tuo blog, <code>#post#</code> per un riassunto breve del contenuto dell'articolo, <code>#category#</code> per la prima categoria selezionata per l'articolo oppure <code>#url#</code> per l'URL all'articolo (breve o normale, a tuo piacere). Potrai inoltre creare degli shortcode personalizzati in modo tale da potere accedere ai campi personalizzati di WordPress. Utilizza le doppie parentesi quadre intorno al nome del campo personalizzato affinché sia possibile aggiungere il valore di quel dato campo personalizzato al tuo aggiornamento dello stato. Ad esempio: <code>[[custom_field]]</code>"
+
+#: wp-to-twitter-manager.php:348
+msgid "<p>One or more of your last posts has failed to send it's status update to Twitter. Your Tweet has been saved in your post custom fields, and you can re-Tweet it at your leisure.</p>"
+msgstr "<p>Uno o più dei tuoi articoli recenti non é stato in grado di comunicare l'aggiornamento a Twitter. Il tuo messaggio é stato inserito nei dati meta del campo personalizzato del tuo articolo in modo tale che tu possa ripetere l'operazione a tuo piacere.</p>"
+
+#: wp-to-twitter-manager.php:351
+msgid "<p>The query to the URL shortener API failed, and your URL was not shrunk. The full post URL was attached to your Tweet. Check with your URL shortening provider to see if there are any known issues. [<a href=\"http://blog.cli.gs\">Cli.gs Blog</a>] [<a href=\"http://blog.bit.ly\">Bit.ly Blog</a>]</p>"
+msgstr "<p>La richiesta é fallita! Non essendo stato possibile abbreviare l'URL abbiamo utilizzato per il messaggio l'indirizzo normale. Verifica la documentazione in merito presso il tuo provider di URL brevi. [<a href=\"http://blog.cli.gs\">Cli.gs Blog</a>] [<a href=\"http://blog.bit.ly\">Bit.ly Blog</a>]</p>"
+
+#: wp-to-twitter-manager.php:358
+msgid "Clear 'WP to Twitter' Error Messages"
+msgstr "Svuota i messaggiodi errore 'WP to Twitter'"
+
+#: wp-to-twitter-manager.php:366
+msgid "Set what should be in a Tweet"
+msgstr "Imposta contenuto messaggio"
+
+#: wp-to-twitter-manager.php:369
+msgid "Update when a post is published"
+msgstr "Aggiorna quando viene pubblicato un articolo"
+
+#: wp-to-twitter-manager.php:369
+msgid "Text for new post updates:"
+msgstr "Testo per aggiornamenti articolo:"
+
+#: wp-to-twitter-manager.php:374
+msgid "Update when a post is edited"
+msgstr "Aggiorna quando modifichi un articolo"
+
+#: wp-to-twitter-manager.php:374
+msgid "Text for editing updates:"
+msgstr "Testo per aggiornamenti modifiche:"
+
+#: wp-to-twitter-manager.php:378
+msgid "Update Twitter when new Wordpress Pages are published"
+msgstr "Aggiorna Twitter quando viene pubblicata una nuova pagina WordPress"
+
+#: wp-to-twitter-manager.php:378
+msgid "Text for new page updates:"
+msgstr "Testo per aggiornamenti articolo:"
+
+#: wp-to-twitter-manager.php:382
+msgid "Update Twitter when WordPress Pages are edited"
+msgstr "Aggiorna Twitter quando viene modificata una pagina WordPress"
+
+#: wp-to-twitter-manager.php:382
+msgid "Text for page edit updates:"
+msgstr "Testo per la pagina di modifica aggiornamenti:"
+
+#: wp-to-twitter-manager.php:386
+msgid "Add tags as hashtags on Tweets"
+msgstr "Aggiungi ai messaggi i tag come fossero degli hashtag "
+
+#: wp-to-twitter-manager.php:388
+msgid "Maximum number of tags to include:"
+msgstr "Numero massimo di tag da includere:"
+
+#: wp-to-twitter-manager.php:389
+msgid "Maximum length in characters for included tags:"
+msgstr "Lunghezza massima in caratteri per i tag inclusi:"
+
+#: wp-to-twitter-manager.php:390
+msgid "These options allow you to restrict the length and number of WordPress tags sent to Twitter as hashtags. Set to <code>0</code> or leave blank to allow any and all tags."
+msgstr "Queste opzioni ti permetteranno di limitare la lunghezza ed il numero dei tag WordPress inviati a Twitter come hashtags. Imposta a <code>0</code> oppure lascia in bianco per permettere ogni tag."
+
+#: wp-to-twitter-manager.php:394
+msgid "Update Twitter when you post a Blogroll link"
+msgstr "Aggiorna Twitter quando viene aggiunto un nuovo link al blogroll"
+
+#: wp-to-twitter-manager.php:396
+msgid "Text for new link updates:"
+msgstr "Testo per gli aggiornamenti di un nuovo link:"
+
+#: wp-to-twitter-manager.php:396
+msgid "Available shortcodes: <code>#url#</code>, <code>#title#</code>, and <code>#description#</code>."
+msgstr "Shortcode disponibili: <code>#url#</code>, <code>#title#</code> e <code>#description#</code>."
+
+#: wp-to-twitter-manager.php:399
+msgid "Length of post excerpt (in characters):"
+msgstr "Lunghezza riassunto messaggi (in caratteri)"
+
+#: wp-to-twitter-manager.php:399
+msgid "By default, extracted from the post itself. If you use the 'Excerpt' field, that will be used instead."
+msgstr "Come funzione predefinita, gli estratti verranno generati in automatico. Utilizzassi il campo 'Excerpt', questi avrà la priorità."
+
+#: wp-to-twitter-manager.php:403
+msgid "Custom text before Tweets:"
+msgstr "Testo personalizzato prima dei messaggi:"
+
+#: wp-to-twitter-manager.php:404
+msgid "Custom text after Tweets:"
+msgstr "Testo personalizzato dopo i messaggi:"
+
+#: wp-to-twitter-manager.php:407
+msgid "Custom field for an alternate URL to be shortened and Tweeted:"
+msgstr "Campo personalizzato riferito ad un URL alternativo da abbreviare ed inviare a Twitter:"
+
+#: wp-to-twitter-manager.php:408
+msgid "You can use a custom field to send Cli.gs and Twitter an alternate URL from the permalink provided by WordPress. The value is the name of the custom field you're using to add an external URL."
+msgstr "Puoi utilizzare un campo personalizzato per inviare a Cli.gs ed a Twitter un URL alternativo dal permalink fornito da WordPress. Questo valore é il nome del campo personalizzato che utilizzerai per aggiungere un URL esterno."
+
+#: wp-to-twitter-manager.php:412
+msgid "Special Cases when WordPress should send a Tweet"
+msgstr "Casi particolari nei quali WordPress dovrebbe inviare un messaggio"
+
+#: wp-to-twitter-manager.php:415
+msgid "Set default Tweet status to 'No.'"
+msgstr "Imposta al 'No' lo stato predefinito per i messaggi"
+
+#: wp-to-twitter-manager.php:416
+msgid "Twitter updates can be set on a post by post basis. By default, posts WILL be posted to Twitter. Check this to change the default to NO."
+msgstr "Gli aggiornamenti per Twitter possono essere impostati in ogni singolo articolo. Come funzione predefinita, gli articoli VERRANNO segnalati a Twitter. Metti il segno di spunta per modificare al NO."
+
+#: wp-to-twitter-manager.php:420
+msgid "Send Twitter Updates on remote publication (Post by Email or XMLRPC Client)"
+msgstr "Invio degli aggiornamenti di Twitter via punti di pubblicazione remoti (Email o client XMLRPC)"
+
+#: wp-to-twitter-manager.php:424
+msgid "Update Twitter when a post is published using QuickPress"
+msgstr "Aggiorna Twitter quando un articolo é stato pubblicato via QuickPress"
+
+#: wp-to-twitter-manager.php:428
+msgid "Special Fields"
+msgstr "Campi particolari"
+
+#: wp-to-twitter-manager.php:431
+msgid "Use Google Analytics with WP-to-Twitter"
+msgstr "Utilizza Google Analytics con WP-to-Twitter"
+
+#: wp-to-twitter-manager.php:432
+msgid "Campaign identifier for Google Analytics:"
+msgstr "Identificatore Google Analytics:"
+
+#: wp-to-twitter-manager.php:433
+msgid "You can track the response from Twitter using Google Analytics by defining a campaign identifier here."
+msgstr "Puoi tracciare i riscontri su Twitter utilizzando Google Analytics inserendo qui l'identificatore."
+
+#: wp-to-twitter-manager.php:438
+msgid "Authors have individual Twitter accounts"
+msgstr "Gli autori hanno degli account personali su Twitter"
+
+#: wp-to-twitter-manager.php:438
+msgid "Each author can set their own Twitter username and password in their user profile. Their posts will be sent to their own Twitter accounts."
+msgstr "Ogni autore può impostare nel proprio profilo utente il nome utente e la password di Twitter. I loro articoli saranno inviati ai propri account di Twitter."
+
+#: wp-to-twitter-manager.php:442
+msgid "Set your preferred URL Shortener"
+msgstr "Seleziona il tuo servizio preferito di URL brevi"
+
+#: wp-to-twitter-manager.php:445
+msgid "Use <strong>Cli.gs</strong> for my URL shortener."
+msgstr "Usa <strong>Cli.gs</strong> per gli URL brevi"
+
+#: wp-to-twitter-manager.php:446
+msgid "Use <strong>Bit.ly</strong> for my URL shortener."
+msgstr "Usa <strong>Bit.ly</strong> per gli URL brevi"
+
+#: wp-to-twitter-manager.php:447
+msgid "Use <strong>WordPress</strong> as a URL shortener."
+msgstr "Usa <strong>WordPress</strong> per gli URL brevi."
+
+#: wp-to-twitter-manager.php:448
+msgid "Don't shorten URLs."
+msgstr "Non usare gli URL brevi"
+
+#: wp-to-twitter-manager.php:449
+msgid "Using WordPress as a URL shortener will send URLs to Twitter in the default URL format for WordPress: <code>http://domain.com/subdir/?p=123</code>. Google Analytics is not available when using WordPress shortened URLs."
+msgstr "L'utilizzo di WordPress per la creazione di URL brevi farà sì che verranno inviati a Twitter gli URL nel formato predefinito di WordPress: <code>http://domain.com/subdir/?p=123</code>. Google Analytics non sarà disponibile durante l'utilizzo di WordPress per la creazione di URL brevi."
+
+#: wp-to-twitter-manager.php:454
+msgid "Save WP->Twitter Options"
+msgstr "Salva le opzioni WP->Twitter"
+
+#: wp-to-twitter-manager.php:460
+msgid "Your Twitter account details"
+msgstr "Dati account Twitter"
+
+#: wp-to-twitter-manager.php:467
+msgid "Your Twitter username:"
+msgstr "Nome utente Twitter:"
+
+#: wp-to-twitter-manager.php:471
+msgid "Your Twitter password:"
+msgstr "Password Twitter:"
+
+#: wp-to-twitter-manager.php:471
+msgid "(<em>Saved</em>)"
+msgstr "(<em>Salvato</em>)"
+
+#: wp-to-twitter-manager.php:475
+msgid "Save Twitter Login Info"
+msgstr "Salva le impostazioni di login a Twitter"
+
+#: wp-to-twitter-manager.php:475
+msgid "&raquo; <small>Don't have a Twitter account? <a href='http://www.twitter.com'>Get one for free here</a>"
+msgstr "&raquo; <small>Non hai un account di Twitter? <a href='http://www.twitter.com'>Vai qui</a>"
+
+#: wp-to-twitter-manager.php:479
+msgid "Your Cli.gs account details"
+msgstr "Dati account Cli.gs"
+
+#: wp-to-twitter-manager.php:486
+msgid "Your Cli.gs <abbr title='application programming interface'>API</abbr> Key:"
+msgstr "La tua chiave <abbr title='application programming interface'>API</abbr> di Cli.gs:"
+
+#: wp-to-twitter-manager.php:492
+msgid "Don't have a Cli.gs account or Cligs API key? <a href='http://cli.gs/user/api/'>Get one free here</a>!<br />You'll need an API key in order to associate the Cligs you create with your Cligs account."
+msgstr "Non hai ancora un account oppure una chiave API Cli.gs? <a href='http://cli.gs/user/api/'>Vai qui</a>!<br />E' necessafia una chiave API in modo tale da potere associare i Cligs da te creati con il tuo account di Cligs."
+
+#: wp-to-twitter-manager.php:497
+msgid "Your Bit.ly account details"
+msgstr "Dati account Bit.ly"
+
+#: wp-to-twitter-manager.php:502
+msgid "Your Bit.ly username:"
+msgstr "Nome utente Bit.ly:"
+
+#: wp-to-twitter-manager.php:506
+msgid "Your Bit.ly <abbr title='application programming interface'>API</abbr> Key:"
+msgstr "La tua chiave <abbr title='application programming interface'>API</abbr> di Bit.ly:"
+
+#: wp-to-twitter-manager.php:513
+msgid "Save Bit.ly API Key"
+msgstr "Salva la chiave API di Bit.ly"
+
+#: wp-to-twitter-manager.php:513
+msgid "Clear Bit.ly API Key"
+msgstr "Svuota la chiave API di Bit.ly"
+
+#: wp-to-twitter-manager.php:513
+msgid "A Bit.ly API key and username is required to shorten URLs via the Bit.ly API and WP to Twitter."
+msgstr "E' necessario il nome utente e la chiave API di Bit.ly per potere rendere brevi gli URL viala chiave API di Bit.ly API e WP to Twitter."
+
+#: wp-to-twitter-manager.php:522
+msgid "Check Support"
+msgstr "Supporto"
+
+#: wp-to-twitter-manager.php:522
+msgid "Check whether your server supports WP to Twitter's queries to the Twitter and URL shortening APIs."
+msgstr "Verifica se il tuo server é in grado di supportare le richieste di WP to Twitter's per Twitter e per l'API dell'URL breve."
+
+#: wp-to-twitter-manager.php:530
+msgid "Need help?"
+msgstr "Serve aiuto?"
+
+#: wp-to-twitter-manager.php:531
+msgid "Visit the <a href='http://www.joedolson.com/articles/wp-to-twitter/'>WP to Twitter plugin page</a>."
+msgstr "Visita la pagina <a href='http://www.joedolson.com/articles/wp-to-twitter/'>WP to Twitter</a>."
+
+#. #-#-#-#-#  plugin.pot (PACKAGE VERSION)  #-#-#-#-#
+#. Plugin Name of an extension
+#: wp-to-twitter.php:744
+msgid "WP to Twitter"
+msgstr "WP to Twitter"
+
+#: wp-to-twitter.php:785
+msgid "Twitter Post"
+msgstr "Messaggio Twitter"
+
+#: wp-to-twitter.php:790
+msgid " characters.<br />Twitter posts are a maximum of 140 characters; if your Cli.gs URL is appended to the end of your document, you have 119 characters available. You can use <code>#url#</code>, <code>#title#</code>, <code>#post#</code>, <code>#category#</code> or <code>#blog#</code> to insert the shortened URL, post title, the first category selected, or a post excerpt or blog name into the Tweet."
+msgstr " caratteri.<br />I messaggi di Twitter possono contenere un massimo di 140 caratteri; un URL generato da Cli.gs posto in coda al messaggio, lascerà disponibili 119 caratteri. Puoi utilizzare <code>#url#</code>, <code>#title#</code>, <code>#post#</code> oppure <code>#blog#</code> per inserire nel messaggio l'URL breve, il nome dell'articolo, un estratto dell'articolo oppure il nome del blog."
+
+#: wp-to-twitter.php:790
+msgid "Make a Donation"
+msgstr "Effettua una donazione"
+
+#: wp-to-twitter.php:793
+msgid "Don't Tweet this post."
+msgstr "Non segnalare a Twitter questo articolo."
+
+#: wp-to-twitter.php:842
+msgid "WP to Twitter User Settings"
+msgstr "Impostazioni WP to Twitter User"
+
+#: wp-to-twitter.php:846
+msgid "Use My Twitter Account"
+msgstr "Utilizza il mio account di Twitter"
+
+#: wp-to-twitter.php:847
+msgid "Select this option if you would like your posts to be Tweeted into your own Twitter account with no @ references."
+msgstr "Seleziona questa opzione qualora gradissi che i tuoi articoli siano segnalati al tuo account personale di Twitter senza nessun riferimento @."
+
+#: wp-to-twitter.php:848
+msgid "Tweet my posts into my Twitter account with an @ reference to the site's main Twitter account."
+msgstr "Segnala i miei articoli nel mio account di Twitter con un riferimento @ correlato al sito principale dell'account su Twitter."
+
+#: wp-to-twitter.php:849
+msgid "Tweet my posts into the main site Twitter account with an @ reference to my username. (Password not required with this option.)"
+msgstr "Segnala i miei articoli al sito principale dell'account su Twitter con un riferimento @ al mio nome utente. (per questa opzione non sarà necessaria la password)"
+
+#: wp-to-twitter.php:852
+msgid "Your Twitter Username"
+msgstr "Nome utente Twitter"
+
+#: wp-to-twitter.php:853
+msgid "Enter your own Twitter username."
+msgstr "Inserisci il tuo nome utente Twitter"
+
+#: wp-to-twitter.php:856
+msgid "Your Twitter Password"
+msgstr "Twitter Password"
+
+#: wp-to-twitter.php:857
+msgid "Enter your own Twitter password."
+msgstr "Inserisci la tua password di Twitter"
+
+#: wp-to-twitter.php:976
+msgid "<p>Couldn't locate the settings page.</p>"
+msgstr "<p>Non é possibile localizzare la pagina delle impostazioni.</p>"
+
+#: wp-to-twitter.php:981
+msgid "Settings"
+msgstr "Impostazioni"
+
+#. Plugin URI of an extension
+msgid "http://www.joedolson.com/articles/wp-to-twitter/"
+msgstr "http://www.joedolson.com/articles/wp-to-twitter/"
+
+#. Description of an extension
+msgid "Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title."
+msgstr "Aggiorna Twitter quando crei un nuovo articolo oppure aggiungi al tuo blogroll utilizzando Cli.gs. Con una chiave API Cli.gs, crea un clig nel tuo account di Cli.gs con il nome del tuo articolo come titolo."
+
+#. Author of an extension
+msgid "Joseph Dolson"
+msgstr "Joseph Dolson"
+
+#. Author URI of an extension
+msgid "http://www.joedolson.com/"
+msgstr "http://www.joedolson.com/"
+
+#~ msgid ""
+#~ "The query to the URL shortener API failed, and your URL was not shrunk. "
+#~ "The full post URL was attached to your Tweet."
+#~ msgstr ""
+#~ "La richiesta API per la creazione dell'URL breve é fallita: il tuo URL "
+#~ "non é stato abbreviato. E' stato allegato l'URL completo al tuo messaggio."
+#~ msgid "Add_new_tag"
+#~ msgstr "Add_new_tag"
+#~ msgid "This plugin may not work in your server environment."
+#~ msgstr "Questo plugin non può funzionare sul tuo server."
+#~ msgid "Wordpress to Twitter Publishing Options"
+#~ msgstr "Opzioni editoriali Wordpress to Twitter"
+#~ msgid "Provide link to blog?"
+#~ msgstr "Desideri il link al blog?"
+#~ msgid "Use <strong>link title</strong> for Twitter updates"
+#~ msgstr ""
+#~ "Utilizza un <strong>link di testo</strong> per gli aggiornamenti di "
+#~ "Twitter"
+#~ msgid "Use <strong>link description</strong> for Twitter updates"
+#~ msgstr ""
+#~ "Utilizza un <strong>link descrittivo</strong> per gli aggiornamenti di "
+#~ "Twitter"
+#~ msgid ""
+#~ "Text for new link updates (used if title/description isn't available.):"
+#~ msgstr ""
+#~ "Testo per il link ai nuovi aggiornamenti (se titolo/descrizione non "
+#~ "fossero disponibili):"
+#~ msgid "Custom text prepended to Tweets:"
+#~ msgstr "Testo personalizzato davanti al messaggio:"
+
