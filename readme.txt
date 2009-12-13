@@ -22,7 +22,17 @@ Credits:
 
 This plugin was originally based loosely on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com). Thanks to [Cory LaViska](http://abeautifulsite.net/notebook/71) for PHP 4 compatible `json_decode` and `json_encode`. Thanks to [Michal Migurski](http://mike.teczno.com) for authoring the JSON class. Other bug fixes and related citations can be found in the changelog.
 
+Translations:
+
+Italian: [Gianni Diurno](http://www.gidibao.net)
+German: [Melvin](http://www.toxicavenger.de/)
+
 == Changelog ==
+
+= 1.5.5 =
+
+* Fixed issue with stray hashtags appearing when Tweeting edited posts was disabled and adding hashtags was enabled.
+* Added shortcode (#date#) for post date. Uses your WordPress date settings to format date, but allows you to customize for WP to Twitter.
 
 = 1.5.4 = 
 

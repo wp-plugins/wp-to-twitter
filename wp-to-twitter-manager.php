@@ -30,6 +30,8 @@
 		update_option( 'newpage-published-text','New page: #title# (#url#)' );
 		update_option( 'oldpage-edited-text','Page edited: #title# (#url#)' );
 		
+		update_option( 'jd_date_format','' );
+		
 		update_option( 'jd_twit_remote', '0' );
 		update_option( 'jd_post_excerpt', 30 );
 		// Use Google Analytics with Twitter
@@ -109,6 +111,7 @@
 		update_option('jd_max_tags',$_POST['jd_max_tags']);
 		update_option('jd_max_characters',$_POST['jd_max_characters']);	
 		update_option('jd_replace_character',$_POST['jd_replace_character']);
+		update_option( 'jd_date_format',$_POST['jd_date_format'] );		
 		
 		switch ($_POST['jd_shortener']) {
 			case 1:
@@ -341,7 +344,7 @@ print_settings();
 </div>
 
 <p>
-<?php _e("For any post update field, you can use the codes <code>#title#</code> for the title of your blog post, <code>#blog#</code> for the title of your blog, <code>#post#</code> for a short excerpt of the post content, <code>#category#</code> for the first selected category for the post, or <code>#url#</code> for the post URL (shortened or not, depending on your preferences.) You can also create custom shortcodes to access WordPress custom fields. Use doubled square brackets surrounding the name of your custom field to add the value of that custom field to your status update. Example: <code>[[custom_field]]</code>", 'wp-to-twitter'); ?>
+<?php _e("For any post update field, you can use the codes <code>#title#</code> for the title of your blog post, <code>#blog#</code> for the title of your blog, <code>#post#</code> for a short excerpt of the post content, <code>#category#</code> for the first selected category for the post, <code>#date#</code> for the post date, or <code>#url#</code> for the post URL (shortened or not, depending on your preferences.) You can also create custom shortcodes to access WordPress custom fields. Use doubled square brackets surrounding the name of your custom field to add the value of that custom field to your status update. Example: <code>[[custom_field]]</code>", 'wp-to-twitter'); ?>
 </p>
 		
 <?php if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_url_failure' ) == '1' ) { ?>
@@ -394,13 +397,15 @@ print_settings();
 			</p>			
 			<p>
 				<input type="checkbox" name="jd_twit_blogroll" id="jd_twit_blogroll" value="1" <?php jd_checkCheckbox('jd_twit_blogroll')?> />
-				<label for="jd_twit_blogroll"><strong><?php _e("Update Twitter when you post a Blogroll link", 'wp-to-twitter'); ?></strong></label><br />
-				
+				<label for="jd_twit_blogroll"><strong><?php _e("Update Twitter when you post a Blogroll link", 'wp-to-twitter'); ?></strong></label><br />				
 				<label for="newlink-published-text"><?php _e("Text for new link updates:", 'wp-to-twitter'); ?></label> <input type="text" name="newlink-published-text" id="newlink-published-text" size="60" maxlength="120" value="<?php echo ( attribute_escape( get_option( 'newlink-published-text' ) ) ); ?>" /><br /><small><?php _e('Available shortcodes: <code>#url#</code>, <code>#title#</code>, and <code>#description#</code>.','wp-to-twitter'); ?></small>
 			</p>
-<p>
+			<p>
 				<label for="jd_post_excerpt"><strong><?php _e("Length of post excerpt (in characters):", 'wp-to-twitter'); ?></strong></label> <input type="text" name="jd_post_excerpt" id="jd_post_excerpt" size="3" maxlength="3" value="<?php echo ( attribute_escape( get_option( 'jd_post_excerpt' ) ) ) ?>" /> <small><?php _e("By default, extracted from the post itself. If you use the 'Excerpt' field, that will be used instead.", 'wp-to-twitter'); ?></small>
 			</p>				
+			<p>
+				<label for="jd_date_format"><strong><?php _e("WP to Twitter Date Formatting:", 'wp-to-twitter'); ?></strong></label> <input type="text" name="jd_date_format" id="jd_date_format" size="12" maxlength="12" value="<?php if (get_option('jd_date_format')=='') { echo ( attribute_escape( get_option('date_format') ) ); } else { echo ( attribute_escape( get_option( 'jd_date_format' ) ) ); }?>" /> <small><?php _e("Default is from your general settings. <a href='http://codex.wordpress.org/Formatting_Date_and_Time'>Date Formatting Documentation</a>.", 'wp-to-twitter'); ?></small>
+			</p>
 			
 			<p>
 				<label for="jd_twit_prepend"><strong><?php _e("Custom text before Tweets:", 'wp-to-twitter'); ?></strong></label> <input type="text" name="jd_twit_prepend" id="jd_twit_prepend" size="20" maxlength="20" value="<?php echo ( attribute_escape( get_option( 'jd_twit_prepend' ) ) ) ?>" />
