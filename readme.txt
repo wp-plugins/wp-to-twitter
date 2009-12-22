@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, cligs, redirect, shortener, post, links
 Requires at least: 2.5
-Tested up to: 2.9
+Tested up to: 3.0-alpha
 Stable tag: trunk
 
 Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using the Cligs URL shortening service.
@@ -28,6 +28,14 @@ Italian: [Gianni Diurno](http://www.gidibao.net)
 German: [Melvin](http://www.toxicavenger.de/)
 
 == Changelog ==
+
+= 1.5.6 = 
+
+* WP 2.9 added support for JSON on PHP versions below 5.2; changes made to do WP version checking before adding JSON support.
+* Stripslashes added to viewable data fields.
+* Added option for spaces to be removed in hashtags.
+* A few post meta updates.
+* Barring major disasters, this will be the last release in the 1.x series. Expect version 2 sometime in late January.
 
 = 1.5.5 =
 

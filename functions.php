@@ -4,7 +4,11 @@
 // support for primary functions is lacking.
 
 if ( !class_exists('SERVICES_JSON') ) {
+	if ( version_compare( $wp_version,"2.9","<" )) {
 	require_once( WP_PLUGIN_DIR.'/wp-to-twitter/json.class.php' );
+	} else {
+	require_once( ABSPATH.WPINC.'/class-json.php' );
+	}
 }
 if (!function_exists('json_encode')) {
 	function json_encode($data) {
