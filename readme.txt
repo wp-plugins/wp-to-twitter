@@ -6,7 +6,7 @@ Requires at least: 2.5
 Tested up to: 3.0-alpha
 Stable tag: trunk
 
-Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using the Cligs URL shortening service.
+Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen shortening service.
 
 == Description ==
 
@@ -28,6 +28,11 @@ Italian: [Gianni Diurno](http://www.gidibao.net)
 German: [Melvin](http://www.toxicavenger.de/)
 
 == Changelog ==
+
+= 1.5.7 = 
+
+* Quick bug fix contributed by DougV from WordPress Forums.
+*
 
 = 1.5.6 = 
 
