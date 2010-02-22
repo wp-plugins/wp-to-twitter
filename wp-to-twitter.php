@@ -34,7 +34,7 @@ $jdwp_api_post_status = "http://twitter.com/statuses/update.json";
 $jdwp_api_post_status = get_option( 'jd_api_post_status' );
 }
 
-$version = "1.5.7";
+$version = "2.0.0";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 $jd_donate_url = "http://www.joedolson.com/donate.php";
 
