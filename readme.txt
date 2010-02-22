@@ -1,12 +1,12 @@
 === Plugin Name ===
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
-Tags: twitter, microblogging, cligs, redirect, shortener, post, links
-Requires at least: 2.5
-Tested up to: 3.0-alpha
+Tags: twitter, microblogging, cligs, bitly, yourls, redirect, shortener, post, links
+Requires at least: 2.7
+Tested up to: 2.9.2
 Stable tag: trunk
 
-Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen shortening service.
+Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service.
 
 == Description ==
 
@@ -18,21 +18,41 @@ The plugin can send a default message for updating or editing posts or pages, bu
 
 Any status update you write which is longer than the available space will automatically be truncated by the plugin. This applies to both the default messages and to your custom messages.
 
+WP to Twitter can also post to any other service using the Twitter-compatible API.
+
 Credits:
 
-This plugin was originally based loosely on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com). Thanks to [Cory LaViska](http://abeautifulsite.net/notebook/71) for PHP 4 compatible `json_decode` and `json_encode`. Thanks to [Michal Migurski](http://mike.teczno.com) for authoring the JSON class. Other bug fixes and related citations can be found in the changelog.
+Although it now bears very little resemblance to the original sources, this plugin was originally based on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com). Thanks to [Cory LaViska](http://abeautifulsite.net/notebook/71) for PHP 4 compatible `json_decode` and `json_encode`. Thanks to [Michal Migurski](http://mike.teczno.com) for authoring the JSON class. Other bug fixes and related citations can be found in the changelog.
 
 Translations:
 
-Italian: [Gianni Diurno](http://www.gidibao.net)
-German: [Melvin](http://www.toxicavenger.de/)
+* Italian: [Gianni Diurno](http://www.gidibao.net)
+* German: [Melvin](http://www.toxicavenger.de/)
+* Spanish: [David Gil P&eacute;rez](http://www.sohelet.com)
 
 == Changelog ==
+
+= 2.0.0 = 
+
+* Fixed bug introduced in WordPress 2.9 where logged in users could only edit their own profiles and associated issues.
+* Fixed bug which caused #url# to repeatedly be added to the end of tweet texts on reactivation or upgrade.
+* Fixed bug which generated shortener API error messages when no URL shortener was used.
+* Fixed bug which prevented display of URL on edit screen if no URL shortener was used.
+* Added Spanish translation courtesy of [David Gil P&eacute;rez](http://www.sohelet.com)
+* Made so many language changes that aforementioned translation is now terribly out of date, as are all others...
+* Added ability to restrict posting to certain categories.
+* Added option to dynamically generate Google Analytics campaign identifier by category, post title, author, or post id.
+* Added option to configure plugin to use other services using the Twitter-compatible API.
+* Added support for YOURLS installations as your URL shortener. (Either local or remote.)
+* Redesigned administrative interface.
+* Removed use of Snoopy and alternate HTTP request methods.
+* Discontinued support for WordPress versions below version 2.7.
+* Major revisions to support checks.
+* Version jumped to 2.0.0
 
 = 1.5.7 = 
 
 * Quick bug fix contributed by DougV from WordPress Forums.
-*
 
 = 1.5.6 = 
 
@@ -274,6 +294,10 @@ There was once an unresolved bug which effected some servers causing the WP-to-T
 = Scheduled posting doesn't work. What's wrong? =
 
 Only posts which you scheduled or edited *after* installing the plugin will be Tweeted. Any future posts written before installing the plugin will be ignored by WP to Twitter.
+
+== Upgrade Notice ==
+
+This version of WP to Twitter is not compatible with WordPress versions lower than 2.7. Do not upgrade if you are using an older version of WordPress.
 
 == Screenshots ==
 
