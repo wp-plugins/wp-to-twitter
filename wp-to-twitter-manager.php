@@ -20,7 +20,6 @@
 	}	
 	//SETS DEFAULT OPTIONS
 	if ( get_option( 'twitterInitialised') != '1' ) {
-
 		update_option( 'newpost-published-update', '1' );
 		update_option( 'newpost-published-text', 'New post: #title# #url#' );
 		
