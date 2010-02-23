@@ -87,6 +87,8 @@ delete_option( 'yourlspath' );
 delete_option( 'yourlsurl' );
 delete_option( 'yourlslogin' );		
 delete_option( 'jd_replace_character' );
-delete_option( 'jd_date_format' )
+delete_option( 'jd_date_format' );
+delete_option( 'jd_keyword_format' );
+
 }
 ?>

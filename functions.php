@@ -165,6 +165,8 @@ $options = array(
 	'yourlspath'=>get_option( 'yourlspath' ),
 	'yourlsurl' =>get_option( 'yourlsurl' ),
 	'yourlslogin'=>get_option( 'yourlslogin' ),
+	'jd_keyword_format'=>get_option( 'jd_keyword_format' ),
+	
 	//twitter api
 	'jd-twitter-service-name'=>get_option( 'jd-twitter-service-name' ),
 	'jd-twitter-char-limit'=>get_option( 'jd-twitter-char-limit' ),	

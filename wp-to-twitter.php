@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 2.0.0
+Version: 2.0.1
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -34,7 +34,7 @@ $jdwp_api_post_status = "http://twitter.com/statuses/update.json";
 $jdwp_api_post_status = get_option( 'jd_api_post_status' );
 }
 
-$version = "2.0.0";
+$version = "2.0.1";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 $jd_donate_url = "http://www.joedolson.com/donate.php";
 
@@ -83,6 +83,8 @@ global $version;
 		if (get_option( 'jd_max_characters' ) == "" ) {
 		update_option( 'jd_max_characters', 5 );
 		}
+	} else if ( version_compare( $version,"2.0.1","<" )) {
+		update_option( 'jd_keyword_format', 1 );
 	}
 }	
 	
@@ -243,7 +245,12 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID ) {
 			}
 			$thispostlink .= urlencode("utm_campaign=$this_campaign&utm_medium=twitter&utm_source=twitter");
 		}
-		
+		// custom word setting
+			if ( get_option( 'jd_keyword_format' ) == '1' ) {
+			$keyword_format = "$post_ID";
+			} else {
+			$keyword_format = '';
+			}		
 		// Generate and grab the clig using the Cli.gs API
 		// cURL alternative contributed by Thor Erik (http://thorerik.net)
 		switch ( get_option( 'jd_shortener' ) ) {
@@ -270,11 +277,11 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID ) {
 			if( file_exists( dirname( get_option( 'yourlspath' ) ).'/load-yourls.php' ) ) { // YOURLS 1.4
 				global $ydb;
 				require_once( dirname( get_option( 'yourlspath' ) ).'/load-yourls.php' ); 
-				$yourls_result = yourls_add_new_link( $thispostlink, $post_ID );
+				$yourls_result = yourls_add_new_link( $thispostlink, $keyword_format );
 			} else { // YOURLS 1.3
 				require_once( get_option( 'yourlspath' ) ); 
 				$yourls_db = new wpdb( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
-				$yourls_result = yourls_add_new_link( $thispostlink, $post_ID, $yourls_db );
+				$yourls_result = yourls_add_new_link( $thispostlink, $keyword_format, $yourls_db );
 			}
 			if ($yourls_result) {
 				$shrink = $yourls_result['shorturl'];			
@@ -284,7 +291,6 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID ) {
 			break;
 			case 6:
 			// remote YOURLS installation
-			$keyword_format = "$post_ID";
 			$api_url = sprintf( get_option('yourlsurl') . '?username=%s&password=%s&url=%s&format=json&action=shorturl&keyword=%s',
 				$yourlslogin, $yourlsapi, $thispostlink, $keyword_format );
 			$json = jd_remote_json( $api_url, false );			

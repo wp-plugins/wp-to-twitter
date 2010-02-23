@@ -65,6 +65,7 @@
 		update_option( 'jd-twitter-service-name', 'Twitter' );
 		update_option( 'jd-twitter-char-limit', 140 );	
 		update_option( 'jd_use_both_services', '0' );
+		update_option( 'jd_keyword_format', '1' );
 		
 		$message = __("Set your $twitter login information and URL shortener API information to use this plugin!", 'wp-to-twitter');
 	}
@@ -233,7 +234,14 @@
 			} else {
 			$message .= __( "The path to your YOURLS installation is not correct. ",'wp-to-twitter' );
 			}
-		}		
+		}	
+		if ( $_POST['jd_keyword_format'] != '' ) {
+			update_option( 'jd_keyword_format',$_POST['jd_keyword_format'] );
+			$message .= __( "YOURLS will use Post ID for short URL slug.",'wp-to-twitter');
+		} else {
+			update_option( 'jd_keyword_format','' );
+			$message .= __( "YOURLS will not use Post ID for the short URL slug.",'wp-to-twitter');
+		}
 	} 
 	
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'cligsapi' ) {
@@ -616,7 +624,9 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 		<label for="yourlsapi"><?php _e("Your YOURLS password:", 'wp-to-twitter'); ?> <?php if ( get_option( 'yourlsapi' ) != '') { _e("<em>Saved</em>",'wp-to-twitter'); } ?></label>
 		<input type="text" name="yourlsapi" id="yourlsapi" size="40" value="" />
 		</p>
-
+		<p>
+		<input type="checkbox" name="jd_keyword_format" id="jd_keyword_format" value="1" <?php jd_checkCheckbox( 'jd_keyword_format' ); ?> /> 		<label for="jd_keyword_format"><?php _e("Use Post ID for YOURLS url slug."); ?></label>
+		</p>
 		<div>
 		<input type="hidden" name="submit-type" value="yourlsapi" />
 		</div>

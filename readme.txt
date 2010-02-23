@@ -32,6 +32,11 @@ Translations:
 
 == Changelog ==
 
+= 2.0.1 = 
+
+* Bug found with YOURLS short url creation when using multiple sites with one YOURLS installation and short URLS are created using post ID. Added option to disable post_ID as shortURL generating key in YOURLS account settings.
+* Missing semicolon replaced in uninstall.php
+
 = 2.0.0 = 
 
 * Fixed bug introduced in WordPress 2.9 where logged in users could only edit their own profiles and associated issues.
@@ -297,7 +302,7 @@ Only posts which you scheduled or edited *after* installing the plugin will be T
 
 == Upgrade Notice ==
 
-This version of WP to Twitter is not compatible with WordPress versions lower than 2.7. Do not upgrade if you are using an older version of WordPress.
+Versions 2.0.0 and above of WP to Twitter are not compatible with WordPress versions lower than 2.7. Do not upgrade if you are using an older version of WordPress.
 
 == Screenshots ==
 
