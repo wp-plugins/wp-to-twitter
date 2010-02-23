@@ -256,7 +256,7 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID ) {
 		switch ( get_option( 'jd_shortener' ) ) {
 			case 0:
 			case 1:
-			$shrink = jd_fetch_url( "http://cli.gs/api/v1/cligs/create?t=snoopy&appid=WP-to-Twitter&url=".$thispostlink."&title=".$thisposttitle."&key=".$cligsapi );
+			$shrink = jd_fetch_url( "http://cli.gs/api/v1/cligs/create?t=wphttp&appid=WP-to-Twitter&url=".$thispostlink."&title=".$thisposttitle."&key=".$cligsapi );
 			break;
 			case 2:
 			$decoded = jd_remote_json( "http://api.bit.ly/shorten?version=2.0.1&longUrl=".$thispostlink."&login=".$bitlylogin."&apiKey=".$bitlyapi."&history=1" );
