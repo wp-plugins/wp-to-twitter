@@ -32,6 +32,12 @@ Translations:
 
 == Changelog ==
 
+= 2.0.2 =
+
+* Bug fixed where appended text was placed before hash tags.
+* Added method for error messages to be automatically cleared following a successful status update. It seems a lot of people couldn't find the button to clear errors, and thought they were getting an error every time.
+* Moved short URL selection option to a more prominent location.
+
 = 2.0.1 = 
 
 * Bug found with YOURLS short url creation when using multiple sites with one YOURLS installation and short URLS are created using post ID. Added option to disable post_ID as shortURL generating key in YOURLS account settings.

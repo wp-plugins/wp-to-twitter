@@ -128,7 +128,6 @@
 		update_option( 'use_tags_as_hashtags', $_POST['use_tags_as_hashtags'] );
 		update_option( 'jd_twit_prepend', $_POST['jd_twit_prepend'] );	
 		update_option( 'jd_twit_append', $_POST['jd_twit_append'] );
-		update_option( 'jd_shortener', $_POST['jd_shortener'] );
 		update_option( 'jd_post_excerpt', $_POST['jd_post_excerpt'] );	
 		update_option('jd_max_tags',$_POST['jd_max_tags']);
 		update_option('jd_max_characters',$_POST['jd_max_characters']);	
@@ -136,19 +135,6 @@
 		update_option( 'jd_date_format',$_POST['jd_date_format'] );	
 		update_option( 'jd_dynamic_analytics',$_POST['jd-dynamic-analytics'] );		
 		update_option( 'use_dynamic_analytics',$_POST['use-dynamic-analytics'] );		
-				
-		if ( get_option( 'jd_shortener' ) == 2 && ( get_option( 'bitlylogin' ) == "" || get_option( 'bitlyapi' ) == "" ) ) {
-			$message .= __( 'You must add your Bit.ly login and API key in order to shorten URLs with Bit.ly.' , 'wp-to-twitter');
-			$message .= "<br />";
-		}
-		if ( get_option( 'jd_shortener' ) == 6 && ( get_option( 'yourlslogin' ) == "" || get_option( 'yourlsapi' ) == "" || get_option( 'yourlsurl' ) == "" ) ) {
-			$message .= __( 'You must add your YOURLS remote URL, login, and password in order to shorten URLs with a remote installation of YOURLS.' , 'wp-to-twitter');
-			$message .= "<br />";
-		}
-		if ( get_option( 'jd_shortener' ) == 5 && ( get_option( 'yourlspath' ) == "" ) ) {
-			$message .= __( 'You must add your YOURLS server path in order to shorten URLs with a remote installation of YOURLS.' , 'wp-to-twitter');
-			$message .= "<br />";
-		}
 		update_option( 'use-twitter-analytics', $_POST['use-twitter-analytics'] );
 		update_option( 'twitter-analytics-campaign', $_POST['twitter-analytics-campaign'] );
 		update_option( 'jd_individual_twitter_users', $_POST['jd_individual_twitter_users'] );
@@ -167,7 +153,21 @@
 		update_option( 'oldpage-edited-text', $_POST['oldpage-edited-text'] );		
 		update_option( 'newlink-published-text', $_POST['newlink-published-text'] );
 		update_option( 'jd_twit_blogroll',$_POST['jd_twit_blogroll'] );
+		update_option( 'jd_shortener', $_POST['jd_shortener'] );
 
+		if ( get_option( 'jd_shortener' ) == 2 && ( get_option( 'bitlylogin' ) == "" || get_option( 'bitlyapi' ) == "" ) ) {
+			$message .= __( 'You must add your Bit.ly login and API key in order to shorten URLs with Bit.ly.' , 'wp-to-twitter');
+			$message .= "<br />";
+		}
+		if ( get_option( 'jd_shortener' ) == 6 && ( get_option( 'yourlslogin' ) == "" || get_option( 'yourlsapi' ) == "" || get_option( 'yourlsurl' ) == "" ) ) {
+			$message .= __( 'You must add your YOURLS remote URL, login, and password in order to shorten URLs with a remote installation of YOURLS.' , 'wp-to-twitter');
+			$message .= "<br />";
+		}
+		if ( get_option( 'jd_shortener' ) == 5 && ( get_option( 'yourlspath' ) == "" ) ) {
+			$message .= __( 'You must add your YOURLS server path in order to shorten URLs with a remote installation of YOURLS.' , 'wp-to-twitter');
+			$message .= "<br />";
+		}		
+		
 		$message .= __( 'WP to Twitter Options Updated' , 'wp-to-twitter');
 
 	}
@@ -508,7 +508,20 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 				<label for="newlink-published-text"><?php _e("Text for new link updates:", 'wp-to-twitter'); ?></label> <input type="text" name="newlink-published-text" id="newlink-published-text" size="60" maxlength="120" value="<?php echo ( attribute_escape( stripslashes( get_option( 'newlink-published-text' ) ) ) ); ?>" /><br /><small><?php _e('Available shortcodes: <code>#url#</code>, <code>#title#</code>, and <code>#description#</code>.','wp-to-twitter'); ?></small>
 			</p>
 			</fieldset>
-
+			<fieldset>	
+			<legend><?php _e("Choose your short URL service (account settings below)",'wp-to-twitter' ); ?></legend>
+			<p>
+			<select name="jd_shortener" id="jd_shortener">
+				<option value="1" <?php jd_checkSelect('jd_shortener','1'); ?>><?php _e("Use Cli.gs for my URL shortener.", 'wp-to-twitter'); ?></option> 
+				<option value="2" <?php jd_checkSelect('jd_shortener','2'); ?>><?php _e("Use Bit.ly for my URL shortener.", 'wp-to-twitter'); ?></option>
+				<option value="5" <?php jd_checkSelect('jd_shortener','5'); ?>><?php _e("YOURLS (installed on this server)", 'wp-to-twitter'); ?></option>
+				<option value="6" <?php jd_checkSelect('jd_shortener','6'); ?>><?php _e("YOURLS (installed on a remote server)", 'wp-to-twitter'); ?></option>		
+				<option value="4" <?php jd_checkSelect('jd_shortener','4'); ?>><?php _e("Use WordPress as a URL shortener.", 'wp-to-twitter'); ?></option> 
+				<option value="3" <?php jd_checkSelect('jd_shortener','3'); ?>><?php _e("Don't shorten URLs.", 'wp-to-twitter'); ?></option>
+			</select><br />		
+			<small><?php _e("Using WordPress as a URL shortener will send URLs to Twitter in the default URL format for WordPress: <code>http://domain.com/wpdir/?p=123</code>. Google Analytics is not available when using WordPress shortened URLs.", 'wp-to-twitter'); ?></small>
+			</p>
+			</fieldset>
 				<div>
 		<input type="hidden" name="submit-type" value="options" />
 		</div>
@@ -753,20 +766,6 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 				<input type="checkbox" name="jd_individual_twitter_users" id="jd_individual_twitter_users" value="1" <?php jd_checkCheckbox('jd_individual_twitter_users')?> />
 				<label for="jd_individual_twitter_users"><?php _e("Authors have individual Twitter accounts", 'wp-to-twitter'); ?></label><br /><small><?php _e('Authors can set their own Twitter username and password in their user profile.', 'wp-to-twitter'); ?></small>
 			</p>			
-		</fieldset>
-		<fieldset>	
-		<legend><?php _e("Choose your short URL service",'wp-to-twitter' ); ?></legend>
-		<p>
-		<select name="jd_shortener" id="jd_shortener">
-			<option value="1" <?php jd_checkSelect('jd_shortener','1'); ?>><?php _e("Use Cli.gs for my URL shortener.", 'wp-to-twitter'); ?></option> 
-			<option value="2" <?php jd_checkSelect('jd_shortener','2'); ?>><?php _e("Use Bit.ly for my URL shortener.", 'wp-to-twitter'); ?></option>
-			<option value="5" <?php jd_checkSelect('jd_shortener','5'); ?>><?php _e("YOURLS (installed on this server)", 'wp-to-twitter'); ?></option>
-			<option value="6" <?php jd_checkSelect('jd_shortener','6'); ?>><?php _e("YOURLS (installed on a remote server)", 'wp-to-twitter'); ?></option>		
-			<option value="4" <?php jd_checkSelect('jd_shortener','4'); ?>><?php _e("Use WordPress as a URL shortener.", 'wp-to-twitter'); ?></option> 
-			<option value="3" <?php jd_checkSelect('jd_shortener','3'); ?>><?php _e("Don't shorten URLs.", 'wp-to-twitter'); ?></option>
-		</select><br />		
-		<small><?php _e("Using WordPress as a URL shortener will send URLs to Twitter in the default URL format for WordPress: <code>http://domain.com/subdir/?p=123</code>. Google Analytics is not available when using WordPress shortened URLs.", 'wp-to-twitter'); ?></small>
-		</p>
 		</fieldset>
 		<div>
 		<input type="hidden" name="submit-type" value="advanced" />
