@@ -303,9 +303,13 @@ if ( get_option('jd-functions-checked') == '0') {
 		case 2:
 		$bitlylogin = get_option( 'bitlylogin' );
 		$bitlyapi = get_option( 'bitlyapi' );
-		$decoded = jd_remote_json( "http://api.bit.ly/shorten?version=2.0.1&longUrl=".$testurl."&login=".$bitlylogin."&apiKey=".$bitlyapi."&history=1" );
+		$decoded = jd_remote_json( "http://api.bit.ly/v3/shorten?uri=".$testurl."&login=".$bitlylogin."&apiKey=".$bitlyapi."&format=json" );
 		if ($decoded) {
-		$shrink = $decoded['results'][urldecode($thispostlink)]['shortUrl'];
+			if ($decoded['status_code'] != 200) {
+				$shrink = false;
+			} else {
+				$shrink = $decoded['data']['url'];		
+			}
 		} else {
 		$shrink = false;
 		}

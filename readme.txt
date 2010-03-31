@@ -32,6 +32,10 @@ Translations:
 
 == Changelog ==
 
+= 2.0.3 = 
+
+* Updated for Bit.ly API v3 (should fix recent issues with incorrect reporting from Bit.ly API and API request failures.)
+
 = 2.0.2 =
 
 * Bug fixed where appended text was placed before hash tags.

@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 2.0.2
+Version: 2.0.3
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -34,7 +34,7 @@ $jdwp_api_post_status = "http://twitter.com/statuses/update.json";
 $jdwp_api_post_status = get_option( 'jd_api_post_status' );
 }
 
-$version = "2.0.2";
+$version = "2.0.3";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 $jd_donate_url = "http://www.joedolson.com/donate.php";
 
@@ -263,9 +263,9 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID ) {
 			case 1:
 			$shrink = jd_fetch_url( "http://cli.gs/api/v1/cligs/create?t=wphttp&appid=WP-to-Twitter&url=".$thispostlink."&title=".$thisposttitle."&key=".$cligsapi );
 			break;
-			case 2:
-			$decoded = jd_remote_json( "http://api.bit.ly/shorten?version=2.0.1&longUrl=".$thispostlink."&login=".$bitlylogin."&apiKey=".$bitlyapi."&history=1" );
-			$shrink = $decoded['results'][urldecode($thispostlink)]['shortUrl'];
+			case 2: // updated to v3 3/31/2010
+			$decoded = jd_remote_json( "http://api.bit.ly/v3/shorten?uri=".$thispostlink."&login=".$bitlylogin."&apiKey=".$bitlyapi."&format=json" );
+			$shrink = $decoded['data']['url'];
 			break;
 			case 3:
 			$shrink = urldecode($thispostlink);
@@ -1058,7 +1058,7 @@ function jd_list_categories() {
 // Add the administrative settings to the "Settings" menu.
 function jd_addTwitterAdminPages() {
     if ( function_exists( 'add_submenu_page' ) ) {
-		 $plugin_page = add_options_page( 'WP -> Twitter', 'WP -> Twitter', 8, __FILE__, 'jd_wp_Twitter_manage_page' );
+		 $plugin_page = add_options_page( 'WP -> Twitter', 'WP -> Twitter', 'manage_options', __FILE__, 'jd_wp_Twitter_manage_page' );
 		 add_action( 'admin_head-'. $plugin_page, 'jd_addTwitterAdminStyles' );
     }
  }
