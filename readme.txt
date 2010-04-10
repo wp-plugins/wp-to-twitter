@@ -32,6 +32,13 @@ Translations:
 
 == Changelog ==
 
+= 2.0.4 = 
+
+* Fixed bug where status updates were not posted when a post changed from pending to published. (Thanks to Justin Heideman for the catch and fix.)
+* Fixed bug where passwords with special characters were not used correctly
+* Eliminated use of LongURL API due to closure of the service. Hope to replace this functionality at some point, so I've left the framework intact, just removed the API call.
+* Improved error reporting in support check routines.
+
 = 2.0.3 = 
 
 * Updated for Bit.ly API v3 (should fix recent issues with incorrect reporting from Bit.ly API and API request failures.)

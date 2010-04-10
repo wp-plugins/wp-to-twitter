@@ -295,10 +295,13 @@ if ( get_option('jd-functions-checked') == '0') {
 		case 0:
 		case 1:
 		$cligsapi = get_option( 'cligsapi' );		
-		$shrink = jd_fetch_url( "http://cli.gs/api/v1/cligs/create?t=snoopy&appid=WP-to-Twitter&url=".$testurl."&key=".$cligsapi );
-		if (!$shrink) {
+		$shrink = jd_fetch_url( "http://cli.gs/api/v1/cligs/create?t=wphttp&appid=WP-to-Twitter&url=".$testurl."&key=".$cligsapi );
+		if (!$shrink || !preg_match( '|^\S+://\S+\.\S+.+$|', $shrink ) ) {
 			$shrink = false;
 		} 
+		if ( $shrink && !preg_match( '|^\S+://\S+\.\S+.+$|', $shrink ) ) {
+			$error = $shrink;
+		}
 		break;
 		case 2:
 		$bitlylogin = get_option( 'bitlylogin' );
@@ -307,6 +310,7 @@ if ( get_option('jd-functions-checked') == '0') {
 		if ($decoded) {
 			if ($decoded['status_code'] != 200) {
 				$shrink = false;
+				$error .= $decoded['status_txt'];
 			} else {
 				$shrink = $decoded['data']['url'];		
 			}
@@ -366,6 +370,7 @@ if ( get_option('jd-functions-checked') == '0') {
 		} else {
 			if ($shrink === FALSE) {
 			$message .= __("<li class=\"error\"><strong>WP to Twitter was unable to contact your selected URL shortening service.</strong></li>",'wp-to-twitter');
+			$message .= "<li><code> $error</code></li>";
 			} else {
 			$wp_shortener_error = FALSE;
 			$message .= __("<li><strong>WP to Twitter successfully contacted your selected URL shortening service.</strong>  The following link should point to your blog homepage:",'wp-to-twitter');
@@ -377,27 +382,35 @@ if ( get_option('jd-functions-checked') == '0') {
 		$rand = rand(1000000,9999999);
 		$testpost = jd_doTwitterAPIPost( "This is a test of WP to Twitter. ($rand)" );
 			if ($testpost) {
-			$message .= __("<li><strong>WP to Twitter successfully submitted a status update to your primary update service.</strong></li>",'wp-to-twitter'); 
-			} else {
-			$wp_twitter_error = true;
-			$message .=	__("<li class=\"error\"><strong>WP to Twitter failed to submit an update to your primary update service.</strong></li>",'wp-to-twitter'); 
+				$response = jd_xml2array($testpost);
+				if ($response[0]['name'] == "status") {
+				$message .= __("<li><strong>WP to Twitter successfully submitted a status update to your primary update service.</strong></li>",'wp-to-twitter'); 
+				} else {
+				$wp_twitter_error = true;
+				$message .=	__("<li class=\"error\"><strong>WP to Twitter failed to submit an update to your primary update service.</strong></li>",'wp-to-twitter'); 
+				$message .= "<li>".__("Twitter returned this error:")."<code>".$response[0]['elements'][1]['text']."</code></li>";
+				}
 			}
 		if ( get_option( 'jd_use_both_services' ) == '1' ) {
-		$testpost2 = jd_doTwitterAPIPost( "This is a test of WP to Twitter.",false,"Twitter" );
+		$testpost2 = jd_doTwitterAPIPost( "This is a test of WP to Twitter. ($rand)",false,"Twitter" );
 			if ($testpost2) {
-			$wp_twitter_error = true;
-			$message .= __("<li><strong>WP to Twitter successfully submitted a status update to your secondary update service.</strong></li>",'wp-to-twitter'); 
-			} else {
-			$message .=	__("<li class=\"error\"><strong>WP to Twitter failed to submit an update to your secondary update service.</strong></li>",'wp-to-twitter'); 
-			}		
+				$response = jd_xml2array($testpost2);
+				if ($response[0]['name'] == "status") {
+					$message .= __("<li><strong>WP to Twitter successfully submitted a status update to your secondary update service.</strong></li>",'wp-to-twitter'); 
+				} else {
+					$wp_twitter_error = true;
+					$message .=	__("<li class=\"error\"><strong>WP to Twitter failed to submit an update to your secondary update service.</strong></li>",'wp-to-twitter'); 
+					$message .= "<li>".__("The service returned this error:")."<code>".$response[0]['elements'][1]['text']."</code></li>";					
+				}
+			}
 		}
 		
 		// If everything's OK, there's  no reason to do this again.
-		if ($wp_twitter_error == FALSE || $wp_shortener_error == FALSE  ) {
+		if ($wp_twitter_error == FALSE && $wp_shortener_error == FALSE  ) {
 		$message .= __("<li><strong>Your server should run WP to Twitter successfully.</strong></li>", 'wp-to-twitter');
 		update_option( 'jd-functions-checked','1' );		
 		} else { 
-		$message .= __("<li class=\"error\"><strong>Your server does not appear to support the required methods for WP to Twitter to function.</strong> You can try it anyway - these tests aren't perfect - but no guarantees.</li>", 'wp-to-twitter');
+		$message .= __("<li class=\"error\"><strong>Your server does not appear to support the required methods for WP to Twitter to function.</strong> You can try it anyway - these tests aren't perfect.</li>", 'wp-to-twitter');
 		update_option( 'jd-functions-checked','1' );	
 		}
 		$message .= "</ul>";
@@ -422,6 +435,7 @@ print_settings();
 } ?>
 
 <h2><?php _e("WP to Twitter Options", 'wp-to-twitter'); ?></h2>
+
 <?php  
 $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dirname( plugin_basename(__FILE__) );
 ?>

@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 2.0.3
+Version: 2.0.4
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -34,7 +34,7 @@ $jdwp_api_post_status = "http://twitter.com/statuses/update.json";
 $jdwp_api_post_status = get_option( 'jd_api_post_status' );
 }
 
-$version = "2.0.3";
+$version = "2.0.4";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 $jd_donate_url = "http://www.joedolson.com/donate.php";
 
@@ -105,14 +105,14 @@ function jd_doTwitterAPIPost( $twit, $authID=FALSE, $service="basic" ) {
 	//check if user login details have been entered on admin page
 	if ($authID == FALSE || ( get_option( 'jd_individual_twitter_users' ) != '1' ) ) {
 		$thisuser = get_option( 'twitterlogin' );
-		$thispass = get_option( 'twitterpw' );
+		$thispass = stripcslashes( get_option( 'twitterpw' ) );
 	} else {
 		if ( ( get_usermeta( $authID, 'wp-to-twitter-enable-user' ) == 'true' || get_usermeta( $authID, 'wp-to-twitter-enable-user' ) == 'userTwitter' || get_usermeta( $authID, 'wp-to-twitter-enable-user' ) == 'userAtTwitter' ) && ( get_usermeta( $authID, 'wp-to-twitter-user-username' ) != "" && get_usermeta( $authID, 'wp-to-twitter-user-password' ) != "" ) ) {	
 			$thisuser = get_usermeta( $authID, 'wp-to-twitter-user-username' );
-			$thispass = get_usermeta( $authID, 'wp-to-twitter-user-password' );
+			$thispass = stripcslashes( get_usermeta( $authID, 'wp-to-twitter-user-password' ) );
 		} else {
 			$thisuser = get_option( 'twitterlogin' );
-			$thispass = get_option( 'twitterpw' );		
+			$thispass = stripcslashes( get_option( 'twitterpw' ) );	
 		}
 	}
 	if ($thisuser == '' || $thispass == '' || $twit == '' ) {
@@ -121,7 +121,7 @@ function jd_doTwitterAPIPost( $twit, $authID=FALSE, $service="basic" ) {
 		if ( $service == "Twitter" ) {
 			$api_url = "http://api.twitter.com/1/statuses/update.xml";
 			$thisuser = get_option( 'x-twitterlogin' );
-			$thispass = get_option( 'x-twitterpw' );			
+			$thispass = stripcslashes( get_option( 'x-twitterpw' ) );	
 		} else {
 			$api_url = $jdwp_api_post_status;
 		}
@@ -220,7 +220,7 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID ) {
 		$bitlyapi = get_option( 'bitlyapi' );
 		$bitlylogin = get_option( 'bitlylogin' );
 		$yourlslogin = get_option( 'yourlslogin');
-		$yourlsapi = get_option( 'yourlsapi' );
+		$yourlsapi = stripcslashes( get_option( 'yourlsapi' ) );
 
 		if ( ( get_option('twitter-analytics-campaign') != '' ) && ( get_option('use-twitter-analytics') == 1 || get_option('use_dynamic_analytics') == 1 ) ) {
 			if ( get_option('use_dynamic_analytics') == '1' ) {
@@ -316,17 +316,18 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID ) {
 }
 
 function jd_expand_url( $short_url ) {
-	$short_url = urlencode( $short_url );
-	$decoded = jd_remote_json("http://api.longurl.org/v2/expand?format=json&url=" . $short_url );
-	$url = $decoded['long-url'];
-	return $url;
+	//$short_url = urlencode( $short_url );
+	//$decoded = jd_remote_json("http://api.longurl.org/v2/expand?format=json&url=" . $short_url );
+	//$url = $decoded['long-url'];
+	//return $url;
+	return $short_url;
 }
 function jd_expand_yourl( $short_url, $remote ) {
 	if ( $remote == 6 ) {
 		$short_url = urlencode( $short_url );
 		$yourl_api = get_option( 'yourlsurl' );
 		$user = get_option( 'yourlslogin' );
-		$pass = get_option( 'yourlsapi' );
+		$pass = stripcslashes( get_option( 'yourlsapi' ) );
 		$decoded = jd_remote_json( $yourl_api . "?action=expand&shorturl=$short_url&format=json&username=$user&password=$pass" );
 		$url = $decoded['longurl'];
 		return $url;
@@ -401,7 +402,7 @@ function jd_twit( $post_ID ) {
 	    $sentence = '';
 		$customTweet = stripcslashes( $_POST['jd_twitter'] );
 		$oldClig = get_post_meta( $post_ID, 'wp_jd_clig', TRUE );
-		if (($get_post_info->post_status == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft')) {
+		if (($get_post_info->post_status == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft' || $_POST['prev_status'] == 'pending' || $_POST['original_post_status'] == 'pending' ) ) {
 				// publish new post
 				if ( get_option( 'newpost-published-update' ) == '1' ) {
 					if ($customTweet != "") {
