@@ -29,6 +29,9 @@ Translations:
 * Italian: [Gianni Diurno](http://www.gidibao.net)
 * German: [Melvin](http://www.toxicavenger.de/)
 * Spanish: [David Gil P&eacute;rez](http://www.sohelet.com)
+* Russian: [Burkov Boris](http://chernobog.ru)
+
+New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
