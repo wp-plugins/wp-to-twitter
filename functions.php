@@ -3,6 +3,11 @@
 // These functions don't perform any WP to Twitter actions, but are sometimes called for when 
 // support for primary functions is lacking.
 
+if ( version_compare( $wp_version,"2.9.3",">" )) {
+if (!class_exists('WP_Http')) {
+	require_once( ABSPATH.WPINC.'/class-http.php' );
+	}
+}
 
 function jd_xml2array($xml) {
         $xmlary = array();
@@ -44,12 +49,16 @@ function jd_remote_json( $url, $array=true ) {
 }			
 
 // Fetch a remote page. Input url, return content
-function jd_fetch_url( $url, $method='GET', $body=array(), $headers=array() ) {
+function jd_fetch_url( $url, $method='GET', $body='', $headers='', $return='body' ) {
 	$request = new WP_Http;
 	$result = $request->request( $url , array( 'method'=>$method, 'body'=>$body, 'headers'=>$headers, 'user-agent'=>'WP to Twitter http://www.joedolson.com/articles/wp-to-twitter/' ) );
 	// Success?
 	if ( !is_wp_error($result) && isset($result['body']) ) {
+		if ($return == 'body') {
 		return $result['body'];
+		} else {
+		return $result;
+		}
 	// Failure (server problem...)
 	} else {
 		return false;
@@ -136,21 +145,6 @@ if ( !function_exists( 'mb_substr_replace' ) ) {
     }
 }
 
-// cURL query contributed by Thor Erik (http://thorerik.net)
-function getfilefromurl($url) {
-if ( function_exists( 'curl_init' ) ) {
-	$ch = curl_init();
-	curl_setopt( $ch, CURLOPT_HEADER, 0 );
-	curl_setopt( $ch, CURLOPT_VERBOSE, 0 );
-	curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-	curl_setopt( $ch, CURLOPT_URL, $url );
-	$output = curl_exec( $ch );
-	curl_close( $ch );
-	return $output;
-	} else {
-	return FALSE;
-	}
-}
 function print_settings() {
 global $version;
 

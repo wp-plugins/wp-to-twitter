@@ -61,7 +61,7 @@
 		// Note that default options are set.
 		update_option( 'twitterInitialised', '1' );	
 		//Twitter API
-		update_option( 'jd_api_post_status', 'http://api.twitter.com/1/statuses/update.xml' );
+		update_option( 'jd_api_post_status', 'http://twitter.com/statuses/update.json' );
 		update_option( 'jd-twitter-service-name', 'Twitter' );
 		update_option( 'jd-twitter-char-limit', 140 );	
 		update_option( 'jd_use_both_services', '0' );
@@ -84,7 +84,7 @@
 
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'service' ) {
 		if ( isset($_POST['jd_reset_services'] ) ) {
-			update_option( 'jd_api_post_status', 'http://api.twitter.com/1/statuses/update.xml' );
+			update_option( 'jd_api_post_status', 'http://twitter.com/statuses/update.json' );
 			update_option( 'jd-twitter-service-name', 'Twitter' );
 			update_option( 'jd-twitter-char-limit', 140 );	
 			update_option( 'jd_use_both_services', '0' );
@@ -92,9 +92,9 @@
 			update_option( 'x-twitterpw','');
 			$message = __("Twitter API settings reset. You may need to change your username and password settings, if they are not the same as the alternate service previously in use.",'wp-to-twitter');
 		} else {
-			update_option( 'jd_api_post_status', $_POST['jd_api_post_status'] );
-			update_option( 'jd-twitter-service-name', $_POST['jd-twitter-service-name']  );
-			update_option( 'jd-twitter-char-limit', $_POST['jd-twitter-char-limit']  );	
+			update_option( 'jd_api_post_status', trim($_POST['jd_api_post_status']) );
+			update_option( 'jd-twitter-service-name', trim($_POST['jd-twitter-service-name']) );
+			update_option( 'jd-twitter-char-limit', trim($_POST['jd-twitter-char-limit']) );	
 			update_option( 'jd_use_both_services', $_POST['jd_use_both_services'] );
 			if ( !isset( $_POST['jd_use_both_services'] ) ) {
 				update_option( 'x-twitterlogin','');
@@ -190,8 +190,8 @@
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'login' ) {
 		//UPDATE LOGIN
 		if( ( $_POST['twitterlogin'] != '' ) && ( $_POST['twitterpw'] != '' ) ) {
-			update_option( 'twitterlogin', $_POST['twitterlogin'] );
-			update_option( 'twitterpw', $_POST['twitterpw'] );
+			update_option( 'twitterlogin', trim($_POST['twitterlogin']) );
+			update_option( 'twitterpw', trim($_POST['twitterpw']) );
 			update_option( 'twitterlogin_encrypted', base64_encode( $_POST['twitterlogin'].':'.$_POST['twitterpw'] ) );
 			$message = __("$twitter login and password updated. ", 'wp-to-twitter');
 		} else {
@@ -201,8 +201,8 @@
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'x-login' ) {
 		//UPDATE LOGIN
 		if( ( $_POST['x-twitterlogin'] != '' ) && ( $_POST['x-twitterpw'] != '' ) ) {
-			update_option( 'x-twitterlogin', $_POST['x-twitterlogin'] );
-			update_option( 'x-twitterpw', $_POST['x-twitterpw'] );
+			update_option( 'x-twitterlogin', trim($_POST['x-twitterlogin']) );
+			update_option( 'x-twitterpw', trim($_POST['x-twitterpw']) );
 			$message = __("Twitter login and password updated. ", 'wp-to-twitter');
 		} else {
 			$message = __("You need to provide your Twitter login and password! ", 'wp-to-twitter');
@@ -211,7 +211,7 @@
 	
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'yourlsapi' ) {
 		if ( $_POST['yourlsapi'] != '' && isset( $_POST['submit'] ) ) {
-			update_option( 'yourlsapi',$_POST['yourlsapi'] );
+			update_option( 'yourlsapi', trim($_POST['yourlsapi']) );
 			$message = __("YOURLS password updated. ", 'wp-to-twitter');
 		} else if ( isset( $_POST['clear'] ) ) {
 			update_option( 'yourlsapi','' );
@@ -220,15 +220,15 @@
 			$message = __( "Failed to save your YOURLS password! ", 'wp-to-twitter' );
 		}
 		if ( $_POST['yourlslogin'] != '' ) {
-			update_option( 'yourlslogin', $_POST['yourlslogin'] );
+			update_option( 'yourlslogin', trim($_POST['yourlslogin']) );
 			$message .= __( "YOURLS username added. ",'wp-to-twitter' ); 
 		}
 		if ( $_POST['yourlsurl'] != '' ) {
-			update_option( 'yourlsurl', $_POST['yourlsurl'] );
+			update_option( 'yourlsurl', trim($_POST['yourlsurl']) );
 			$message .= __( "YOURLS API url added. ",'wp-to-twitter' ); 
 		}
 		if ( $_POST['yourlspath'] != '' ) {
-			update_option( 'yourlspath', $_POST['yourlspath'] );	
+			update_option( 'yourlspath', trim($_POST['yourlspath']) );	
 			if ( file_exists( $_POST['yourlspath'] ) ) {
 			$message .= __( "YOURLS local server path added. ",'wp-to-twitter'); 
 			} else {
@@ -236,7 +236,7 @@
 			}
 		}	
 		if ( $_POST['jd_keyword_format'] != '' ) {
-			update_option( 'jd_keyword_format',$_POST['jd_keyword_format'] );
+			update_option( 'jd_keyword_format', $_POST['jd_keyword_format'] );
 			$message .= __( "YOURLS will use Post ID for short URL slug.",'wp-to-twitter');
 		} else {
 			update_option( 'jd_keyword_format','' );
@@ -246,7 +246,7 @@
 	
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'cligsapi' ) {
 		if ( $_POST['cligsapi'] != '' && isset( $_POST['submit'] ) ) {
-			update_option( 'cligsapi',$_POST['cligsapi'] );
+			update_option( 'cligsapi', trim($_POST['cligsapi']) );
 			$message = __("Cligs API Key Updated", 'wp-to-twitter');
 		} else if ( isset( $_POST['clear'] ) ) {
 			update_option( 'cligsapi','' );
@@ -257,7 +257,7 @@
 	} 
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'bitlyapi' ) {
 		if ( $_POST['bitlyapi'] != '' && isset( $_POST['submit'] ) ) {
-			update_option( 'bitlyapi',trim($_POST['bitlyapi']) );
+			update_option( 'bitlyapi', trim($_POST['bitlyapi']) );
 			$message = __("Bit.ly API Key Updated.", 'wp-to-twitter');
 		} else if ( isset( $_POST['clear'] ) ) {
 			update_option( 'bitlyapi','' );
@@ -266,7 +266,7 @@
 			$message = __("Bit.ly API Key not added - <a href='http://bit.ly/account/'>get one here</a>! An API key is required to use the Bit.ly URL shortening service.", 'wp-to-twitter');
 		}
 		if ( $_POST['bitlylogin'] != '' && isset( $_POST['submit'] ) ) {
-			update_option( 'bitlylogin',$_POST['bitlylogin'] );
+			update_option( 'bitlylogin', trim($_POST['bitlylogin']) );
 			$message .= __(" Bit.ly User Login Updated.", 'wp-to-twitter');
 		} else if ( isset( $_POST['clear'] ) ) {
 			update_option( 'bitlylogin','' );
@@ -382,25 +382,29 @@ if ( get_option('jd-functions-checked') == '0') {
 		$rand = rand(1000000,9999999);
 		$testpost = jd_doTwitterAPIPost( "This is a test of WP to Twitter. ($rand)" );
 			if ($testpost) {
-				$response = jd_xml2array($testpost);
-				if ($response[0]['name'] == "status") {
+				//$response = jd_xml2array($testpost);
+				if ($testpost['response']['code'] == 200) {
 				$message .= __("<li><strong>WP to Twitter successfully submitted a status update to your primary update service.</strong></li>",'wp-to-twitter'); 
 				} else {
 				$wp_twitter_error = true;
 				$message .=	__("<li class=\"error\"><strong>WP to Twitter failed to submit an update to your primary update service.</strong></li>",'wp-to-twitter'); 
-				$message .= "<li>".__("Twitter returned this error:")."<code>".$response[0]['elements'][1]['text']."</code></li>";
+				$message .= "<li>".__("Twitter returned this error:")."<code>".$testpost['headers']['status']."</code></li>";
 				}
+			} else {
+				$wp_twitter_error = true;
+				$message .=	__("<li class=\"error\"><strong>WP to Twitter failed to contact your primary update service.</strong></li>",'wp-to-twitter'); 
+				$message .= "<li>".__("No error was returned.")."</li>";
 			}
 		if ( get_option( 'jd_use_both_services' ) == '1' ) {
 		$testpost2 = jd_doTwitterAPIPost( "This is a test of WP to Twitter. ($rand)",false,"Twitter" );
 			if ($testpost2) {
-				$response = jd_xml2array($testpost2);
-				if ($response[0]['name'] == "status") {
+				//$response = jd_xml2array($testpost2);
+				if ($testpost['response']['code'] == 200) {
 					$message .= __("<li><strong>WP to Twitter successfully submitted a status update to your secondary update service.</strong></li>",'wp-to-twitter'); 
 				} else {
 					$wp_twitter_error = true;
 					$message .=	__("<li class=\"error\"><strong>WP to Twitter failed to submit an update to your secondary update service.</strong></li>",'wp-to-twitter'); 
-					$message .= "<li>".__("The service returned this error:")."<code>".$response[0]['elements'][1]['text']."</code></li>";					
+					$message .= "<li>".__("The service returned this error:")."<code>".$testpost['headers']['status']."</code></li>";					
 				}
 			}
 		}
@@ -467,6 +471,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 <li><?php _e("<code>#category#</code>: the first selected category for the post", 'wp-to-twitter'); ?></li>
 <li><?php _e("<code>#date#</code>: the post date", 'wp-to-twitter'); ?></li>
 <li><?php _e("<code>#url#</code>: the post URL", 'wp-to-twitter'); ?></li>
+<li><?php _e("<code>#author#</code>: the post author'",'wp-to-twitter'); ?></li>
 </ul>
 <p><?php _e("You can also create custom shortcodes to access WordPress custom fields. Use doubled square brackets surrounding the name of your custom field to add the value of that custom field to your status update. Example: <code>[[custom_field]]</code></p>", 'wp-to-twitter'); ?>
 		
@@ -688,7 +693,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 		<input type="checkbox" name="jd_reset_services" id="jd_reset_services" value="1" /> <label for="jd_reset_services"><?php _e("Reset to normal Twitter settings","wp-to-twitter"); ?></label>
 		</p>		
 		<input type="hidden" name="submit-type" value="service" />
-		<p><input type="submit" name="submit" value="<?php _e("Update Twitter Compatible Service", 'wp-to-twitter'); ?>" class="button-primary" /> <?php _e("&raquo; <small>You can use any service using the Twitter-compatible REST API returning data in XML format with this plugin. Twitter-compatible services include <a href='http://identi.ca'>Identi.ca</a>, <a href='http://shoutem.com'>Shoutem.com</a> and <a href='http://chirup.com'>Chirup.com</a>. <strong>No support will be provided for services other than Twitter.</strong>", 'wp-to-twitter'); ?></small></p>		
+		<p><input type="submit" name="submit" value="<?php _e("Update Twitter Compatible Service", 'wp-to-twitter'); ?>" class="button-primary" /> <?php _e("&raquo; <small>You can use any service using the Twitter-compatible REST API returning data in JSON format with this plugin. Twitter-compatible services include <a href='http://identi.ca'>Identi.ca</a>, <a href='http://shoutem.com'>Shoutem.com</a> and <a href='http://chirup.com'>Chirup.com</a>. <strong>No support will be provided for services other than Twitter.</strong>", 'wp-to-twitter'); ?></small></p>		
 	</div>
 	</form>
 	</div>

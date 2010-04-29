@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, cligs, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.7
-Tested up to: 2.9.2
+Tested up to: 3.0 beta
 Stable tag: trunk
 
 Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service.
@@ -34,6 +34,13 @@ Translations:
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.1.0 =
+
+* Now compatible through WP 3.0 series
+* Fixed bug related to failed responses from URL shortener API requests.
+* Added #author# shortcode for status update templates.
+* Fixed a problem with non-posting of scheduled posts when default status updates are disabled.
 
 = 2.0.4 = 
 
