@@ -35,6 +35,12 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.1.1 = 
+
+* Added a control to disable error messages. 
+* Separated URL shortener errors from Twitter API errors.
+* Added stored value with the error message from Bit.ly to try and identify source of errors.
+
 = 2.1.0 =
 
 * Now compatible through WP 3.0 series

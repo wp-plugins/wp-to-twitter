@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 2.1.0
+Version: 2.1.1
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -89,6 +89,8 @@ global $version;
 	if ( version_compare( $version, "2.0.4",">" ) ) {
 		update_option( 'jd_api_post_status','http://twitter.com/statuses/update.json' );
 	}
+	update_option( 'disable_twitter_failure', 0 );
+	update_option( 'disable_url_failure', 0 );
 }	
 	
 // Function checks for an alternate URL to be tweeted. Contribution by Bill Berry.	
@@ -272,7 +274,17 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID ) {
 			break;
 			case 2: // updated to v3 3/31/2010
 			$decoded = jd_remote_json( "http://api.bit.ly/v3/shorten?uri=".$thispostlink."&login=".$bitlylogin."&apiKey=".$bitlyapi."&format=json" );
-			$shrink = $decoded['data']['url'];
+				if ($decoded) {
+					if ($decoded['status_code'] != 200) {
+						$shrink = false;
+						$error .= $decoded['status_txt'];
+						update_option( 'wp_bitly_error',$error );
+					} else {
+						$shrink = $decoded['data']['url'];		
+					}
+				} else {
+				$shrink = false;
+				}			
 			break;
 			case 3:
 			$shrink = urldecode($thispostlink);
@@ -314,7 +326,7 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID ) {
 			break;
 		}
 		if ( $shrink === FALSE || ( stristr( $shrink, "http://" ) === FALSE )) {
-			update_option( 'wp_url_failure','1' );		
+			update_option( 'wp_url_failure','1' );
 			$shrink = $thispostlink;
 		} else {
 			update_option( 'wp_url_failure','0' );
@@ -1167,8 +1179,15 @@ if ( get_option( 'jd_individual_twitter_users')=='1') {
 	add_action( 'edit_user_profile', 'jd_twitter_profile' );
 	add_action( 'profile_update', 'jd_twitter_save_profile');
 }
-if ( get_option( 'wp_twitter_failure' ) == '1' || get_option( 'wp_url_failure' ) == '1' ) {
-	add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>';_e('There\'s been an error posting your Twitter status! <a href=\"".get_bloginfo('wpurl')."/wp-admin/options-general.php?page=wp-to-twitter/wp-to-twitter.php\">Visit your WP to Twitter settings page</a> to get more information and to clear this error message.','wp-to-twitter'); echo '</p></div>';" ) );
+if ( get_option( 'disable_url_failure' ) != '1' ) {
+	if ( get_option( 'wp_url_failure' ) == '1' ) {
+		add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>';_e('There\'s been an error shortening your URL! <a href=\"".get_bloginfo('wpurl')."/wp-admin/options-general.php?page=wp-to-twitter/wp-to-twitter.php\">Visit your WP to Twitter settings page</a> to get more information and to clear this error message.','wp-to-twitter'); echo '</p></div>';" ) );
+	}
+}
+if ( get_option( 'disable_twitter_failure' ) != '1' ) {
+	if ( get_option( 'wp_twitter_failure' ) == '1' ) {
+		add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>';_e('There\'s been an error posting your Twitter status! <a href=\"".get_bloginfo('wpurl')."/wp-admin/options-general.php?page=wp-to-twitter/wp-to-twitter.php\">Visit your WP to Twitter settings page</a> to get more information and to clear this error message.','wp-to-twitter'); echo '</p></div>';" ) );
+	}
 }
 if ( get_option( 'jd_twit_pages' )=='1' ) {
 	add_action( 'publish_page', 'jd_twit_page' );

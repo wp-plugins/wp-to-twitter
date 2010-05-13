@@ -138,6 +138,9 @@
 		update_option( 'use-twitter-analytics', $_POST['use-twitter-analytics'] );
 		update_option( 'twitter-analytics-campaign', $_POST['twitter-analytics-campaign'] );
 		update_option( 'jd_individual_twitter_users', $_POST['jd_individual_twitter_users'] );
+		update_option( 'disable_url_failure' , $_POST['disable_url_failure'] );
+		update_option( 'disable_twitter_failure' , $_POST['disable_twitter_failure'] );
+
 		
 		$message .= __( 'WP to Twitter Advanced Options Updated' , 'wp-to-twitter');
 	}
@@ -788,6 +791,17 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 			<p>
 				<input type="checkbox" name="jd_individual_twitter_users" id="jd_individual_twitter_users" value="1" <?php jd_checkCheckbox('jd_individual_twitter_users')?> />
 				<label for="jd_individual_twitter_users"><?php _e("Authors have individual Twitter accounts", 'wp-to-twitter'); ?></label><br /><small><?php _e('Authors can set their own Twitter username and password in their user profile.', 'wp-to-twitter'); ?></small>
+			</p>			
+		</fieldset>
+		<fieldset>
+		<legend><?php _e('Disable Error Messages','wp-to-twitter'); ?></legend>
+			<p>
+				<input type="checkbox" name="disable_url_failure" id="disable_url_failure" value="1" <?php jd_checkCheckbox('disable_url_failure')?> />
+				<label for="disable_url_failure"><?php _e("Disable global URL shortener error messages.", 'wp-to-twitter'); ?></label>
+			</p>
+			<p>
+				<input type="checkbox" name="disable_twitter_failure" id="disable_twitter_failure" value="1" <?php jd_checkCheckbox('disable_twitter_failure')?> />
+				<label for="disable_twitter_failure"><?php _e("Disable global Twitter API error messages.", 'wp-to-twitter'); ?></label>
 			</p>			
 		</fieldset>
 		<div>

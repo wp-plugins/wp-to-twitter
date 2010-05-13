@@ -230,6 +230,9 @@ $options = array(
 	//category limits
 	'limit_categories'=>get_option('limit_categories' ),
 	'tweet_categories'=>get_option('tweet_categories' ),
+	'disable_url_failure'=>get_option('disable_url_failure' ),
+	'disable_twitter_failure'=>get_option('disable_twitter_failure' ),
+	'wp_bitly_error'=>get_option( 'wp_bitly_error' )
 
 );
 
