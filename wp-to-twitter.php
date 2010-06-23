@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 2.1.1
+Version: 2.1.2
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -24,7 +24,7 @@ Author URI: http://www.joedolson.com/
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status;	
-
+$version = "2.1.2";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', 'wp-content/plugins/' . $plugin_dir, $plugin_dir );
 
@@ -34,7 +34,6 @@ $jdwp_api_post_status = "http://twitter.com/statuses/update.json";
 $jdwp_api_post_status = get_option( 'jd_api_post_status' );
 }
 
-$version = "2.1.0";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 $jd_donate_url = "http://www.joedolson.com/donate.php";
 
@@ -55,42 +54,14 @@ require_once( WP_PLUGIN_DIR . '/wp-to-twitter/functions.php' );
 	
 function wptotwitter_activate() {
 global $version;
-	if ( version_compare( $version,"1.5.6","<" )) {
-		if ( get_option( 'jd-use-link-description' ) == 1 || get_option( 'jd-use-link-description' ) == 0 ) {
-		delete_option( 'jd-use-link-description' );
-		update_option( 'newlink-published-text', "New Link Posted: #description#" );		
-		} 
-		if ( get_option( 'jd-use-link-title' ) == 0 || get_option( 'jd-use-link-title' ) == 1 ) {
-		delete_option( 'jd-use-link-title' );
-		update_option( 'newlink-published-text', "New Link Posted: #title#" );
-		}
-		if ( get_option( 'newpost-published-showlink' ) == 1 ) {
-		delete_option( 'newpost-published-showlink' );	
-		$update = get_option( 'newpost-published-text' ) . " #url#";
-		update_option( 'newpost-published-text', $update );
-		}	
-		if (get_option( 'oldpost-edited-showlink' ) == 1 ) {
-		delete_option( 'oldpost-edited-showlink' );		
-		$update = get_option( 'oldpost-edited-text' ) . " #url#";
-		update_option( 'oldpost-edited-text', $update );		
-		}
-		if ( get_option( 'jd_post_excerpt' ) == "" ) {
-		update_option( 'jd_post_excerpt', 25 );
-		}
-		if ( get_option( 'jd_max_tags' ) == "" ) {
-		update_option( 'jd_max_tags', 3 );
-		}
-		if (get_option( 'jd_max_characters' ) == "" ) {
-		update_option( 'jd_max_characters', 5 );
-		}
-	} else if ( version_compare( $version,"2.0.1","<" )) {
-		update_option( 'jd_keyword_format', 1 );
-	}
-	if ( version_compare( $version, "2.0.4",">" ) ) {
-		update_option( 'jd_api_post_status','http://twitter.com/statuses/update.json' );
-	}
-	update_option( 'disable_twitter_failure', 0 );
-	update_option( 'disable_url_failure', 0 );
+$prev_version = get_option( 'wp_to_twitter_version',$version );
+// this is a switch to plan for future versions
+	/* switch($prev_version) {
+		case '':
+		break;
+		default:
+	} */
+	update_option( 'wp_to_twitter_version',$version );
 }	
 	
 // Function checks for an alternate URL to be tweeted. Contribution by Bill Berry.	
@@ -225,10 +196,10 @@ return $sentence;
 }
 
 function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID ) {
-		$cligsapi = get_option( 'cligsapi' );
-		$bitlyapi = get_option( 'bitlyapi' );
-		$bitlylogin = get_option( 'bitlylogin' );
-		$yourlslogin = get_option( 'yourlslogin');
+		$cligsapi = urlencode( trim ( get_option( 'cligsapi' ) ) );
+		$bitlyapi = urlencode( trim ( get_option( 'bitlyapi' ) ) );
+		$bitlylogin = urlencode( trim ( get_option( 'bitlylogin' ) ) );
+		$yourlslogin = urlencode( trim ( get_option( 'yourlslogin') ) );
 		$yourlsapi = stripcslashes( get_option( 'yourlsapi' ) );
 
 		if ( ( get_option('twitter-analytics-campaign') != '' ) && ( get_option('use-twitter-analytics') == 1 || get_option('use_dynamic_analytics') == 1 ) ) {
@@ -265,15 +236,14 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID ) {
 			} else {
 			$keyword_format = '';
 			}		
-		// Generate and grab the clig using the Cli.gs API
-		// cURL alternative contributed by Thor Erik (http://thorerik.net)
+		// Generate and grab the short url
 		switch ( get_option( 'jd_shortener' ) ) {
 			case 0:
 			case 1:
 			$shrink = jd_fetch_url( "http://cli.gs/api/v1/cligs/create?t=wphttp&appid=WP-to-Twitter&url=".$thispostlink."&title=".$thisposttitle."&key=".$cligsapi );
 			break;
 			case 2: // updated to v3 3/31/2010
-			$decoded = jd_remote_json( "http://api.bit.ly/v3/shorten?uri=".$thispostlink."&login=".$bitlylogin."&apiKey=".$bitlyapi."&format=json" );
+			$decoded = jd_remote_json( "http://api.bit.ly/v3/shorten?longUrl=".$thispostlink."&login=".$bitlylogin."&apiKey=".$bitlyapi."&format=json" );
 				if ($decoded) {
 					if ($decoded['status_code'] != 200) {
 						$shrink = false;
@@ -335,11 +305,11 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID ) {
 }
 
 function jd_expand_url( $short_url ) {
-	//$short_url = urlencode( $short_url );
-	//$decoded = jd_remote_json("http://api.longurl.org/v2/expand?format=json&url=" . $short_url );
-	//$url = $decoded['long-url'];
-	//return $url;
-	return $short_url;
+	$short_url = urlencode( $short_url );
+	$decoded = jd_remote_json("http://api.longurl.org/v2/expand?format=json&url=" . $short_url );
+	$url = $decoded['long-url'];
+	return $url;
+	//return $short_url;
 }
 function jd_expand_yourl( $short_url, $remote ) {
 	if ( $remote == 6 ) {
@@ -412,7 +382,7 @@ function jd_twit( $post_ID ) {
 		} else {
 		$thispostexcerpt = @mb_substr( strip_tags($get_post_info->post_excerpt), 0, $excerpt_length );	
 		}
-	    $thisposttitle = urlencode( stripcslashes( strip_tags( $_POST['post_title'] ) ) );
+	    $thisposttitle = urlencode( stripcslashes( strip_tags( $get_post_info->post_title ) ) );
 		if ($thisposttitle == "") {
 			$thisposttitle = urlencode( stripcslashes( strip_tags( $_POST['title'] ) ) );
 		}
@@ -421,7 +391,7 @@ function jd_twit( $post_ID ) {
 	    $sentence = '';
 		$customTweet = stripcslashes( $_POST['jd_twitter'] );
 		$oldClig = get_post_meta( $post_ID, 'wp_jd_clig', TRUE );
-		if (($get_post_info->post_status == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft' || $_POST['original_post_status'] == 'auto-draft' || $_POST['prev_status'] == 'pending' || $_POST['original_post_status'] == 'pending' ) ) {
+		if (($get_post_info->post_status == 'publish' || $_POST['publish'] == 'Publish') && !( ( $_POST['prev_status'] == 'publish' ) || ($_POST['original_post_status'] == 'publish') ) ) {
 				// publish new post
 				if ( get_option( 'newpost-published-update' ) == '1' ) {
 					if ($customTweet != "") {

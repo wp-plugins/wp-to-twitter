@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, cligs, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.7
-Tested up to: 3.0 beta
+Tested up to: 3.0
 Stable tag: trunk
 
 Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service.
@@ -34,6 +34,15 @@ Translations:
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.1.2 =
+
+* Last update before oAuth integration, I hope.
+* Fixed problems with Postie compatibility
+* Fixed bug where local YOURLS path could not be unset
+* Fixed some issues with upgrades which re-wrote status update templates, occasionally removing the #url# shortcode.
+* Despite numerous reports of issues API behavior with Bit.ly or Twitter, I was unable, in testing, to reproduce any issues, including on servers which I know have had failed requests in the past. 
+* Revised upgrade routines to avoid future problems. 
 
 = 2.1.1 = 
 
@@ -335,7 +344,8 @@ Only posts which you scheduled or edited *after* installing the plugin will be T
 
 == Upgrade Notice ==
 
-Versions 2.0.0 and above of WP to Twitter are not compatible with WordPress versions lower than 2.7. Do not upgrade if you are using an older version of WordPress.
+Please check your WP to Twitter settings after upgrading.
+
 
 == Screenshots ==
 

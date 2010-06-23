@@ -229,6 +229,9 @@
 		if ( $_POST['yourlsurl'] != '' ) {
 			update_option( 'yourlsurl', trim($_POST['yourlsurl']) );
 			$message .= __( "YOURLS API url added. ",'wp-to-twitter' ); 
+		} else {
+			update_option('yourlsurl','');
+			$message .= __( "YOURLS API url removed. ",'wp-to-twitter' ); 			
 		}
 		if ( $_POST['yourlspath'] != '' ) {
 			update_option( 'yourlspath', trim($_POST['yourlspath']) );	
@@ -237,7 +240,10 @@
 			} else {
 			$message .= __( "The path to your YOURLS installation is not correct. ",'wp-to-twitter' );
 			}
-		}	
+		} else {
+			update_option( 'yourlspath','' );
+			$message .= __( "YOURLS local server path removed. ",'wp-to-twitter');
+		}
 		if ( $_POST['jd_keyword_format'] != '' ) {
 			update_option( 'jd_keyword_format', $_POST['jd_keyword_format'] );
 			$message .= __( "YOURLS will use Post ID for short URL slug.",'wp-to-twitter');
@@ -309,7 +315,7 @@ if ( get_option('jd-functions-checked') == '0') {
 		case 2:
 		$bitlylogin = get_option( 'bitlylogin' );
 		$bitlyapi = get_option( 'bitlyapi' );
-		$decoded = jd_remote_json( "http://api.bit.ly/v3/shorten?uri=".$testurl."&login=".$bitlylogin."&apiKey=".$bitlyapi."&format=json" );
+		$decoded = jd_remote_json( "http://api.bit.ly/v3/shorten?longUrl=".$testurl."&login=".$bitlylogin."&apiKey=".$bitlyapi."&format=json" );
 		if ($decoded) {
 			if ($decoded['status_code'] != 200) {
 				$shrink = false;
@@ -385,7 +391,6 @@ if ( get_option('jd-functions-checked') == '0') {
 		$rand = rand(1000000,9999999);
 		$testpost = jd_doTwitterAPIPost( "This is a test of WP to Twitter. ($rand)" );
 			if ($testpost) {
-				//$response = jd_xml2array($testpost);
 				if ($testpost['response']['code'] == 200) {
 				$message .= __("<li><strong>WP to Twitter successfully submitted a status update to your primary update service.</strong></li>",'wp-to-twitter'); 
 				} else {
@@ -401,8 +406,7 @@ if ( get_option('jd-functions-checked') == '0') {
 		if ( get_option( 'jd_use_both_services' ) == '1' ) {
 		$testpost2 = jd_doTwitterAPIPost( "This is a test of WP to Twitter. ($rand)",false,"Twitter" );
 			if ($testpost2) {
-				//$response = jd_xml2array($testpost2);
-				if ($testpost['response']['code'] == 200) {
+				if ($testpost2['response']['code'] == 200) {
 					$message .= __("<li><strong>WP to Twitter successfully submitted a status update to your secondary update service.</strong></li>",'wp-to-twitter'); 
 				} else {
 					$wp_twitter_error = true;
@@ -578,7 +582,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 		</p>
 		<p>
 		<label for="twitterpw"><?php _e("Your $twitter password:", 'wp-to-twitter'); ?><?php if ( get_option( 'twitterpw' ) != "" ) { _e('(<em>Saved</em>)' , 'wp-to-twitter'); } ?></label>
-		<input type="password" name="twitterpw" id="twitterpw" value="" />
+		<input type="password" name="twitterpw" id="twitterpw" value="" /> bestforbabes/breastfeeding
 		</p>
 		<input type="hidden" name="submit-type" value="login" />
 		<p><input type="submit" name="submit" value="<?php _e("Save $twitter Login Info", 'wp-to-twitter'); ?>" class="button-primary" /> <?php _e("&raquo; <small>Don't have a Twitter account? <a href='http://www.twitter.com'>Get one for free here</a>", 'wp-to-twitter'); ?></small></p>
@@ -736,7 +740,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 				<label for="jd_post_excerpt"><?php _e("Length of post excerpt (in characters):", 'wp-to-twitter'); ?></label> <input type="text" name="jd_post_excerpt" id="jd_post_excerpt" size="3" maxlength="3" value="<?php echo ( attribute_escape( get_option( 'jd_post_excerpt' ) ) ) ?>" /><br /><small><?php _e("By default, extracted from the post itself. If you use the 'Excerpt' field, that will be used instead.", 'wp-to-twitter'); ?></small>
 			</p>				
 			<p>
-				<label for="jd_date_format"><?php _e("WP to Twitter Date Formatting:", 'wp-to-twitter'); ?></label> <input type="text" name="jd_date_format" id="jd_date_format" size="12" maxlength="12" value="<?php if (get_option('jd_date_format')=='') { echo ( attribute_escape( get_option('date_format') ) ); } else { echo ( attribute_escape( get_option( 'jd_date_format' ) ) ); }?>" /> (<?php if ( get_option( 'jd_date_format' ) != '' ) { echo date( get_option( 'jd_date_format' ) ); } else { echo date( get_option( 'date_format' ) ); } ?>)<br />
+				<label for="jd_date_format"><?php _e("WP to Twitter Date Formatting:", 'wp-to-twitter'); ?></label> <input type="text" name="jd_date_format" id="jd_date_format" size="12" maxlength="12" value="<?php if (get_option('jd_date_format')=='') { echo ( attribute_escape( get_option('date_format') ) ); } else { echo ( attribute_escape( get_option( 'jd_date_format' ) ) ); }?>" /> (<?php if ( get_option( 'jd_date_format' ) != '' ) { echo date_i18n( get_option( 'jd_date_format' ) ); } else { echo date_i18n( get_option( 'date_format' ) ); } ?>)<br />
 				<small><?php _e("Default is from your general settings. <a href='http://codex.wordpress.org/Formatting_Date_and_Time'>Date Formatting Documentation</a>.", 'wp-to-twitter'); ?></small>
 			</p>
 			
