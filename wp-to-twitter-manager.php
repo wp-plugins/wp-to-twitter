@@ -582,7 +582,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 		</p>
 		<p>
 		<label for="twitterpw"><?php _e("Your $twitter password:", 'wp-to-twitter'); ?><?php if ( get_option( 'twitterpw' ) != "" ) { _e('(<em>Saved</em>)' , 'wp-to-twitter'); } ?></label>
-		<input type="password" name="twitterpw" id="twitterpw" value="" /> bestforbabes/breastfeeding
+		<input type="password" name="twitterpw" id="twitterpw" value="" />
 		</p>
 		<input type="hidden" name="submit-type" value="login" />
 		<p><input type="submit" name="submit" value="<?php _e("Save $twitter Login Info", 'wp-to-twitter'); ?>" class="button-primary" /> <?php _e("&raquo; <small>Don't have a Twitter account? <a href='http://www.twitter.com'>Get one for free here</a>", 'wp-to-twitter'); ?></small></p>
