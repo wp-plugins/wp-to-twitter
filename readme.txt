@@ -35,6 +35,10 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.1.3 =
+
+* Fixed copy typo.
+
 = 2.1.2 =
 
 * Last update before oAuth integration, I hope.
