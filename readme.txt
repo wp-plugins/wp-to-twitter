@@ -2,13 +2,15 @@
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, cligs, bitly, yourls, redirect, shortener, post, links
-Requires at least: 2.7
-Tested up to: 3.0
+Requires at least: 2.9.2
+Tested up to: 3.0.1
 Stable tag: trunk
 
 Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service.
 
 == Description ==
+
+**This is a beta version.** Upgrade to this version if you wish to help me test OAuth support. The current and all past versions of the plugin will cease to work on August 31st, 2010.
 
 The WP-to-Twitter plugin posts a Twitter status update from your WordPress blog using either the Cli.gs or Bit.ly URL shortening services to provide a link back to your post from Twitter. 
 
@@ -35,6 +37,14 @@ Translations:
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.2.0 (beta) = 
+
+* Added OAuth support
+* Fixed problem with default Tweet status not defaulting to 'no.'
+* Revised a few other minor issues
+* No longer supporting WordPress versions below 2.9.2
+* Eliminated features: Author's Twitter account posting; Use of additional service to post to Twitter on a second account. These features are not possible with simple OAuth authentication; they require XAuth. This makes the features of extremely limited value, since you, as the user, would be required to apply for XAuth permissions on your own installation. I regret the necessity to remove these features. Both options will still function with Twitter-compatible API services using Basic authentication.
 
 = 2.1.3 =
 
@@ -349,8 +359,7 @@ Only posts which you scheduled or edited *after* installing the plugin will be T
 
 == Upgrade Notice ==
 
-Please check your WP to Twitter settings after upgrading.
-
+This is a beta release with OAuth support. Please read the changelog before upgrading.
 
 == Screenshots ==
 
