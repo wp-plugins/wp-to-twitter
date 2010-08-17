@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 2.2.0 (beta 3)
+Version: 2.2.0 (beta 4)
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -362,7 +362,7 @@ function jd_expand_yourl( $short_url, $remote ) {
 }
 
 function in_allowed_category( $array ) {
-	$allowed_categories = unserialize( get_option( 'tweet_categories' ) );
+	$allowed_categories =  get_option( 'tweet_categories' );
 	if ( is_array( $array ) && is_array( $allowed_categories ) ) {
 	$common = @array_intersect( $array,$allowed_categories );
 		if ( count( $common ) >= 1 ) {
@@ -404,12 +404,13 @@ function jd_twit( $post_ID ) {
 	    $thispostlink =  external_or_permalink( $post_ID );
 		$thisblogtitle =  get_bloginfo( 'name' );
 	    $sentence = '';
-		$customTweet = stripcslashes( $_POST['jd_twitter'] );
+		$customTweet = stripcslashes( trim( $_POST['jd_twitter'] ) );
 		$oldClig = get_post_meta( $post_ID, 'wp_jd_clig', TRUE );
 		if ( ( $get_post_info->post_status == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft') || $_POST['original_post_status'] == 'auto-draft' ) {
 			// publish new post
 				if ( get_option( 'newpost-published-update' ) == '1' ) {
-				    $sentence = ($customTweet != "")?$customTweet:stripcslashes( get_option( 'newpost-published-text' ) );
+					$nptext = stripcslashes( get_option( 'newpost-published-text' ) );			
+				    $sentence = ( $customTweet != "" ) ? $customTweet : $nptext;
 					if ($oldClig != '') {
 					$shrink = $oldClig;
 					} else {
@@ -423,12 +424,13 @@ function jd_twit( $post_ID ) {
 			} else if ( (( $_POST['originalaction'] == "editpost" ) && ( ( $_POST['prev_status'] == 'publish' ) || ($_POST['original_post_status'] == 'publish') ) ) && $get_post_info->post_status == 'publish') {
 				// if this is an old post and editing updates are enabled
 				if ( get_option( 'oldpost-edited-update') == '1' ) {
-				    $sentence = ($customTweet != "")?$customTweet:stripcslashes( get_option( 'oldpost-published-text' ) );
+				    $optext = stripcslashes( get_option( 'oldpost-published-text' ) );
+				    $sentence = ( $customTweet != "" ) ? $customTweet : $optext;
 					if ( $oldClig != '' ) {
-					$old_post_link = $oldClig;
+						$old_post_link = $oldClig;
 					} else {
-					$old_post_link = jd_shorten_link( $thispostlink, $thisposttitle, $post_ID );
-					store_url( $post_ID, $old_post_link );
+						$old_post_link = jd_shorten_link( $thispostlink, $thisposttitle, $post_ID );
+						store_url( $post_ID, $old_post_link );
 					}
 					$sentence = custom_shortcodes( $sentence, $post_ID );					
 					$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $thispostexcerpt, $old_post_link, $category, $thisdate, $post_ID,  $authID );
@@ -469,13 +471,14 @@ function jd_twit_page( $post_ID ) {
 	    $thispostlink = external_or_permalink( $post_ID );
 		$thisblogtitle =  get_bloginfo( 'name' );
 	    $sentence = '';
-		$customTweet = stripcslashes( $_POST['jd_twitter'] );
+		$customTweet = stripcslashes( trim( $_POST['jd_twitter'] ) );
 		$oldClig = get_post_meta( $post_ID, 'wp_jd_clig', TRUE );
 		if (($get_post_info->post_status == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft')) {
 				// publish new post
 				if ( get_option( 'jd_twit_pages' ) == '1' ) {
-				    $sentence = ($customTweet != "")?$customTweet:stripcslashes( get_option( 'newpage-published-text' ) );
-						if ($oldClig != '') {
+				    $npptext = stripcslashes( get_option( 'newpage-published-text' ) );
+					$sentence = ( $customTweet != "" ) ? $customTweet : $npptext;
+					if ($oldClig != '') {
 						$shrink = $oldClig;
 						} else {
 						$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $post_ID );
@@ -488,11 +491,12 @@ function jd_twit_page( $post_ID ) {
 			} else if ( (( $_POST['originalaction'] == "editpost" ) && ( ( $_POST['prev_status'] == 'publish' ) || ($_POST['original_post_status'] == 'publish') ) ) && $get_post_info->post_status == 'publish') {
 				// if this is an old page and editing updates are enabled
 			if ( get_option( 'jd_twit_edited_pages' ) == '1' ) {
-				    $sentence = ($customTweet != "")?$customTweet:stripcslashes( get_option( 'oldpage-published-text' ) );
+				    $opptext = stripcslashes( get_option( 'oldpage-published-text' ) );
+					$sentence = ( $customTweet != "" ) ? $customTweet : $opptext;
 						if ($oldClig != '') {
-						$shrink = $oldClig;
+							$shrink = $oldClig;
 						} else {
-						$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $post_ID );
+							$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $post_ID );
 						}
 					store_url( $post_ID, $shrink );		
 					$sentence = custom_shortcodes( $sentence, $post_ID );
@@ -987,7 +991,7 @@ function jd_list_categories() {
 	$input = "<form action=\"\" method=\"post\">
 	<fieldset><legend>".__('Check the categories you want to tweet:','wp-to-twitter')."</legend>
 	<ul>\n";
-	$tweet_categories = unserialize( get_option( 'tweet_categories' ) );
+	$tweet_categories =  get_option( 'tweet_categories' );
 		foreach ($categories AS $cat) {
 			if (is_array($tweet_categories)) {
 				if (in_array($cat->term_id,$tweet_categories)) {

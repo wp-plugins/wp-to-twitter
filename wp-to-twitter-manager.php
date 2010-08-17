@@ -197,7 +197,7 @@
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'setcategories' ) {
 		
 		if ( is_array($_POST['categories'])) {
-			$categories = serialize($_POST['categories']);
+			$categories = $_POST['categories'];
 			update_option('limit_categories','1');
 			update_option('tweet_categories',$categories);
 			$message = __("Category limits updated.");
@@ -763,7 +763,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 		<legend><?php _e('Individual Authors','wp-to-twitter'); ?></legend>
 			<p>
 				<input type="checkbox" name="jd_individual_twitter_users" id="jd_individual_twitter_users" value="1" <?php jd_checkCheckbox('jd_individual_twitter_users')?> />
-				<label for="jd_individual_twitter_users"><?php _e("Authors have individual Twitter accounts", 'wp-to-twitter'); ?></label><br /><small><?php _e('Authors can set their own Twitter username and password in their user profile.', 'wp-to-twitter'); ?></small>
+				<label for="jd_individual_twitter_users"><?php _e("Authors have individual Non-Twitter accounts", 'wp-to-twitter'); ?></label><br /><small><?php _e('Authors can set their own username and password in their user profile. As of version 2.2.0, this feature no longer allows authors to post to their own Twitter accounts. It can only be used with a secondary update service.', 'wp-to-twitter'); ?></small>
 			</p>			
 		</fieldset>
 		<fieldset>

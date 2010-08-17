@@ -44,10 +44,10 @@ switch ( $_POST['oauth_settings'] ) {
 				&& !empty($_POST['wtt_oauth_token'])
 				&& !empty($_POST['wtt_oauth_token_secret'])
 			) {
-				update_option('app_consumer_key',$_POST['wtt_app_consumer_key']);
-				update_option('app_consumer_secret',$_POST['wtt_app_consumer_secret']);
-				update_option('oauth_token',$_POST['wtt_oauth_token']);
-				update_option('oauth_token_secret',$_POST['wtt_oauth_token_secret']);
+				update_option('app_consumer_key',trim($_POST['wtt_app_consumer_key']));
+				update_option('app_consumer_secret',trim($_POST['wtt_app_consumer_secret']));
+				update_option('oauth_token',trim($_POST['wtt_oauth_token']));
+				update_option('oauth_token_secret',trim($_POST['wtt_oauth_token_secret']));
 				
 				$message = 'fail';
 				
@@ -59,7 +59,16 @@ switch ( $_POST['oauth_settings'] ) {
 						$oauth_hash = wtt_oauth_credentials_to_hash();
 						update_option('wtt_oauth_hash', $oauth_hash);
 						$message = 'success';
+					} else {
+						$error_information = array("http_code"=>$connection->http_code,"status"=>$connection->http_header['status']);
 					}
+					/*
+					echo "<pre>Errors:";
+					print_r($error_information);
+					echo "Full:";
+				     print_r($connection);
+					echo "</pre>";
+					*/
 				}
 			}
 			return $message;
@@ -94,7 +103,7 @@ echo '<div class="handlediv" title="Click to toggle"><br/></div>';
 			<h3>'.__('Connect to Twitter','wp-to-twitter').'</h3>
 			<div class="inside">
 			<br class="clear" />			
-			<p>'.__('The process to set up OAuth authentication for your web site is needlessly laborious. However, this is the only method available from Twitter at this time. Follow the instructions carefully.', 'wp-to-twitter').'</p> 
+			<p>'.__('The process to set up OAuth authentication for your web site is needlessly laborious. It is also confusing. However, this is the only method available from Twitter at this time. Note that you will not, at any time, enter you Twitter username or password into WP to Twitter; they are not used in OAuth authentication.', 'wp-to-twitter').'</p> 
 			<form action="" method="post">
 				<fieldset class="options">
 					<h4>'.__('1. Register this site as an application on ', 'wp-to-twitter') . '<a href="http://dev.twitter.com/apps/new" target="_blank">'.__('Twitter\'s application registration page','wp-to-twitter').'</a></h4>

@@ -33,10 +33,19 @@ Translations:
 * Spanish: [David Gil P&eacute;rez](http://www.sohelet.com)
 * Russian: [Burkov Boris](http://chernobog.ru)
 * French: [Fr&eacute;d&eacute;ric Million](http://www.traducteurs.com)
+* Estonian: [Raivo Ratsep](http://raivoratsep.com)
 
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.2.0 (beta 4) =
+
+* Fixed long-standing issue with serialization of option arrays
+* Fixed trimming of white space from authentication keys
+* Clarification of some texts to help explain some of the changes
+* Clarification of some texts to help explain how to connect to Twitter with OAuth
+* Added credit for Estonian translation by Raivo Ratsep.
 
 = 2.2.0 (beta 3) =
 
