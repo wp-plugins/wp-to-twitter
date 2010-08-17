@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 2.2.0 (beta 2)
+Version: 2.2.0 (beta 3)
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -377,7 +377,7 @@ function in_allowed_category( $array ) {
 
 function jd_twit( $post_ID ) {	
 	$jd_tweet_this = get_post_meta( $post_ID, 'jd_tweet_this', TRUE);
-	if ( $jd_tweet_this == "yes" ) {
+	if ( $jd_tweet_this != "no" ) {
 		$get_post_info = get_post( $post_ID );
 		// get post author
 		$authID = $get_post_info->post_author;

@@ -38,6 +38,10 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.2.0 (beta 3) =
+
+* Fixed issue with failing to post to Twitter. 
+
 = 2.2.0 (beta 2) =
 
 * Fixed false positive error message on Twitter check routine failure
