@@ -389,18 +389,12 @@ function jd_check_functions() {
 		$rand = rand(1000000,9999999);
 		$testpost = jd_doTwitterAPIPost( "This is a test of WP to Twitter. ($rand)" );
 			if ($testpost) {
-				if ($testpost['response']['code'] == 200) {
 				$message .= __("<li><strong>WP to Twitter successfully submitted a status update to your primary update service.</strong></li>",'wp-to-twitter'); 
-				} else {
+			} else {
 				$wp_twitter_error = true;
 				$message .=	__("<li class=\"error\"><strong>WP to Twitter failed to submit an update to your primary update service.</strong></li>",'wp-to-twitter'); 
 				$message .= "<li>".__("Twitter returned this error:")."<code>".$testpost['headers']['status']."</code></li>";
 				}
-			} else {
-				$wp_twitter_error = true;
-				$message .=	__("<li class=\"error\"><strong>WP to Twitter failed to contact your primary update service.</strong></li>",'wp-to-twitter'); 
-				$message .= "<li>".__("No error was returned.")."</li>";
-			}
 	} else {
 		$message .= "<strong>"._e('You have not connected WordPress to Twitter.','wp-to-twitter')."</strong> ";
 	}
@@ -416,7 +410,6 @@ function jd_check_functions() {
 				}
 			}
 		}
-		
 		// If everything's OK, there's  no reason to do this again.
 		if ($wp_twitter_error == FALSE && $wp_shortener_error == FALSE  ) {
 		$message .= __("<li><strong>Your server should run WP to Twitter successfully.</strong></li>", 'wp-to-twitter');
@@ -426,11 +419,10 @@ function jd_check_functions() {
 		update_option( 'jd-functions-checked','1' );	
 		}
 		$message .= "</ul>";
-	?>
-	<?php if ( $wp_twitter_error == TRUE || ( $wp_cligs_error == TRUE && $wp_bitly_error == TRUE ) ) {
-	echo "<div class='error'><p>";
-	_e("This plugin may not fully work in your server environment. The plugin failed to contact both a URL shortener API and the Twitter service API.", 'wp-to-twitter');
-	echo "</p></div>";
+	if ( $wp_twitter_error == TRUE || ( $wp_cligs_error == TRUE && $wp_bitly_error == TRUE ) ) {
+		echo "<div class='error'><p>";
+		_e("This plugin may not fully work in your server environment. The plugin failed to contact both a URL shortener API and the Twitter service API.", 'wp-to-twitter');
+		echo "</p></div>";
 	}
 }
 ?>

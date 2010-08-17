@@ -100,7 +100,8 @@ echo '<div class="handlediv" title="Click to toggle"><br/></div>';
 					<h4>'.__('1. Register this site as an application on ', 'wp-to-twitter') . '<a href="http://dev.twitter.com/apps/new" target="_blank">'.__('Twitter\'s application registration page','wp-to-twitter').'</a></h4>
 						<ul>
 						<li>'.__('If you\'re not currently logged in, use the Twitter username and password which you want associated with this site' , 'wp-to-twitter').'</li>
-						<li>'.__('Your Application\'s Name will be what shows up after "via" in your twitter stream; previously, "WP to Twitter"' , 'wp-to-twitter').'</li>
+						<li>'.__('Your Application\'s Name will be what shows up after "via" in your twitter stream; previously, "WP to Twitter." Your application name cannot include the word "Twitter"' , 'wp-to-twitter').'</li>
+						<li>'.__('Your Application Description can be whatever you want.','wp-to-twitter').'</li>
 						<li>'.__('Application Type should be set on ' , 'wp-to-twitter').'<strong>'.__('Browser' , 'wp-to-twitter').'</strong></li>
 						<li>'.__('The Callback URL should be ' , 'wp-to-twitter').'<strong>'.  get_bloginfo( 'url' ) .'</strong></li>
 						<li>'.__('Default Access type must be set to ' , 'wp-to-twitter').'<strong>'.__('Read &amp; Write' , 'wp-to-twitter').'</strong> '.__('(this is NOT the default)' , 'wp-to-twitter').'</li>

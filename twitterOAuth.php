@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Abraham Williams (abraham@abrah.am) http://abrah.am
  *
@@ -247,3 +246,4 @@ class TwitterOAuth {
 }
 
 } // class_exists check
+?>

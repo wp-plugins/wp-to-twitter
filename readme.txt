@@ -38,6 +38,11 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.2.0 (beta 2) =
+
+* Fixed false positive error message on Twitter check routine failure
+* Adjusted twitteroauth file to hopefully avoid certain errors
+
 = 2.2.0 (beta) = 
 
 * Added OAuth support
