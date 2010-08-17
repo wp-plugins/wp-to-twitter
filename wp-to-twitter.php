@@ -454,7 +454,7 @@ function jd_twit( $post_ID ) {
 
 function jd_twit_page( $post_ID ) {	
 	$jd_tweet_this = get_post_meta( $post_ID, 'jd_tweet_this', TRUE);
-	if ( $jd_tweet_this == "yes" ) {
+	if ( $jd_tweet_this != "no" ) {
 		$get_post_info = get_post( $post_ID );
 		$authID = $get_post_info->post_author;
 		$postdate = $get_post_info->post_date;
@@ -588,7 +588,7 @@ function jd_twit_future( $post_ID ) {
 	foreach ($categories AS $cat) {
 		$category_ids[] = $cat->term_id;
 	}	
-	if ( $jd_tweet_this == "yes" ) {	
+	if ( $jd_tweet_this != "no" ) {	
 		$thispostlink =  external_or_permalink( $post_ID );
 		$thisposttitle =  strip_tags( $get_post_info->post_title );	
 		$authID = $get_post_info->post_author;		
