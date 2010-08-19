@@ -16,16 +16,23 @@ function jd_remote_json( $url, $array=true ) {
 	// TODO: some error handling ?
 }			
 
+function is_valid_url( $url ) {
+	return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);	
+}
 // Fetch a remote page. Input url, return content
 function jd_fetch_url( $url, $method='GET', $body='', $headers='', $return='body' ) {
 	$request = new WP_Http;
 	$result = $request->request( $url , array( 'method'=>$method, 'body'=>$body, 'headers'=>$headers, 'user-agent'=>'WP to Twitter http://www.joedolson.com/articles/wp-to-twitter/' ) );
 	// Success?
 	if ( !is_wp_error($result) && isset($result['body']) ) {
-		if ($return == 'body') {
-		return $result['body'];
+		if ( $result['code'] != 200 ) {
+			if ($return == 'body') {
+			return $result['body'];
+			} else {
+			return $result;
+			}
 		} else {
-		return $result;
+			return $result['code'];
 		}
 	// Failure (server problem...)
 	} else {
@@ -190,7 +197,6 @@ $options = array(
 	'jd_shortener'=>get_option( 'jd_shortener' ),
 	
 	// Error checking
-	'jd-functions-checked'=>get_option( 'jd-functions-checked' ),
 	'wp_twitter_failure'=>get_option( 'wp_twitter_failure' ),
 	'wp_url_failure' =>get_option( 'wp_url_failure' ),
 	'twitterInitialised'=>get_option( 'twitterInitialised' ),
@@ -200,8 +206,8 @@ $options = array(
 	'tweet_categories'=>get_option('tweet_categories' ),
 	'disable_url_failure'=>get_option('disable_url_failure' ),
 	'disable_twitter_failure'=>get_option('disable_twitter_failure' ),
-	'wp_bitly_error'=>get_option( 'wp_bitly_error' )
-
+	'wp_bitly_error'=>get_option( 'wp_bitly_error' ),
+	'wp_cligs_error'=>get_option( 'wp_cligs_error' )
 );
 
 echo "<div class=\"settings\">";

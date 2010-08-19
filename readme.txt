@@ -34,10 +34,18 @@ Translations:
 * Russian: [Burkov Boris](http://chernobog.ru)
 * French: [Fr&eacute;d&eacute;ric Million](http://www.traducteurs.com)
 * Estonian: [Raivo Ratsep](http://raivoratsep.com)
+* Simplified Chinese: [Joe Francis](http://blog.francistm.com)
 
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.2.0 (beta 5) =
+
+* Eliminated an incompatibility with alternate versions of twitterOAuth class
+* Significant revisions of error message processes and details
+* Fixed some URL shortener problems
+* Added simplified Chinese translation
 
 = 2.2.0 (beta 4) =
 

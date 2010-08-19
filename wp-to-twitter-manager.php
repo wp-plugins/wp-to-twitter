@@ -57,7 +57,6 @@
 		// Use custom external URLs to point elsewhere. 
 		update_option( 'jd_twit_custom_url', 'external_link' );	
 		// Error checking
-		update_option( 'jd_functions_checked','0' );
 		update_option( 'wp_twitter_failure','0' );
 		update_option( 'wp_url_failure','0' );
 		// Default publishing options.
@@ -284,146 +283,73 @@
 	///*
 	// Check whether the server has supported for needed functions.
 	if (  isset($_POST['submit-type']) && $_POST['submit-type'] == 'check-support' ) {
-		jd_check_functions();
+		$message = jd_check_functions();
 	}
 // If you're attempting to solve the "settings page doesn't display" problem, begin your comment here. 
 
 
 
 function jd_check_functions() {
-	$message = "<ul>";
+	$message = "<div class='update'><ul>";
 	// grab or set necessary variables
-	$testurl = urlencode( get_bloginfo( 'url' ) );
+	$testurl =  get_bloginfo( 'url' );
 	$shortener = get_option( 'jd_shortener' );
-	$passthrough = false;
-	
-	switch ( $shortener ) {
-		case 0:
-		case 1:
-		$cligsapi = get_option( 'cligsapi' );		
-		$shrink = jd_fetch_url( "http://cli.gs/api/v1/cligs/create?t=wphttp&appid=WP-to-Twitter&url=".$testurl."&key=".$cligsapi );
-		if (!$shrink || !preg_match( '|^\S+://\S+\.\S+.+$|', $shrink ) ) {
-			$shrink = false;
-		} 
-		if ( $shrink && !preg_match( '|^\S+://\S+\.\S+.+$|', $shrink ) ) {
-			$error = $shrink;
-		}
-		break;
-		case 2:
-		$bitlylogin = get_option( 'bitlylogin' );
-		$bitlyapi = get_option( 'bitlyapi' );
-		$decoded = jd_remote_json( "http://api.bit.ly/v3/shorten?longUrl=".$testurl."&login=".$bitlylogin."&apiKey=".$bitlyapi."&format=json" );
-		if ($decoded) {
-			if ($decoded['status_code'] != 200) {
-				$shrink = false;
-				$error .= $decoded['status_txt'];
-			} else {
-				$shrink = $decoded['data']['url'];		
-			}
-		} else {
-		$shrink = false;
-		}
+	$title = urlencode( 'Your blog home' );
+	$shrink = jd_shorten_link( $testurl, $title, false, 'true' );
 
-		break;
-		case 3:
-		$passthrough = true;
-		
-		break;
-		case 4:
-		$passthrough = true;
-		
-		break;
-		case 5:
-		// local YOURLS installation
-		global $yourls_reserved_URL;
-		define('YOURLS_INSTALLING', true); // Pretend we're installing YOURLS to bypass test for install or upgrade
-		define('YOURLS_FLOOD_DELAY_SECONDS', 0); // Disable flood check
-		if( file_exists( dirname( get_option( 'yourlspath' ) ).'/load-yourls.php' ) ) { // YOURLS 1.4
-			global $ydb;
-			require_once( dirname( get_option( 'yourlspath' ) ).'/load-yourls.php' ); 
-			$yourls_result = yourls_add_new_link( $testurl, '' );
-		} else { // YOURLS 1.3
-			require_once( get_option( 'yourlspath' ) ); 
-			$yourls_db = new wpdb( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
-			$yourls_result = yourls_add_new_link( $testurl, '', $yourls_db );
-		}
-		if ($yourls_result) {
-			$shrink = $yourls_result['shorturl'];			
-		} else {
-			$shrink = false;
-		}		
-		break;
-		case 6:
-		// remote YOURLS installation
-		$yourlslogin = get_option( 'yourlslogin' );
-		$yourlsapi = get_option( 'yourlsapi' );		
-		$api_url = sprintf( get_option('yourlsurl') . '?username=%s&password=%s&url=%s&format=json&action=shorturl',
-			$yourlslogin, $yourlsapi, $testurl );
-		$json = jd_remote_json( $api_url, false );			
-		if ($json) {
-			$shrink = $json->shorturl;
-		} else {
-			$shrink = false;
-		}		
-		break;
-	}
 	$api_url = $jdwp_api_post_status;
 	$yourls_URL = "";
 		
-		if ($passthrough == true) {
-			$wp_shortener_error = FALSE;
-			$message .= __("<li><strong>Your selected URL shortener does not require testing.</strong></li>",'wp-to-twitter');
+	if ($shrink == FALSE) {
+		if ($shortener == 1) {
+			$error = htmlentities(get_option('wp_cligs_error'));
+		} else 
+		if ($shortener == 2) {
+			$error = htmlentities(get_option('wp_bitly_error'));
 		} else {
-			if ($shrink === FALSE) {
-			$message .= __("<li class=\"error\"><strong>WP to Twitter was unable to contact your selected URL shortening service.</strong></li>",'wp-to-twitter');
-			$message .= "<li><code> $error</code></li>";
-			} else {
-			$wp_shortener_error = FALSE;
-			$message .= __("<li><strong>WP to Twitter successfully contacted your selected URL shortening service.</strong>  The following link should point to your blog homepage:",'wp-to-twitter');
-			$message .= " <a href='$shrink'>$shrink</a></li>";	
-			}
-		}
+			$error = _('No error information is available for your shortener.','wp-to-twitter');
+		}	
+		$message .= __("<li class=\"error\"><strong>WP to Twitter was unable to contact your selected URL shortening service.</strong></li>",'wp-to-twitter');
+		$message .= "<li><code> $error</code></li>";
+	} else {
+		$message .= __("<li><strong>WP to Twitter successfully contacted your selected URL shortening service.</strong>  The following link should point to your blog homepage:",'wp-to-twitter');
+		$message .= " <a href='$shrink'>$shrink</a></li>";	
+	}
 		
 	//check twitter credentials
 	if ( wtt_oauth_test() ) {
 		$rand = rand(1000000,9999999);
-		$testpost = jd_doTwitterAPIPost( "This is a test of WP to Twitter. ($rand)" );
+		$testpost = jd_doTwitterAPIPost( "This is a test of WP to Twitter. [$shrink] ($rand)" );
 			if ($testpost) {
-				$message .= __("<li><strong>WP to Twitter successfully submitted a status update to your primary update service.</strong></li>",'wp-to-twitter'); 
+				$message .= __("<li><strong>WP to Twitter successfully submitted a status update to Twitter.</strong></li>",'wp-to-twitter'); 
 			} else {
-				$wp_twitter_error = true;
-				$message .=	__("<li class=\"error\"><strong>WP to Twitter failed to submit an update to your primary update service.</strong></li>",'wp-to-twitter'); 
-				$message .= "<li>".__("Twitter returned this error:")."<code>".$testpost['headers']['status']."</code></li>";
+				$message .=	__("<li class=\"error\"><strong>WP to Twitter failed to submit an update to Twitter.</strong></li>",'wp-to-twitter'); 
 				}
 	} else {
 		$message .= "<strong>"._e('You have not connected WordPress to Twitter.','wp-to-twitter')."</strong> ";
 	}
 		if ( get_option( 'jd_use_both_services' ) == '1' ) {
-		$testpost2 = jd_doUnknownAPIPost( "This is a test of WP to Twitter. ($rand)",false,"Twitter" );
+		$testpost2 = jd_doUnknownAPIPost( "This is a test of WP to Twitter. [$shrink] ($rand)",false,"Twitter" );
 			if ($testpost2) {
 				if ($testpost2['response']['code'] == 200) {
 					$message .= __("<li><strong>WP to Twitter successfully submitted a status update to your secondary update service.</strong></li>",'wp-to-twitter'); 
 				} else {
-					$wp_twitter_error = true;
 					$message .=	__("<li class=\"error\"><strong>WP to Twitter failed to submit an update to your secondary update service.</strong></li>",'wp-to-twitter'); 
-					$message .= "<li>".__("The service returned this error:")."<code>".$testpost['headers']['status']."</code></li>";					
+					$message .= "<li>".__("The service returned this error:")."<code>".$testpost2['headers']['status']."</code></li>";					
 				}
 			}
 		}
-		// If everything's OK, there's  no reason to do this again.
-		if ($wp_twitter_error == FALSE && $wp_shortener_error == FALSE  ) {
-		$message .= __("<li><strong>Your server should run WP to Twitter successfully.</strong></li>", 'wp-to-twitter');
-		update_option( 'jd-functions-checked','1' );		
+		// If everything's OK, there's  no reason to do this again.	
+		if ($testpost == FALSE && $shrink == FALSE  ) {
+			$message .= __("<li class=\"error\"><strong>Your server does not appear to support the required methods for WP to Twitter to function.</strong> You can try it anyway - these tests aren't perfect.</li>", 'wp-to-twitter');
 		} else { 
-		$message .= __("<li class=\"error\"><strong>Your server does not appear to support the required methods for WP to Twitter to function.</strong> You can try it anyway - these tests aren't perfect.</li>", 'wp-to-twitter');
-		update_option( 'jd-functions-checked','1' );	
 		}
-		$message .= "</ul>";
-	if ( $wp_twitter_error == TRUE || ( $wp_cligs_error == TRUE && $wp_bitly_error == TRUE ) ) {
-		echo "<div class='error'><p>";
-		_e("This plugin may not fully work in your server environment. The plugin failed to contact both a URL shortener API and the Twitter service API.", 'wp-to-twitter');
-		echo "</p></div>";
+	if ( $testpost && $shrink ) {
+	$message .= __("<li><strong>Your server should run WP to Twitter successfully.</strong></li>", 'wp-to-twitter');
 	}
+	$message .= "</ul>
+	</div>";
+	return $message;
 }
 ?>
 
@@ -438,7 +364,7 @@ print_settings();
 
 <h2><?php _e("WP to Twitter Options", 'wp-to-twitter'); ?></h2>
 
-<?php echo get_option('jd_last_tweet'); ?>
+<?php //echo get_option('jd_last_tweet'); ?>
 
 <?php  
 $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dirname( plugin_basename(__FILE__) );

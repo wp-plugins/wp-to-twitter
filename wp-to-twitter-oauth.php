@@ -11,8 +11,8 @@ $ot = get_option('oauth_token');
 $ots = get_option('oauth_token_secret');
 
 if ( !empty( $ack ) && !empty( $acs ) && !empty( $ot ) && !empty( $ots ) ) {	
-	require_once( WP_PLUGIN_DIR . '/wp-to-twitter/twitterOAuth.php' );
-	$connection = new TwitterOAuth(
+	require_once( WP_PLUGIN_DIR . '/wp-to-twitter/jd_twitterOAuth.php' );
+	$connection = new jd_TwitterOAuth(
 		get_option('app_consumer_key'), 
 		get_option('app_consumer_secret'), 
 		get_option('oauth_token'), 
@@ -109,7 +109,7 @@ echo '<div class="handlediv" title="Click to toggle"><br/></div>';
 					<h4>'.__('1. Register this site as an application on ', 'wp-to-twitter') . '<a href="http://dev.twitter.com/apps/new" target="_blank">'.__('Twitter\'s application registration page','wp-to-twitter').'</a></h4>
 						<ul>
 						<li>'.__('If you\'re not currently logged in, use the Twitter username and password which you want associated with this site' , 'wp-to-twitter').'</li>
-						<li>'.__('Your Application\'s Name will be what shows up after "via" in your twitter stream; previously, "WP to Twitter." Your application name cannot include the word "Twitter"' , 'wp-to-twitter').'</li>
+						<li>'.__('Your Application\'s Name will be what shows up after "via" in your twitter stream; previously, "WP to Twitter." Your application name cannot include the word "Twitter." I suggest using the name of your web site.' , 'wp-to-twitter').'</li>
 						<li>'.__('Your Application Description can be whatever you want.','wp-to-twitter').'</li>
 						<li>'.__('Application Type should be set on ' , 'wp-to-twitter').'<strong>'.__('Browser' , 'wp-to-twitter').'</strong></li>
 						<li>'.__('The Callback URL should be ' , 'wp-to-twitter').'<strong>'.  get_bloginfo( 'url' ) .'</strong></li>

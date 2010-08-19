@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 2.2.0 (beta 4)
+Version: 2.2.0 (beta 5)
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -222,40 +222,45 @@ $sentence =  $post_sentence;
 return $sentence;
 }
 
-function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID ) {
+function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='false' ) {
 		$cligsapi = urlencode( trim ( get_option( 'cligsapi' ) ) );
 		$bitlyapi = urlencode( trim ( get_option( 'bitlyapi' ) ) );
 		$bitlylogin = urlencode( trim ( get_option( 'bitlylogin' ) ) );
 		$yourlslogin = urlencode( trim ( get_option( 'yourlslogin') ) );
 		$yourlsapi = stripcslashes( get_option( 'yourlsapi' ) );
-
-		if ( ( get_option('twitter-analytics-campaign') != '' ) && ( get_option('use-twitter-analytics') == 1 || get_option('use_dynamic_analytics') == 1 ) ) {
-			if ( get_option('use_dynamic_analytics') == '1' ) {
-				$campaign_type = get_option('jd_dynamic_analytics');
-				if ($campaign_type == "post_category") {
-					$category = get_the_category( $post_ID );
-					$this_campaign = $category[0]->cat_name;
-				} else if ($campaign_type == "post_ID") {
-					$this_campaign = $post_ID;
-				} else if ($campaign_type == "post_title") {
-					$post = get_post( $post_ID );
-					$this_campaign = $post->post_title; 
+		$thisposttitle = urlencode($thisposttitle);
+		if ($testmode != 'false') {
+			if ( ( get_option('twitter-analytics-campaign') != '' ) && ( get_option('use-twitter-analytics') == 1 || get_option('use_dynamic_analytics') == 1 ) ) {
+				if ( get_option('use_dynamic_analytics') == '1' ) {
+					$campaign_type = get_option('jd_dynamic_analytics');
+					if ($campaign_type == "post_category") {
+						$category = get_the_category( $post_ID );
+						$this_campaign = $category[0]->cat_name;
+					} else if ($campaign_type == "post_ID") {
+						$this_campaign = $post_ID;
+					} else if ($campaign_type == "post_title") {
+						$post = get_post( $post_ID );
+						$this_campaign = $post->post_title; 
+					} else {
+						$post = get_post( $post_ID );
+						$post_author = $post->post_author;
+						$this_campaign = get_the_author_meta( 'user_login',$post_author );
+					}
 				} else {
-					$post = get_post( $post_ID );
-					$post_author = $post->post_author;
-					$this_campaign = get_the_author_meta( 'user_login',$post_author );
+				$this_campaign = get_option('twitter-analytics-campaign');
 				}
-			} else {
-			$this_campaign = get_option('twitter-analytics-campaign');
+				$search = array(" ","&","?");
+				$this_campaign = str_replace($search,'',$this_campaign);
+				if ( strpos( $thispostlink,"%3F" ) === FALSE) {
+				$thispostlink .= urlencode("?");
+				} else {
+				$thispostlink .= urlencode("&");
+				}
+				$thispostlink .= urlencode("utm_campaign=$this_campaign&utm_medium=twitter&utm_source=twitter");
 			}
-			$search = array(" ","&","?");
-			$this_campaign = str_replace($search,'',$this_campaign);
-			if ( strpos( $thispostlink,"%3F" ) === FALSE) {
-			$thispostlink .= urlencode("?");
-			} else {
-			$thispostlink .= urlencode("&");
-			}
-			$thispostlink .= urlencode("utm_campaign=$this_campaign&utm_medium=twitter&utm_source=twitter");
+		}
+		if ($testmode != 'false') {
+			$thispostlink = urlencode(trim($thispostlink));
 		}
 		// custom word setting
 		$keyword_format = ( get_option( 'jd_keyword_format' ) == '1' )?$post_ID:'';
@@ -264,20 +269,23 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID ) {
 			case 0:
 			case 1:
 			$shrink = jd_fetch_url( "http://cli.gs/api/v1/cligs/create?t=wphttp&appid=WP-to-Twitter&url=".$thispostlink."&title=".$thisposttitle."&key=".$cligsapi );
+			update_option( 'wp_cligs_error',"Cligs API result: $shrink" );					
+			if ( !is_valid_url($shrink) ) { $shrink = false; }
 			break;
 			case 2: // updated to v3 3/31/2010
 			$decoded = jd_remote_json( "http://api.bit.ly/v3/shorten?longUrl=".$thispostlink."&login=".$bitlylogin."&apiKey=".$bitlyapi."&format=json" );
 				if ($decoded) {
 					if ($decoded['status_code'] != 200) {
 						$shrink = false;
-						$error .= $decoded['status_txt'];
+						$error = $decoded['status_txt'];
 						update_option( 'wp_bitly_error',$error );
 					} else {
 						$shrink = $decoded['data']['url'];		
 					}
 				} else {
 				$shrink = false;
-				}			
+				update_option( 'wp_bitly_error',"JSON result could not be decoded");
+				}	
 			break;
 			case 3:
 			$shrink = urldecode($thispostlink);
@@ -318,11 +326,13 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID ) {
 			}
 			break;
 		}
-		if ( $shrink === FALSE || ( stristr( $shrink, "http://" ) === FALSE )) {
-			update_option( 'wp_url_failure','1' );
-			$shrink = $thispostlink;
-		} else {
-			update_option( 'wp_url_failure','0' );
+		if ($testmode == 'false') {
+			if ( $shrink === FALSE || ( stristr( $shrink, "http://" ) === FALSE )) {
+				update_option( 'wp_url_failure','1' );
+				$shrink = $thispostlink;
+			} else {
+				update_option( 'wp_url_failure','0' );
+			}
 		}
 	return $shrink;
 }
@@ -375,17 +385,16 @@ function in_allowed_category( $array ) {
 	}
 }
 
-function jd_twit( $post_ID ) {	
-	$jd_tweet_this = get_post_meta( $post_ID, 'jd_tweet_this', TRUE);
-	if ( $jd_tweet_this != "no" ) {
-		$get_post_info = get_post( $post_ID );
-		// get post author
-		$authID = $get_post_info->post_author;
-		//get post date
+function jd_post_info( $post_ID ) {
+	$get_post_info = get_post( $post_ID );
+	$values = array();
+	// get post author
+	$values['authId'] = $get_post_info->post_author;
 		$postdate = $get_post_info->post_date;
 		$dateformat = (get_option('jd_date_format')=='')?get_option('date_format'):get_option('jd_date_format');
 		$thisdate = mysql2date( $dateformat,$postdate );
-		// get first category
+	$values['postDate'] = $thisdate;
+	// get first category
 		$category = null;
 		$categories = get_the_category( $post_ID );
 		if ( $categories > 0 ) {
@@ -394,60 +403,64 @@ function jd_twit( $post_ID ) {
 		foreach ($categories AS $cat) {
 			$category_ids[] = $cat->term_id;
 		}
-		
+	$values['categoryIds'] = $category_ids;
+	$values['category'] = $category;
 		$excerpt_length = get_option( 'jd_post_excerpt' );
-		$thispostexcerpt = ( trim( $get_post_info->post_excerpt ) == "" )?@mb_substr( strip_tags($get_post_info->post_content), 0, $excerpt_length ):@mb_substr( strip_tags($get_post_info->post_excerpt), 0, $excerpt_length );
-	    $thisposttitle =  stripcslashes( strip_tags( $get_post_info->post_title ) );
+	$values['postExcerpt'] = ( trim( $get_post_info->post_excerpt ) == "" )?@mb_substr( strip_tags($get_post_info->post_content), 0, $excerpt_length ):@mb_substr( strip_tags($get_post_info->post_excerpt), 0, $excerpt_length );
+	$thisposttitle =  stripcslashes( strip_tags( $get_post_info->post_title ) );
 		if ($thisposttitle == "") {
 			$thisposttitle =  stripcslashes( strip_tags( $_POST['title'] ) );
 		}
-	    $thispostlink =  external_or_permalink( $post_ID );
-		$thisblogtitle =  get_bloginfo( 'name' );
+	$values['postTitle'] = $thisposttitle;
+	$values['postLink'] = external_or_permalink( $post_ID );
+	$values['blogTitle'] = get_bloginfo( 'name' );
+	$values['shortUrl'] = get_post_meta( $post_ID, 'wp_jd_clig', TRUE );
+	return $values;
+}
+
+function jd_twit( $post_ID ) {	
+	$jd_tweet_this = get_post_meta( $post_ID, 'jd_tweet_this', TRUE);
+	if ( $jd_tweet_this != "no" ) {
+		$jd_post_info = jd_post_info( $post_ID );
 	    $sentence = '';
 		$customTweet = stripcslashes( trim( $_POST['jd_twitter'] ) );
-		$oldClig = get_post_meta( $post_ID, 'wp_jd_clig', TRUE );
 		if ( ( $get_post_info->post_status == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft') || $_POST['original_post_status'] == 'auto-draft' ) {
 			// publish new post
+			 $newpost = true;
 				if ( get_option( 'newpost-published-update' ) == '1' ) {
 					$nptext = stripcslashes( get_option( 'newpost-published-text' ) );			
-				    $sentence = ( $customTweet != "" ) ? $customTweet : $nptext;
-					if ($oldClig != '') {
-					$shrink = $oldClig;
-					} else {
-					$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $post_ID );
-					// Stores the posts CLIG in a custom field for later use as needed.
-					store_url( $post_ID, $shrink );						
-					}
-					$sentence = custom_shortcodes( $sentence, $post_ID );
-					$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $thispostexcerpt, $shrink, $category, $thisdate, $post_ID, $authID );		
 				}
-			} else if ( (( $_POST['originalaction'] == "editpost" ) && ( ( $_POST['prev_status'] == 'publish' ) || ($_POST['original_post_status'] == 'publish') ) ) && $get_post_info->post_status == 'publish') {
+		} else if ( (( $_POST['originalaction'] == "editpost" ) && ( ( $_POST['prev_status'] == 'publish' ) || ($_POST['original_post_status'] == 'publish') ) ) && $get_post_info->post_status == 'publish') {
+			$oldpost = true;
 				// if this is an old post and editing updates are enabled
 				if ( get_option( 'oldpost-edited-update') == '1' ) {
-				    $optext = stripcslashes( get_option( 'oldpost-published-text' ) );
-				    $sentence = ( $customTweet != "" ) ? $customTweet : $optext;
-					if ( $oldClig != '' ) {
-						$old_post_link = $oldClig;
-					} else {
-						$old_post_link = jd_shorten_link( $thispostlink, $thisposttitle, $post_ID );
-						store_url( $post_ID, $old_post_link );
-					}
-					$sentence = custom_shortcodes( $sentence, $post_ID );					
-					$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $thispostexcerpt, $old_post_link, $category, $thisdate, $post_ID,  $authID );
+				    $nptext = stripcslashes( get_option( 'oldpost-published-text' ) );
 				}
-			}
+		}
+		if ($newpost || $oldpost) {
+			$sentence = ( $customTweet != "" ) ? $customTweet : $nptext;
+			if ($jd_post_info['shortUrl'] != '') {
+				$shrink = $jd_post_info['shortUrl'];
+			} else {
+				$shrink = jd_shorten_link( $jd_post_info['postLink'], $jd_post_info['postTitle'], $post_ID );
+				store_url( $post_ID, $shrink );
+			}		
+			$sentence = custom_shortcodes( $sentence, $post_ID );					
+			$sentence = jd_truncate_tweet( $sentence, $jd_post_info['postTitle'], $jd_post_info['blogTitle'], $jd_post_info['postExcerpt'], $shrink, $jd_post_info['category'], $jd_post_info['postDate'], $post_ID, $jd_post_info['authId'] );		
+		}
+			
 		if ( $sentence != '' ) {
-			if ( get_option('limit_categories') == '0' || in_allowed_category( $category_ids )) {
+			if ( get_option('limit_categories') == '0' || in_allowed_category( $jd_post_info['categoryIds'] ) ) {
 				if ( get_option('jd_use_both_services') == '1' ) {
-				$sendToTwitter = jd_doTwitterAPIPost( $sentence );	
-				$sendToTwitter = jd_doUnknownAPIPost( $sentence, $authID );				
+					$sendToTwitter = jd_doTwitterAPIPost( $sentence );	
+					$sendToTwitter = jd_doUnknownAPIPost( $sentence, $jd_post_info['authId']  );				
 				} else {
-					$sendToTwitter = ( get_option( 'x_jd_api_post_status' ) == '' )?jd_doTwitterAPIPost( $sentence ):jd_doUnknownAPIPost( $sentence, $authID );
+					$sendToTwitter = ( get_option( 'x_jd_api_post_status' ) == '' )?jd_doTwitterAPIPost( $sentence ):jd_doUnknownAPIPost( $sentence, $jd_post_info['authId']  );
 				}		
 			}
 			if ( $sendToTwitter == false ) {
-			update_post_meta( $post_ID,'jd_wp_twitter',urldecode( $sentence ) );
-			update_option( 'wp_twitter_failure','1' );
+				update_post_meta( $post_ID,'jd_wp_twitter',urldecode( $sentence ) );
+				update_option( 'wp_twitter_failure','1' );
 			}
 		}
 	}
@@ -457,64 +470,42 @@ function jd_twit( $post_ID ) {
 function jd_twit_page( $post_ID ) {	
 	$jd_tweet_this = get_post_meta( $post_ID, 'jd_tweet_this', TRUE);
 	if ( $jd_tweet_this != "no" ) {
-		$get_post_info = get_post( $post_ID );
-		$authID = $get_post_info->post_author;
-		$postdate = $get_post_info->post_date;
-		$dateformat = (get_option('jd_date_format')=='')?get_option('date_format'):get_option('jd_date_format');
-		$thisdate = mysql2date( $dateformat,$postdate );
-		$excerpt_length = get_option( 'jd_post_excerpt' );
-		$thispostexcerpt = ( trim( $get_post_info->post_excerpt ) == "" )?@mb_substr( strip_tags($get_post_info->post_content), 0, $excerpt_length ):@mb_substr( strip_tags($get_post_info->post_excerpt), 0, $excerpt_length );
-	    $thisposttitle = stripcslashes( strip_tags( $_POST['post_title'] ) );
-		if ($thisposttitle == "") {
-			$thisposttitle = stripcslashes( strip_tags( $_POST['title'] ) );
-		}
-	    $thispostlink = external_or_permalink( $post_ID );
-		$thisblogtitle =  get_bloginfo( 'name' );
+		$jd_post_info = jd_post_info( $post_ID );
 	    $sentence = '';
 		$customTweet = stripcslashes( trim( $_POST['jd_twitter'] ) );
-		$oldClig = get_post_meta( $post_ID, 'wp_jd_clig', TRUE );
 		if (($get_post_info->post_status == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft')) {
-				// publish new post
+				$newpost = true; // publish new post
 				if ( get_option( 'jd_twit_pages' ) == '1' ) {
-				    $npptext = stripcslashes( get_option( 'newpage-published-text' ) );
-					$sentence = ( $customTweet != "" ) ? $customTweet : $npptext;
-					if ($oldClig != '') {
-						$shrink = $oldClig;
-						} else {
-						$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $post_ID );
-						// Stores the posts CLIG in a custom field for later use as needed.
-						store_url( $post_ID, $shrink );						
-					}
-					$sentence = custom_shortcodes( $sentence, $post_ID );					
-					$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $thispostexcerpt, $shrink, '',$thisdate, $post_ID,  $authID );					
+				    $nptext = stripcslashes( get_option( 'newpage-published-text' ) );
 				}
-			} else if ( (( $_POST['originalaction'] == "editpost" ) && ( ( $_POST['prev_status'] == 'publish' ) || ($_POST['original_post_status'] == 'publish') ) ) && $get_post_info->post_status == 'publish') {
-				// if this is an old page and editing updates are enabled
+		} else if ( (( $_POST['originalaction'] == "editpost" ) && ( ( $_POST['prev_status'] == 'publish' ) || ($_POST['original_post_status'] == 'publish') ) ) && $get_post_info->post_status == 'publish') {
+				$oldpost = true; // if this is an old page and editing updates are enabled
 			if ( get_option( 'jd_twit_edited_pages' ) == '1' ) {
-				    $opptext = stripcslashes( get_option( 'oldpage-published-text' ) );
-					$sentence = ( $customTweet != "" ) ? $customTweet : $opptext;
-						if ($oldClig != '') {
-							$shrink = $oldClig;
-						} else {
-							$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $post_ID );
-						}
-					store_url( $post_ID, $shrink );		
-					$sentence = custom_shortcodes( $sentence, $post_ID );
-					$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $thispostexcerpt, $shrink, '',$thisdate, $post_ID, $authID );
+				    $nptext = stripcslashes( get_option( 'oldpage-published-text' ) );
 			}
 		}
+		if ($newpost || $oldpost) {
+			$sentence = ( $customTweet != "" ) ? $customTweet : $nptext;
+			if ($jd_post_info['shortUrl'] != '') {
+				$shrink = $jd_post_info['shortUrl'];
+			} else {
+				$shrink = jd_shorten_link( $jd_post_info['postLink'], $jd_post_info['postTitle'], $post_ID );
+				store_url( $post_ID, $shrink );
+			}		
+			$sentence = custom_shortcodes( $sentence, $post_ID );					
+			$sentence = jd_truncate_tweet( $sentence, $jd_post_info['postTitle'], $jd_post_info['blogTitle'], $jd_post_info['postExcerpt'], $shrink, $jd_post_info['category'], $jd_post_info['postDate'], $post_ID, $jd_post_info['authId'] );		
+		}			
 		if ( $sentence != '' ) {
-			if ( get_option('limit_categories') == '0' || in_allowed_category( $category_ids )) {
+			if ( get_option('limit_categories') == '0' || in_allowed_category( $jd_post_info['categoryIds'] ) ) {
 				if ( get_option('jd_use_both_services') == '1' ) {
-				$sendToTwitter = jd_doTwitterAPIPost( $sentence );	
-				$sendToTwitter2 = jd_doUnknownAPIPost( $sentence, $authID );				
+					$sendToTwitter = jd_doTwitterAPIPost( $sentence );	
+					$sendToTwitter2 = jd_doUnknownAPIPost( $sentence, $jd_post_info['authId']  );				
 				} else {
-					$sendToTwitter = ( get_option( 'x_jd_api_post_status' ) == '' )?jd_doTwitterAPIPost( $sentence ):jd_doUnknownAPIPost( $sentence, $authID );
+					$sendToTwitter = ( get_option( 'x_jd_api_post_status' ) == '' )?jd_doTwitterAPIPost( $sentence ):jd_doUnknownAPIPost( $sentence, $jd_post_info['authId']  );
 				}
-				
 				if ( $sendToTwitter == false ) {
-				update_post_meta( $post_ID,'jd_wp_twitter',urldecode( $sentence ) );
-				update_option( 'wp_twitter_failure','1' );
+					update_post_meta( $post_ID,'jd_wp_twitter',urldecode( $sentence ) );
+					update_option( 'wp_twitter_failure','1' );
 				}
 			}
 		}
@@ -531,7 +522,6 @@ global $version;
 		$thispostlink =  $_POST['link_url'] ;
 		$thislinkdescription =  stripcslashes( $_POST['link_description'] );
 		$sentence = stripcslashes( get_option( 'newlink-published-text' ) );
-
 		if ( get_option( 'jd-use-link-description' ) == '1' || get_option ( 'jd-use-link-title' ) == '1' ) {
 			if ( get_option( 'jd-use-link-description' ) == '1' && get_option ( 'jd-use-link-title' ) == '0' ) {
 			$sentence = $sentence . ' ' . $thislinkdescription;
@@ -545,22 +535,19 @@ global $version;
 		if (mb_strlen( $sentence ) > 120) {
 			$sentence = mb_substr($sentence,0,116) . '...';
 		}
-		// Generate and grab the clig using the Cli.gs API
-		$shrink = jd_shorten_link( $thispostlink, $thislinkname, $post_ID );
+		$shrink = jd_shorten_link( $jd_post_info['postLink'], $jd_post_info['postTitle'], $post_ID );
 				if ( stripos($sentence,"#url#") === FALSE ) {
 				$sentence = $sentence . " " . $shrink;
 				} else {
 				$sentence = str_ireplace("#url#",$shrink,$sentence);
 				}						
 			if ( $sentence != '' ) {
-				if ( get_option('limit_categories') == '0' || in_allowed_category( $category_ids )) {
 					if ( get_option('jd_use_both_services') == '1' ) {
 					$sendToTwitter = jd_doTwitterAPIPost( $sentence );	
-					$sendToTwitter = jd_doUnknownAPIPost( $sentence, $authID );				
+					$sendToTwitter = jd_doUnknownAPIPost( $sentence, $jd_post_info['authId']  );				
 					} else {
-					$sendToTwitter = ( get_option( 'x_jd_api_post_status' ) == '' )?jd_doTwitterAPIPost( $sentence ):jd_doUnknownAPIPost( $sentence, $authID );	
+					$sendToTwitter = ( get_option( 'x_jd_api_post_status' ) == '' )?jd_doTwitterAPIPost( $sentence ):jd_doUnknownAPIPost( $sentence, $jd_post_info['authId']  );	
 					}				
-				}
 			if ( $sendToTwitter == false ) {
 				update_option('wp_twitter_failure','2');
 				}
@@ -574,55 +561,32 @@ global $version;
 // HANDLES SCHEDULED POSTS
 function jd_twit_future( $post_ID ) {
     $post_ID = $post_ID->ID;
-	
-	$get_post_info = get_post( $post_ID );
-	$jd_tweet_this = get_post_meta( $post_ID, 'jd_tweet_this', TRUE );
-	$post_status = $get_post_info->post_status;
-		//get post date
-		$postdate = $get_post_info->post_date;
-		$dateformat = (get_option('jd_date_format')=='')?get_option('date_format'):get_option('jd_date_format');
-
-		$thisdate = mysql2date( $dateformat,$postdate );
-		// get first category
-	$category = null;
-	$categories = get_the_category( $post_ID );
-	if ( $categories > 0 ) {
-		$category = $categories[0]->cat_name;	
-	}	
-	foreach ($categories AS $cat) {
-		$category_ids[] = $cat->term_id;
-	}	
 	if ( $jd_tweet_this != "no" ) {	
-		$thispostlink =  external_or_permalink( $post_ID );
-		$thisposttitle =  strip_tags( $get_post_info->post_title );	
-		$authID = $get_post_info->post_author;		
-		$thisblogtitle = get_bloginfo( 'name' );
-		$excerpt_length = get_option( 'jd_post_excerpt' );
-		$thispostexcerpt = ( trim( $get_post_info->post_excerpt ) == "" )?@mb_substr( strip_tags($get_post_info->post_content), 0, $excerpt_length ):@mb_substr( strip_tags($get_post_info->post_excerpt), 0, $excerpt_length );
+		$jd_post_info = jd_post_info( $post_ID );
 		$sentence = '';
 		$customTweet = get_post_meta( $post_ID, 'jd_twitter', TRUE ); 
 		$sentence = stripcslashes(get_option( 'newpost-published-text' ));
-			$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $post_ID );
+		$shrink = jd_shorten_link( $jd_post_info['postLink'], $jd_post_info['postTitle'], $post_ID );
 			// Stores the post's short URL in a custom field for later use as needed.
 			store_url($post_ID, $shrink);
 				if ( $customTweet != "" ) {
 				$sentence = $customTweet;
 				}  
 			$sentence = custom_shortcodes( $sentence, $post_ID );			
-			$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $thispostexcerpt, $shrink, $category, $thisdate, $post_ID, $authID );
+			$sentence = jd_truncate_tweet( $sentence, $jd_post_info['postTitle'], $jd_post_info['blogTitle'], $jd_post_info['postExcerpt'], $shrink, $jd_post_info['category'], $jd_post_info['postDate'], $post_ID, $jd_post_info['authId'] );		
 		
 			if ( $sentence != '' ) {
-				if ( get_option('limit_categories') == '0' || in_allowed_category( $category_ids )) {
+				if ( get_option('limit_categories') == '0' || in_allowed_category( $jd_post_info['categoryIds'] ) ) {
 					if ( get_option('jd_use_both_services') == '1' ) {
 					$sendToTwitter = jd_doTwitterAPIPost( $sentence );	
-					$sendToTwitter = jd_doUnknownAPIPost( $sentence, $authID );				
+					$sendToTwitter = jd_doUnknownAPIPost( $sentence, $jd_post_info['authId']  );				
 					} else {
-					$sendToTwitter = ( get_option( 'x_jd_api_post_status' ) == '' )?jd_doTwitterAPIPost( $sentence ):jd_doUnknownAPIPost( $sentence, $authID );	
+					$sendToTwitter = ( get_option( 'x_jd_api_post_status' ) == '' )?jd_doTwitterAPIPost( $sentence ):jd_doUnknownAPIPost( $sentence, $jd_post_info['authId']  );	
 					}			
 				}
 			if ( $sendToTwitter == false ) {
-				add_post_meta( $post_ID,'jd_wp_twitter',urldecode($sentence) );
-				update_option( 'wp_twitter_failure','1' );
+					add_post_meta( $post_ID,'jd_wp_twitter',urldecode($sentence) );
+					update_option( 'wp_twitter_failure','1' );
 				}
 			}
 		return $post_ID;
@@ -632,34 +596,21 @@ function jd_twit_future( $post_ID ) {
 // Tweet from QuickPress (no custom fields, so can't control whether to tweet.)
 function jd_twit_quickpress( $post_ID ) {
     $post_ID = $post_ID->ID;
-	$get_post_info = get_post( $post_ID );
-	$post_status = $get_post_info->post_status;
-	$thispostlink = external_or_permalink( $post_ID );
-	$thisposttitle = strip_tags( $get_post_info->post_title );	
-	$authID = $get_post_info->post_author;	
-			//get post date
-		$postdate = $get_post_info->post_date;
-		$dateformat = (get_option('jd_date_format')=='')?get_option('date_format'):get_option('jd_date_format');
-
-		$thisdate = mysql2date( $dateformat,$postdate );
-		// get first category
-	$excerpt_length = get_option( 'jd_post_excerpt' );
-	$thispostexcerpt = ( trim( $get_post_info->post_excerpt ) == "" )?@mb_substr( strip_tags($get_post_info->post_content), 0, $excerpt_length ):@mb_substr( strip_tags($get_post_info->post_excerpt), 0, $excerpt_length );	
-	$thisblogtitle =  get_bloginfo( 'name' );
+	$jd_post_info = jd_post_info ( $post_ID );
 	$sentence = '';
 	$sentence = stripcslashes(get_option( 'newpost-published-text' ));
-		$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $post_ID );
+	$shrink = jd_shorten_link( $jd_post_info['postLink'], $jd_post_info['postTitle'], $post_ID );
 		// Stores the posts CLIG in a custom field for later use as needed.
 		store_url($post_ID, $shrink);			
 		$sentence = custom_shortcodes( $sentence, $post_ID );		
-		$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $thispostexcerpt, $shrink, '', $thisdate, $post_ID, $authID );
-			if ( $sentence != '' ) {
-				if ( get_option('limit_categories') == '0' || in_allowed_category( $category_ids )) {
+		$sentence = jd_truncate_tweet( $sentence, $jd_post_info['postTitle'], $jd_post_info['blogTitle'], $jd_post_info['postExcerpt'], $shrink, $jd_post_info['category'], $jd_post_info['postDate'], $post_ID, $jd_post_info['authId'] );		
+		if ( $sentence != '' ) {
+				if ( get_option('limit_categories') == '0' || in_allowed_category( $jd_post_info['categoryIds'] ) ) {
 					if ( get_option('jd_use_both_services') == '1' ) {
-					$sendToTwitter = jd_doTwitterAPIPost( $sentence );	
-					$sendToTwitter = jd_doUnknownAPIPost( $sentence, $authID );				
+						$sendToTwitter = jd_doTwitterAPIPost( $sentence );	
+						$sendToTwitter = jd_doUnknownAPIPost( $sentence, $jd_post_info['authId']  );				
 					} else {
-					$sendToTwitter = ( get_option( 'x_jd_api_post_status' ) == '' )?jd_doTwitterAPIPost( $sentence ):jd_doUnknownAPIPost( $sentence, $authID );	
+						$sendToTwitter = ( get_option( 'x_jd_api_post_status' ) == '' )?jd_doTwitterAPIPost( $sentence ):jd_doUnknownAPIPost( $sentence, $jd_post_info['authId']  );	
 					}			
 				}
 			if ($sendToTwitter == false ) {
@@ -678,26 +629,7 @@ function jd_twit_xmlrpc( $post_ID ) {
 		return;
 	} else {	
 	if ( get_option('jd_tweet_default') != '1' && get_option('jd_twit_remote') == '1' ) {
-		$authID = $get_post_info->post_author;	
-		$thispostlink =  external_or_permalink( $post_ID );
-		$thisposttitle = strip_tags( $get_post_info->post_title );	
-				//get post date
-		$postdate = $get_post_info->post_date;
-		$dateformat = (get_option('jd_date_format')=='')?get_option('date_format'):get_option('jd_date_format');
-
-		$thisdate = mysql2date( $dateformat,$postdate );
-		// get first category
-		$category = null;
-		$categories = get_the_category( $post_ID );
-		if ( $categories > 0 ) {
-			$category = $categories[0]->cat_name;	
-		}	
-		foreach ($categories AS $cat) {
-			$category_ids[] = $cat->term_id;
-		}
-		$excerpt_length = get_option( 'jd_post_excerpt' );
-		$thispostexcerpt = ( trim( $get_post_info->post_excerpt ) == "" )?@mb_substr( strip_tags($get_post_info->post_content), 0, $excerpt_length ):@mb_substr( strip_tags($get_post_info->post_excerpt), 0, $excerpt_length );
-		$thisblogtitle = get_bloginfo( 'name' );
+		$jd_post_info = jd_post_info( $post_ID );
 		$sentence = '';
 		$sentence = stripcslashes(get_option( 'newpost-published-text' ));
 			$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $post_ID );
@@ -705,15 +637,15 @@ function jd_twit_xmlrpc( $post_ID ) {
 			store_url($post_ID, $shrink);				
 			// Check the length of the tweet and truncate parts as necessary.
 			$sentence = custom_shortcodes( $sentence, $post_ID );			
-			$sentence = jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $thispostexcerpt, $shrink, $category, $thisdate, $post_ID, $authID );
+			$sentence = jd_truncate_tweet( $sentence, $jd_post_info['postTitle'], $jd_post_info['blogTitle'], $jd_post_info['postExcerpt'], $shrink, $jd_post_info['category'], $jd_post_info['postDate'], $post_ID, $jd_post_info['authId'] );		
 			
 			if ( $sentence != '' ) {	
-				if ( get_option('limit_categories') == '0' || in_allowed_category( $category_ids )) {
+				if ( get_option('limit_categories') == '0' || in_allowed_category( $jd_post_info['categoryIds'] ) ) {
 					if ( get_option('jd_use_both_services') == '1' ) {
 					$sendToTwitter = jd_doTwitterAPIPost( $sentence );	
-					$sendToTwitter = jd_doUnknownAPIPost( $sentence, $authID );				
+					$sendToTwitter = jd_doUnknownAPIPost( $sentence, $jd_post_info['authId']  );				
 					} else {
-					$sendToTwitter = ( get_option( 'x_jd_api_post_status' ) == '' )?jd_doTwitterAPIPost( $sentence ):jd_doUnknownAPIPost( $sentence, $authID );	
+					$sendToTwitter = ( get_option( 'x_jd_api_post_status' ) == '' )?jd_doTwitterAPIPost( $sentence ):jd_doUnknownAPIPost( $sentence, $jd_post_info['authId']  );	
 					}			
 				}
 			if ($sendToTwitter == false ) {
