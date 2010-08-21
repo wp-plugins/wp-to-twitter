@@ -40,6 +40,13 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.2.0 (beta 6) =
+
+* Fixed bug where errors were reported on categories not intended to be sent to Twitter
+* Allowed OAuth notice to be disabled for users not intending to use that service.
+* Added a debugging option to output some process data if OAuth connection fails
+* Fixed bug which prevented posting of edited status updates
+
 = 2.2.0 (beta 5) =
 
 * Eliminated an incompatibility with alternate versions of twitterOAuth class

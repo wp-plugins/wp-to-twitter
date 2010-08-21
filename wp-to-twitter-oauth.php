@@ -54,21 +54,23 @@ switch ( $_POST['oauth_settings'] ) {
 				if ($connection = wtt_oauth_connection()) {
 					$data = $connection->get('account/verify_credentials');
 					if ($connection->http_code == '200') {
-						$data = json_decode($data);
-						update_option('wtt_twitter_username', stripslashes($data->screen_name));
+						$decode = json_decode($data);
+						update_option('wtt_twitter_username', stripslashes($decode->screen_name));
 						$oauth_hash = wtt_oauth_credentials_to_hash();
 						update_option('wtt_oauth_hash', $oauth_hash);
 						$message = 'success';
 					} else {
 						$error_information = array("http_code"=>$connection->http_code,"status"=>$connection->http_header['status']);
 					}
-					/*
-					echo "<pre>Errors:";
+					if ( get_option('wp_debug_oauth') == '1' ) {
+					echo "<pre><strong>Summary Connection Response:</strong><br />";
 					print_r($error_information);
-					echo "Full:";
-				     print_r($connection);
-					echo "</pre>";
-					*/
+					echo "<br /><strong>Account Verification Data:</strong><br />";
+					print_r($data);
+					echo "<br /><strong>Full Connection Response:</strong><br />";
+					print_r($connection);
+					echo "</pre>";										
+					}
 				}
 			}
 			return $message;

@@ -159,7 +159,10 @@
 		update_option( 'disable_url_failure' , $_POST['disable_url_failure'] );
 		update_option( 'disable_twitter_failure' , $_POST['disable_twitter_failure'] );
 		update_option( 'jd_twit_postie' , (int) $_POST['jd_twit_postie'] );
-		
+		update_option( 'disable_oauth_notice' , $_POST['disable_oauth_notice'] );
+		update_option( 'wp_debug_oauth' , $_POST['wp_debug_oauth'] );
+	
+	
 		$message .= __( 'WP to Twitter Advanced Options Updated' , 'wp-to-twitter');
 	}
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'options' ) {
@@ -701,6 +704,14 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 			<p>
 				<input type="checkbox" name="disable_twitter_failure" id="disable_twitter_failure" value="1" <?php jd_checkCheckbox('disable_twitter_failure')?> />
 				<label for="disable_twitter_failure"><?php _e("Disable global Twitter API error messages.", 'wp-to-twitter'); ?></label>
+			</p>
+			<p>
+				<input type="checkbox" name="disable_oauth_notice" id="disable_oauth_notice" value="1" <?php jd_checkCheckbox('disable_oauth_notice')?> />
+				<label for="disable_oauth_notice"><?php _e("Disable notification to implement OAuth", 'wp-to-twitter'); ?></label>
+			</p>
+			<p>
+				<input type="checkbox" name="wp_debug_oauth" id="wp_debug_oauth" value="1" <?php jd_checkCheckbox('wp_debug_oauth')?> />
+				<label for="wp_debug_oauth"><?php _e("Get Debugging Data for OAuth Connection", 'wp-to-twitter'); ?></label>
 			</p>			
 		</fieldset>
 		<div>
