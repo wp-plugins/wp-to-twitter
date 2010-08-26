@@ -92,7 +92,7 @@ switch ( $_POST['oauth_settings'] ) {
 
 // connect or disconnect form
 function wtt_connect_oauth() {
-echo '<div id="poststuff" class="ui-sortable meta-box-sortables">';
+echo '<div class="ui-sortable meta-box-sortables">';
 if ( !wtt_oauth_test() ) { 
 echo '<div class="postbox">';
 } else { 
@@ -160,7 +160,7 @@ echo '<div class="handlediv" title="Click to toggle"><br/></div>';
 						<p><strong class="auth_label">'.__('Twitter Username ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('wtt_twitter_username').'</code></p>
 						<p><strong class="auth_label">'.__('Consumer Key ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('app_consumer_key').'</code></p>
 						<p><strong class="auth_label">'.__('Consumer Secret ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('app_consumer_secret').'</code></p>
-						<p><strong class="auth_label">'.__('Access Token ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('oauth_token').'</code></div>
+						<p><strong class="auth_label">'.__('Access Token ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('oauth_token').'</code></p>
 						<p><strong class="auth_label">'.__('Access Token Secret ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('oauth_token_secret').'</code></p>
 					</fieldset>
 					<p class="submit">

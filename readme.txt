@@ -40,6 +40,16 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.2.0 (beta 7) =
+
+* Significantly improved error reporting.
+* Completely revamped secondary author support to give some value in Twitter.
+* Completely eliminated secondary posting service support. Too much trouble, too little application.
+* Removed the custom post meta data clutter; WP to Twitter's post meta data is now private to the plugin.
+* Fixed a couple of error situations with Bit.ly
+* Made it possible for contributor posts to be Tweeted
+* This is the last beta version.
+
 = 2.2.0 (beta 6) =
 
 * Fixed bug where errors were reported on categories not intended to be sent to Twitter

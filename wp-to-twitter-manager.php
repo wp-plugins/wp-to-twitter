@@ -17,11 +17,7 @@
 	$wp_cligs_error = FALSE;
 	$wp_bitly_error = FALSE;
 	$message = "";
-	if ( get_option('jd-twitter-service-name') == '' ) {
-		$twitter = "Twitter";
-	} else {
-		$twitter = get_option('jd-twitter-service-name');
-	}	
+
 	// SET DEFAULT OPTIONS
 	if ( get_option( 'twitterInitialised') != '1' ) {
 		update_option( 'newpost-published-update', '1' );
@@ -64,10 +60,6 @@
 		// Note that default options are set.
 		update_option( 'twitterInitialised', '1' );	
 		//Twitter API
-		update_option( 'jd_api_post_status', 'http://twitter.com/statuses/update.json' );
-		update_option( 'jd-twitter-service-name', 'Twitter' );
-		update_option( 'jd-twitter-char-limit', 140 );	
-		update_option( 'jd_use_both_services', '0' );
 		update_option( 'jd_keyword_format', '1' );
 	}
 	if ( get_option( 'twitterInitialised') == '1' && get_option( 'jd_post_excerpt' ) == "" ) { 
@@ -106,24 +98,6 @@
 		update_option( 'wp_url_failure','0' );
 		$message =  __("WP to Twitter Errors Cleared", 'wp-to-twitter');
 	}
-
-	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'service' ) {
-		update_option( 'x_jd_api_post_status', trim($_POST['x_jd_api_post_status']) );
-		update_option( 'jd-twitter-service-name', trim($_POST['jd-twitter-service-name']) );
-		update_option( 'jd-twitter-char-limit', trim($_POST['jd-twitter-char-limit']) );	
-		update_option( 'jd_use_both_services', $_POST['jd_use_both_services'] );
-		if( ( $_POST['x-login'] != '' ) && ( $_POST['x-pw'] != '' ) ) {
-			update_option( 'x-login', trim($_POST['x-login']) );
-			update_option( 'x-pw', trim($_POST['x-pw']) );
-			$message = __("Non-Twitter login and password updated. ", 'wp-to-twitter');
-		} else {
-			$message = __("You need to provide your login and password! ", 'wp-to-twitter');
-		}
-		$message .= __("Twitter-compatible API settings updated. ",'wp-to-twitter');
-		if ( get_option( 'jd_use_both_services' ) == '1' ) {
-			$message .= __("You have configured WP to Twitter to use both Twitter and your selected service.");
-		}
-	}
 	
 	// Error messages on status update or url shortener failures	
 	if ( get_option( 'wp_twitter_failure' ) == '1' ) {
@@ -159,6 +133,9 @@
 		update_option( 'disable_url_failure' , $_POST['disable_url_failure'] );
 		update_option( 'disable_twitter_failure' , $_POST['disable_twitter_failure'] );
 		update_option( 'jd_twit_postie' , (int) $_POST['jd_twit_postie'] );
+		if ( $_POST['jd_twit_postie'] == 1 ) {
+			update_option( 'oldpost-edited-update','1');
+		}
 		update_option( 'disable_oauth_notice' , $_POST['disable_oauth_notice'] );
 		update_option( 'wp_debug_oauth' , $_POST['wp_debug_oauth'] );
 	
@@ -305,15 +282,14 @@ function jd_check_functions() {
 		
 	if ($shrink == FALSE) {
 		if ($shortener == 1) {
-			$error = htmlentities(get_option('wp_cligs_error'));
-		} else 
-		if ($shortener == 2) {
-			$error = htmlentities(get_option('wp_bitly_error'));
+			$error = htmlentities( get_option('wp_cligs_error') );
+		} else if ( $shortener == 2 ) {
+			$error = htmlentities( get_option('wp_bitly_error') );
 		} else {
 			$error = _('No error information is available for your shortener.','wp-to-twitter');
 		}	
 		$message .= __("<li class=\"error\"><strong>WP to Twitter was unable to contact your selected URL shortening service.</strong></li>",'wp-to-twitter');
-		$message .= "<li><code> $error</code></li>";
+		$message .= "<li><code>$error</code></li>";
 	} else {
 		$message .= __("<li><strong>WP to Twitter successfully contacted your selected URL shortening service.</strong>  The following link should point to your blog homepage:",'wp-to-twitter');
 		$message .= " <a href='$shrink'>$shrink</a></li>";	
@@ -331,17 +307,6 @@ function jd_check_functions() {
 	} else {
 		$message .= "<strong>"._e('You have not connected WordPress to Twitter.','wp-to-twitter')."</strong> ";
 	}
-		if ( get_option( 'jd_use_both_services' ) == '1' ) {
-		$testpost2 = jd_doUnknownAPIPost( "This is a test of WP to Twitter. [$shrink] ($rand)",false,"Twitter" );
-			if ($testpost2) {
-				if ($testpost2['response']['code'] == 200) {
-					$message .= __("<li><strong>WP to Twitter successfully submitted a status update to your secondary update service.</strong></li>",'wp-to-twitter'); 
-				} else {
-					$message .=	__("<li class=\"error\"><strong>WP to Twitter failed to submit an update to your secondary update service.</strong></li>",'wp-to-twitter'); 
-					$message .= "<li>".__("The service returned this error:")."<code>".$testpost2['headers']['status']."</code></li>";					
-				}
-			}
-		}
 		// If everything's OK, there's  no reason to do this again.	
 		if ($testpost == FALSE && $shrink == FALSE  ) {
 			$message .= __("<li class=\"error\"><strong>Your server does not appear to support the required methods for WP to Twitter to function.</strong> You can try it anyway - these tests aren't perfect.</li>", 'wp-to-twitter');
@@ -379,7 +344,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 <a href="?page=wp-to-twitter/wp-to-twitter.php&amp;export=settings"><?php _e("Export Settings",'wp-to-twitter'); ?></a> &middot; 
 <a href="http://www.joedolson.com/donate.php"><?php _e("Make a Donation",'wp-to-twitter'); ?></a>
 </p>
-<p>
+<div>
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <div>
 <input type="hidden" name="cmd" value="_s-xclick" />
@@ -388,7 +353,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
 </div>
 </form>
-</p>
+</div>
 
 </div>
 
@@ -400,7 +365,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 <li><?php _e("<code>#category#</code>: the first selected category for the post", 'wp-to-twitter'); ?></li>
 <li><?php _e("<code>#date#</code>: the post date", 'wp-to-twitter'); ?></li>
 <li><?php _e("<code>#url#</code>: the post URL", 'wp-to-twitter'); ?></li>
-<li><?php _e("<code>#author#</code>: the post author'",'wp-to-twitter'); ?></li>
+<li><?php _e("<code>#author#</code>: the post author",'wp-to-twitter'); ?></li>
 </ul>
 <p><?php _e("You can also create custom shortcodes to access WordPress custom fields. Use doubled square brackets surrounding the name of your custom field to add the value of that custom field to your status update. Example: <code>[[custom_field]]</code></p>", 'wp-to-twitter'); ?>
 		
@@ -408,6 +373,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 		<div class="error">
 		<?php if ( get_option( 'wp_twitter_failure' ) == '1' ) {
 		_e("<p>One or more of your last posts has failed to send it's status update to Twitter. Your Tweet has been saved in your post custom fields, and you can re-Tweet it at your leisure.</p>", 'wp-to-twitter');
+		echo "<p><strong>".get_option( 'jd_status_message' )."</strong></p>";
 		}
 		if ( get_option( 'wp_url_failure' ) == '1' ) {
 		_e("<p>The query to the URL shortener API failed, and your URL was not shrunk. The full post URL was attached to your Tweet. Check with your URL shortening provider to see if there are any known issues. [<a href=\"http://blog.cli.gs\">Cli.gs Blog</a>] [<a href=\"http://blog.bit.ly\">Bit.ly Blog</a>]</p>", 'wp-to-twitter');
@@ -422,11 +388,13 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 <?php
 }
 ?>		
-<div class="jd-settings">
+<div class="jd-settings" id="poststuff">
 
 <?php wtt_connect_oauth(); ?>
 
-<div id="poststuff" class="ui-sortable meta-box-sortables">
+<?php echo get_option( 'jd_shortener' ); ?>
+
+<div class="ui-sortable meta-box-sortables">
 <?php if ( isset( $_POST['submit-type']) && $_POST['submit-type'] == 'options' ) { ?>
 <div class="postbox">
 <?php } else { ?>
@@ -450,9 +418,9 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 				<input type="checkbox" name="oldpost-edited-update" id="oldpost-edited-update" value="1" <?php jd_checkCheckbox('oldpost-edited-update')?> />
 				<label for="oldpost-edited-update"><strong><?php _e("Update when a post is edited", 'wp-to-twitter'); ?></strong></label><br /><label for="oldpost-edited-text"><?php _e("Text for editing updates:", 'wp-to-twitter'); ?></label> <input type="text" name="oldpost-edited-text" id="oldpost-edited-text" size="60" maxlength="120" value="<?php echo( attribute_escape( stripslashes( get_option('oldpost-edited-text' ) ) ) ); ?>" />		
 			<?php } else { ?>
-				<input type="checkbox" name="oldpost-edited-update" id="oldpost-edited-update" value="1" disabled="disabled" />
-				<label for="oldpost-edited-update"><strong><?php _e("Update when a post is edited", 'wp-to-twitter'); ?></strong></label><br /><label for="oldpost-edited-text"><?php _e("Text for editing updates:", 'wp-to-twitter'); ?></label> <input type="text" name="oldpost-edited-text" id="oldpost-edited-text" size="60" maxlength="120" value="<?php echo( attribute_escape( stripslashes( get_option('oldpost-edited-text' ) ) ) ); ?>"  disabled="disabled" />					
-				<br /><small><?php _e('You can not disabled updates on edits when using Postie or similar plugins.'); ?></small>
+				<input type="checkbox" name="oldpost-edited-update" id="oldpost-edited-update" value="1" disabled="disabled" checked="checked" />
+				<label for="oldpost-edited-update"><strong><?php _e("Update when a post is edited", 'wp-to-twitter'); ?></strong></label><br /><label for="oldpost-edited-text"><?php _e("Text for editing updates:", 'wp-to-twitter'); ?></label> <input type="text" name="oldpost-edited-text" id="oldpost-edited-text" size="60" maxlength="120" value="<?php echo( attribute_escape( stripslashes( get_option('oldpost-edited-text' ) ) ) ); ?>" readonly="readonly" />					
+				<br /><small><?php _e('You can not disable updates on edits when using Postie or similar plugins.'); ?></small>
 			<?php } ?>			</p>	
 			<p>
 				<input type="checkbox" name="jd_twit_pages" id="jd_twit_pages" value="1" <?php jd_checkCheckbox('jd_twit_pages')?> />
@@ -491,13 +459,13 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 </div>
 </div>
 </div>
-<div id="poststuff" class="ui-sortable meta-box-sortables">
-<?php if ( ( isset( $_POST['submit-type'] ) && ($_POST['submit-type']!='setcategories' && $_POST['submit-type']!='advanced' && $_POST['submit-type']!='options' && $_POST['submit-type']!="check-support" ) ) || get_option( 'twitterlogin' )=='' ) { ?>
+<div class="ui-sortable meta-box-sortables">
+<?php if ( ( isset( $_POST['submit-type'] ) && ($_POST['submit-type']!='setcategories' && $_POST['submit-type']!='advanced' && $_POST['submit-type']!='options' && $_POST['submit-type']!="check-support" ) ) ) { ?>
 <div class="postbox">
 <?php } else { ?>
 <div class="postbox closed">
 <?php } ?>				<div class="handlediv" title="Click to toggle"><br/></div>
-				<h3>Account Settings</h3>
+				<h3><?php _e('<abbr title="Uniform Resource Locator">URL</abbr> Shortener Account Settings','wp-to-twitter'); ?></h3>
 
 				<div class="inside">
 		<div class="panel">
@@ -568,44 +536,12 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 	</div>
 	</form>		
 	</div>
-	<div class="change-service panel">
-	<h4 class="twitter-api"><?php _e("Add Twitter-compatible Service",'wp-to-twitter'); ?></h4>
-	<form method="post" action="" >
-	<div>
-		<p>
-		<label for="x_jd_api_post_status"><?php _e("URI for Twitter-compatible Post Status API","wp-to-twitter"); ?></label>
-		<input type="text" name="x_jd_api_post_status" id="x_jd_api_post_status" size="60" value="<?php echo get_option('x_jd_api_post_status'); ?>" />
-		</p>
-		<p>
-		<label for="jd-twitter-service-name"><?php _e("Service Name","wp-to-twitter"); ?></label>
-		<input type="text" name="jd-twitter-service-name" id="jd-twitter-service-name" value="<?php echo get_option( 'jd-twitter-service-name' ); ?>" />
-		</p>
-		<p>
-		<label for="jd-twitter-char-limit"><?php _e("Status Update Character Limit","wp-to-twitter"); ?></label>
-		<input type="text" name="jd-twitter-char-limit" id="jd-twitter-char-limit" value="<?php echo get_option( 'jd-twitter-char-limit' ); ?>" />
-		</p>
-		<p>
-		<input type="checkbox" name="jd_use_both_services" id="jd_use_both_services" value="1"<?php jd_checkCheckbox('jd_use_both_services'); ?> /> <label for="jd_use_both_services"><?php _e("Post status updates to both Twitter and this service.","wp-to-twitter"); ?></label>
-		</p>	
-		<p>
-		<label for="x-login"><?php _e("Your service username:", 'wp-to-twitter'); ?></label>
-		<input type="text" name="x-login" id="x-login" value="<?php echo ( attribute_escape( get_option( 'x-login' ) ) ) ?>" />
-		</p>
-		<p>
-		<label for="x-pw"><?php _e("Your service password:", 'wp-to-twitter'); ?><?php if ( get_option( 'x-pw' ) != "" ) { _e('(<em>Saved</em>)' , 'wp-to-twitter'); } ?></label>
-		<input type="password" name="x-pw" id="x-pw" value="" />
-		</p>
-		<input type="hidden" name="submit-type" value="service" />
-		<p><input type="submit" name="submit" value="<?php _e("Update Twitter Compatible Service", 'wp-to-twitter'); ?>" class="button-primary" /> <?php _e("&raquo; <small>You can use any service using the Twitter-compatible REST API returning data in JSON format with this plugin. Twitter-compatible services include <a href='http://identi.ca'>Identi.ca</a>, <a href='http://shoutem.com'>Shoutem.com</a> and <a href='http://chirup.com'>Chirup.com</a>. <strong>No support will be provided for services other than Twitter.</strong>", 'wp-to-twitter'); ?></small></p>		
-	</div>
-	</form>
-	</div>
 	
 </div>
 </div>
 </div>
 
-<div id="poststuff" class="ui-sortable meta-box-sortables">
+<div class="ui-sortable meta-box-sortables">
 <?php if ( isset( $_POST['submit-type']) && $_POST['submit-type']=='advanced') { ?>
 <div class="postbox">
 <?php } else { ?>
@@ -692,7 +628,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 		<legend><?php _e('Individual Authors','wp-to-twitter'); ?></legend>
 			<p>
 				<input type="checkbox" name="jd_individual_twitter_users" id="jd_individual_twitter_users" value="1" <?php jd_checkCheckbox('jd_individual_twitter_users')?> />
-				<label for="jd_individual_twitter_users"><?php _e("Authors have individual Non-Twitter accounts", 'wp-to-twitter'); ?></label><br /><small><?php _e('Authors can set their own username and password in their user profile. As of version 2.2.0, this feature no longer allows authors to post to their own Twitter accounts. It can only be used with a secondary update service.', 'wp-to-twitter'); ?></small>
+				<label for="jd_individual_twitter_users"><?php _e("Authors have individual Twitter accounts", 'wp-to-twitter'); ?></label><br /><small><?php _e('Authors can set their username in their user profile. As of version 2.2.0, this feature no longer allows authors to post to their own Twitter accounts. It can only add an @reference to the author.', 'wp-to-twitter'); ?></small>
 			</p>			
 		</fieldset>
 		<fieldset>
@@ -723,7 +659,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 </div>
 </div>
 </div>
-<div id="poststuff" class="ui-sortable meta-box-sortables">
+<div class="ui-sortable meta-box-sortables">
 <?php if ( isset( $_POST['submit-type']) && $_POST['submit-type']=='setcategories') { ?>
 <div class="postbox">
 <?php } else { ?>
