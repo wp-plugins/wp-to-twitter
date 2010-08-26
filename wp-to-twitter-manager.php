@@ -392,8 +392,6 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 
 <?php wtt_connect_oauth(); ?>
 
-<?php echo get_option( 'jd_shortener' ); ?>
-
 <div class="ui-sortable meta-box-sortables">
 <?php if ( isset( $_POST['submit-type']) && $_POST['submit-type'] == 'options' ) { ?>
 <div class="postbox">
@@ -527,7 +525,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 		<input type="text" name="yourlsapi" id="yourlsapi" size="40" value="" />
 		</p>
 		<p>
-		<input type="checkbox" name="jd_keyword_format" id="jd_keyword_format" value="1" <?php jd_checkCheckbox( 'jd_keyword_format' ); ?> /> 		<label for="jd_keyword_format"><?php _e("Use Post ID for YOURLS url slug."); ?></label>
+		<input type="checkbox" name="jd_keyword_format" id="jd_keyword_format" value="1" <?php jd_checkCheckbox( 'jd_keyword_format' ); ?> /> 		<label for="jd_keyword_format"><?php _e("Use Post ID for YOURLS url slug.",'wp-to-twitter'); ?></label>
 		</p>
 		<div>
 		<input type="hidden" name="submit-type" value="yourlsapi" />
