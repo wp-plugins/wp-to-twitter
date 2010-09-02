@@ -17,7 +17,11 @@ function jd_remote_json( $url, $array=true ) {
 }			
 
 function is_valid_url( $url ) {
+    if (is_string($url)) {
 	return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);	
+	} else {
+	return false;
+	}
 }
 // Fetch a remote page. Input url, return content
 function jd_fetch_url( $url, $method='GET', $body='', $headers='', $return='body' ) {

@@ -694,14 +694,9 @@ if ( get_option('limit_categories') == '0' ) {
 </div>
 <?php global $wp_version; ?>
 <script type="text/javascript">
-<!--
-<?php if ( version_compare( $wp_version, '2.7', '<' ) ) { ?>
-jQuery('.postbox h3').prepend('<a class="togbox" title="expand this box">+</a> ');
-<?php } ?>
-jQuery('.postbox h3').click( function() { jQuery(jQuery(this).parent().get(0)).toggleClass('closed'); } );
-jQuery('.postbox .handlediv').click( function() { jQuery(jQuery(this).parent().get(0)).toggleClass('closed'); } );
-jQuery('.postbox.close-me').each(function() {
-	jQuery(this).addClass("closed");
-});
-//-->
+//<![CDATA[
+jQuery('.postbox h3').click( function() { jQuery(jQuery(this).parent().get(0)).toggleClass('closed'); });
+jQuery('.postbox .handlediv').click( function() { jQuery(jQuery(this).parent().get(0)).toggleClass('closed'); });
+jQuery('.postbox.close-me').each(function() { jQuery(this).addClass("closed"); });
+//]]>
 </script>

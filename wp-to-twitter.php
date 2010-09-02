@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 2.2.0 (beta 7)
+Version: 2.2.1
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -28,7 +28,7 @@ require_once( WP_PLUGIN_DIR . '/wp-to-twitter/functions.php' );
 require_once( WP_PLUGIN_DIR . '/wp-to-twitter/wp-to-twitter-oauth.php' );
 
 global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status, $x_jdwp_post_status;	
-$version = "2.2.0";
+$version = "2.2.1";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', 'wp-content/plugins/' . $plugin_dir, $plugin_dir );
 
@@ -236,12 +236,11 @@ return $sentence;
 }
 
 function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='false' ) {
-		$cligsapi = urlencode( trim ( get_option( 'cligsapi' ) ) );
-		$bitlyapi = urlencode( trim ( get_option( 'bitlyapi' ) ) );
-		$bitlylogin = urlencode( trim ( get_option( 'bitlylogin' ) ) );
-		$yourlslogin = urlencode( trim ( get_option( 'yourlslogin') ) );
+		$cligsapi =  trim ( get_option( 'cligsapi' ) );
+		$bitlyapi =  trim ( get_option( 'bitlyapi' ) );
+		$bitlylogin =  trim ( get_option( 'bitlylogin' ) );
+		$yourlslogin =  trim ( get_option( 'yourlslogin') );
 		$yourlsapi = stripcslashes( get_option( 'yourlsapi' ) );
-		$thisposttitle = urlencode($thisposttitle);
 		if ($testmode != 'false') {
 			if ( ( get_option('twitter-analytics-campaign') != '' ) && ( get_option('use-twitter-analytics') == 1 || get_option('use_dynamic_analytics') == 1 ) ) {
 				if ( get_option('use_dynamic_analytics') == '1' ) {
@@ -265,16 +264,15 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='fa
 				$search = array(" ","&","?");
 				$this_campaign = str_replace($search,'',$this_campaign);
 				if ( strpos( $thispostlink,"%3F" ) === FALSE) {
-				$thispostlink .= urlencode("?");
+				$thispostlink .= "?";
 				} else {
-				$thispostlink .= urlencode("&");
+				$thispostlink .= "&";
 				}
-				$thispostlink .= urlencode("utm_campaign=$this_campaign&utm_medium=twitter&utm_source=twitter");
+				$thispostlink .= "utm_campaign=$this_campaign&utm_medium=twitter&utm_source=twitter";
 			}
 		}
-		if ($testmode != 'false') {
-			$thispostlink = urlencode(trim($thispostlink));
-		}
+		$thispostlink = urlencode(trim($thispostlink));
+
 		// custom word setting
 		$keyword_format = ( get_option( 'jd_keyword_format' ) == '1' )?$post_ID:'';
 		// Generate and grab the short url
@@ -630,7 +628,7 @@ function jd_twit_xmlrpc( $post_ID ) {
 		$jd_post_info = jd_post_info( $post_ID );
 		$sentence = '';
 		$sentence = stripcslashes(get_option( 'newpost-published-text' ));
-			$shrink = jd_shorten_link( $thispostlink, $thisposttitle, $post_ID );
+			$shrink = jd_shorten_link( $jd_post_info['postLink'], $jd_post_info['postTitle'], $post_ID );
 			// Stores the posts CLIG in a custom field for later use as needed.
 			store_url($post_ID, $shrink);				
 			// Check the length of the tweet and truncate parts as necessary.

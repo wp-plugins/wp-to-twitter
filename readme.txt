@@ -3,14 +3,12 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, cligs, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.9.2
-Tested up to: 3.0.1
+Tested up to: 3.1-alpha
 Stable tag: trunk
 
 Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service.
 
 == Description ==
-
-**This is a beta version.** Upgrade to this version if you wish to help me test OAuth support. The current and all past versions of the plugin will cease to work on August 31st, 2010.
 
 The WP-to-Twitter plugin posts a Twitter status update from your WordPress blog using either the Cli.gs or Bit.ly URL shortening services to provide a link back to your post from Twitter. 
 
@@ -20,11 +18,9 @@ The plugin can send a default message for updating or editing posts or pages, bu
 
 Any status update you write which is longer than the available space will automatically be truncated by the plugin. This applies to both the default messages and to your custom messages.
 
-WP to Twitter can also post to any other service using the Twitter-compatible API.
-
 Credits:
 
-Although it now bears very little resemblance to the original sources, this plugin was originally based on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com). Thanks to [Cory LaViska](http://abeautifulsite.net/notebook/71) for PHP 4 compatible `json_decode` and `json_encode`. Thanks to [Michal Migurski](http://mike.teczno.com) for authoring the JSON class. Other bug fixes and related citations can be found in the changelog.
+Although it now bears almost no resemblance to the original sources, this plugin was originally based on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com). Thanks to [Cory LaViska](http://abeautifulsite.net/notebook/71) for PHP 4 compatible `json_decode` and `json_encode`. Thanks to [Michal Migurski](http://mike.teczno.com) for authoring the JSON class. Other bug fixes and related citations can be found in the changelog.
 
 Translations:
 
@@ -35,10 +31,20 @@ Translations:
 * French: [Fr&eacute;d&eacute;ric Million](http://www.traducteurs.com)
 * Estonian: [Raivo Ratsep](http://raivoratsep.com)
 * Simplified Chinese: [Joe Francis](http://blog.francistm.com)
+* Dutch: [Rene at WPwebshop](http://wpwebshop.com/premium-wordpress-plugins/)
 
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.2.1 =
+
+* Not a Beta anymore. 
+* Fixed issue with non-shortening links when using XMLRPC clients
+* Fixed issue with double-urlencoding of links before shortening
+* Added Dutch translation
+* Updated Italian translation
+
 
 = 2.2.0 (beta 7) =
 
