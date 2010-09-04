@@ -298,7 +298,7 @@ function jd_check_functions() {
 	//check twitter credentials
 	if ( wtt_oauth_test() ) {
 		$rand = rand(1000000,9999999);
-		$testpost = jd_doTwitterAPIPost( "This is a test of WP to Twitter. [$shrink] ($rand)" );
+		$testpost = jd_doTwitterAPIPost( "This is a test of WP to Twitter. $shrink ($rand)" );
 			if ($testpost) {
 				$message .= __("<li><strong>WP to Twitter successfully submitted a status update to Twitter.</strong></li>",'wp-to-twitter'); 
 			} else {
