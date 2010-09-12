@@ -129,7 +129,7 @@ echo '<div class="handlediv" title="Click to toggle"><br/></div>';
 						<input type="text" size="25" name="wtt_app_consumer_secret" id="wtt_app_consumer_secret" value="'.esc_attr( get_option('app_consumer_secret') ).'" autocomplete="off">
 					</p>
 					<h4>'.__('3. Copy and paste your Access Token and Access Token Secret into the fields below','wp-to-twitter').'</h4>
-					<p>'.__('On the right hand side of your application page, click on \'My Access Token\'.','wp-to-twitter').'</p>
+					<p>'.__('On the right hand side of your new application page at Twitter, click on \'My Access Token\'.','wp-to-twitter').'</p>
 					<p>
 						<label for="wtt_oauth_token">'.__('Access Token', 'wp-to-twitter').'</label>
 						<input type="text" size="25" name="wtt_oauth_token" id="wtt_oauth_token" value="'.esc_attr( get_option('oauth_token') ).'" autocomplete="off">

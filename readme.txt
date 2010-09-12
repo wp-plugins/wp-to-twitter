@@ -25,7 +25,6 @@ Although it now bears almost no resemblance to the original sources, this plugin
 Translations:
 
 * Italian: [Gianni Diurno](http://www.gidibao.net)
-* German: [Melvin](http://www.toxicavenger.de/)
 * Spanish: [David Gil P&eacute;rez](http://www.sohelet.com)
 * Russian: [Burkov Boris](http://chernobog.ru)
 * French: [Fr&eacute;d&eacute;ric Million](http://www.traducteurs.com)
@@ -36,6 +35,13 @@ Translations:
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.2.2 = 
+
+* Fixed a bug where new Pages did not Tweet.
+* Minor text changes to try and clarify OAuth process.
+* Fixed bug where any post with a customized status update would post, regardless of settings.
+* Fixed faulty shortening when new links were added.
 
 = 2.2.1 =
 

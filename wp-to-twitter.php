@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 2.2.1
+Version: 2.2.2
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -28,7 +28,7 @@ require_once( WP_PLUGIN_DIR . '/wp-to-twitter/functions.php' );
 require_once( WP_PLUGIN_DIR . '/wp-to-twitter/wp-to-twitter-oauth.php' );
 
 global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status, $x_jdwp_post_status;	
-$version = "2.2.1";
+$version = "2.2.2";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', 'wp-content/plugins/' . $plugin_dir, $plugin_dir );
 
@@ -245,18 +245,23 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='fa
 			if ( ( get_option('twitter-analytics-campaign') != '' ) && ( get_option('use-twitter-analytics') == 1 || get_option('use_dynamic_analytics') == 1 ) ) {
 				if ( get_option('use_dynamic_analytics') == '1' ) {
 					$campaign_type = get_option('jd_dynamic_analytics');
-					if ($campaign_type == "post_category") {
+					if ($campaign_type == "post_category" && $testmode != 'link' ) {
 						$category = get_the_category( $post_ID );
 						$this_campaign = $category[0]->cat_name;
 					} else if ($campaign_type == "post_ID") {
 						$this_campaign = $post_ID;
-					} else if ($campaign_type == "post_title") {
+					} else if ($campaign_type == "post_title" && $testmode != 'link' ) {
 						$post = get_post( $post_ID );
 						$this_campaign = $post->post_title; 
 					} else {
+						if ( $testmode != 'link' ) {
 						$post = get_post( $post_ID );
 						$post_author = $post->post_author;
 						$this_campaign = get_the_author_meta( 'user_login',$post_author );
+						} else {
+							$post_author = '';
+							$this_campaign = '';
+						}
 					}
 				} else {
 				$this_campaign = get_option('twitter-analytics-campaign');
@@ -447,15 +452,15 @@ function jd_twit( $post_ID ) {
 		$customTweet = stripcslashes( trim( $_POST['_jd_twitter'] ) );
 		if ( ( $jd_post_info['postStatus'] == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft' || $_POST['prev_status'] == 'pending' || $_POST['original_post_status'] =='pending' || $_POST['original_post_status'] == 'auto-draft' ) ) {
 		// publish new post
-			$newpost = true;
 				if ( get_option( 'newpost-published-update' ) == '1' ) {
-					$nptext = stripcslashes( get_option( 'newpost-published-text' ) );			
+					$nptext = stripcslashes( get_option( 'newpost-published-text' ) );	
+					$newpost = true;
 				}
 		} else if ( (( $_POST['originalaction'] == "editpost" ) && ( ( $_POST['prev_status'] == 'publish' ) || ($_POST['original_post_status'] == 'publish') ) ) && $jd_post_info['postStatus'] == 'publish') {
-			$oldpost = true;
 				// if this is an old post and editing updates are enabled
 				if ( get_option( 'oldpost-edited-update') == '1' ) {
 				    $nptext = stripcslashes( get_option( 'oldpost-edited-text' ) );
+					$oldpost = true;
 				}			
 		}
 		if ($newpost || $oldpost) {
@@ -489,7 +494,7 @@ function jd_twit_page( $post_ID ) {
 		$jd_post_info = jd_post_info( $post_ID );
 	    $sentence = '';
 		$customTweet = stripcslashes( trim( $_POST['_jd_twitter'] ) );
-		if (( $jd_post_info['postStatus'] == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft')) {
+		if (( $jd_post_info['postStatus'] == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft' || $_POST['original_post_status'] == 'auto-draft' ) ) {
 				$newpost = true; // publish new post
 				if ( get_option( 'jd_twit_pages' ) == '1' ) {
 				    $nptext = stripcslashes( get_option( 'newpage-published-text' ) );
@@ -546,7 +551,7 @@ global $version;
 		if (mb_strlen( $sentence ) > 120) {
 			$sentence = mb_substr($sentence,0,116) . '...';
 		}
-		$shrink = jd_shorten_link( $jd_post_info['postLink'], $jd_post_info['postTitle'], $post_ID );
+		$shrink = jd_shorten_link( $thispostlink, $thislinkname, $link_ID, 'link' );
 				if ( stripos($sentence,"#url#") === FALSE ) {
 				$sentence = $sentence . " " . $shrink;
 				} else {
