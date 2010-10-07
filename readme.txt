@@ -36,6 +36,13 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.2.3 =
+
+* Fixed: Bug which added unnecessary duplications of post meta
+* Fixed: broken analytics campaign info
+* Fix attempt to clear up problems with urlencoding of links
+* Fix attempt to clear up problems with some 403 errors and status update truncation
+
 = 2.2.2 = 
 
 * Fixed a bug where new Pages did not Tweet.

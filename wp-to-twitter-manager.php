@@ -90,6 +90,12 @@
 				</div>
 
 			');		
+		} else {
+			print('
+				<div id="message" class="updated fade">
+					<p>'.__('OAuth Authentication response not understood.', 'wp-to-twitter').'</p>
+				</div>			
+			');
 		}
 	}
 	

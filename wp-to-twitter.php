@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 2.2.2
+Version: 2.2.3
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -28,7 +28,7 @@ require_once( WP_PLUGIN_DIR . '/wp-to-twitter/functions.php' );
 require_once( WP_PLUGIN_DIR . '/wp-to-twitter/wp-to-twitter-oauth.php' );
 
 global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status, $x_jdwp_post_status;	
-$version = "2.2.2";
+$version = "2.2.3";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', 'wp-content/plugins/' . $plugin_dir, $plugin_dir );
 
@@ -142,7 +142,7 @@ function jd_doTwitterAPIPost( $twit ) {
 					$error = __("401 Unauthorized: Authentication credentials were missing or incorrect.",'wp-to-twitter');
 			} else if ( strcmp( $connection->http_code, '403' ) == 0 ) {
 					$return = false;
-					$error = __("403 Forbidden: The request is understood, but it has been refused. This code is used when requests are being denied due to update limits.",'wp-to-twitter');							} else if ( strcmp( $connection->http_code, '500' ) == 0 ) {
+					$error = __("403 Forbidden: The request is understood, but it has been refused. This code is used when requests are being denied due to status update character limits.",'wp-to-twitter');							} else if ( strcmp( $connection->http_code, '500' ) == 0 ) {
 					$return = false;
 					$error = __("500 Internal Server Error: Something is broken at Twitter.",'wp-to-twitter');				
 			} else if ( strcmp( $connection->http_code, '503' ) == 0 ) {
@@ -158,6 +158,12 @@ function jd_doTwitterAPIPost( $twit ) {
 		}		
 	}
 }
+
+function fake_normalize( $string ) {
+    return preg_replace( '~&([a-z]{1,2})(acute|cedil|circ|grave|lig|orn|ring|slash|th|tilde|uml);~i', '$1', htmlentities( $string, ENT_QUOTES, 'UTF-8' ) );
+	//return $string;
+}
+
 
 function jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $thispostexcerpt, $thisposturl, $thispostcategory, $thisdate, $post_ID, $authID=FALSE ) {
 $post_length = 140;
@@ -207,17 +213,17 @@ $post_sentence = str_ireplace ( '#category#',$thispostcategory,$post_sentence );
 $post_sentence = str_ireplace ( '#date#', $thisdate,$post_sentence );
 $post_sentence = str_ireplace ( '#author#', $thisauthor,$post_sentence );
 
-$str_length = mb_strlen( urldecode( $post_sentence ) );
+$str_length = mb_strlen( urldecode( fake_normalize( $post_sentence ) ) );
 $length = get_option( 'jd_post_excerpt' );
 
 $length_array = array();
 //$order = get_option( 'jd_truncation_sort_order' );
-$length_array['thispostexcerpt'] = mb_strlen($thispostexcerpt);
-$length_array['thisblogtitle'] = mb_strlen($thisblogtitle);
-$length_array['thisposttitle'] = mb_strlen($thisposttitle);
-$length_array['thispostcategory'] = mb_strlen($thispostcategory);
-$length_array['thisdate'] = mb_strlen($thisdate);
-$length_array['thisauthor'] = mb_strlen($thisauthor);
+$length_array['thispostexcerpt'] = mb_strlen(fake_normalize($thispostexcerpt));
+$length_array['thisblogtitle'] = mb_strlen(fake_normalize($thisblogtitle));
+$length_array['thisposttitle'] = mb_strlen(fake_normalize($thisposttitle));
+$length_array['thispostcategory'] = mb_strlen(fake_normalize($thispostcategory));
+$length_array['thisdate'] = mb_strlen(fake_normalize($thisdate));
+$length_array['thisauthor'] = mb_strlen(fake_normalize($thisauthor));
 
 if ( $str_length > $post_length ) {
 	foreach($length_array AS $key=>$value) {
@@ -226,23 +232,24 @@ if ( $str_length > $post_length ) {
 			$old_value = ${$key};
 			$new_value = mb_substr( $old_value,0,-( $trim ) );
 			$post_sentence = str_ireplace( $old_value,$new_value,$post_sentence );
-			$str_length = mb_strlen( urldecode( $post_sentence ) );
+			$str_length = mb_strlen( urldecode( fake_normalize( $post_sentence ) ) );
 		} else {
 		}
 	}
 }
-$sentence =  $post_sentence;
+if ( mb_strlen( fake_normalize ( $post_sentence) ) > 140 ) { $post_sentence = substr( $post_sentence,0,139 ); }
+$sentence = $post_sentence;
 return $sentence;
 }
 
-function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='false' ) {
+function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='true' ) {
 		$cligsapi =  trim ( get_option( 'cligsapi' ) );
 		$bitlyapi =  trim ( get_option( 'bitlyapi' ) );
 		$bitlylogin =  trim ( get_option( 'bitlylogin' ) );
 		$yourlslogin =  trim ( get_option( 'yourlslogin') );
 		$yourlsapi = stripcslashes( get_option( 'yourlsapi' ) );
 		if ($testmode != 'false') {
-			if ( ( get_option('twitter-analytics-campaign') != '' ) && ( get_option('use-twitter-analytics') == 1 || get_option('use_dynamic_analytics') == 1 ) ) {
+			if ( get_option('use-twitter-analytics') == 1 || get_option('use_dynamic_analytics') == 1 ) {
 				if ( get_option('use_dynamic_analytics') == '1' ) {
 					$campaign_type = get_option('jd_dynamic_analytics');
 					if ($campaign_type == "post_category" && $testmode != 'link' ) {
@@ -266,9 +273,8 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='fa
 				} else {
 				$this_campaign = get_option('twitter-analytics-campaign');
 				}
-				$search = array(" ","&","?");
-				$this_campaign = str_replace($search,'',$this_campaign);
-				if ( strpos( $thispostlink,"%3F" ) === FALSE) {
+				$this_campaign = urlencode($this_campaign);
+				if ( strpos( $thispostlink,"%3F" ) === FALSE || strpos( $thispostlink,"?" ) === FALSE ) {
 				$thispostlink .= "?";
 				} else {
 				$thispostlink .= "&";
@@ -276,7 +282,8 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='fa
 				$thispostlink .= "utm_campaign=$this_campaign&utm_medium=twitter&utm_source=twitter";
 			}
 		}
-		$thispostlink = urlencode(trim($thispostlink));
+		$thispostlink = urldecode(trim($thispostlink));
+		$thispostlink = urlencode($thispostlink);
 
 		// custom word setting
 		$keyword_format = ( get_option( 'jd_keyword_format' ) == '1' )?$post_ID:'';
@@ -845,7 +852,9 @@ function jd_fix_post_meta( $post_id ) {
 		update_post_meta( $post_id, "_$value", $old_value );
 		delete_post_meta( $post_id, $value );
 	}
+	if ( $post_id != 0 ) {
 	add_post_meta( $post_id, "_jd_post_meta_fixed",'true' );
+	}
 }
 
 // Post the Custom Tweet into the post meta table
@@ -855,7 +864,7 @@ function post_jd_twitter( $id ) {
 		jd_fix_post_meta( $post_id );
 	}
 	$jd_twitter = $_POST[ '_jd_twitter' ];
-		if (isset($jd_twitter) && !empty($jd_twitter)) {
+		if (isset($jd_twitter)) {
 			update_post_meta( $id, '_jd_twitter', $jd_twitter );
 		}
 	$jd_tweet_this = esc_attr($_POST[ '_jd_tweet_this' ]);
