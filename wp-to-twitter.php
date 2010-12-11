@@ -85,7 +85,7 @@ function external_or_permalink( $post_ID ) {
        return ( $ex_link ) ? $ex_link : $perma_link;
 }
 
-// I don't remember what this does. I don't think it does anything in the current iteration.
+// I don't remember what this does. I don't think it does anything in the current iteration. If I don't hear about something being broken, I'll remove it
 function jd_doUnknownAPIPost( $twit, $authID=FALSE, $service="basic" ) {
 /*
 	global $version, $jd_plugin_url, $x_jd_api_post_status;
