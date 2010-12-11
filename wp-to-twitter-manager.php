@@ -372,6 +372,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 <li><?php _e("<code>#date#</code>: the post date", 'wp-to-twitter'); ?></li>
 <li><?php _e("<code>#url#</code>: the post URL", 'wp-to-twitter'); ?></li>
 <li><?php _e("<code>#author#</code>: the post author",'wp-to-twitter'); ?></li>
+<li><?php _e("<code>#account#</code>: the twitter @reference for the account (or the author, if author settings are enabled and set.)",'wp-to-twitter'); ?></li>
 </ul>
 <p><?php _e("You can also create custom shortcodes to access WordPress custom fields. Use doubled square brackets surrounding the name of your custom field to add the value of that custom field to your status update. Example: <code>[[custom_field]]</code></p>", 'wp-to-twitter'); ?>
 		
@@ -632,7 +633,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 		<legend><?php _e('Individual Authors','wp-to-twitter'); ?></legend>
 			<p>
 				<input type="checkbox" name="jd_individual_twitter_users" id="jd_individual_twitter_users" value="1" <?php jd_checkCheckbox('jd_individual_twitter_users')?> />
-				<label for="jd_individual_twitter_users"><?php _e("Authors have individual Twitter accounts", 'wp-to-twitter'); ?></label><br /><small><?php _e('Authors can set their username in their user profile. As of version 2.2.0, this feature no longer allows authors to post to their own Twitter accounts. It can only add an @reference to the author.', 'wp-to-twitter'); ?></small>
+				<label for="jd_individual_twitter_users"><?php _e("Authors have individual Twitter accounts", 'wp-to-twitter'); ?></label><br /><small><?php _e('Authors can set their username in their user profile. As of version 2.2.0, this feature no longer allows authors to post to their own Twitter accounts. It can only add an @reference to the author. This @reference is placed using the <code>#account#</code> shortcode. (It will pick up the main account if user accounts are not enabled.)', 'wp-to-twitter'); ?></small>
 			</p>			
 		</fieldset>
 		<fieldset>

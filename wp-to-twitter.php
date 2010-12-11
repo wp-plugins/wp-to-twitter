@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 2.2.3
+Version: 2.2.4
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -27,15 +27,13 @@ Author URI: http://www.joedolson.com/
 require_once( WP_PLUGIN_DIR . '/wp-to-twitter/functions.php' );
 require_once( WP_PLUGIN_DIR . '/wp-to-twitter/wp-to-twitter-oauth.php' );
 
-global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status, $x_jdwp_post_status;	
-$version = "2.2.3";
+global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status, $x_jdwp_post_status;
+$version = "2.2.4";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', 'wp-content/plugins/' . $plugin_dir, $plugin_dir );
 
-
 $jdwp_api_post_status = "http://twitter.com/statuses/update.json";
 $x_jd_api_post_status = get_option( 'x_jd_api_post_status' );
-
 
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 $jd_donate_url = "http://www.joedolson.com/donate.php";
@@ -43,27 +41,37 @@ $jd_donate_url = "http://www.joedolson.com/donate.php";
 if ( !defined( 'WP_PLUGIN_DIR' ) ) {
     define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 }
-
 // Check whether a supported version is in use.
-$exit_msg='WP to Twitter requires WordPress 2.7 or a more recent version. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>';
+$exit_msg='WP to Twitter requires WordPress 2.9.2 or a more recent version. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>';
 
-	if ( version_compare( $wp_version,"2.7","<" )) {
+	if ( version_compare( $wp_version,"2.9.2","<" )) {
 	exit ($exit_msg);
 	}
-// check for OAuth configuration
-	if ( !wtt_oauth_test() && get_option('disable_oauth_notice') != '1' ) {
-		add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>".sprintf(__('Twitter now requires authentication by OAuth. You will need you to update your <a href="%s">settings</a> in order to continue to use WP to Twitter.', 'wp-to-twitter'), admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'))."</p></div>';" ) );
-	}	
+	
+ // check for OAuth configuration
+ 	if ( !wtt_oauth_test() && get_option('disable_oauth_notice') != '1' ) {
+		add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } echo '<div class=\"error\"><p>".sprintf(__('Twitter now requires authentication by OAuth. You will need you to update your <a href="%s">settings</a> in order to continue to use WP to Twitter.', 'wp-to-twitter'), admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'))."</p></div>';" ) );
+ 	}	
 	
 function wptotwitter_activate() {
 global $version;
-$prev_version = get_option( 'wp_to_twitter_version',$version );
+$prev_version = get_option( 'wp_to_twitter_version' );
 // this is a switch to plan for future versions
-	/* switch($prev_version) {
-		case '':
+	switch($prev_version) {
+		case '2.2.3':
+			delete_option( 'x-twitterlogin' );
+			delete_option( 'twitterlogin' );
+			delete_option( 'twitterpw' );
+			delete_option( 'jd-use-link-title' );
+			delete_option( 'jd-use-link-description' );
+			delete_option( 'jd_use_both_services' );
+			delete_option( 'jd-twitter-service-name' );
+			delete_option( 'jd_api_post_status' );
+			delete_option( 'jd-twitter-char-limit' );
+			delete_option( 'x-twitterpw' );		
 		break;
 		default:
-	} */
+	}
 	update_option( 'wp_to_twitter_version',$version );
 }	
 	
@@ -77,7 +85,9 @@ function external_or_permalink( $post_ID ) {
        return ( $ex_link ) ? $ex_link : $perma_link;
 }
 
+// I don't remember what this does. I don't think it does anything in the current iteration.
 function jd_doUnknownAPIPost( $twit, $authID=FALSE, $service="basic" ) {
+/*
 	global $version, $jd_plugin_url, $x_jd_api_post_status;
 	//check if user login details have been entered on admin page
 	if ($authID == FALSE || ( get_option( 'jd_individual_twitter_users' ) != '1' ) ) {
@@ -113,6 +123,7 @@ function jd_doUnknownAPIPost( $twit, $authID=FALSE, $service="basic" ) {
 		return true;
 		}
 	}
+*/
 }
 
 
@@ -179,39 +190,30 @@ $thisauthor = get_the_author_meta( 'display_name',$post_author );
 
 if ( get_option( 'jd_individual_twitter_users' ) == 1 ) {
 	if ( get_usermeta( $authID, 'wp-to-twitter-enable-user' ) == 'mainAtTwitter' ) {
-	$at_append = "@" . stripcslashes(get_usermeta( $authID, 'wp-to-twitter-user-username' ));
+	$thisaccount = "@" . stripcslashes(get_usermeta( $authID, 'wp-to-twitter-user-username' ));
 	} else if ( get_usermeta( $authID, 'wp-to-twitter-enable-user' ) == 'mainAtTwitterPlus' ) {
-	$at_append = "@" . stripcslashes(get_usermeta( $authID, 'wp-to-twitter-user-username' ) . ' @' . get_option( 'wtt_twitter_username' ));
+	$thisaccount = "@" . stripcslashes(get_usermeta( $authID, 'wp-to-twitter-user-username' ) . ' @' . get_option( 'wtt_twitter_username' ));
 	}
 } else {
-$at_append = "";
-}
-if ($sentence != '') {
-	$sentence = $at_append . " " . $sentence;
+$thisaccount = "@".get_option('wtt_twitter_username');
 }
 	if ( get_option( 'use_tags_as_hashtags' ) == '1'  && $sentence != '' ) {
-		$sentence = $sentence . " " . generate_hash_tags( $post_ID );
+	$sentence = $sentence . " " . generate_hash_tags( $post_ID );
 	}	
-	
 	if ( get_option( 'jd_twit_prepend' ) != "" && $sentence != '' ) {
 	$sentence = get_option( 'jd_twit_prepend' ) . " " . $sentence;
 	}
 	if ( get_option( 'jd_twit_append' ) != "" && $sentence != '' ) {
 	$sentence = $sentence . " " . get_option( 'jd_twit_append' );
 	}
-	if ( mb_substr( $thispostexcerpt, -1 ) == ";" || mb_substr( $thispostexcerpt, -1 ) == "," || mb_substr( $thispostexcerpt, -1 ) == ":" ) {
-	$thispostexcerpt = mb_substr_replace( $thispostexcerpt,"",-1, 1 );
-	}
-	if ( mb_substr( $thispostexcerpt, -1 ) != "." && mb_substr( $thispostexcerpt, -1 ) != "?" && mb_substr( $thispostexcerpt, -1 ) != "!" ) {
-	$thispostexcerpt = $thispostexcerpt . "...";
-	}
-$post_sentence = str_ireplace( "#url#", $thisposturl, $sentence );
+$post_sentence = str_ireplace( "#account#", $thisaccount, $sentence );
+$post_sentence = str_ireplace( "#url#", $thisposturl, $post_sentence );
 $post_sentence = str_ireplace( '#title#', $thisposttitle, $post_sentence );
-$post_sentence = str_ireplace ( '#blog#',$thisblogtitle,$post_sentence );
-$post_sentence = str_ireplace ( '#post#',$thispostexcerpt,$post_sentence );
-$post_sentence = str_ireplace ( '#category#',$thispostcategory,$post_sentence );
-$post_sentence = str_ireplace ( '#date#', $thisdate,$post_sentence );
-$post_sentence = str_ireplace ( '#author#', $thisauthor,$post_sentence );
+$post_sentence = str_ireplace ( '#blog#',$thisblogtitle, $post_sentence );
+$post_sentence = str_ireplace ( '#post#',$thispostexcerpt, $post_sentence );
+$post_sentence = str_ireplace ( '#category#',$thispostcategory, $post_sentence );
+$post_sentence = str_ireplace ( '#date#', $thisdate, $post_sentence );
+$post_sentence = str_ireplace ( '#author#', $thisauthor, $post_sentence );
 
 $str_length = mb_strlen( urldecode( fake_normalize( $post_sentence ) ) );
 $length = get_option( 'jd_post_excerpt' );
@@ -224,6 +226,12 @@ $length_array['thisposttitle'] = mb_strlen(fake_normalize($thisposttitle));
 $length_array['thispostcategory'] = mb_strlen(fake_normalize($thispostcategory));
 $length_array['thisdate'] = mb_strlen(fake_normalize($thisdate));
 $length_array['thisauthor'] = mb_strlen(fake_normalize($thisauthor));
+$length_array['thisaccount'] = mb_strlen(fake_normalize($thisaccount));
+
+//echo $thispostexcerpt;
+//echo "<pre>";
+//echo $post_sentence."<br />";
+//print_r($length_array);
 
 if ( $str_length > $post_length ) {
 	foreach($length_array AS $key=>$value) {
@@ -233,12 +241,15 @@ if ( $str_length > $post_length ) {
 			$new_value = mb_substr( $old_value,0,-( $trim ) );
 			$post_sentence = str_ireplace( $old_value,$new_value,$post_sentence );
 			$str_length = mb_strlen( urldecode( fake_normalize( $post_sentence ) ) );
-		} else {
 		}
 	}
 }
-if ( mb_strlen( fake_normalize ( $post_sentence) ) > 140 ) { $post_sentence = substr( $post_sentence,0,139 ); }
+if ( mb_strlen( fake_normalize ( $post_sentence ) ) > 140 ) { $post_sentence = substr( $post_sentence,0,139 ); }
 $sentence = $post_sentence;
+//echo "<br />$sentence";
+//echo "</pre>";
+//die;
+
 return $sentence;
 }
 
@@ -545,16 +556,9 @@ global $version;
 		$thispostlink =  $_POST['link_url'] ;
 		$thislinkdescription =  stripcslashes( $_POST['link_description'] );
 		$sentence = stripcslashes( get_option( 'newlink-published-text' ) );
-		if ( get_option( 'jd-use-link-description' ) == '1' || get_option ( 'jd-use-link-title' ) == '1' ) {
-			if ( get_option( 'jd-use-link-description' ) == '1' && get_option ( 'jd-use-link-title' ) == '0' ) {
-			$sentence = $sentence . ' ' . $thislinkdescription;
-			} else if ( get_option( 'jd-use-link-description' ) == '0' && get_option ( 'jd-use-link-title' ) == '1' ) {
-			$sentence = $sentence . ' ' . $thislinkname;
-			}
-		} else {
-			$sentence = str_ireplace("#title#",$thislinkname,$sentence);
-			$sentence = str_ireplace("#description#",$thislinkdescription,$sentence);		 
-		}
+		$sentence = str_ireplace("#title#",$thislinkname,$sentence);
+		$sentence = str_ireplace("#description#",$thislinkdescription,$sentence);		 
+
 		if (mb_strlen( $sentence ) > 120) {
 			$sentence = mb_substr($sentence,0,116) . '...';
 		}
@@ -809,7 +813,7 @@ echo "<p class='error'><strong>Previous Tweet:</strong> $previous_tweet</p>";
 </p>
 <p><input readonly type="text" name="twitlength" size="3" maxlength="3" value="<?php echo attribute_escape( mb_strlen( $description) ); ?>" />
 <?php $minus_length = $post_length - 21; ?>
-<?php _e(" characters.<br />$twitter posts are a maximum of $post_length characters; if your short URL is appended to the end of your document, you have about $minus_length characters available. You can use <code>#url#</code>, <code>#title#</code>, <code>#post#</code>, <code>#category#</code>, <code>#date#</code>, <code>#author#</code>, or <code>#blog#</code> to insert the shortened URL, post title, the first category selected, the post date, the post author, or a post excerpt or blog name into the Tweet.", 'wp-to-twitter', 'wp-to-twitter') ?> 
+<?php _e(" characters.<br />$twitter posts are a maximum of $post_length characters; if your short URL is appended to the end of your document, you have about $minus_length characters available. You can use <code>#url#</code>, <code>#title#</code>, <code>#post#</code>, <code>#category#</code>, <code>#date#</code>, <code>#author#</code>, <code>#account#</code> or <code>#blog#</code> to insert the shortened URL, post title, the first category selected, the post date, the post author, the twitter @reference, or a post excerpt or blog name into the Tweet.", 'wp-to-twitter', 'wp-to-twitter') ?> 
 </p>
 <p>
 <a target="__blank" href="<?php echo $jd_donate_url; ?>"><?php _e('Make a Donation', 'wp-to-twitter', 'wp-to-twitter') ?></a> &bull; <a target="__blank" href="<?php echo $jd_plugin_url; ?>"><?php _e('Get Support', 'wp-to-twitter', 'wp-to-twitter') ?></a> &raquo;
@@ -1036,16 +1040,18 @@ if ( get_option( 'jd_individual_twitter_users')=='1') {
 	add_action( 'edit_user_profile', 'jd_twitter_profile' );
 	add_action( 'profile_update', 'jd_twitter_save_profile');
 }
+
 if ( get_option( 'disable_url_failure' ) != '1' ) {
 	if ( get_option( 'wp_url_failure' ) == '1' ) {
-		add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>';_e('There\'s been an error shortening your URL! <a href=\"".get_bloginfo('wpurl')."/wp-admin/options-general.php?page=wp-to-twitter/wp-to-twitter.php\">Visit your WP to Twitter settings page</a> to get more information and to clear this error message.','wp-to-twitter'); echo '</p></div>';" ) );
+		add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } echo '<div class=\"error\"><p>';_e('There\'s been an error shortening your URL! <a href=\"".get_bloginfo('wpurl')."/wp-admin/options-general.php?page=wp-to-twitter/wp-to-twitter.php\">Visit your WP to Twitter settings page</a> to get more information and to clear this error message.','wp-to-twitter'); echo '</p></div>';" ) );
 	}
 }
 if ( get_option( 'disable_twitter_failure' ) != '1' ) {
 	if ( get_option( 'wp_twitter_failure' ) == '1' ) {
-		add_action('admin_notices', create_function( '', "echo '<div class=\"error\"><p>';_e('There\'s been an error posting your Twitter status! <a href=\"".get_bloginfo('wpurl')."/wp-admin/options-general.php?page=wp-to-twitter/wp-to-twitter.php\">Visit your WP to Twitter settings page</a> to get more information and to clear this error message.','wp-to-twitter'); echo '</p></div>';" ) );
+		add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } echo '<div class=\"error\"><p>';_e('There\'s been an error posting your Twitter status! <a href=\"".get_bloginfo('wpurl')."/wp-admin/options-general.php?page=wp-to-twitter/wp-to-twitter.php\">Visit your WP to Twitter settings page</a> to get more information and to clear this error message.','wp-to-twitter'); echo '</p></div>';" ) );
 	}
 }
+
 if ( get_option( 'jd_twit_pages' )=='1' ) {
 	add_action( 'publish_page', 'jd_twit_page' );
 }

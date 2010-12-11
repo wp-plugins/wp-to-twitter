@@ -36,6 +36,13 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.2.4 =
+
+* Blocked global error messages from being seen by non-admin level users.
+* Added #account# shortcode to supply Twitter username @ reference in Tweet templates.
+* Updated debugging output
+* Deletes obsolete options from database
+
 = 2.2.3 =
 
 * Fixed: Bug which added unnecessary duplications of post meta

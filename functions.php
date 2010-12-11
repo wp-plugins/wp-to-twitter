@@ -127,60 +127,23 @@ if ( !function_exists( 'mb_substr_replace' ) ) {
 function print_settings() {
 global $version;
 
-if ( get_option ( 'twitterpw' ) != '' ) {
-	$twitterpw = "Saved.";
-} else {
-	$twitterpw = "Blank.";
-}
-if ( get_option ( 'yourlsapi' ) != '' ) {
-	$yourlsapi = "Saved.";
-} else {
-	$yourlsapi = "Blank.";
-}
-if ( get_option ( 'bitlyapi' ) != '' ) {
-	$bitlyapi = "Saved.";
-} else {
-	$bitlyapi = "Blank.";
-}
+$bitlyapi = ( get_option ( 'bitlyapi' ) != '' )?"Saved.":"Blank.";
+$yourlsapi = ( get_option ( 'yourlsapi' ) != '' )?"Saved.":"Blank.";
+
 $options = array( 
-	'newpost-published-update'=>get_option( 'newpost-published-update' ),
-	'newpost-published-text'=>get_option( 'newpost-published-text' ),
+	'app_consumer_key'=>get_option('app_consumer_key'),
+	'app_consumer_secret'=>get_option('app_consumer_secret'),
+	'bitlylogin'=>get_option( 'bitlylogin' ),
+	'bitlyapi'=>$bitlyapi,
+	'cligsapi'=>get_option( 'cligsapi' ),
+	'disable_oauth_notice'=>get_option('disable_oauth_notice'),
+	'disable_url_failure'=>get_option('disable_url_failure' ),
+	'disable_twitter_failure'=>get_option('disable_twitter_failure' ),
 
-	'oldpost-edited-update'=>get_option( 'oldpost-edited-update' ),
-	'oldpost-edited-text'=>get_option( 'oldpost-edited-text' ),
-
+	'jd_twit_blogroll'=>get_option( 'jd_twit_blogroll' ),
 	'jd_twit_pages'=>get_option( 'jd_twit_pages' ),
 	'jd_twit_edited_pages'=>get_option( 'jd_twit_edited_pages' ),
-	
-	'oldpage-edited-text'=>get_option( 'oldpage-edited-text' ),
-	'newpage-published-text'=>get_option( 'newpage-published-text' ),
-	// Blogroll options
-	'jd_twit_blogroll'=>get_option( 'jd_twit_blogroll' ),
-	'newlink-published-text'=>get_option( 'newlink-published-text' ),
-
-	// account settings
-	'twitterlogin'=>get_option( 'twitterlogin' ),
-	'twitterpw'=>$twitterpw,
-	'cligsapi'=>get_option( 'cligsapi' ),
-	'bitlylogin'=>get_option( 'bitlylogin' ),
-	'bitlyapi'=>$bitlyapi,	
-	'jd_api_post_status'=>get_option( 'jd_api_post_status' ),
-	//yourls installation
-	'yourlsapi'=>$yourlsapi,
-	'yourlspath'=>get_option( 'yourlspath' ),
-	'yourlsurl' =>get_option( 'yourlsurl' ),
-	'yourlslogin'=>get_option( 'yourlslogin' ),
 	'jd_keyword_format'=>get_option( 'jd_keyword_format' ),
-	
-	//twitter api
-	'jd-twitter-service-name'=>get_option( 'jd-twitter-service-name' ),
-	'jd-twitter-char-limit'=>get_option( 'jd-twitter-char-limit' ),	
-	'jd_use_both_services'=>get_option( 'jd_use_both_services'  ),
-	'x-twitterlogin'=>get_option( 'x-twitterlogin' ),
-	'x-twitterpw'=>get_option( 'x-twitterpw' ),
-	
-	//advanced settings
-	'use_tags_as_hashtags'=>get_option( 'use_tags_as_hashtags' ),
 	'jd_replace_character'=>get_option( 'jd_replace_character' ),
 	'jd_max_tags'=>get_option('jd_max_tags'),
 	'jd_max_characters'=>get_option('jd_max_characters'),	
@@ -192,26 +155,48 @@ $options = array(
 	'jd_tweet_default'=>get_option( 'jd_tweet_default' ),
 	'jd_twit_remote'=>get_option( 'jd_twit_remote' ),
 	'jd_twit_quickpress'=>get_option( 'jd_twit_quickpress' ),
-
-	'twitter-analytics-campaign'=>get_option( 'twitter-analytics-campaign' ),
-	'use-twitter-analytics'=>get_option( 'use-twitter-analytics' ),
-	'jd_dynamic_analytics'=>get_option( 'jd_dynamic_analytics' ),		
-	'use_dynamic_analytics'=>get_option( 'use_dynamic_analytics' ),
 	'jd_individual_twitter_users'=>get_option( 'jd_individual_twitter_users' ),
 	'jd_shortener'=>get_option( 'jd_shortener' ),
-	
-	// Error checking
+	'jd_dynamic_analytics'=>get_option( 'jd_dynamic_analytics' ),
+
+	'limit_categories'=>get_option('limit_categories' ),
+
+	'newpost-published-update'=>get_option( 'newpost-published-update' ),
+	'newpost-published-text'=>get_option( 'newpost-published-text' ),
+	'newpage-published-text'=>get_option( 'newpage-published-text' ),
+	'newlink-published-text'=>get_option( 'newlink-published-text' ),
+
+	'oauth_token'=>get_option('oauth_token'),
+	'oauth_token_secret'=>get_option('oauth_token_secret'),
+	'oldpost-edited-update'=>get_option( 'oldpost-edited-update' ),
+	'oldpost-edited-text'=>get_option( 'oldpost-edited-text' ),
+	'oldpage-edited-text'=>get_option( 'oldpage-edited-text' ),
+
+
+	'tweet_categories'=>get_option('tweet_categories' ),
+	'twitterInitialised'=>get_option( 'twitterInitialised' ),
+	'twitter-analytics-campaign'=>get_option( 'twitter-analytics-campaign' ),
+
+	'use-twitter-analytics'=>get_option( 'use-twitter-analytics' ),
+	'use_tags_as_hashtags'=>get_option( 'use_tags_as_hashtags' ),	
+	'use_dynamic_analytics'=>get_option( 'use_dynamic_analytics' ),
+
 	'wp_twitter_failure'=>get_option( 'wp_twitter_failure' ),
 	'wp_url_failure' =>get_option( 'wp_url_failure' ),
-	'twitterInitialised'=>get_option( 'twitterInitialised' ),
-
-	//category limits
-	'limit_categories'=>get_option('limit_categories' ),
-	'tweet_categories'=>get_option('tweet_categories' ),
-	'disable_url_failure'=>get_option('disable_url_failure' ),
-	'disable_twitter_failure'=>get_option('disable_twitter_failure' ),
 	'wp_bitly_error'=>get_option( 'wp_bitly_error' ),
-	'wp_cligs_error'=>get_option( 'wp_cligs_error' )
+	'wp_cligs_error'=>get_option( 'wp_cligs_error' ),
+	'wp_to_twitter_version'=>get_option( 'wp_to_twitter_version'),
+	'wtt_twitter_username'=>get_option( 'wtt_twitter_username' ),
+	'wp_debug_oauth'=>get_option('wp_debug_oauth'),
+
+	'x-login'=>get_option( 'x-login' ),
+	'x-pw'=>get_option( 'x-pw' ),
+	'x_jd_api_post_status'=>get_option( 'x_jd_api_post_status' ),
+
+	'yourlsapi'=>$yourlsapi,
+	'yourlspath'=>get_option( 'yourlspath' ),
+	'yourlsurl' =>get_option( 'yourlsurl' ),
+	'yourlslogin'=>get_option( 'yourlslogin' )	
 );
 
 echo "<div class=\"settings\">";
