@@ -56,7 +56,7 @@ function wptotwitter_activate() {
 global $version;
 $prev_version = get_option( 'wp_to_twitter_version' );
 // this is a switch to plan for future versions
-$upgrade = version_compare( $prev_version,"2.2.5","<" )
+$upgrade = version_compare( $prev_version,"2.2.5","<" );
 	if ($upgrade) {
 			delete_option( 'x-twitterlogin' );
 			delete_option( 'twitterlogin' );
