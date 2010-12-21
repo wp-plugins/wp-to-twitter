@@ -191,7 +191,6 @@ $options = array(
 
 	'x-login'=>get_option( 'x-login' ),
 	'x-pw'=>get_option( 'x-pw' ),
-	'x_jd_api_post_status'=>get_option( 'x_jd_api_post_status' ),
 
 	'yourlsapi'=>$yourlsapi,
 	'yourlspath'=>get_option( 'yourlspath' ),

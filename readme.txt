@@ -36,6 +36,12 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.2.5 =
+
+* Bug fix: shouldn't see error 'Could not redeclare OAuth..' again. 
+* Bug fix: shouldn't see 'Fatal erro: Class 'OAuthSignatureMethod...' again.
+* Bug fix: updated API endpoints
+
 = 2.2.4 =
 
 * Blocked global error messages from being seen by non-admin level users.
