@@ -6,7 +6,7 @@
  */
 
 /* Load OAuth lib. You can find it at http://oauth.net */
-require_once('OAuth.php');
+require_once('WP_OAuth.php');
 
 if (!class_exists('jd_TwitterOAuth')) {
 

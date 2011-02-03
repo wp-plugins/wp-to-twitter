@@ -93,11 +93,7 @@ switch ( $_POST['oauth_settings'] ) {
 // connect or disconnect form
 function wtt_connect_oauth() {
 echo '<div class="ui-sortable meta-box-sortables">';
-if ( !wtt_oauth_test() ) { 
 echo '<div class="postbox">';
-} else { 
-echo '<div class="postbox closed">';
-}
 echo '<div class="handlediv" title="Click to toggle"><br/></div>';
 
 	if ( !wtt_oauth_test() ) {

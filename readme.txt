@@ -3,10 +3,10 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, cligs, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.9.2
-Tested up to: 3.1-alpha
+Tested up to: 3.1-RC3
 Stable tag: trunk
 
-Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service.
+Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5. 
 
 == Description ==
 
@@ -36,10 +36,23 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.2.6 =
+
+* Modification: renamed OAuth files to maybe avoid collision with alternate OAuth versions which do not include needed methods
+* Eliminated postbox toggles
+* Clean out deprecated functions
+* Updated admin styles and separated into a separate file. 
+* Bug fix: Edited pages did not Tweet
+* Bug fix: May have reduced occurrences of URL not being sent in status update. Maybe.
+* Bug fix: Forced lowercase on Bit.ly API username (Thanks, Bit.ly for NOT DOCUMENTING this.)
+* Added option to strip non-alphanumeric characters from hash tags
+* Added control to adjust which levels of users will see custom Profile settings
+* Found myself becoming unnecessarily sarcastic in Changelog notes. Will fix in next version. :)
+
 = 2.2.5 =
 
 * Bug fix: shouldn't see error 'Could not redeclare OAuth..' again. 
-* Bug fix: shouldn't see 'Fatal erro: Class 'OAuthSignatureMethod...' again.
+* Bug fix: shouldn't see 'Fatal error: Class 'OAuthSignatureMethod...' again.
 * Bug fix: updated API endpoints
 
 = 2.2.4 =
@@ -412,10 +425,6 @@ If Twitter isn't available, you'll get a message telling you that there's been a
 
 If your URL shortening service isn't available, your tweet will be sent using it's normal post permalink. You'll also get an error message letting you know that there was a problem contacting Cli.gs or Bit.ly.
 
-= Why do my Twitter status updates show up labeled as "From WP to Twitter"? =
-
-Twitter.com allows API applications to register themselves with the service, so they can provide information about the source of your Tweet. WP to Twitter is a registered user agent with Twitter.com. The same effect is seen if you use any other registered Twitter client.
-
 = What if my server doesn't support the methods you use to contact these other sites? =
 
 Well, there isn't much I can do about that - but the plugin will check and see whether or not the needed methods work. If they don't, you will find a warning message on your settings page. 
@@ -424,17 +433,13 @@ Well, there isn't much I can do about that - but the plugin will check and see w
 
 No. They're private. 
 
-= I can't see the settings page! =
-
-There was once an unresolved bug which effected some servers causing the WP-to-Twitter settings page to fail. I haven't heard a report of this problem for quite a while, so I believe it's gone, but if it *does* show up again, you can get around the problem by commenting out approximately lines 191 - 256 in wp-to-twitter/wp-to-twitter-manager.php. (Version 1.4.0.) . (These numbers change from version to version, but there are comments in the code to help you out.)
-
 = Scheduled posting doesn't work. What's wrong? =
 
 Only posts which you scheduled or edited *after* installing the plugin will be Tweeted. Any future posts written before installing the plugin will be ignored by WP to Twitter.
 
 == Upgrade Notice ==
 
-This is a beta release with OAuth support. Please read the changelog before upgrading.
+
 
 == Screenshots ==
 

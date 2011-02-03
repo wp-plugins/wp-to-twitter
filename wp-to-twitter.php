@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 2.2.5
+Version: 2.2.6
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -24,11 +24,25 @@ Author URI: http://www.joedolson.com/
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 // include service functions
-require_once( WP_PLUGIN_DIR . '/wp-to-twitter/functions.php' );
-require_once( WP_PLUGIN_DIR . '/wp-to-twitter/wp-to-twitter-oauth.php' );
+
+
+if ( version_compare( get_bloginfo( 'version' ) , '3.0' , '<' ) && is_ssl() ) {
+	$wp_content_url = str_replace( 'http://' , 'https://' , get_option( 'siteurl' ) );
+} else {
+	$wp_content_url = get_option( 'siteurl' );
+}
+$wp_content_url .= '/wp-content';
+$wp_content_dir = ABSPATH . 'wp-content';
+$wp_plugin_url = $wp_content_url . '/plugins';
+$wp_plugin_dir = $wp_content_dir . '/plugins';
+$wpmu_plugin_url = $wp_content_url . '/mu-plugins';
+$wpmu_plugin_dir = $wp_content_dir . '/mu-plugins';
+
+require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
+require_once( $wp_plugin_dir . '/wp-to-twitter/wp-to-twitter-oauth.php' );
 
 global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status, $x_jdwp_post_status;
-$version = "2.2.5";
+$version = "2.2.6";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', 'wp-content/plugins/' . $plugin_dir, $plugin_dir );
 
@@ -37,9 +51,6 @@ $jdwp_api_post_status = "http://api.twitter.com/1/statuses/update.json";
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 $jd_donate_url = "http://www.joedolson.com/donate.php";
 
-if ( !defined( 'WP_PLUGIN_DIR' ) ) {
-    define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
-}
 // Check whether a supported version is in use.
 $exit_msg='WP to Twitter requires WordPress 2.9.2 or a more recent version. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>';
 
@@ -214,13 +225,13 @@ $sentence = $post_sentence;
 return $sentence;
 }
 
-function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='true' ) {
+function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='false' ) {
 		$cligsapi =  trim ( get_option( 'cligsapi' ) );
 		$bitlyapi =  trim ( get_option( 'bitlyapi' ) );
-		$bitlylogin =  trim ( get_option( 'bitlylogin' ) );
+		$bitlylogin =  trim ( strtolower( get_option( 'bitlylogin' ) ) );
 		$yourlslogin =  trim ( get_option( 'yourlslogin') );
 		$yourlsapi = stripcslashes( get_option( 'yourlsapi' ) );
-		if ($testmode != 'false') {
+		if ($testmode == 'false') {
 			if ( get_option('use-twitter-analytics') == 1 || get_option('use_dynamic_analytics') == 1 ) {
 				if ( get_option('use_dynamic_analytics') == '1' ) {
 					$campaign_type = get_option('jd_dynamic_analytics');
@@ -264,6 +275,9 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='tr
 			case 0:
 			case 1:
 			$shrink = jd_fetch_url( "http://cli.gs/api/v1/cligs/create?t=wphttp&appid=WP-to-Twitter&url=".$thispostlink."&title=".$thisposttitle."&key=".$cligsapi );
+			if ($shrink == "There was a server problem creating the clig.") {
+				$shrink .= __('PLEASE NOTE: This is an internal server error at Cli.gs. If you continue to receive this error, you should change URL shorteners. This cannot be fixed in WP to Twitter.','wp-to-twitter');
+			}
 			update_option( 'wp_cligs_error',"Cligs API result: $shrink" );					
 			if ( !is_valid_url($shrink) ) { $shrink = false; }
 			break;
@@ -286,7 +300,7 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='tr
 			$shrink = urldecode($thispostlink);
 			break;
 			case 4:
-			$shrink = get_bloginfo('url') . "/?p=" . $post_ID;
+			$shrink = home_url() . "/?p=" . $post_ID;
 			break;
 			case 5:
 			// local YOURLS installation
@@ -321,10 +335,10 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='tr
 			}
 			break;
 		}
-		if ($testmode == 'false') {
-			if ( $shrink === FALSE || ( stristr( $shrink, "http://" ) === FALSE )) {
+		if ($testmode != 'true') {
+			if ( $shrink === false || ( stristr( $shrink, "http://" ) === FALSE )) {
 				update_option( 'wp_url_failure','1' );
-				$shrink = $thispostlink;
+				$shrink = urldecode( $thispostlink );
 			} else {
 				update_option( 'wp_url_failure','0' );
 			}
@@ -481,11 +495,11 @@ function jd_twit_page( $post_ID ) {
 		} else if ( (( $_POST['originalaction'] == "editpost" ) && ( ( $_POST['prev_status'] == 'publish' ) || ($_POST['original_post_status'] == 'publish') ) ) && $jd_post_info['postStatus'] == 'publish') {
 				$oldpost = true; // if this is an old page and editing updates are enabled
 			if ( get_option( 'jd_twit_edited_pages' ) == '1' ) {
-				    $nptext = stripcslashes( get_option( 'oldpage-published-text' ) );
+				    $nptext = stripcslashes( get_option( 'oldpage-edited-text' ) );
 			}
 		}
 		if ($newpost || $oldpost) {
-			$sentence = ( $customTweet != "" ) ? $customTweet : $nptext;
+			$sentence = ( $customTweet != "" ) ? $customTweet : $nptext;		
 			if ($jd_post_info['shortUrl'] != '') {
 				$shrink = $jd_post_info['shortUrl'];
 			} else {
@@ -681,6 +695,10 @@ $max_characters = get_option( 'jd_max_characters' );
 			foreach ( $tags as $value ) {
 			$tag = $value->name;
 			$replace = get_option( 'jd_replace_character' );
+			$strip = get_option( 'jd_strip_nonan' );
+			$search = "/[^a-zA-Z0-9]/";
+			$replace = '';
+			if ($strip == '1') { $tag = preg_replace( $search, $replace, $tag ); }
 			if ($replace == "" || !$replace) { $replace = "_"; } 
 			if ($replace == "[ ]") { $replace = ""; }
 			$value = str_ireplace( " ",$replace,trim( $tag ) );
@@ -718,10 +736,9 @@ jd_add_twitter_inner_box();
 }
 
 function jd_add_twitter_inner_box() {
-	$twitter = "Twitter";
 	$post_length = 140;
 
-global $post, $jd_plugin_url;
+global $post, $jd_plugin_url, $jd_donate_url;
 	$post_id = $post;
 	if (is_object($post_id)) {
 		$post_id = $post_id->ID;
@@ -729,7 +746,6 @@ global $post, $jd_plugin_url;
 	if ( get_post_meta ( $post_id, "_jd_post_meta_fixed", true ) != 'true' ) {
 		jd_fix_post_meta( $post_id );
 	}
-	
 	$jd_twitter = htmlspecialchars( stripcslashes( get_post_meta($post_id, '_jd_twitter', true ) ) );
 	$jd_tweet_this = get_post_meta( $post_id, '_jd_tweet_this', true );
 		if ( ( get_option( 'jd_tweet_default' ) == '1' && $jd_tweet_this != 'yes' ) || $jd_tweet_this == 'no') {
@@ -768,19 +784,19 @@ cntfield.value = field.value.length;
 echo "<p class='error'><strong>Previous Tweet:</strong> $previous_tweet</p>";
 } ?>
 <p>
-<label for="jd_twitter"><?php _e("Custom $twitter Post", 'wp-to-twitter', 'wp-to-twitter') ?></label><br /><textarea style="width:95%;" name="_jd_twitter" id="jd_twitter" rows="2" cols="60"
+<label for="jd_twitter"><?php _e("Custom Twitter Post", 'wp-to-twitter', 'wp-to-twitter') ?></label><br /><textarea style="width:95%;" name="_jd_twitter" id="jd_twitter" rows="2" cols="60"
 	onKeyDown="countChars(document.post.jd_twitter,document.post.twitlength)"
-	onKeyUp="countChars(document.post.jd_twitter,document.post.twitlength)"><?php echo attribute_escape( $jd_twitter ); ?></textarea>
+	onKeyUp="countChars(document.post.jd_twitter,document.post.twitlength)"><?php echo esc_attr( $jd_twitter ); ?></textarea>
 </p>
-<p><input readonly type="text" name="twitlength" size="3" maxlength="3" value="<?php echo attribute_escape( mb_strlen( $description) ); ?>" />
+<p><input readonly type="text" name="twitlength" size="3" maxlength="3" value="<?php echo esc_attr( mb_strlen( $description) ); ?>" />
 <?php $minus_length = $post_length - 21; ?>
-<?php _e(" characters.<br />$twitter posts are a maximum of $post_length characters; if your short URL is appended to the end of your document, you have about $minus_length characters available. You can use <code>#url#</code>, <code>#title#</code>, <code>#post#</code>, <code>#category#</code>, <code>#date#</code>, <code>#author#</code>, <code>#account#</code> or <code>#blog#</code> to insert the shortened URL, post title, the first category selected, the post date, the post author, the twitter @reference, or a post excerpt or blog name into the Tweet.", 'wp-to-twitter', 'wp-to-twitter') ?> 
+<?php _e(" characters.<br />Twitter posts are a maximum of $post_length characters; if your short URL is included in your update, you have about $minus_length characters available. You can use <code>#url#</code>, <code>#title#</code>, <code>#post#</code>, <code>#category#</code>, <code>#date#</code>, <code>#author#</code>, <code>#account#</code> or <code>#blog#</code> to insert the shortened URL, post title, the first category selected, the post date, the post author, the twitter @reference, or a post excerpt or blog name into the Tweet.", 'wp-to-twitter', 'wp-to-twitter') ?> 
 </p>
 <p>
 <a target="__blank" href="<?php echo $jd_donate_url; ?>"><?php _e('Make a Donation', 'wp-to-twitter', 'wp-to-twitter') ?></a> &bull; <a target="__blank" href="<?php echo $jd_plugin_url; ?>"><?php _e('Get Support', 'wp-to-twitter', 'wp-to-twitter') ?></a> &raquo;
 </p>
 <p>
-<input type="checkbox" name="_jd_tweet_this" value="no"<?php echo attribute_escape( $jd_selected ); ?> id="jd_tweet_this" /> <label for="jd_tweet_this"><?php _e("Don't Tweet this post.", 'wp-to-twitter'); ?></label>
+<input type="checkbox" name="_jd_tweet_this" value="no"<?php echo esc_attr( $jd_selected ); ?> id="jd_tweet_this" /> <label for="jd_tweet_this"><?php _e("Don't Tweet this post.", 'wp-to-twitter'); ?></label>
 </p>
 <p>
 <?php
@@ -799,12 +815,12 @@ if ($post_status == 'publish') {
 function jd_add_twitter_outer_box() {
 	if ( function_exists( 'add_meta_box' )) {
     add_meta_box( 'wptotwitter_div','WP to Twitter', 'jd_add_twitter_inner_box', 'post', 'advanced' );
-		if (  get_option( 'jd_twit_pages') == 1 ) {
+		if (  get_option( 'jd_twit_pages') == '1' ) {
 			add_meta_box( 'wptotwitter_div','WP to Twitter', 'jd_add_twitter_inner_box', 'page', 'advanced' );
 		}
    } else {
     add_action('dbx_post_advanced', 'jd_add_twitter_old_box' );
-		if ( get_option( 'jd_twit_pages') == 1 ) {
+		if ( get_option( 'jd_twit_pages') == '1' ) {
 			add_action('dbx_page_advanced', 'jd_add_twitter_old_box' );
 		}
   }
@@ -838,8 +854,9 @@ function post_jd_twitter( $id ) {
 
 
 function jd_twitter_profile() {
-		global $user_ID;
-		get_currentuserinfo();
+	global $user_ID;
+	get_currentuserinfo();
+	if ( current_user_can( get_option('wtt_user_permissions') ) ) {
 		if ( isset($_GET['user_id']) ) { 
 			$user_ID = (int) $_GET['user_id']; 
 		} 
@@ -856,11 +873,12 @@ function jd_twitter_profile() {
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><label for="wp-to-twitter-user-username"><?php _e("Your $twitter Username", 'wp-to-twitter'); ?></label></th>
-			<td><input type="text" name="wp-to-twitter-user-username" id="wp-to-twitter-user-username" value="<?php echo attribute_escape( $twitter_username ); ?>" /> <?php _e('Enter your own Twitter username.', 'wp-to-twitter'); ?></td>
+			<th scope="row"><label for="wp-to-twitter-user-username"><?php _e("Your Twitter Username", 'wp-to-twitter'); ?></label></th>
+			<td><input type="text" name="wp-to-twitter-user-username" id="wp-to-twitter-user-username" value="<?php echo esc_attr( $twitter_username ); ?>" /> <?php _e('Enter your own Twitter username.', 'wp-to-twitter'); ?></td>
 		</tr>
 		</table>
 <?php
+	}
 }
 
 function custom_shortcodes( $sentence, $post_ID ) {
@@ -924,60 +942,10 @@ function jd_addTwitterAdminPages() {
     }
  }
 function jd_addTwitterAdminStyles() {
- $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dirname( plugin_basename(__FILE__) );
-	echo "
-<style type=\"text/css\">
-<!--
-#wp-to-twitter #message {
-margin: 10px 0;
-padding: 5px;
-}
-#wp-to-twitter .jd-settings {
-clear: both;
-}
-#wp-to-twitter form .error p {
-background: none;
-border: none;
-}
-legend {
-font-weight: 700;
-font-size: 1.2em;
-padding: 6px 0;
-}
-.resources {
-float: right;
-border: 1px solid #aaa;
-padding: 10px 10px 0;
-margin-left: 10px;
-margin-bottom: 10px;
--moz-border-radius: 5px;
--webkit-border-radius: 5px;
-border-radius: 5px;
-background: #fff;
-text-align: center;
-}
-#wp-to-twitter .resources form {
-margin: 0;
-}
-.settings {
-margin: 25px 0;
-background: #fff;
-padding: 10px;
-border: 1px solid #000;
-}
-#wp-to-twitter .panel {
-border: 1px solid #ddd;
-background: #f6f6f6;
-padding: 5px;
-margin: 5px;
-}
-#wp-to-twitter ul {
-list-style-type: disc;
-margin-left: 3em;
-font-size: 1em;
-}
--->
-</style>";
+global $wp_plugin_url, $wp_plugin_dir;
+	if ( $_GET['page'] == "wp-to-twitter/wp-to-twitter.php" ) {
+		echo '<link type="text/css" rel="stylesheet" href="'.$wp_plugin_url.'/wp-to-twitter/styles.css" />';
+	}
  }
 // Include the Manager page
 function jd_wp_Twitter_manage_page() {

@@ -39,10 +39,12 @@
 		update_option( 'jd_twit_quickpress', '1' );
 		update_option( 'jd_shortener', '1' );
 		update_option( 'use_tags_as_hashtags', '0' );
+		update_option( 'jd_strip_nonan', '0' );
 		update_option('jd_max_tags',3);
 		update_option('jd_max_characters',15);	
 		update_option('jd_replace_character','_');
-			
+		update_option('wtt_user_permissions','manage_options');
+		
 		update_option( 'jd_twit_remote', '0' );
 		update_option( 'jd_post_excerpt', 30 );
 		// Use Google Analytics with Twitter
@@ -124,6 +126,7 @@
 		update_option( 'jd_twit_custom_url', $_POST['jd_twit_custom_url'] );
 		update_option( 'jd_twit_quickpress', $_POST['jd_twit_quickpress'] );
 		update_option( 'use_tags_as_hashtags', $_POST['use_tags_as_hashtags'] );
+		update_option( 'jd_strip_nonan', $_POST['jd_strip_nonan'] );
 		update_option( 'jd_twit_prepend', $_POST['jd_twit_prepend'] );	
 		update_option( 'jd_twit_append', $_POST['jd_twit_append'] );
 		update_option( 'jd_post_excerpt', $_POST['jd_post_excerpt'] );	
@@ -136,6 +139,8 @@
 		update_option( 'use-twitter-analytics', $_POST['use-twitter-analytics'] );
 		update_option( 'twitter-analytics-campaign', $_POST['twitter-analytics-campaign'] );
 		update_option( 'jd_individual_twitter_users', $_POST['jd_individual_twitter_users'] );
+		$wtt_user_permissions = $_POST['wtt_user_permissions'];
+		update_option('wtt_user_permissions',$wtt_user_permissions);
 		update_option( 'disable_url_failure' , $_POST['disable_url_failure'] );
 		update_option( 'disable_twitter_failure' , $_POST['disable_twitter_failure'] );
 		update_option( 'jd_twit_postie' , (int) $_POST['jd_twit_postie'] );
@@ -400,11 +405,8 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 <?php wtt_connect_oauth(); ?>
 
 <div class="ui-sortable meta-box-sortables">
-<?php if ( isset( $_POST['submit-type']) && $_POST['submit-type'] == 'options' ) { ?>
 <div class="postbox">
-<?php } else { ?>
-<div class="postbox closed">
-<?php } ?>
+
 	<div class="handlediv" title="Click to toggle"><br/></div>
 	<h3><?php _e('Basic Settings','wp-to-twitter'); ?></h3>
 	<div class="inside">
@@ -415,30 +417,30 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 			<legend><?php _e("Tweet Templates", 'wp-to-twitter'); ?></legend>
 			<p>
 				<input type="checkbox" name="newpost-published-update" id="newpost-published-update" value="1" <?php jd_checkCheckbox('newpost-published-update')?> />
-				<label for="newpost-published-update"><strong><?php _e("Update when a post is published", 'wp-to-twitter'); ?></strong></label> <label for="newpost-published-text"><br /><?php _e("Text for new post updates:", 'wp-to-twitter'); ?></label> <input type="text" name="newpost-published-text" id="newpost-published-text" size="60" maxlength="120" value="<?php echo( attribute_escape( stripslashes( get_option( 'newpost-published-text' ) ) ) ); ?>" />
+				<label for="newpost-published-update"><strong><?php _e("Update when a post is published", 'wp-to-twitter'); ?></strong></label> <label for="newpost-published-text"><br /><?php _e("Text for new post updates:", 'wp-to-twitter'); ?></label> <input type="text" name="newpost-published-text" id="newpost-published-text" size="60" maxlength="120" value="<?php echo( esc_attr( stripslashes( get_option( 'newpost-published-text' ) ) ) ); ?>" />
 			</p>
 		
 			<p>
 			<?php if ( get_option( 'jd_twit_postie' ) != 1 ) { ?>
 				<input type="checkbox" name="oldpost-edited-update" id="oldpost-edited-update" value="1" <?php jd_checkCheckbox('oldpost-edited-update')?> />
-				<label for="oldpost-edited-update"><strong><?php _e("Update when a post is edited", 'wp-to-twitter'); ?></strong></label><br /><label for="oldpost-edited-text"><?php _e("Text for editing updates:", 'wp-to-twitter'); ?></label> <input type="text" name="oldpost-edited-text" id="oldpost-edited-text" size="60" maxlength="120" value="<?php echo( attribute_escape( stripslashes( get_option('oldpost-edited-text' ) ) ) ); ?>" />		
+				<label for="oldpost-edited-update"><strong><?php _e("Update when a post is edited", 'wp-to-twitter'); ?></strong></label><br /><label for="oldpost-edited-text"><?php _e("Text for editing updates:", 'wp-to-twitter'); ?></label> <input type="text" name="oldpost-edited-text" id="oldpost-edited-text" size="60" maxlength="120" value="<?php echo( esc_attr( stripslashes( get_option('oldpost-edited-text' ) ) ) ); ?>" />		
 			<?php } else { ?>
 				<input type="checkbox" name="oldpost-edited-update" id="oldpost-edited-update" value="1" disabled="disabled" checked="checked" />
-				<label for="oldpost-edited-update"><strong><?php _e("Update when a post is edited", 'wp-to-twitter'); ?></strong></label><br /><label for="oldpost-edited-text"><?php _e("Text for editing updates:", 'wp-to-twitter'); ?></label> <input type="text" name="oldpost-edited-text" id="oldpost-edited-text" size="60" maxlength="120" value="<?php echo( attribute_escape( stripslashes( get_option('oldpost-edited-text' ) ) ) ); ?>" readonly="readonly" />					
+				<label for="oldpost-edited-update"><strong><?php _e("Update when a post is edited", 'wp-to-twitter'); ?></strong></label><br /><label for="oldpost-edited-text"><?php _e("Text for editing updates:", 'wp-to-twitter'); ?></label> <input type="text" name="oldpost-edited-text" id="oldpost-edited-text" size="60" maxlength="120" value="<?php echo( esc_attr( stripslashes( get_option('oldpost-edited-text' ) ) ) ); ?>" readonly="readonly" />					
 				<br /><small><?php _e('You can not disable updates on edits when using Postie or similar plugins.'); ?></small>
 			<?php } ?>			</p>	
 			<p>
 				<input type="checkbox" name="jd_twit_pages" id="jd_twit_pages" value="1" <?php jd_checkCheckbox('jd_twit_pages')?> />
-				<label for="jd_twit_pages"><strong><?php _e("Update Twitter when new Wordpress Pages are published", 'wp-to-twitter'); ?></strong></label><br /><label for="newpage-published-text"><?php _e("Text for new page updates:", 'wp-to-twitter'); ?></label> <input type="text" name="newpage-published-text" id="newpage-published-text" size="60" maxlength="120" value="<?php echo( attribute_escape( stripslashes( get_option('newpage-published-text' ) ) ) ); ?>" />	
+				<label for="jd_twit_pages"><strong><?php _e("Update Twitter when new Wordpress Pages are published", 'wp-to-twitter'); ?></strong></label><br /><label for="newpage-published-text"><?php _e("Text for new page updates:", 'wp-to-twitter'); ?></label> <input type="text" name="newpage-published-text" id="newpage-published-text" size="60" maxlength="120" value="<?php echo( esc_attr( stripslashes( get_option('newpage-published-text' ) ) ) ); ?>" />	
 			</p>
 			<p>
 				<input type="checkbox" name="jd_twit_edited_pages" id="jd_twit_edited_pages" value="1" <?php jd_checkCheckbox('jd_twit_edited_pages')?> />
-				<label for="jd_twit_edited_pages"><strong><?php _e("Update Twitter when WordPress Pages are edited", 'wp-to-twitter'); ?></strong></label><br /><label for="oldpage-edited-text"><?php _e("Text for page edit updates:", 'wp-to-twitter'); ?></label> <input type="text" name="oldpage-edited-text" id="oldpage-edited-text" size="60" maxlength="120" value="<?php echo( attribute_escape( stripslashes( get_option('oldpage-edited-text' ) ) ) ); ?>" />	
+				<label for="jd_twit_edited_pages"><strong><?php _e("Update Twitter when WordPress Pages are edited", 'wp-to-twitter'); ?></strong></label><br /><label for="oldpage-edited-text"><?php _e("Text for page edit updates:", 'wp-to-twitter'); ?></label> <input type="text" name="oldpage-edited-text" id="oldpage-edited-text" size="60" maxlength="120" value="<?php echo( esc_attr( stripslashes( get_option('oldpage-edited-text' ) ) ) ); ?>" />	
 			</p>
 			<p>
 				<input type="checkbox" name="jd_twit_blogroll" id="jd_twit_blogroll" value="1" <?php jd_checkCheckbox('jd_twit_blogroll')?> />
 				<label for="jd_twit_blogroll"><strong><?php _e("Update Twitter when you post a Blogroll link", 'wp-to-twitter'); ?></strong></label><br />				
-				<label for="newlink-published-text"><?php _e("Text for new link updates:", 'wp-to-twitter'); ?></label> <input type="text" name="newlink-published-text" id="newlink-published-text" size="60" maxlength="120" value="<?php echo ( attribute_escape( stripslashes( get_option( 'newlink-published-text' ) ) ) ); ?>" /><br /><small><?php _e('Available shortcodes: <code>#url#</code>, <code>#title#</code>, and <code>#description#</code>.','wp-to-twitter'); ?></small>
+				<label for="newlink-published-text"><?php _e("Text for new link updates:", 'wp-to-twitter'); ?></label> <input type="text" name="newlink-published-text" id="newlink-published-text" size="60" maxlength="120" value="<?php echo ( esc_attr( stripslashes( get_option( 'newlink-published-text' ) ) ) ); ?>" /><br /><small><?php _e('Available shortcodes: <code>#url#</code>, <code>#title#</code>, and <code>#description#</code>.','wp-to-twitter'); ?></small>
 			</p>
 			</fieldset>
 			<fieldset>	
@@ -465,11 +467,8 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 </div>
 </div>
 <div class="ui-sortable meta-box-sortables">
-<?php if ( ( isset( $_POST['submit-type'] ) && ($_POST['submit-type']!='setcategories' && $_POST['submit-type']!='advanced' && $_POST['submit-type']!='options' && $_POST['submit-type']!="check-support" ) ) ) { ?>
 <div class="postbox">
-<?php } else { ?>
-<div class="postbox closed">
-<?php } ?>				<div class="handlediv" title="Click to toggle"><br/></div>
+			<div class="handlediv" title="Click to toggle"><br/></div>
 				<h3><?php _e('<abbr title="Uniform Resource Locator">URL</abbr> Shortener Account Settings','wp-to-twitter'); ?></h3>
 
 				<div class="inside">
@@ -480,7 +479,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 	<div>
 		<p>
 		<label for="cligsapi"><?php _e("Your Cli.gs <abbr title='application programming interface'>API</abbr> Key:", 'wp-to-twitter'); ?></label>
-		<input type="text" name="cligsapi" id="cligsapi" size="40" value="<?php echo ( attribute_escape( get_option( 'cligsapi' ) ) ) ?>" />
+		<input type="text" name="cligsapi" id="cligsapi" size="40" value="<?php echo ( esc_attr( get_option( 'cligsapi' ) ) ) ?>" />
 		</p>
 		<div>
 		<input type="hidden" name="submit-type" value="cligsapi" />
@@ -497,11 +496,11 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 	<div>
 		<p>
 		<label for="bitlylogin"><?php _e("Your Bit.ly username:", 'wp-to-twitter'); ?></label>
-		<input type="text" name="bitlylogin" id="bitlylogin" value="<?php echo ( attribute_escape( get_option( 'bitlylogin' ) ) ) ?>" />
+		<input type="text" name="bitlylogin" id="bitlylogin" value="<?php echo ( esc_attr( get_option( 'bitlylogin' ) ) ) ?>" />
 		</p>	
 		<p>
 		<label for="bitlyapi"><?php _e("Your Bit.ly <abbr title='application programming interface'>API</abbr> Key:", 'wp-to-twitter'); ?></label>
-		<input type="text" name="bitlyapi" id="bitlyapi" size="40" value="<?php echo ( attribute_escape( get_option( 'bitlyapi' ) ) ) ?>" />
+		<input type="text" name="bitlyapi" id="bitlyapi" size="40" value="<?php echo ( esc_attr( get_option( 'bitlyapi' ) ) ) ?>" />
 		</p>
 
 		<div>
@@ -516,16 +515,16 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 	<form method="post" action="">
 	<div>
 		<p>
-		<label for="yourlspath"><?php _e('Path to the YOURLS config file (Local installations)','wp-to-twitter'); ?></label> <input type="text" id="yourlspath" name="yourlspath" size="60" value="<?php echo ( attribute_escape( get_option( 'yourlspath' ) ) ); ?>"/>
+		<label for="yourlspath"><?php _e('Path to the YOURLS config file (Local installations)','wp-to-twitter'); ?></label> <input type="text" id="yourlspath" name="yourlspath" size="60" value="<?php echo ( esc_attr( get_option( 'yourlspath' ) ) ); ?>"/>
 		<small><?php _e('Example:','wp-to-twitter'); ?> <code>/home/username/www/www/yourls/includes/config.php</code></small>
 		</p>				
 		<p>
-		<label for="yourlsurl"><?php _e('URI to the YOURLS API (Remote installations)','wp-to-twitter'); ?></label> <input type="text" id="yourlsurl" name="yourlsurl" size="60" value="<?php echo ( attribute_escape( get_option( 'yourlsurl' ) ) ); ?>"/>
+		<label for="yourlsurl"><?php _e('URI to the YOURLS API (Remote installations)','wp-to-twitter'); ?></label> <input type="text" id="yourlsurl" name="yourlsurl" size="60" value="<?php echo ( esc_attr( get_option( 'yourlsurl' ) ) ); ?>"/>
 		<small><?php _e('Example:','wp-to-twitter'); ?> <code>http://domain.com/yourls-api.php</code></small>
 		</p>
 		<p>
 		<label for="yourlslogin"><?php _e("Your YOURLS username:", 'wp-to-twitter'); ?></label>
-		<input type="text" name="yourlslogin" id="yourlslogin" value="<?php echo ( attribute_escape( get_option( 'yourlslogin' ) ) ) ?>" />
+		<input type="text" name="yourlslogin" id="yourlslogin" value="<?php echo ( esc_attr( get_option( 'yourlslogin' ) ) ) ?>" />
 		</p>	
 		<p>
 		<label for="yourlsapi"><?php _e("Your YOURLS password:", 'wp-to-twitter'); ?> <?php if ( get_option( 'yourlsapi' ) != '') { _e("<em>Saved</em>",'wp-to-twitter'); } ?></label>
@@ -547,12 +546,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 </div>
 
 <div class="ui-sortable meta-box-sortables">
-<?php if ( isset( $_POST['submit-type']) && $_POST['submit-type']=='advanced') { ?>
 <div class="postbox">
-<?php } else { ?>
-<div class="postbox closed">
-<?php } ?>
-
 	<div class="handlediv" title="Click to toggle"><br/></div>
 	<h3><?php _e('Advanced Settings','wp-to-twitter'); ?></h3>
 	<div class="inside">
@@ -563,30 +557,30 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 			<fieldset>
 				<legend><?php _e("Advanced Tweet settings","wp-to-twitter"); ?></legend>
 			<p>
-				<input type="checkbox" name="use_tags_as_hashtags" id="use_tags_as_hashtags" value="1" <?php jd_checkCheckbox('use_tags_as_hashtags')?> />
-				<label for="use_tags_as_hashtags"><?php _e("Add tags as hashtags on Tweets", 'wp-to-twitter'); ?></label>
-				<br /><label for="jd_replace_character"><?php _e("Spaces replaced with:",'wp-to-twitter'); ?></label> <input type="text" name="jd_replace_character" id="jd_replace_character" value="<?php echo attribute_escape( get_option('jd_replace_character') ); ?>" size="3" /><br />
+				<input type="checkbox" name="use_tags_as_hashtags" id="use_tags_as_hashtags" value="1" <?php jd_checkCheckbox('use_tags_as_hashtags'); ?> /> <label for="use_tags_as_hashtags"><?php _e("Add tags as hashtags on Tweets", 'wp-to-twitter'); ?></label> <input type="checkbox" name="jd_strip_nonan" id="jd_strip_nonan" value="1" <?php jd_checkCheckbox('jd_strip_nonan'); ?> /> <label for="jd_strip_nonan"><?php _e("Strip nonalphanumeric characters",'wp-to-twitter'); ?></label><br />
+				<label for="jd_replace_character"><?php _e("Spaces replaced with:",'wp-to-twitter'); ?></label> <input type="text" name="jd_replace_character" id="jd_replace_character" value="<?php echo esc_attr( get_option('jd_replace_character') ); ?>" size="3" /><br />
+				
 				<small><?php _e("Default replacement is an underscore (<code>_</code>). Use <code>[ ]</code> to remove spaces entirely.",'wp-to-twitter'); ?></small>					
 			</p>
 			<p>
-			<label for="jd_max_tags"><?php _e("Maximum number of tags to include:",'wp-to-twitter'); ?></label> <input type="text" name="jd_max_tags" id="jd_max_tags" value="<?php echo attribute_escape( get_option('jd_max_tags') ); ?>" size="3" />
-			<label for="jd_max_characters"><?php _e("Maximum length in characters for included tags:",'wp-to-twitter'); ?></label> <input type="text" name="jd_max_characters" id="jd_max_characters" value="<?php echo attribute_escape( get_option('jd_max_characters') ); ?>" size="3" /><br />
+			<label for="jd_max_tags"><?php _e("Maximum number of tags to include:",'wp-to-twitter'); ?></label> <input type="text" name="jd_max_tags" id="jd_max_tags" value="<?php echo esc_attr( get_option('jd_max_tags') ); ?>" size="3" />
+			<label for="jd_max_characters"><?php _e("Maximum length in characters for included tags:",'wp-to-twitter'); ?></label> <input type="text" name="jd_max_characters" id="jd_max_characters" value="<?php echo esc_attr( get_option('jd_max_characters') ); ?>" size="3" /><br />
 			<small><?php _e("These options allow you to restrict the length and number of WordPress tags sent to Twitter as hashtags. Set to <code>0</code> or leave blank to allow any and all tags.",'wp-to-twitter'); ?></small>			
 			</p>			
 			<p>
-				<label for="jd_post_excerpt"><?php _e("Length of post excerpt (in characters):", 'wp-to-twitter'); ?></label> <input type="text" name="jd_post_excerpt" id="jd_post_excerpt" size="3" maxlength="3" value="<?php echo ( attribute_escape( get_option( 'jd_post_excerpt' ) ) ) ?>" /><br /><small><?php _e("By default, extracted from the post itself. If you use the 'Excerpt' field, that will be used instead.", 'wp-to-twitter'); ?></small>
+				<label for="jd_post_excerpt"><?php _e("Length of post excerpt (in characters):", 'wp-to-twitter'); ?></label> <input type="text" name="jd_post_excerpt" id="jd_post_excerpt" size="3" maxlength="3" value="<?php echo ( esc_attr( get_option( 'jd_post_excerpt' ) ) ) ?>" /><br /><small><?php _e("By default, extracted from the post itself. If you use the 'Excerpt' field, that will be used instead.", 'wp-to-twitter'); ?></small>
 			</p>				
 			<p>
-				<label for="jd_date_format"><?php _e("WP to Twitter Date Formatting:", 'wp-to-twitter'); ?></label> <input type="text" name="jd_date_format" id="jd_date_format" size="12" maxlength="12" value="<?php if (get_option('jd_date_format')=='') { echo ( attribute_escape( get_option('date_format') ) ); } else { echo ( attribute_escape( get_option( 'jd_date_format' ) ) ); }?>" /> (<?php if ( get_option( 'jd_date_format' ) != '' ) { echo date_i18n( get_option( 'jd_date_format' ) ); } else { echo date_i18n( get_option( 'date_format' ) ); } ?>)<br />
+				<label for="jd_date_format"><?php _e("WP to Twitter Date Formatting:", 'wp-to-twitter'); ?></label> <input type="text" name="jd_date_format" id="jd_date_format" size="12" maxlength="12" value="<?php if (get_option('jd_date_format')=='') { echo ( esc_attr( get_option('date_format') ) ); } else { echo ( esc_attr( get_option( 'jd_date_format' ) ) ); }?>" /> (<?php if ( get_option( 'jd_date_format' ) != '' ) { echo date_i18n( get_option( 'jd_date_format' ) ); } else { echo date_i18n( get_option( 'date_format' ) ); } ?>)<br />
 				<small><?php _e("Default is from your general settings. <a href='http://codex.wordpress.org/Formatting_Date_and_Time'>Date Formatting Documentation</a>.", 'wp-to-twitter'); ?></small>
 			</p>
 			
 			<p>
-				<label for="jd_twit_prepend"><?php _e("Custom text before all Tweets:", 'wp-to-twitter'); ?></label> <input type="text" name="jd_twit_prepend" id="jd_twit_prepend" size="20" maxlength="20" value="<?php echo ( attribute_escape( get_option( 'jd_twit_prepend' ) ) ) ?>" />
-				<label for="jd_twit_append"><?php _e("Custom text after all Tweets:", 'wp-to-twitter'); ?></label> <input type="text" name="jd_twit_append" id="jd_twit_append" size="20" maxlength="20" value="<?php echo ( attribute_escape( get_option( 'jd_twit_append' ) ) ) ?>" />
+				<label for="jd_twit_prepend"><?php _e("Custom text before all Tweets:", 'wp-to-twitter'); ?></label> <input type="text" name="jd_twit_prepend" id="jd_twit_prepend" size="20" maxlength="20" value="<?php echo ( esc_attr( get_option( 'jd_twit_prepend' ) ) ) ?>" />
+				<label for="jd_twit_append"><?php _e("Custom text after all Tweets:", 'wp-to-twitter'); ?></label> <input type="text" name="jd_twit_append" id="jd_twit_append" size="20" maxlength="20" value="<?php echo ( esc_attr( get_option( 'jd_twit_append' ) ) ) ?>" />
 			</p>
 			<p>
-				<label for="jd_twit_custom_url"><?php _e("Custom field for an alternate URL to be shortened and Tweeted:", 'wp-to-twitter'); ?></label> <input type="text" name="jd_twit_custom_url" id="jd_twit_custom_url" size="40" maxlength="120" value="<?php echo ( attribute_escape( get_option( 'jd_twit_custom_url' ) ) ) ?>" /><br />
+				<label for="jd_twit_custom_url"><?php _e("Custom field for an alternate URL to be shortened and Tweeted:", 'wp-to-twitter'); ?></label> <input type="text" name="jd_twit_custom_url" id="jd_twit_custom_url" size="40" maxlength="120" value="<?php echo ( esc_attr( get_option( 'jd_twit_custom_url' ) ) ) ?>" /><br />
 				<small><?php _e("You can use a custom field to send an alternate URL for your post. The value is the name of a custom field containing your external URL.", 'wp-to-twitter'); ?></small>
 			</p>	
 		</fieldset>	
@@ -615,7 +609,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 			<p>
 				<input type="checkbox" name="use-twitter-analytics" id="use-twitter-analytics" value="1" <?php jd_checkCheckbox('use-twitter-analytics')?> />
 				<label for="use-twitter-analytics"><?php _e("Use a Static Identifier with WP-to-Twitter", 'wp-to-twitter'); ?></label><br />
-				<label for="twitter-analytics-campaign"><?php _e("Static Campaign identifier for Google Analytics:", 'wp-to-twitter'); ?></label> <input type="text" name="twitter-analytics-campaign" id="twitter-analytics-campaign" size="40" maxlength="120" value="<?php echo ( attribute_escape( get_option( 'twitter-analytics-campaign' ) ) ) ?>" /><br />
+				<label for="twitter-analytics-campaign"><?php _e("Static Campaign identifier for Google Analytics:", 'wp-to-twitter'); ?></label> <input type="text" name="twitter-analytics-campaign" id="twitter-analytics-campaign" size="40" maxlength="120" value="<?php echo ( esc_attr( get_option( 'twitter-analytics-campaign' ) ) ) ?>" /><br />
 			</p>
 			<p>
 				<input type="checkbox" name="use-dynamic-analytics" id="use-dynamic-analytics" value="1" <?php jd_checkCheckbox('use_dynamic_analytics')?> />
@@ -634,7 +628,16 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 			<p>
 				<input type="checkbox" name="jd_individual_twitter_users" id="jd_individual_twitter_users" value="1" <?php jd_checkCheckbox('jd_individual_twitter_users')?> />
 				<label for="jd_individual_twitter_users"><?php _e("Authors have individual Twitter accounts", 'wp-to-twitter'); ?></label><br /><small><?php _e('Authors can set their username in their user profile. As of version 2.2.0, this feature no longer allows authors to post to their own Twitter accounts. It can only add an @reference to the author. This @reference is placed using the <code>#account#</code> shortcode. (It will pick up the main account if user accounts are not enabled.)', 'wp-to-twitter'); ?></small>
-			</p>			
+			</p>
+		    <p>
+			<label for="wtt_user_permissions"><?php _e('Choose the lowest user group that can add their Twitter information','wp-to-twitter'); ?></label> <select id="wtt_user_permissions" name="wtt_user_permissions">
+				<option value="read"<?php echo wtt_option_selected(get_option('wtt_user_permissions'),'read','option'); ?>><?php _e('Subscriber','wp-to-twitter')?></option>
+				<option value="edit_posts"<?php echo wtt_option_selected(get_option('wtt_user_permissions'),'edit_posts','option'); ?>><?php _e('Contributor','wp-to-twitter')?></option>
+				<option value="publish_posts"<?php echo wtt_option_selected(get_option('wtt_user_permissions'),'publish_posts','option'); ?>><?php _e('Author','wp-to-twitter')?></option>
+				<option value="moderate_comments"<?php echo wtt_option_selected(get_option('wtt_user_permissions'),'moderate_comments','option'); ?>><?php _e('Editor','wp-to-twitter')?></option>
+				<option value="manage_options"<?php echo wtt_option_selected(get_option('wtt_user_permissions'),'manage_options','option'); ?>><?php _e('Administrator','wp-to-twitter')?></option>
+			</select> 
+			</p>
 		</fieldset>
 		<fieldset>
 		<legend><?php _e('Disable Error Messages','wp-to-twitter'); ?></legend>
@@ -665,11 +668,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 </div>
 </div>
 <div class="ui-sortable meta-box-sortables">
-<?php if ( isset( $_POST['submit-type']) && $_POST['submit-type']=='setcategories') { ?>
 <div class="postbox">
-<?php } else { ?>
-<div class="postbox closed">
-<?php } ?>
 
 	<div class="handlediv" title="Click to toggle"><br/></div>
 	<h3><?php _e('Limit Updating Categories','wp-to-twitter'); ?></h3>
@@ -700,10 +699,3 @@ if ( get_option('limit_categories') == '0' ) {
 </div>
 </div>
 <?php global $wp_version; ?>
-<script type="text/javascript">
-//<![CDATA[
-jQuery('.postbox h3').click( function() { jQuery(jQuery(this).parent().get(0)).toggleClass('closed'); });
-jQuery('.postbox .handlediv').click( function() { jQuery(jQuery(this).parent().get(0)).toggleClass('closed'); });
-jQuery('.postbox.close-me').each(function() { jQuery(this).addClass("closed"); });
-//]]>
-</script>

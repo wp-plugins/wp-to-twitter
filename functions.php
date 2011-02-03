@@ -18,6 +18,7 @@ function jd_remote_json( $url, $array=true ) {
 
 function is_valid_url( $url ) {
     if (is_string($url)) {
+	$url = urldecode($url);
 	return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);	
 	} else {
 	return false;
@@ -187,6 +188,7 @@ $options = array(
 	'wp_cligs_error'=>get_option( 'wp_cligs_error' ),
 	'wp_to_twitter_version'=>get_option( 'wp_to_twitter_version'),
 	'wtt_twitter_username'=>get_option( 'wtt_twitter_username' ),
+	'wtt_user_permissions'=>get_option('wtt_user_permissions'),
 	'wp_debug_oauth'=>get_option('wp_debug_oauth'),
 
 	'x-login'=>get_option( 'x-login' ),
@@ -209,5 +211,23 @@ echo "</ol>";
 echo "<p>";
 _e( "[<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>Hide</a>] If you're experiencing trouble, please copy these settings into any request for support.",'wp-to-twitter');
 echo "</p></div>";
+}
+
+function wtt_option_selected($field,$value,$type='checkbox') {
+	switch ($type) {
+		case 'radio':		
+		case 'checkbox':
+		$result = ' checked="checked"';
+		break;
+		case 'option':
+		$result = ' selected="selected"';
+		break;
+	}	
+	if ($field == $value) {
+		$output = $result;
+	} else {
+		$output = '';
+	}
+	return $output;
 }
 ?>
