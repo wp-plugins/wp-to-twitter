@@ -73,6 +73,9 @@ switch ( $_POST['oauth_settings'] ) {
 					}
 				}
 			}
+			if ( $message == 'failed' && ( time() < strtotime( $connection->http_header['date'] )-300 || time() > strtotime( $connection->http_header['date'] )+300 ) ) {
+				$message = 'nosync';
+			}			
 			return $message;
 		break;
 		case 'wtt_twitter_disconnect':

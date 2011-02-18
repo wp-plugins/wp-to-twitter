@@ -2,8 +2,8 @@
 /*
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
-Description: Updates Twitter when you create a new blog post or add to your blogroll using Cli.gs. With a Cli.gs API key, creates a clig in your Cli.gs account with the name of your post as the title.
-Version: 2.2.6
+Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
+Version: 2.2.7
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -26,6 +26,7 @@ Author URI: http://www.joedolson.com/
 // include service functions
 
 
+
 if ( version_compare( get_bloginfo( 'version' ) , '3.0' , '<' ) && is_ssl() ) {
 	$wp_content_url = str_replace( 'http://' , 'https://' , get_option( 'siteurl' ) );
 } else {
@@ -33,18 +34,36 @@ if ( version_compare( get_bloginfo( 'version' ) , '3.0' , '<' ) && is_ssl() ) {
 }
 $wp_content_url .= '/wp-content';
 $wp_content_dir = ABSPATH . 'wp-content';
+
+if ( defined('WP_CONTENT_URL') ) {
+	$wp_content_url = constant('WP_CONTENT_URL');
+}
+if ( defined('WP_CONTENT_DIR') ) {
+	$wp_content_dir = constant('WP_CONTENT_DIR');
+}
+
 $wp_plugin_url = $wp_content_url . '/plugins';
 $wp_plugin_dir = $wp_content_dir . '/plugins';
 $wpmu_plugin_url = $wp_content_url . '/mu-plugins';
 $wpmu_plugin_dir = $wp_content_dir . '/mu-plugins';
 
+
+if ( version_compare( phpversion(), '5.0', '<' ) ) {
+	$warning = __('WP to Twitter requires PHP version 5 or above. Please upgrade PHP to run WP to Twitter.','wp-to-twitter' );
+	add_action('admin_notices', create_function( '', "echo \"<div class='error'><p>$warning</p></div>\";" ) );
+	
+} else {
+	require_once( $wp_plugin_dir . '/wp-to-twitter/wp-to-twitter-oauth.php' );
+}
+
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
-require_once( $wp_plugin_dir . '/wp-to-twitter/wp-to-twitter-oauth.php' );
+
+
 
 global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status, $x_jdwp_post_status;
-$version = "2.2.6";
+$version = "2.2.7";
 $plugin_dir = basename(dirname(__FILE__));
-load_plugin_textdomain( 'wp-to-twitter', 'wp-content/plugins/' . $plugin_dir, $plugin_dir );
+load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
 $jdwp_api_post_status = "http://api.twitter.com/1/statuses/update.json";
 
@@ -52,14 +71,20 @@ $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 $jd_donate_url = "http://www.joedolson.com/donate.php";
 
 // Check whether a supported version is in use.
-$exit_msg='WP to Twitter requires WordPress 2.9.2 or a more recent version. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>';
+$exit_msg=__('WP to Twitter requires WordPress 2.9.2 or a more recent version. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>','wp-to-twitter');
 
-	if ( version_compare( $wp_version,"2.9.2","<" )) {
+if ( version_compare( $wp_version,"2.9.2","<" )) {
 	exit ($exit_msg);
-	}
+}
 	
  // check for OAuth configuration
- 	if ( !wtt_oauth_test() && get_option('disable_oauth_notice') != '1' ) {
+if ( !function_exists('wtt_oauth_test') ) {
+	$oauth = false;
+} else {
+	$oauth = wtt_oauth_test();
+}
+ 
+ 	if ( !$oauth && get_option('disable_oauth_notice') != '1' ) {
 		add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } echo '<div class=\"error\"><p>".sprintf(__('Twitter now requires authentication by OAuth. You will need you to update your <a href="%s">settings</a> in order to continue to use WP to Twitter.', 'wp-to-twitter'), admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'))."</p></div>';" ) );
  	}	
 	
@@ -94,15 +119,9 @@ function external_or_permalink( $post_ID ) {
        return ( $ex_link ) ? $ex_link : $perma_link;
 }
 
-// I don't remember what this does. I don't think it does anything in the current iteration. If I don't hear about something being broken, I'll remove it
-function jd_doUnknownAPIPost( $twit, $authID=FALSE, $service="basic" ) {
-}
-
-
 // This function performs the API post to Twitter
 function jd_doTwitterAPIPost( $twit ) {
 	global $jdwp_api_post_status;
-	//check if user login details have been entered on admin page
 	if ( $twit == '' ) {
 	return FALSE;
 	} else {
@@ -114,31 +133,46 @@ function jd_doTwitterAPIPost( $twit ) {
 					, 'source' => 'wp-to-twitter'
 				)
 			);
-			if ( strcmp( $connection->http_code, '200' ) == 0 ) {
+
+			$http_code = $connection->http_code;
+			switch ($http_code) {
+				case '200':
 					$return = true;
 					$error = __("200 OK: Success!",'wp-to-twitter');
-			} else if ( strcmp( $connection->http_code, '400' ) == 0 ) {
+					break;
+				case '400':
 					$return = false;
 					$error = __("400 Bad Request: The request was invalid. This is the status code returned during rate limiting.",'wp-to-twitter');
-			} else if ( strcmp( $connection->http_code, '401' ) == 0 ) {
+					break;
+				case '401':
 					$return = false;
 					$error = __("401 Unauthorized: Authentication credentials were missing or incorrect.",'wp-to-twitter');
-			} else if ( strcmp( $connection->http_code, '403' ) == 0 ) {
+					break;
+				case '403':
 					$return = false;
-					$error = __("403 Forbidden: The request is understood, but it has been refused. This code is used when requests are being denied due to status update character limits.",'wp-to-twitter');							} else if ( strcmp( $connection->http_code, '500' ) == 0 ) {
+					$error = __("403 Forbidden: The request is understood, but it has been refused. This code is used when requests are being denied due to status update character limits.",'wp-to-twitter');
+					break;
+				case '500':
 					$return = false;
-					$error = __("500 Internal Server Error: Something is broken at Twitter.",'wp-to-twitter');				
-			} else if ( strcmp( $connection->http_code, '503' ) == 0 ) {
+					$error = __("500 Internal Server Error: Something is broken at Twitter.",'wp-to-twitter');
+					break;
+				case '503':
 					$return = false;
-					$error = __("503 Service Unavailable: The Twitter servers are up, but overloaded with requests Please try again later.",'wp-to-twitter');				
-			} else if ( strcmp( $connection->http_code, '502' ) == 0 ) {
+					$error = __("503 Service Unavailable: The Twitter servers are up, but overloaded with requests Please try again later.",'wp-to-twitter');
+					break;
+				case '502':
 					$return = false;
-					$error = __("502 Bad Gateway: Twitter is down or being upgraded.",'wp-to-twitter');				
-			} 
+					$error = __("502 Bad Gateway: Twitter is down or being upgraded.",'wp-to-twitter');
+					break;
+				default:
+					$return = false;
+					$error = __("<strong>Code $http_code</strong>: Twitter did not return a recognized response code.",'wp-to-twitter');
+					break;
+			}
 			update_option( 'jd_last_tweet',$twit );
 			update_option( 'jd_status_message',$error );
 			return $return;			
-		}		
+		}	
 	}
 }
 
@@ -415,7 +449,7 @@ function jd_post_info( $post_ID ) {
 	$values['categoryIds'] = $category_ids;
 	$values['category'] = $category;
 		$excerpt_length = get_option( 'jd_post_excerpt' );
-	$values['postExcerpt'] = ( trim( $get_post_info->post_excerpt ) == "" )?@mb_substr( strip_tags($get_post_info->post_content), 0, $excerpt_length ):@mb_substr( strip_tags($get_post_info->post_excerpt), 0, $excerpt_length );
+	$values['postExcerpt'] = ( trim( $get_post_info->post_excerpt ) == "" )?@mb_substr( strip_shortcodes( strip_tags($get_post_info->post_content) ), 0, $excerpt_length ):@mb_substr( strip_shortcodes( strip_tags($get_post_info->post_excerpt) ), 0, $excerpt_length );
 	$thisposttitle =  stripcslashes( strip_tags( $get_post_info->post_title ) );
 		if ($thisposttitle == "") {
 			$thisposttitle =  stripcslashes( strip_tags( $_POST['title'] ) );
@@ -697,9 +731,8 @@ $max_characters = get_option( 'jd_max_characters' );
 			$replace = get_option( 'jd_replace_character' );
 			$strip = get_option( 'jd_strip_nonan' );
 			$search = "/[^a-zA-Z0-9]/";
-			$replace = '';
 			if ($strip == '1') { $tag = preg_replace( $search, $replace, $tag ); }
-			if ($replace == "" || !$replace) { $replace = "_"; } 
+			if ($replace == "" || !$replace) { $replace = "_"; }
 			if ($replace == "[ ]") { $replace = ""; }
 			$value = str_ireplace( " ",$replace,trim( $tag ) );
 				$newtag = "#$value";

@@ -3,10 +3,10 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, cligs, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.9.2
-Tested up to: 3.1-RC3
+Tested up to: 3.1-RC5
 Stable tag: trunk
 
-Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5. 
+Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5. [Make a Pledge at Fundry(https://fundry.com/project/10-wp-to-twitter)].
 
 == Description ==
 
@@ -20,7 +20,7 @@ Any status update you write which is longer than the available space will automa
 
 Credits:
 
-Although it now bears almost no resemblance to the original sources, this plugin was originally based on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com). Thanks to [Cory LaViska](http://abeautifulsite.net/notebook/71) for PHP 4 compatible `json_decode` and `json_encode`. Thanks to [Michal Migurski](http://mike.teczno.com) for authoring the JSON class. Other bug fixes and related citations can be found in the changelog.
+Although it now bears almost no resemblance to the original sources, this plugin was once based on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com). Thanks to [Cory LaViska](http://abeautifulsite.net/notebook/71) for PHP 4 compatible `json_decode` and `json_encode`. Thanks to [Michal Migurski](http://mike.teczno.com) for authoring the JSON class. Other bug fixes and related citations can be found in the changelog.
 
 Translations:
 
@@ -35,6 +35,16 @@ Translations:
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.2.7 =
+
+* Enhancement: strips shortcodes before sending post excerpts to Tweet
+* Enhancement: Added PHP version check and warning.
+* Added a default case to check on HTTP response code from Twitter.
+* Added a specific error message for out of sync server times.
+* Added link to [WP to Twitter's Fundry.com page(https://fundry.com/project/10-wp-to-twitter)].
+* Bug fix: hash tag space removal fixed
+* Enhancement: Respects wp content directory constants if set.
 
 = 2.2.6 =
 
@@ -361,7 +371,7 @@ New translations are always welcome! The translation file is in the download.
 
 = 1.3.0 = 
 
-*Support for multiple authors with independent Twitter & Cligs accounts. 
+*Support for multiple authors with independent Twitter &amp; Cligs accounts. 
 *Other minor textual revisions, addition of API availability check in the Settings panel. 
 *Bugfixes: If editing a post by XMLRPC, you could not disable tweeting your edits. FIXED. 
 

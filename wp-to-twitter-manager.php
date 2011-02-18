@@ -79,12 +79,7 @@
 			');
 		}
 		else if ( $oauth_message == "fail" ) {
-			print('
-				<div id="message" class="updated fade">
-					<p>'.__('OAuth Authentication Failed. Check your credentials and verify that <a href="http://www.twitter.com/">Twitter</a> is running.', 'wp-to-twitter').'</p>
-				</div>
 
-			');
 		} else if ( $oauth_message == "cleared" ) {
 			print('
 				<div id="message" class="updated fade">
@@ -92,6 +87,13 @@
 				</div>
 
 			');		
+		} else  if ( $oauth_message == 'nosync' ) {
+			print('
+				<div id="message" class="updated fade">
+					<p>'.__('OAuth Authentication Failed. Your server time is not in sync with the Twitter servers. Talk to your hosting service to see what can be done.', 'wp-to-twitter').'</p>
+				</div>
+
+			');
 		} else {
 			print('
 				<div id="message" class="updated fade">
@@ -351,9 +353,10 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 <div class="resources">
 <img src="<?php echo $wp_to_twitter_directory; ?>/wp-to-twitter-logo.png" alt="WP to Twitter" />
 <p>
-<a href="http://www.joedolson.com/articles/wp-to-twitter/support/"><?php _e("Get Support",'wp-to-twitter'); ?></a> &middot; 
-<a href="?page=wp-to-twitter/wp-to-twitter.php&amp;export=settings"><?php _e("Export Settings",'wp-to-twitter'); ?></a> &middot; 
-<a href="http://www.joedolson.com/donate.php"><?php _e("Make a Donation",'wp-to-twitter'); ?></a>
+<a href="http://wordpress.org/extend/plugins/wp-to-twitter/"><?php _e("Pledge to new features",'wp-to-twitter'); ?></a> &middot; <a href="http://www.joedolson.com/donate.php"><?php _e("Make a Donation",'wp-to-twitter'); ?></a>
+</p>
+<p>
+<a href="?page=wp-to-twitter/wp-to-twitter.php&amp;export=settings"><?php _e("View Settings",'wp-to-twitter'); ?></a> &middot; <a href="http://www.joedolson.com/articles/wp-to-twitter/support/"><?php _e("Get Support",'wp-to-twitter'); ?></a>
 </p>
 <div>
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
@@ -402,7 +405,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 ?>		
 <div class="jd-settings" id="poststuff">
 
-<?php wtt_connect_oauth(); ?>
+<?php if (function_exists('wtt_connect_oauth') ) { wtt_connect_oauth(); } ?>
 
 <div class="ui-sortable meta-box-sortables">
 <div class="postbox">
