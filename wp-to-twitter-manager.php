@@ -353,7 +353,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 <div class="resources">
 <img src="<?php echo $wp_to_twitter_directory; ?>/wp-to-twitter-logo.png" alt="WP to Twitter" />
 <p>
-<a href="http://wordpress.org/extend/plugins/wp-to-twitter/"><?php _e("Pledge to new features",'wp-to-twitter'); ?></a> &middot; <a href="http://www.joedolson.com/donate.php"><?php _e("Make a Donation",'wp-to-twitter'); ?></a>
+<a href="https://fundry.com/project/10-wp-to-twitter"><?php _e("Pledge to new features",'wp-to-twitter'); ?></a> &middot; <a href="http://www.joedolson.com/donate.php"><?php _e("Make a Donation",'wp-to-twitter'); ?></a>
 </p>
 <p>
 <a href="?page=wp-to-twitter/wp-to-twitter.php&amp;export=settings"><?php _e("View Settings",'wp-to-twitter'); ?></a> &middot; <a href="http://www.joedolson.com/articles/wp-to-twitter/support/"><?php _e("Get Support",'wp-to-twitter'); ?></a>

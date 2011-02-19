@@ -31,6 +31,7 @@ Translations:
 * Estonian: [Raivo Ratsep](http://raivoratsep.com)
 * Simplified Chinese: [Joe Francis](http://blog.francistm.com)
 * Dutch: [Rene at WPwebshop](http://wpwebshop.com/premium-wordpress-plugins/)
+* Romanian: [Jibo](http://jibo.ro)
 
 New translations are always welcome! The translation file is in the download.
 
@@ -42,7 +43,7 @@ New translations are always welcome! The translation file is in the download.
 * Enhancement: Added PHP version check and warning.
 * Added a default case to check on HTTP response code from Twitter.
 * Added a specific error message for out of sync server times.
-* Added link to [WP to Twitter's Fundry.com page(https://fundry.com/project/10-wp-to-twitter)].
+* Added link to [WP to Twitter's Fundry.com page](https://fundry.com/project/10-wp-to-twitter).
 * Bug fix: hash tag space removal fixed
 * Enhancement: Respects wp content directory constants if set.
 
