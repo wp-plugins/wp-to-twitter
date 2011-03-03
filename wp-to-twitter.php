@@ -3,11 +3,11 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.2.7
+Version: 2.2.8
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
-/*  Copyright 2008  Joseph C Dolson  (email : wp-to-twitter@joedolson.com)
+/*  Copyright 2008-2011  Joseph C Dolson  (email : wp-to-twitter@joedolson.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,9 +23,6 @@ Author URI: http://www.joedolson.com/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-// include service functions
-
-
 
 if ( version_compare( get_bloginfo( 'version' ) , '3.0' , '<' ) && is_ssl() ) {
 	$wp_content_url = str_replace( 'http://' , 'https://' , get_option( 'siteurl' ) );
@@ -55,13 +52,11 @@ if ( version_compare( phpversion(), '5.0', '<' ) ) {
 } else {
 	require_once( $wp_plugin_dir . '/wp-to-twitter/wp-to-twitter-oauth.php' );
 }
-
+// include service functions
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
-
-
-global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status, $x_jdwp_post_status;
-$version = "2.2.7";
+global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status;
+$version = "2.2.8";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -121,58 +116,64 @@ function external_or_permalink( $post_ID ) {
 
 // This function performs the API post to Twitter
 function jd_doTwitterAPIPost( $twit ) {
-	global $jdwp_api_post_status;
-	if ( $twit == '' ) {
-	return FALSE;
+	// prevent duplicate tweets
+	$check = get_option('jd_last_tweet');
+	if ( $check == $twit ) {
+		return true;
 	} else {
-		if ( wtt_oauth_test() && ( $connection = wtt_oauth_connection() ) ) {
-			$connection->post(
-				$jdwp_api_post_status
-				, array(
-					'status' => $twit
-					, 'source' => 'wp-to-twitter'
-				)
-			);
+		global $jdwp_api_post_status;
+		if ( $twit == '' ) {
+		return FALSE;
+		} else {
+			if ( wtt_oauth_test() && ( $connection = wtt_oauth_connection() ) ) {
+				$connection->post(
+					$jdwp_api_post_status
+					, array(
+						'status' => $twit
+						, 'source' => 'wp-to-twitter'
+					)
+				);
 
-			$http_code = $connection->http_code;
-			switch ($http_code) {
-				case '200':
-					$return = true;
-					$error = __("200 OK: Success!",'wp-to-twitter');
-					break;
-				case '400':
-					$return = false;
-					$error = __("400 Bad Request: The request was invalid. This is the status code returned during rate limiting.",'wp-to-twitter');
-					break;
-				case '401':
-					$return = false;
-					$error = __("401 Unauthorized: Authentication credentials were missing or incorrect.",'wp-to-twitter');
-					break;
-				case '403':
-					$return = false;
-					$error = __("403 Forbidden: The request is understood, but it has been refused. This code is used when requests are being denied due to status update character limits.",'wp-to-twitter');
-					break;
-				case '500':
-					$return = false;
-					$error = __("500 Internal Server Error: Something is broken at Twitter.",'wp-to-twitter');
-					break;
-				case '503':
-					$return = false;
-					$error = __("503 Service Unavailable: The Twitter servers are up, but overloaded with requests Please try again later.",'wp-to-twitter');
-					break;
-				case '502':
-					$return = false;
-					$error = __("502 Bad Gateway: Twitter is down or being upgraded.",'wp-to-twitter');
-					break;
-				default:
-					$return = false;
-					$error = __("<strong>Code $http_code</strong>: Twitter did not return a recognized response code.",'wp-to-twitter');
-					break;
-			}
-			update_option( 'jd_last_tweet',$twit );
-			update_option( 'jd_status_message',$error );
-			return $return;			
-		}	
+				$http_code = $connection->http_code;
+				switch ($http_code) {
+					case '200':
+						$return = true;
+						$error = __("200 OK: Success!",'wp-to-twitter');
+						break;
+					case '400':
+						$return = false;
+						$error = __("400 Bad Request: The request was invalid. This is the status code returned during rate limiting.",'wp-to-twitter');
+						break;
+					case '401':
+						$return = false;
+						$error = __("401 Unauthorized: Authentication credentials were missing or incorrect.",'wp-to-twitter');
+						break;
+					case '403':
+						$return = false;
+						$error = __("403 Forbidden: The request is understood, but it has been refused. This code is used when requests are being denied due to status update character limits.",'wp-to-twitter');
+						break;
+					case '500':
+						$return = false;
+						$error = __("500 Internal Server Error: Something is broken at Twitter.",'wp-to-twitter');
+						break;
+					case '503':
+						$return = false;
+						$error = __("503 Service Unavailable: The Twitter servers are up, but overloaded with requests Please try again later.",'wp-to-twitter');
+						break;
+					case '502':
+						$return = false;
+						$error = __("502 Bad Gateway: Twitter is down or being upgraded.",'wp-to-twitter');
+						break;
+					default:
+						$return = false;
+						$error = __("<strong>Code $http_code</strong>: Twitter did not return a recognized response code.",'wp-to-twitter');
+						break;
+				}
+				update_option( 'jd_last_tweet',$twit );
+				update_option( 'jd_status_message',$error );
+				return $return;			
+			}	
+		}
 	}
 }
 
@@ -342,10 +343,16 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='fa
 			global $yourls_reserved_URL;
 			define('YOURLS_INSTALLING', true); // Pretend we're installing YOURLS to bypass test for install or upgrade
 			define('YOURLS_FLOOD_DELAY_SECONDS', 0); // Disable flood check
-			if( file_exists( dirname( get_option( 'yourlspath' ) ).'/load-yourls.php' ) ) { // YOURLS 1.4
+			$opath = get_option( 'yourlspath' );
+			$ypath = str_replace( 'user','includes', $opath );
+			if ( file_exists( dirname( $ypath ).'/load-yourls.php' ) ) { // YOURLS 1.4+
 				global $ydb;
-				require_once( dirname( get_option( 'yourlspath' ) ).'/load-yourls.php' ); 
-				$yourls_result = yourls_add_new_link( $thispostlink, $keyword_format );
+				require_once( dirname( $ypath ).'/load-yourls.php' );
+				if ( function_exists( 'yourls_add_new_link' ) ) {
+					$yourls_result = yourls_add_new_link( $thispostlink, $keyword_format );
+				} else {
+					$yourls_result = $thispostlink;
+				}
 			} else { // YOURLS 1.3
 				require_once( get_option( 'yourlspath' ) ); 
 				$yourls_db = new wpdb( YOURLS_DB_USER, YOURLS_DB_PASS, YOURLS_DB_NAME, YOURLS_DB_HOST );
@@ -459,6 +466,7 @@ function jd_post_info( $post_ID ) {
 	$values['blogTitle'] = get_bloginfo( 'name' );
 	$values['shortUrl'] = get_post_meta( $post_ID, '_wp_jd_clig', TRUE );
 	$values['postStatus'] = $get_post_info->post_status;
+	$values['postType'] = $get_post_info->post_type;
 	return $values;
 }
 
@@ -475,42 +483,48 @@ function jd_twit( $post_ID ) {
 	$jd_tweet_this = get_post_meta( $post_ID, '_jd_tweet_this', TRUE);
 	if ( $jd_tweet_this != "no" ) {
 		$jd_post_info = jd_post_info( $post_ID );
-	    $sentence = '';
-		$customTweet = stripcslashes( trim( $_POST['_jd_twitter'] ) );
-		if ( ( $jd_post_info['postStatus'] == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft' || $_POST['prev_status'] == 'pending' || $_POST['original_post_status'] =='pending' || $_POST['original_post_status'] == 'auto-draft' ) ) {
-		// publish new post
-				if ( get_option( 'newpost-published-update' ) == '1' ) {
-					$nptext = stripcslashes( get_option( 'newpost-published-text' ) );	
-					$newpost = true;
+		$post_type = $jd_post_info['postType'];
+		// this will eventually be related to custom post types
+		//if ($post_type == 'post' || $post_type == 'page' ) {
+			$sentence = '';
+			$customTweet = stripcslashes( trim( $_POST['_jd_twitter'] ) );
+			if ( ( $jd_post_info['postStatus'] == 'publish' || $_POST['publish'] == 'Publish') && ($_POST['prev_status'] == 'draft' || $_POST['original_post_status'] == 'draft' || $_POST['prev_status'] == 'pending' || $_POST['original_post_status'] =='pending' || $_POST['original_post_status'] == 'auto-draft' ) ) {
+			// publish new post
+					if ( get_option( 'newpost-published-update' ) == '1' ) {
+						$nptext = stripcslashes( get_option( 'newpost-published-text' ) );	
+						$newpost = true;
+					}
+			} else if ( (( $_POST['originalaction'] == "editpost" ) && ( ( $_POST['prev_status'] == 'publish' ) || ($_POST['original_post_status'] == 'publish') ) ) && $jd_post_info['postStatus'] == 'publish') {
+					// if this is an old post and editing updates are enabled
+					if ( get_option( 'oldpost-edited-update') == '1' ) {
+						$nptext = stripcslashes( get_option( 'oldpost-edited-text' ) );
+						$oldpost = true;
+					}
+			}
+			if ($newpost || $oldpost) {
+				$sentence = ( $customTweet != "" ) ? $customTweet : $nptext;
+				if ($jd_post_info['shortUrl'] != '') {
+					$shrink = $jd_post_info['shortUrl'];
+				} else {
+					$shrink = jd_shorten_link( $jd_post_info['postLink'], $jd_post_info['postTitle'], $post_ID );
+					store_url( $post_ID, $shrink );
 				}
-		} else if ( (( $_POST['originalaction'] == "editpost" ) && ( ( $_POST['prev_status'] == 'publish' ) || ($_POST['original_post_status'] == 'publish') ) ) && $jd_post_info['postStatus'] == 'publish') {
-				// if this is an old post and editing updates are enabled
-				if ( get_option( 'oldpost-edited-update') == '1' ) {
-				    $nptext = stripcslashes( get_option( 'oldpost-edited-text' ) );
-					$oldpost = true;
-				}			
-		}
-		if ($newpost || $oldpost) {
-			$sentence = ( $customTweet != "" ) ? $customTweet : $nptext;
-			if ($jd_post_info['shortUrl'] != '') {
-				$shrink = $jd_post_info['shortUrl'];
-			} else {
-				$shrink = jd_shorten_link( $jd_post_info['postLink'], $jd_post_info['postTitle'], $post_ID );
-				store_url( $post_ID, $shrink );
-			}		
-			$sentence = custom_shortcodes( $sentence, $post_ID );					
-			$sentence = jd_truncate_tweet( $sentence, $jd_post_info['postTitle'], $jd_post_info['blogTitle'], $jd_post_info['postExcerpt'], $shrink, $jd_post_info['category'], $jd_post_info['postDate'], $post_ID, $jd_post_info['authId'] );		
-		}
-			
-		if ( $sentence != '' ) {
-			if ( get_option('limit_categories') == '0' || in_allowed_category( $jd_post_info['categoryIds'] ) ) {
-				$sendToTwitter = jd_doTwitterAPIPost( $sentence );
-				if ( $sendToTwitter == false ) {
-					update_post_meta( $post_ID,'_jd_wp_twitter',urldecode( $sentence ) );
-					update_option( 'wp_twitter_failure','1' );
+				$sentence = custom_shortcodes( $sentence, $post_ID );					
+				$sentence = jd_truncate_tweet( $sentence, $jd_post_info['postTitle'], $jd_post_info['blogTitle'], $jd_post_info['postExcerpt'], $shrink, $jd_post_info['category'], $jd_post_info['postDate'], $post_ID, $jd_post_info['authId'] );		
+			}
+				
+			if ( $sentence != '' ) {
+				if ( get_option('limit_categories') == '0' || in_allowed_category( $jd_post_info['categoryIds'] ) ) {
+					$sendToTwitter = jd_doTwitterAPIPost( $sentence );
+					if ( $sendToTwitter == false ) {
+						update_post_meta( $post_ID,'_jd_wp_twitter',urldecode( $sentence ) );
+						update_option( 'wp_twitter_failure','1' );
+					}
 				}
 			}
-		}
+	//	} else {
+	//		return $post_ID;
+	//	}
 	}
 	return $post_ID;
 }
@@ -592,6 +606,7 @@ global $version;
 // HANDLES SCHEDULED POSTS
 function jd_twit_future( $post_ID ) {
     $post_ID = $post_ID->ID;
+	$jd_tweet_this = get_post_meta( $post_ID, '_jd_tweet_this', TRUE);	
 	if ( $jd_tweet_this != "no" ) {	
 		$jd_post_info = jd_post_info( $post_ID );
 		$sentence = '';
@@ -678,33 +693,37 @@ function jd_twit_xmlrpc( $post_ID ) {
 add_action('admin_menu','jd_add_twitter_outer_box');
 
 function store_url($post_ID, $url) {
-	if ( get_option( 'jd_shortener' ) == 0 || get_option( 'jd_shortener' ) == 1) {
-			if ( get_post_meta ( $post_ID, '_wp_jd_clig', TRUE ) != $url ) {
-			update_post_meta ( $post_ID, '_wp_jd_clig', $url );
-			}	
-	} elseif ( get_option( 'jd_shortener' ) == 2 ) {
-			if ( get_post_meta ( $post_ID, '_wp_jd_bitly', TRUE ) != $url ) {
-			update_post_meta ( $post_ID, '_wp_jd_bitly', $url );
-			}	
-	} elseif (  get_option( 'jd_shortener' ) == 3 ) {
-			if ( get_post_meta ( $post_ID, '_wp_jd_url', TRUE ) != $url ) {
-			update_post_meta ( $post_ID, '_wp_jd_url', $url );
-			}
-	} elseif (  get_option( 'jd_shortener' ) == 4 ) {
-			if ( get_post_meta ( $post_ID, '_wp_jd_wp', TRUE ) != $url ) {
-			update_post_meta ( $post_ID, '_wp_jd_wp', $url );
-			}
-	} elseif (  get_option( 'jd_shortener' ) == 5 || get_option( 'jd_shortener' ) == 6 ) {
-			if ( get_post_meta ( $post_ID, '_wp_jd_yourls', TRUE ) != $url ) {
-			update_post_meta ( $post_ID, '_wp_jd_yourls', $url );
-			}
+	$shortener = get_option( 'jd_shortener' );
+	switch ($shortener) {
+		case 0:
+		case 1:
+		$ext = '_clig';
+		break;
+		case 2:
+		$ext = '_bitly';
+		break;
+		case 3:
+		$ext = '_url';
+		break;
+		case 4:
+		$ext = '_wp';
+		case 5:
+		$ext = '_yourls';
+		break;
+		default:
+		$ext = '_ind';
+		break;
 	}
+	if ( get_post_meta ( $post_ID, "_wp_jd$ext", TRUE ) != $url ) {
+		update_post_meta ( $post_ID, "_wp_jd$ext", $url );
+	}	
+
 	if ( get_option( 'jd_shortener' ) == '0' || get_option( 'jd_shortener' ) == '1' || get_option( 'jd_shortener' ) == '2' ) {
-	$target = jd_expand_url( $url );
+		$target = jd_expand_url( $url );
 	} else if ( get_option( 'jd_shortener' ) == '5' || get_option( 'jd_shortener' ) == '6' ) {
-	$target = jd_expand_yourl( $url, get_option( 'jd_shortener' ) );
+		$target = jd_expand_yourl( $url, get_option( 'jd_shortener' ) );
 	} else {
-	$target = $url;
+		$target = $url;
 	}
 	update_post_meta( $post_ID, '_wp_jd_target', $target );
 }
@@ -731,11 +750,11 @@ $max_characters = get_option( 'jd_max_characters' );
 			$replace = get_option( 'jd_replace_character' );
 			$strip = get_option( 'jd_strip_nonan' );
 			$search = "/[^a-zA-Z0-9]/";
+			if ($replace == "[ ]") { $replace = ""; }
+			$tag = str_ireplace( " ",$replace,trim( $tag ) );
 			if ($strip == '1') { $tag = preg_replace( $search, $replace, $tag ); }
 			if ($replace == "" || !$replace) { $replace = "_"; }
-			if ($replace == "[ ]") { $replace = ""; }
-			$value = str_ireplace( " ",$replace,trim( $tag ) );
-				$newtag = "#$value";
+				$newtag = "#$tag";
 					if ( mb_strlen( $newtag ) > 2 && (mb_strlen( $newtag ) <= $max_characters) && ($i <= $max_tags) ) {
 					$hashtags .= "$newtag ";
 					$i++;

@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, cligs, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.9.2
-Tested up to: 3.1-RC5
+Tested up to: 3.1
 Stable tag: trunk
 
 Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5. [Make a Pledge at Fundry(https://fundry.com/project/10-wp-to-twitter)].
@@ -32,10 +32,19 @@ Translations:
 * Simplified Chinese: [Joe Francis](http://blog.francistm.com)
 * Dutch: [Rene at WPwebshop](http://wpwebshop.com/premium-wordpress-plugins/)
 * Romanian: [Jibo](http://jibo.ro)
+* Danish: [Rasmus Himmelstrup](http://seoanalyst.dk)
 
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.2.8 =
+
+* Enhancement: protect against duplicate tweets
+* Bug fix: hash tag replacement with spaces problematic if alphanumeric limit also set
+* Bug fix: issue with scheduled posts posting when 'Do not Tweet' checked.
+* Added Danish translation by Rasmus Himmelstrup
+* Updates to compensate for changes in YOURLS 1.5
 
 = 2.2.7 =
 

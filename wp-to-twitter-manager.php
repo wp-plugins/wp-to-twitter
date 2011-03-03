@@ -518,7 +518,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 	<form method="post" action="">
 	<div>
 		<p>
-		<label for="yourlspath"><?php _e('Path to the YOURLS config file (Local installations)','wp-to-twitter'); ?></label> <input type="text" id="yourlspath" name="yourlspath" size="60" value="<?php echo ( esc_attr( get_option( 'yourlspath' ) ) ); ?>"/>
+		<label for="yourlspath"><?php _e('Path to your YOURLS config file (Local installations)','wp-to-twitter'); ?></label> <input type="text" id="yourlspath" name="yourlspath" size="60" value="<?php echo ( esc_attr( get_option( 'yourlspath' ) ) ); ?>"/>
 		<small><?php _e('Example:','wp-to-twitter'); ?> <code>/home/username/www/www/yourls/includes/config.php</code></small>
 		</p>				
 		<p>
@@ -678,7 +678,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 	<div class="inside">
 		<br class="clear" />
 		<p>
-		<?php _e('Select which blog categories will be Tweeted. ','wp-to-twitter'); ?>
+		<?php _e('Select which blog categories will be Tweeted. Uncheck all categories to disable category limits.','wp-to-twitter'); ?>
 <?php
 if ( get_option('limit_categories') == '0' ) {
 	_e('<em>Category limits are disabled.</em>','wp-to-twitter');
