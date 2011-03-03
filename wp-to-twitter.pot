@@ -2,15 +2,144 @@
 # This file is distributed under the same license as the WP to Twitter package.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP to Twitter 2.2.7\n"
+"Project-Id-Version: WP to Twitter 2.2.8\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/wp-to-twitter\n"
-"POT-Creation-Date: 2011-02-19 00:49:38+00:00\n"
+"POT-Creation-Date: 2011-03-03 19:09:58+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "PO-Revision-Date: 2010-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: wp-to-twitter-oauth.php:104 wp-to-twitter-oauth.php:142
+msgid "Connect to Twitter"
+msgstr ""
+
+#: wp-to-twitter-oauth.php:107
+msgid ""
+"The process to set up OAuth authentication for your web site is needlessly "
+"laborious. It is also confusing. However, this is the only method available "
+"from Twitter at this time. Note that you will not, at any time, enter you "
+"Twitter username or password into WP to Twitter; they are not used in OAuth "
+"authentication."
+msgstr ""
+
+#: wp-to-twitter-oauth.php:110
+msgid "1. Register this site as an application on "
+msgstr ""
+
+#: wp-to-twitter-oauth.php:110
+msgid "Twitter's application registration page"
+msgstr ""
+
+#: wp-to-twitter-oauth.php:112
+msgid ""
+"If you're not currently logged in, use the Twitter username and password "
+"which you want associated with this site"
+msgstr ""
+
+#: wp-to-twitter-oauth.php:113
+msgid ""
+"Your Application's Name will be what shows up after \"via\" in your twitter "
+"stream; previously, \"WP to Twitter.\" Your application name cannot include "
+"the word \"Twitter.\" I suggest using the name of your web site."
+msgstr ""
+
+#: wp-to-twitter-oauth.php:114
+msgid "Your Application Description can be whatever you want."
+msgstr ""
+
+#: wp-to-twitter-oauth.php:115
+msgid "Application Type should be set on "
+msgstr ""
+
+#: wp-to-twitter-oauth.php:115
+msgid "Browser"
+msgstr ""
+
+#: wp-to-twitter-oauth.php:116
+msgid "The Callback URL should be "
+msgstr ""
+
+#: wp-to-twitter-oauth.php:117
+msgid "Default Access type must be set to "
+msgstr ""
+
+#: wp-to-twitter-oauth.php:117
+msgid "Read &amp; Write"
+msgstr ""
+
+#: wp-to-twitter-oauth.php:117
+msgid "(this is NOT the default)"
+msgstr ""
+
+#: wp-to-twitter-oauth.php:119
+msgid ""
+"Once you have registered your site as an application, you will be provided "
+"with a consumer key and a consumer secret."
+msgstr ""
+
+#: wp-to-twitter-oauth.php:120
+msgid ""
+"2. Copy and paste your consumer key and consumer secret into the fields below"
+msgstr ""
+
+#: wp-to-twitter-oauth.php:123
+msgid "Twitter Consumer Key"
+msgstr ""
+
+#: wp-to-twitter-oauth.php:127
+msgid "Twitter Consumer Secret"
+msgstr ""
+
+#: wp-to-twitter-oauth.php:130
+msgid ""
+"3. Copy and paste your Access Token and Access Token Secret into the fields "
+"below"
+msgstr ""
+
+#: wp-to-twitter-oauth.php:131
+msgid ""
+"On the right hand side of your new application page at Twitter, click on 'My "
+"Access Token'."
+msgstr ""
+
+#: wp-to-twitter-oauth.php:133
+msgid "Access Token"
+msgstr ""
+
+#: wp-to-twitter-oauth.php:137
+msgid "Access Token Secret"
+msgstr ""
+
+#: wp-to-twitter-oauth.php:152
+msgid "Disconnect from Twitter"
+msgstr ""
+
+#: wp-to-twitter-oauth.php:159
+msgid "Twitter Username "
+msgstr ""
+
+#: wp-to-twitter-oauth.php:160
+msgid "Consumer Key "
+msgstr ""
+
+#: wp-to-twitter-oauth.php:161
+msgid "Consumer Secret "
+msgstr ""
+
+#: wp-to-twitter-oauth.php:162
+msgid "Access Token "
+msgstr ""
+
+#: wp-to-twitter-oauth.php:163
+msgid "Access Token Secret "
+msgstr ""
+
+#: wp-to-twitter-oauth.php:166
+msgid "Disconnect Your WordPress and Twitter Account"
+msgstr ""
 
 #: wp-to-twitter-manager.php:76
 msgid "WP to Twitter is now connected with Twitter."
@@ -226,7 +355,7 @@ msgstr ""
 msgid "Pledge to new features"
 msgstr ""
 
-#: wp-to-twitter-manager.php:356 wp-to-twitter.php:829
+#: wp-to-twitter-manager.php:356 wp-to-twitter.php:848
 msgid "Make a Donation"
 msgstr ""
 
@@ -234,7 +363,7 @@ msgstr ""
 msgid "View Settings"
 msgstr ""
 
-#: wp-to-twitter-manager.php:359 wp-to-twitter.php:829
+#: wp-to-twitter-manager.php:359 wp-to-twitter.php:848
 msgid "Get Support"
 msgstr ""
 
@@ -455,7 +584,7 @@ msgid "Your YOURLS account details"
 msgstr ""
 
 #: wp-to-twitter-manager.php:521
-msgid "Path to the YOURLS config file (Local installations)"
+msgid "Path to your YOURLS config file (Local installations)"
 msgstr ""
 
 #: wp-to-twitter-manager.php:522 wp-to-twitter-manager.php:526
@@ -716,7 +845,9 @@ msgid "Limit Updating Categories"
 msgstr ""
 
 #: wp-to-twitter-manager.php:681
-msgid "Select which blog categories will be Tweeted. "
+msgid ""
+"Select which blog categories will be Tweeted. Uncheck all categories to "
+"disable category limits."
 msgstr ""
 
 #: wp-to-twitter-manager.php:684
@@ -735,135 +866,6 @@ msgid ""
 "a URL using your selected methods."
 msgstr ""
 
-#: wp-to-twitter-oauth.php:104 wp-to-twitter-oauth.php:142
-msgid "Connect to Twitter"
-msgstr ""
-
-#: wp-to-twitter-oauth.php:107
-msgid ""
-"The process to set up OAuth authentication for your web site is needlessly "
-"laborious. It is also confusing. However, this is the only method available "
-"from Twitter at this time. Note that you will not, at any time, enter you "
-"Twitter username or password into WP to Twitter; they are not used in OAuth "
-"authentication."
-msgstr ""
-
-#: wp-to-twitter-oauth.php:110
-msgid "1. Register this site as an application on "
-msgstr ""
-
-#: wp-to-twitter-oauth.php:110
-msgid "Twitter's application registration page"
-msgstr ""
-
-#: wp-to-twitter-oauth.php:112
-msgid ""
-"If you're not currently logged in, use the Twitter username and password "
-"which you want associated with this site"
-msgstr ""
-
-#: wp-to-twitter-oauth.php:113
-msgid ""
-"Your Application's Name will be what shows up after \"via\" in your twitter "
-"stream; previously, \"WP to Twitter.\" Your application name cannot include "
-"the word \"Twitter.\" I suggest using the name of your web site."
-msgstr ""
-
-#: wp-to-twitter-oauth.php:114
-msgid "Your Application Description can be whatever you want."
-msgstr ""
-
-#: wp-to-twitter-oauth.php:115
-msgid "Application Type should be set on "
-msgstr ""
-
-#: wp-to-twitter-oauth.php:115
-msgid "Browser"
-msgstr ""
-
-#: wp-to-twitter-oauth.php:116
-msgid "The Callback URL should be "
-msgstr ""
-
-#: wp-to-twitter-oauth.php:117
-msgid "Default Access type must be set to "
-msgstr ""
-
-#: wp-to-twitter-oauth.php:117
-msgid "Read &amp; Write"
-msgstr ""
-
-#: wp-to-twitter-oauth.php:117
-msgid "(this is NOT the default)"
-msgstr ""
-
-#: wp-to-twitter-oauth.php:119
-msgid ""
-"Once you have registered your site as an application, you will be provided "
-"with a consumer key and a consumer secret."
-msgstr ""
-
-#: wp-to-twitter-oauth.php:120
-msgid ""
-"2. Copy and paste your consumer key and consumer secret into the fields below"
-msgstr ""
-
-#: wp-to-twitter-oauth.php:123
-msgid "Twitter Consumer Key"
-msgstr ""
-
-#: wp-to-twitter-oauth.php:127
-msgid "Twitter Consumer Secret"
-msgstr ""
-
-#: wp-to-twitter-oauth.php:130
-msgid ""
-"3. Copy and paste your Access Token and Access Token Secret into the fields "
-"below"
-msgstr ""
-
-#: wp-to-twitter-oauth.php:131
-msgid ""
-"On the right hand side of your new application page at Twitter, click on 'My "
-"Access Token'."
-msgstr ""
-
-#: wp-to-twitter-oauth.php:133
-msgid "Access Token"
-msgstr ""
-
-#: wp-to-twitter-oauth.php:137
-msgid "Access Token Secret"
-msgstr ""
-
-#: wp-to-twitter-oauth.php:152
-msgid "Disconnect from Twitter"
-msgstr ""
-
-#: wp-to-twitter-oauth.php:159
-msgid "Twitter Username "
-msgstr ""
-
-#: wp-to-twitter-oauth.php:160
-msgid "Consumer Key "
-msgstr ""
-
-#: wp-to-twitter-oauth.php:161
-msgid "Consumer Secret "
-msgstr ""
-
-#: wp-to-twitter-oauth.php:162
-msgid "Access Token "
-msgstr ""
-
-#: wp-to-twitter-oauth.php:163
-msgid "Access Token Secret "
-msgstr ""
-
-#: wp-to-twitter-oauth.php:166
-msgid "Disconnect Your WordPress and Twitter Account"
-msgstr ""
-
 #: functions.php:212
 msgid ""
 "[<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>Hide</"
@@ -871,20 +873,20 @@ msgid ""
 "request for support."
 msgstr ""
 
-#: wp-to-twitter.php:52
+#: wp-to-twitter.php:49
 msgid ""
 "WP to Twitter requires PHP version 5 or above. Please upgrade PHP to run WP "
 "to Twitter."
 msgstr ""
 
-#: wp-to-twitter.php:74
+#: wp-to-twitter.php:69
 msgid ""
 "WP to Twitter requires WordPress 2.9.2 or a more recent version. <a href="
 "\"http://codex.wordpress.org/Upgrading_WordPress\">Please update your "
 "WordPress version!</a>"
 msgstr ""
 
-#: wp-to-twitter.php:88
+#: wp-to-twitter.php:83
 msgid ""
 "Twitter now requires authentication by OAuth. You will need you to update "
 "your <a href=\"%s\">settings</a> in order to continue to use WP to Twitter."
@@ -924,70 +926,70 @@ msgstr ""
 msgid "502 Bad Gateway: Twitter is down or being upgraded."
 msgstr ""
 
-#: wp-to-twitter.php:313
+#: wp-to-twitter.php:314
 msgid ""
 "PLEASE NOTE: This is an internal server error at Cli.gs. If you continue to "
 "receive this error, you should change URL shorteners. This cannot be fixed "
 "in WP to Twitter."
 msgstr ""
 
-#. #-#-#-#-#  plugin.pot (WP to Twitter 2.2.7)  #-#-#-#-#
+#. #-#-#-#-#  plugin.pot (WP to Twitter 2.2.8)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
-#: wp-to-twitter.php:758
+#: wp-to-twitter.php:777
 msgid "WP to Twitter"
 msgstr ""
 
-#: wp-to-twitter.php:820
+#: wp-to-twitter.php:839
 msgid "Custom Twitter Post"
 msgstr ""
 
-#: wp-to-twitter.php:832
+#: wp-to-twitter.php:851
 msgid "Don't Tweet this post."
 msgstr ""
 
-#: wp-to-twitter.php:842
+#: wp-to-twitter.php:861
 msgid "This URL is direct and has not been shortened: "
 msgstr ""
 
-#: wp-to-twitter.php:899
+#: wp-to-twitter.php:918
 msgid "WP to Twitter User Settings"
 msgstr ""
 
-#: wp-to-twitter.php:903
+#: wp-to-twitter.php:922
 msgid "Use My Twitter Username"
 msgstr ""
 
-#: wp-to-twitter.php:904
+#: wp-to-twitter.php:923
 msgid "Tweet my posts with an @ reference to my username."
 msgstr ""
 
-#: wp-to-twitter.php:905
+#: wp-to-twitter.php:924
 msgid ""
 "Tweet my posts with an @ reference to both my username and to the main site "
 "username."
 msgstr ""
 
-#: wp-to-twitter.php:909
+#: wp-to-twitter.php:928
 msgid "Your Twitter Username"
 msgstr ""
 
-#: wp-to-twitter.php:910
+#: wp-to-twitter.php:929
 msgid "Enter your own Twitter username."
 msgstr ""
 
-#: wp-to-twitter.php:947
+#: wp-to-twitter.php:966
 msgid "Check the categories you want to tweet:"
 msgstr ""
 
-#: wp-to-twitter.php:964
+#: wp-to-twitter.php:983
 msgid "Set Categories"
 msgstr ""
 
-#: wp-to-twitter.php:988
+#: wp-to-twitter.php:1007
 msgid "<p>Couldn't locate the settings page.</p>"
 msgstr ""
 
-#: wp-to-twitter.php:993
+#: wp-to-twitter.php:1012
 msgid "Settings"
 msgstr ""
 
