@@ -6,11 +6,11 @@ Requires at least: 2.9.2
 Tested up to: 3.1.1
 Stable tag: trunk
 
-Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5 and cURL. 
+Posts a Twitter update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5 and cURL. 
 
 == Description ==
 
-[Make a Pledge at Fundry(https://fundry.com/project/10-wp-to-twitter)].
+[Make a Pledge at Fundry](https://fundry.com/project/10-wp-to-twitter).
 
 The WP-to-Twitter plugin posts a Twitter status update from your WordPress blog using your selected URL shortening service to provide a link back to your post from Twitter. 
 
