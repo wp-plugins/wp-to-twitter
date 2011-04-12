@@ -874,5 +874,3 @@ class WPOAuthUtil {
 }
 
 } // class_exists check
-
-?>

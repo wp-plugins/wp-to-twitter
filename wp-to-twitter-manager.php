@@ -14,7 +14,7 @@
 		}
 	}
 	$wp_twitter_error = FALSE;
-	$wp_cligs_error = FALSE;
+	$wp_supr_error = FALSE;
 	$wp_bitly_error = FALSE;
 	$message = "";
 
@@ -242,15 +242,17 @@
 		}
 	} 
 	
-	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'cligsapi' ) {
-		if ( $_POST['cligsapi'] != '' && isset( $_POST['submit'] ) ) {
-			update_option( 'cligsapi', trim($_POST['cligsapi']) );
-			$message = __("Cligs API Key Updated", 'wp-to-twitter');
+	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'suprapi' ) {
+		if ( $_POST['suprapi'] != '' && isset( $_POST['submit'] ) ) {
+			update_option( 'suprapi', trim($_POST['suprapi']) );
+			update_option( 'suprlogin', trim($_POST['suprlogin']) );
+			$message = __("Su.pr API Key and Username Updated", 'wp-to-twitter');
 		} else if ( isset( $_POST['clear'] ) ) {
-			update_option( 'cligsapi','' );
-			$message = __("Cli.gs API Key deleted. Cli.gs created by WP to Twitter will no longer be associated with your account. ", 'wp-to-twitter');
+			update_option( 'suprapi','' );
+			update_option( 'suprlogin','' );
+			$message = __("Su.pr API Key and username deleted. Su.pr URLs created by WP to Twitter will no longer be associated with your account. ", 'wp-to-twitter');
 		} else {
-			$message = __("Cli.gs API Key not added - <a href='http://cli.gs/user/api/'>get one here</a>! ", 'wp-to-twitter');
+			$message = __("Su.pr API Key not added - <a href='http://su.pr/'>get one here</a>! ", 'wp-to-twitter');
 		}
 	} 
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'bitlyapi' ) {
@@ -295,7 +297,7 @@ function jd_check_functions() {
 		
 	if ($shrink == FALSE) {
 		if ($shortener == 1) {
-			$error = htmlentities( get_option('wp_cligs_error') );
+			$error = htmlentities( get_option('wp_supr_error') );
 		} else if ( $shortener == 2 ) {
 			$error = htmlentities( get_option('wp_bitly_error') );
 		} else {
@@ -315,7 +317,9 @@ function jd_check_functions() {
 			if ($testpost) {
 				$message .= __("<li><strong>WP to Twitter successfully submitted a status update to Twitter.</strong></li>",'wp-to-twitter'); 
 			} else {
+				$error = get_option('jd_status_message');
 				$message .=	__("<li class=\"error\"><strong>WP to Twitter failed to submit an update to Twitter.</strong></li>",'wp-to-twitter'); 
+				$message .= "<li class=\"error\">$error</li>";
 				}
 	} else {
 		$message .= "<strong>"._e('You have not connected WordPress to Twitter.','wp-to-twitter')."</strong> ";
@@ -391,7 +395,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 		echo "<p><strong>".get_option( 'jd_status_message' )."</strong></p>";
 		}
 		if ( get_option( 'wp_url_failure' ) == '1' ) {
-		_e("<p>The query to the URL shortener API failed, and your URL was not shrunk. The full post URL was attached to your Tweet. Check with your URL shortening provider to see if there are any known issues. [<a href=\"http://blog.cli.gs\">Cli.gs Blog</a>] [<a href=\"http://blog.bit.ly\">Bit.ly Blog</a>]</p>", 'wp-to-twitter');
+		_e("<p>The query to the URL shortener API failed, and your URL was not shrunk. The full post URL was attached to your Tweet. Check with your URL shortening provider to see if there are any known issues. [<a href=\"http://www.stumbleupon.com/help/how-to-use-supr/\">Su.pr Help</a>] [<a href=\"http://blog.bit.ly\">Bit.ly Blog</a>]</p>", 'wp-to-twitter');
 		}
 		echo $wp_to_twitter_failure;
 		?>
@@ -450,12 +454,12 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 			<legend><?php _e("Choose your short URL service (account settings below)",'wp-to-twitter' ); ?></legend>
 			<p>
 			<select name="jd_shortener" id="jd_shortener">
-				<option value="1" <?php jd_checkSelect('jd_shortener','1'); ?>><?php _e("Use Cli.gs for my URL shortener.", 'wp-to-twitter'); ?></option> 
+				<option value="3" <?php jd_checkSelect('jd_shortener','3'); ?>><?php _e("Don't shorten URLs.", 'wp-to-twitter'); ?></option>
+				<option value="7" <?php jd_checkSelect('jd_shortener','7'); ?>><?php _e("Use Su.pr for my URL shortener.", 'wp-to-twitter'); ?></option> 
 				<option value="2" <?php jd_checkSelect('jd_shortener','2'); ?>><?php _e("Use Bit.ly for my URL shortener.", 'wp-to-twitter'); ?></option>
 				<option value="5" <?php jd_checkSelect('jd_shortener','5'); ?>><?php _e("YOURLS (installed on this server)", 'wp-to-twitter'); ?></option>
 				<option value="6" <?php jd_checkSelect('jd_shortener','6'); ?>><?php _e("YOURLS (installed on a remote server)", 'wp-to-twitter'); ?></option>		
 				<option value="4" <?php jd_checkSelect('jd_shortener','4'); ?>><?php _e("Use WordPress as a URL shortener.", 'wp-to-twitter'); ?></option> 
-				<option value="3" <?php jd_checkSelect('jd_shortener','3'); ?>><?php _e("Don't shorten URLs.", 'wp-to-twitter'); ?></option>
 			</select><br />		
 			<small><?php _e("Using WordPress as a URL shortener will send URLs to Twitter in the default URL format for WordPress: <code>http://domain.com/wpdir/?p=123</code>. Google Analytics is not available when using WordPress shortened URLs.", 'wp-to-twitter'); ?></small>
 			</p>
@@ -476,18 +480,22 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 
 				<div class="inside">
 		<div class="panel">
-<h4 class="cligs"><span><?php _e("Your Cli.gs account details", 'wp-to-twitter'); ?></span></h4>
+<h4 class="supr"><span><?php _e("Your Su.pr account details", 'wp-to-twitter'); ?></span></h4>
 
 	<form method="post" action="">
 	<div>
 		<p>
-		<label for="cligsapi"><?php _e("Your Cli.gs <abbr title='application programming interface'>API</abbr> Key:", 'wp-to-twitter'); ?></label>
-		<input type="text" name="cligsapi" id="cligsapi" size="40" value="<?php echo ( esc_attr( get_option( 'cligsapi' ) ) ) ?>" />
+		<label for="suprlogin"><?php _e("Your Su.pr Username:", 'wp-to-twitter'); ?></label>
+		<input type="text" name="suprlogin" id="suprlogin" size="40" value="<?php echo ( esc_attr( get_option( 'suprlogin' ) ) ) ?>" />
+		</p>	
+		<p>
+		<label for="suprapi"><?php _e("Your Su.pr <abbr title='application programming interface'>API</abbr> Key:", 'wp-to-twitter'); ?></label>
+		<input type="text" name="suprapi" id="suprapi" size="40" value="<?php echo ( esc_attr( get_option( 'suprapi' ) ) ) ?>" />
 		</p>
 		<div>
-		<input type="hidden" name="submit-type" value="cligsapi" />
+		<input type="hidden" name="submit-type" value="suprapi" />
 		</div>
-		<p><input type="submit" name="submit" value="Save Cli.gs API Key" class="button-primary" /> <input type="submit" name="clear" value="Clear Cli.gs API Key" />&raquo; <small><?php _e("Don't have a Cli.gs account or Cligs API key? <a href='http://cli.gs/user/api/'>Get one free here</a>!<br />You'll need an API key in order to associate the Cligs you create with your Cligs account.", 'wp-to-twitter'); ?></small></p>
+		<p><input type="submit" name="submit" value="Save Su.pr API Key" class="button-primary" /> <input type="submit" name="clear" value="Clear Su.pr API Key" />&raquo; <small><?php _e("Don't have a Su.pr account or API key? <a href='http://su.pr/'>Get one here</a>!<br />You'll need an API key in order to associate the URLs you create with your Su.pr account.", 'wp-to-twitter'); ?></small></p>
 	</div>
 	</form>
 	</div>
@@ -701,4 +709,4 @@ if ( get_option('limit_categories') == '0' ) {
 	</form>	
 </div>
 </div>
-<?php global $wp_version; ?>
+<?php global $wp_version;

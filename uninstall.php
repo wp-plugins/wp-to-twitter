@@ -19,13 +19,13 @@ delete_option( 'jd_twit_remote' );
 
 delete_option( 'jd_post_excerpt' );
 
-// Cligs API
-delete_option( 'cligsapi' );
+// Su.pr API
+delete_option( 'suprapi' );
 
 // Error checking
 delete_option( 'jd-functions-checked' );
 delete_option( 'wp_twitter_failure' );
-delete_option( 'wp_cligs_failure' );
+delete_option( 'wp_supr_failure' );
 delete_option( 'wp_url_failure' );
 delete_option( 'wp_bitly_failure' );
 
@@ -40,13 +40,12 @@ delete_option( 'jd_tweet_default' );
 // Note that default options are set.
 delete_option( 'twitterInitialised' );
 delete_option( 'wp_twitter_failure' );
-delete_option( 'wp_cligs_failure' );
 delete_option( 'twitterlogin' );
 delete_option( 'twitterpw' );
 delete_option( 'twitterlogin_encrypted' );
-delete_option( 'cligsapi' );
+delete_option( 'suprapi' );
 delete_option( 'jd_twit_quickpress' );
-delete_option( 'jd-use-cligs' );
+delete_option( 'jd-use-supr' );
 delete_option( 'jd-use-none' );
 delete_option( 'jd-use-wp' );
 
@@ -96,4 +95,3 @@ delete_option( 'jd_date_format' );
 delete_option( 'jd_keyword_format' );
 
 }
-?>

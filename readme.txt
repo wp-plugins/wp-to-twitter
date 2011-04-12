@@ -1,20 +1,22 @@
 === Plugin Name ===
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
-Tags: twitter, microblogging, cligs, bitly, yourls, redirect, shortener, post, links
+Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.9.2
-Tested up to: 3.1
+Tested up to: 3.1.1
 Stable tag: trunk
 
-Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5. [Make a Pledge at Fundry(https://fundry.com/project/10-wp-to-twitter)].
+Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5 and cURL. 
 
 == Description ==
 
-The WP-to-Twitter plugin posts a Twitter status update from your WordPress blog using either the Cli.gs or Bit.ly URL shortening services to provide a link back to your post from Twitter. 
+[Make a Pledge at Fundry(https://fundry.com/project/10-wp-to-twitter)].
+
+The WP-to-Twitter plugin posts a Twitter status update from your WordPress blog using your selected URL shortening service to provide a link back to your post from Twitter. 
 
 For both services you can provide your information to maintain a list of your shortened URLs with your URL shortening service for statistics and your own records.
 
-The plugin can send a default message for updating or editing posts or pages, but also allows you to write a custom Tweet for your post which says whatever you want. By default, the shortened URL from Cli.gs is appended to the end of your message, so you should keep that in mind when writing your custom Tweet. 
+The plugin can send a default message for updating or editing posts or pages, but also allows you to write a custom Tweet for your post which says whatever you want, using a wide selection of custom shortcodes to create your text. 
 
 Any status update you write which is longer than the available space will automatically be truncated by the plugin. This applies to both the default messages and to your custom messages.
 
@@ -37,6 +39,16 @@ Translations:
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.2.9 =
+
+* Blocked posting on custom post types
+* Added time check, for servers with incorrect time.
+* Added cURL check.
+* Due to ongoing problems with Cli.gs, removed that URL shortening service and replaced with Su.pr
+* Changed default shortening to 'no shortening'
+* Saves every tweet into post meta on save; adds link to re-post status update in WP to Twitter post box.
+* Revised error messages to increase detail.
 
 = 2.2.8 =
 
@@ -423,27 +435,34 @@ New translations are always welcome! The translation file is in the download.
 3. Go to Settings > WP->Twitter
 4. Adjust the WP->Twitter Options as you prefer them. 
 5. Supply your Twitter username and login.
-6. **Optional**: Provide your Cli.gs API key ([available free from Cli.gs](http://cli.gs)), if you want to have statistics available for your URL.
+6. **Optional**: Configure your choice of URL shortener. Default is to use the Su.pr URL shortener from Stumbleupon as a short URL.
 7. That's it!  You're all set.
 
 == Frequently Asked Questions ==
+
+= I can't connect to Twitter using OAuth. What's wrong? =
+
+The most likely problems that I've found so far are either that you don't have cURL support or that your server time is incorrect. Check with your host to verify these possibilities. 
+
+= Hey! Why did you remove Cli.gs support! =
+
+First, I could no longer get it to work for me. If I can't run a single successful test with it, I can't just randomly trust it will work for somebody else. Second, the number of unsolvable support requests I received for Cli.gs was too great to justify keeping it in the plug-in. Still need it? You can download the [last version with Cli.gs support here](http://downloads.wordpress.org/plugin/wp-to-twitter.2.2.8.zip).
 
 = Do I have to have a Twitter.com account to use this plugin? =
 
 Yes, you need an account with Twitter to use this plugin.
 
-= Do I have to have a Cli.gs/Bit.ly account to use this plugin? =
+= Do I have to have a URL shortener account to use this plugin? =
 
-A Cli.gs account is entirely optional. Without an API from Cli.gs, a "public" Clig will be generated. The redirect will work just fine, but you won't be able to access statistics on your Clig. Bit.ly does require an API key and username, however.
-Regardless, you don't need to have an account with either service to make effective use of the WP to Twitter plugin.
+You don't need any URL shortener accounts to use this plugin. However, you may need an account with specific URL shorteners to use the plug-in to your best advantage.
 
 = Twitter goes down a lot. What happens if it's not available? =
 
 If Twitter isn't available, you'll get a message telling you that there's been an error with your Twitter status update. The Tweet you were going to send will be saved in your post meta fields, so you can grab it and post it manually if you wish.
 
-= What if Cli.gs or Bit.ly aren't available when I make my post? =
+= What if my URL shortener isn't available when I make my post? =
 
-If your URL shortening service isn't available, your tweet will be sent using it's normal post permalink. You'll also get an error message letting you know that there was a problem contacting Cli.gs or Bit.ly.
+If your URL shortening service isn't available, your tweet will be sent using it's normal post permalink. You'll also get an error message letting you know that there was a problem contacting your URL shortener.
 
 = What if my server doesn't support the methods you use to contact these other sites? =
 

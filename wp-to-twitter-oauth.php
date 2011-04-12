@@ -98,19 +98,21 @@ function wtt_connect_oauth() {
 echo '<div class="ui-sortable meta-box-sortables">';
 echo '<div class="postbox">';
 echo '<div class="handlediv" title="Click to toggle"><br/></div>';
+$server_time = date_i18n( DATE_COOKIE  );
 
 	if ( !wtt_oauth_test() ) {
 		print('	
 			<h3>'.__('Connect to Twitter','wp-to-twitter').'</h3>
 			<div class="inside">
-			<br class="clear" />			
-			<p>'.__('The process to set up OAuth authentication for your web site is needlessly laborious. It is also confusing. However, this is the only method available from Twitter at this time. Note that you will not, at any time, enter you Twitter username or password into WP to Twitter; they are not used in OAuth authentication.', 'wp-to-twitter').'</p> 
+			<br class="clear" />	
+			<p>Your server time is <code>'.$server_time.'</code>. If this is wrong, your server will not be able to connect with Twitter. (<strong>Note:</strong> your server time may not match your current time, but it should be correct for it\'s own time zone.)</p>
+			<p>'.__('The process to set up OAuth authentication for your web site is needlessly laborious. It is also confusing. However, this is the only method available from Twitter. Note that you will not add your Twitter username or password to WP to Twitter; they are not used in OAuth authentication.', 'wp-to-twitter').'</p> 
 			<form action="" method="post">
 				<fieldset class="options">
 					<h4>'.__('1. Register this site as an application on ', 'wp-to-twitter') . '<a href="http://dev.twitter.com/apps/new" target="_blank">'.__('Twitter\'s application registration page','wp-to-twitter').'</a></h4>
 						<ul>
 						<li>'.__('If you\'re not currently logged in, use the Twitter username and password which you want associated with this site' , 'wp-to-twitter').'</li>
-						<li>'.__('Your Application\'s Name will be what shows up after "via" in your twitter stream; previously, "WP to Twitter." Your application name cannot include the word "Twitter." I suggest using the name of your web site.' , 'wp-to-twitter').'</li>
+						<li>'.__('Your Application\'s Name will be what shows up after "via" in your twitter stream. Your application name cannot include the word "Twitter." Use the name of your web site.' , 'wp-to-twitter').'</li>
 						<li>'.__('Your Application Description can be whatever you want.','wp-to-twitter').'</li>
 						<li>'.__('Application Type should be set on ' , 'wp-to-twitter').'<strong>'.__('Browser' , 'wp-to-twitter').'</strong></li>
 						<li>'.__('The Callback URL should be ' , 'wp-to-twitter').'<strong>'.  get_bloginfo( 'url' ) .'</strong></li>
@@ -175,4 +177,3 @@ echo '<div class="handlediv" title="Click to toggle"><br/></div>';
 echo "</div>";
 echo "</div>";
 }
-?>

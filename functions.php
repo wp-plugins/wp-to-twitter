@@ -45,25 +45,6 @@ function jd_fetch_url( $url, $method='GET', $body='', $headers='', $return='body
 	}
 }
 
-if ( !class_exists('SERVICES_JSON') ) {
-	if ( version_compare( $wp_version,"2.9","<" )) {
-	require_once( WP_PLUGIN_DIR.'/wp-to-twitter/json.class.php' );
-	} else {
-	require_once( ABSPATH.WPINC.'/class-json.php' );
-	}
-}
-if (!function_exists('json_encode')) {
-	function json_encode($data) {
-		$json = new Services_JSON();
-		return( $json->encode($data) );
-	}
-}
-if (!function_exists('json_decode')) {
-	function json_decode($data) {
-		$json = new Services_JSON( SERVICES_JSON_LOOSE_TYPE );
-		return( $json->decode($data) );
-	}
-}
 if (!function_exists('mb_strlen')) {
 	function mb_strlen($data) {
 		return strlen($data);
@@ -136,7 +117,7 @@ $options = array(
 	'app_consumer_secret'=>get_option('app_consumer_secret'),
 	'bitlylogin'=>get_option( 'bitlylogin' ),
 	'bitlyapi'=>$bitlyapi,
-	'cligsapi'=>get_option( 'cligsapi' ),
+	'suprapi'=>get_option( 'suprapi' ),
 	'disable_oauth_notice'=>get_option('disable_oauth_notice'),
 	'disable_url_failure'=>get_option('disable_url_failure' ),
 	'disable_twitter_failure'=>get_option('disable_twitter_failure' ),
@@ -185,7 +166,7 @@ $options = array(
 	'wp_twitter_failure'=>get_option( 'wp_twitter_failure' ),
 	'wp_url_failure' =>get_option( 'wp_url_failure' ),
 	'wp_bitly_error'=>get_option( 'wp_bitly_error' ),
-	'wp_cligs_error'=>get_option( 'wp_cligs_error' ),
+	'wp_supr_error'=>get_option( 'wp_supr_error' ),
 	'wp_to_twitter_version'=>get_option( 'wp_to_twitter_version'),
 	'wtt_twitter_username'=>get_option( 'wtt_twitter_username' ),
 	'wtt_user_permissions'=>get_option('wtt_user_permissions'),
@@ -230,4 +211,3 @@ function wtt_option_selected($field,$value,$type='checkbox') {
 	}
 	return $output;
 }
-?>

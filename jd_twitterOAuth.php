@@ -246,4 +246,3 @@ class jd_TwitterOAuth {
 }
 
 } // class_exists check
-?>
