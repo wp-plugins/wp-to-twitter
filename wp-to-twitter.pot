@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the WP to Twitter package.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP to Twitter 2.2.8\n"
+"Project-Id-Version: WP to Twitter 2.2.9\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/wp-to-twitter\n"
-"POT-Creation-Date: 2011-03-03 19:09:58+00:00\n"
+"POT-Creation-Date: 2011-04-12 22:29:25+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,133 +12,261 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: wp-to-twitter-oauth.php:104 wp-to-twitter-oauth.php:142
+#: functions.php:193
+msgid ""
+"[<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>Hide</"
+"a>] If you're experiencing trouble, please copy these settings into any "
+"request for support."
+msgstr ""
+
+#: wp-to-twitter-oauth.php:105 wp-to-twitter-oauth.php:144
 msgid "Connect to Twitter"
 msgstr ""
 
-#: wp-to-twitter-oauth.php:107
+#: wp-to-twitter-oauth.php:109
 msgid ""
 "The process to set up OAuth authentication for your web site is needlessly "
 "laborious. It is also confusing. However, this is the only method available "
-"from Twitter at this time. Note that you will not, at any time, enter you "
-"Twitter username or password into WP to Twitter; they are not used in OAuth "
-"authentication."
-msgstr ""
-
-#: wp-to-twitter-oauth.php:110
-msgid "1. Register this site as an application on "
-msgstr ""
-
-#: wp-to-twitter-oauth.php:110
-msgid "Twitter's application registration page"
+"from Twitter. Note that you will not add your Twitter username or password "
+"to WP to Twitter; they are not used in OAuth authentication."
 msgstr ""
 
 #: wp-to-twitter-oauth.php:112
+msgid "1. Register this site as an application on "
+msgstr ""
+
+#: wp-to-twitter-oauth.php:112
+msgid "Twitter's application registration page"
+msgstr ""
+
+#: wp-to-twitter-oauth.php:114
 msgid ""
 "If you're not currently logged in, use the Twitter username and password "
 "which you want associated with this site"
 msgstr ""
 
-#: wp-to-twitter-oauth.php:113
+#: wp-to-twitter-oauth.php:115
 msgid ""
 "Your Application's Name will be what shows up after \"via\" in your twitter "
-"stream; previously, \"WP to Twitter.\" Your application name cannot include "
-"the word \"Twitter.\" I suggest using the name of your web site."
-msgstr ""
-
-#: wp-to-twitter-oauth.php:114
-msgid "Your Application Description can be whatever you want."
-msgstr ""
-
-#: wp-to-twitter-oauth.php:115
-msgid "Application Type should be set on "
-msgstr ""
-
-#: wp-to-twitter-oauth.php:115
-msgid "Browser"
+"stream. Your application name cannot include the word \"Twitter.\" Use the "
+"name of your web site."
 msgstr ""
 
 #: wp-to-twitter-oauth.php:116
+msgid "Your Application Description can be whatever you want."
+msgstr ""
+
+#: wp-to-twitter-oauth.php:117
+msgid "Application Type should be set on "
+msgstr ""
+
+#: wp-to-twitter-oauth.php:117
+msgid "Browser"
+msgstr ""
+
+#: wp-to-twitter-oauth.php:118
 msgid "The Callback URL should be "
 msgstr ""
 
-#: wp-to-twitter-oauth.php:117
+#: wp-to-twitter-oauth.php:119
 msgid "Default Access type must be set to "
 msgstr ""
 
-#: wp-to-twitter-oauth.php:117
+#: wp-to-twitter-oauth.php:119
 msgid "Read &amp; Write"
 msgstr ""
 
-#: wp-to-twitter-oauth.php:117
+#: wp-to-twitter-oauth.php:119
 msgid "(this is NOT the default)"
 msgstr ""
 
-#: wp-to-twitter-oauth.php:119
+#: wp-to-twitter-oauth.php:121
 msgid ""
 "Once you have registered your site as an application, you will be provided "
 "with a consumer key and a consumer secret."
 msgstr ""
 
-#: wp-to-twitter-oauth.php:120
+#: wp-to-twitter-oauth.php:122
 msgid ""
 "2. Copy and paste your consumer key and consumer secret into the fields below"
 msgstr ""
 
-#: wp-to-twitter-oauth.php:123
+#: wp-to-twitter-oauth.php:125
 msgid "Twitter Consumer Key"
 msgstr ""
 
-#: wp-to-twitter-oauth.php:127
+#: wp-to-twitter-oauth.php:129
 msgid "Twitter Consumer Secret"
 msgstr ""
 
-#: wp-to-twitter-oauth.php:130
+#: wp-to-twitter-oauth.php:132
 msgid ""
 "3. Copy and paste your Access Token and Access Token Secret into the fields "
 "below"
 msgstr ""
 
-#: wp-to-twitter-oauth.php:131
+#: wp-to-twitter-oauth.php:133
 msgid ""
 "On the right hand side of your new application page at Twitter, click on 'My "
 "Access Token'."
 msgstr ""
 
-#: wp-to-twitter-oauth.php:133
+#: wp-to-twitter-oauth.php:135
 msgid "Access Token"
 msgstr ""
 
-#: wp-to-twitter-oauth.php:137
+#: wp-to-twitter-oauth.php:139
 msgid "Access Token Secret"
 msgstr ""
 
-#: wp-to-twitter-oauth.php:152
+#: wp-to-twitter-oauth.php:154
 msgid "Disconnect from Twitter"
 msgstr ""
 
-#: wp-to-twitter-oauth.php:159
+#: wp-to-twitter-oauth.php:161
 msgid "Twitter Username "
 msgstr ""
 
-#: wp-to-twitter-oauth.php:160
+#: wp-to-twitter-oauth.php:162
 msgid "Consumer Key "
 msgstr ""
 
-#: wp-to-twitter-oauth.php:161
+#: wp-to-twitter-oauth.php:163
 msgid "Consumer Secret "
 msgstr ""
 
-#: wp-to-twitter-oauth.php:162
+#: wp-to-twitter-oauth.php:164
 msgid "Access Token "
 msgstr ""
 
-#: wp-to-twitter-oauth.php:163
+#: wp-to-twitter-oauth.php:165
 msgid "Access Token Secret "
 msgstr ""
 
-#: wp-to-twitter-oauth.php:166
+#: wp-to-twitter-oauth.php:168
 msgid "Disconnect Your WordPress and Twitter Account"
+msgstr ""
+
+#: wp-to-twitter.php:49
+msgid ""
+"WP to Twitter requires PHP version 5 or above with cURL support. Please "
+"upgrade PHP or install cURL to run WP to Twitter."
+msgstr ""
+
+#: wp-to-twitter.php:70
+msgid ""
+"WP to Twitter requires WordPress 2.9.2 or a more recent version. <a href="
+"\"http://codex.wordpress.org/Upgrading_WordPress\">Please update your "
+"WordPress version!</a>"
+msgstr ""
+
+#: wp-to-twitter.php:84
+msgid ""
+"Twitter now requires authentication by OAuth. You will need you to update "
+"your <a href=\"%s\">settings</a> in order to continue to use WP to Twitter."
+msgstr ""
+
+#: wp-to-twitter.php:150
+msgid "200 OK: Success!"
+msgstr ""
+
+#: wp-to-twitter.php:154
+msgid ""
+"400 Bad Request: The request was invalid. This is the status code returned "
+"during rate limiting."
+msgstr ""
+
+#: wp-to-twitter.php:158
+msgid "401 Unauthorized: Authentication credentials were missing or incorrect."
+msgstr ""
+
+#: wp-to-twitter.php:162
+msgid ""
+"403 Forbidden: The request is understood, but it has been refused. This code "
+"is used when requests are understood, but are denied by Twitter. Reasons "
+"include exceeding the 140 character limit or the API update limit."
+msgstr ""
+
+#: wp-to-twitter.php:166
+msgid "500 Internal Server Error: Something is broken at Twitter."
+msgstr ""
+
+#: wp-to-twitter.php:170
+msgid ""
+"503 Service Unavailable: The Twitter servers are up, but overloaded with "
+"requests Please try again later."
+msgstr ""
+
+#: wp-to-twitter.php:174
+msgid "502 Bad Gateway: Twitter is down or being upgraded."
+msgstr ""
+
+#. #-#-#-#-#  plugin.pot (WP to Twitter 2.2.9)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: wp-to-twitter.php:803
+msgid "WP to Twitter"
+msgstr ""
+
+#: wp-to-twitter.php:865
+msgid "Custom Twitter Post"
+msgstr ""
+
+#: wp-to-twitter.php:874 wp-to-twitter-manager.php:360
+msgid "Make a Donation"
+msgstr ""
+
+#: wp-to-twitter.php:874 wp-to-twitter-manager.php:363
+msgid "Get Support"
+msgstr ""
+
+#: wp-to-twitter.php:877
+msgid "Don't Tweet this post."
+msgstr ""
+
+#: wp-to-twitter.php:887
+msgid "This URL is direct and has not been shortened: "
+msgstr ""
+
+#: wp-to-twitter.php:946
+msgid "WP to Twitter User Settings"
+msgstr ""
+
+#: wp-to-twitter.php:950
+msgid "Use My Twitter Username"
+msgstr ""
+
+#: wp-to-twitter.php:951
+msgid "Tweet my posts with an @ reference to my username."
+msgstr ""
+
+#: wp-to-twitter.php:952
+msgid ""
+"Tweet my posts with an @ reference to both my username and to the main site "
+"username."
+msgstr ""
+
+#: wp-to-twitter.php:956
+msgid "Your Twitter Username"
+msgstr ""
+
+#: wp-to-twitter.php:957
+msgid "Enter your own Twitter username."
+msgstr ""
+
+#: wp-to-twitter.php:996
+msgid "Check the categories you want to tweet:"
+msgstr ""
+
+#: wp-to-twitter.php:1013
+msgid "Set Categories"
+msgstr ""
+
+#: wp-to-twitter.php:1037
+msgid "<p>Couldn't locate the settings page.</p>"
+msgstr ""
+
+#: wp-to-twitter.php:1042
+msgid "Settings"
 msgstr ""
 
 #: wp-to-twitter-manager.php:76
@@ -256,156 +384,146 @@ msgstr ""
 msgid "YOURLS will not use Post ID for the short URL slug."
 msgstr ""
 
-#: wp-to-twitter-manager.php:248
-msgid "Cligs API Key Updated"
-msgstr ""
-
-#: wp-to-twitter-manager.php:251
-msgid ""
-"Cli.gs API Key deleted. Cli.gs created by WP to Twitter will no longer be "
-"associated with your account. "
+#: wp-to-twitter-manager.php:249
+msgid "Su.pr API Key and Username Updated"
 msgstr ""
 
 #: wp-to-twitter-manager.php:253
 msgid ""
-"Cli.gs API Key not added - <a href='http://cli.gs/user/api/'>get one here</"
-"a>! "
+"Su.pr API Key and username deleted. Su.pr URLs created by WP to Twitter will "
+"no longer be associated with your account. "
 msgstr ""
 
-#: wp-to-twitter-manager.php:259
+#: wp-to-twitter-manager.php:255
+msgid "Su.pr API Key not added - <a href='http://su.pr/'>get one here</a>! "
+msgstr ""
+
+#: wp-to-twitter-manager.php:261
 msgid "Bit.ly API Key Updated."
 msgstr ""
 
-#: wp-to-twitter-manager.php:262
+#: wp-to-twitter-manager.php:264
 msgid ""
 "Bit.ly API Key deleted. You cannot use the Bit.ly API without an API key. "
 msgstr ""
 
-#: wp-to-twitter-manager.php:264
+#: wp-to-twitter-manager.php:266
 msgid ""
 "Bit.ly API Key not added - <a href='http://bit.ly/account/'>get one here</"
 "a>! An API key is required to use the Bit.ly URL shortening service."
 msgstr ""
 
-#: wp-to-twitter-manager.php:268
+#: wp-to-twitter-manager.php:270
 msgid " Bit.ly User Login Updated."
 msgstr ""
 
-#: wp-to-twitter-manager.php:271
+#: wp-to-twitter-manager.php:273
 msgid ""
 "Bit.ly User Login deleted. You cannot use the Bit.ly API without providing "
 "your username. "
 msgstr ""
 
-#: wp-to-twitter-manager.php:273
+#: wp-to-twitter-manager.php:275
 msgid ""
 "Bit.ly Login not added - <a href='http://bit.ly/account/'>get one here</a>! "
 msgstr ""
 
-#: wp-to-twitter-manager.php:302
+#: wp-to-twitter-manager.php:304
 msgid "No error information is available for your shortener."
 msgstr ""
 
-#: wp-to-twitter-manager.php:304
+#: wp-to-twitter-manager.php:306
 msgid ""
 "<li class=\"error\"><strong>WP to Twitter was unable to contact your "
 "selected URL shortening service.</strong></li>"
 msgstr ""
 
-#: wp-to-twitter-manager.php:307
+#: wp-to-twitter-manager.php:309
 msgid ""
 "<li><strong>WP to Twitter successfully contacted your selected URL "
 "shortening service.</strong>  The following link should point to your blog "
 "homepage:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:316
+#: wp-to-twitter-manager.php:318
 msgid ""
 "<li><strong>WP to Twitter successfully submitted a status update to Twitter."
 "</strong></li>"
 msgstr ""
 
-#: wp-to-twitter-manager.php:318
+#: wp-to-twitter-manager.php:321
 msgid ""
 "<li class=\"error\"><strong>WP to Twitter failed to submit an update to "
 "Twitter.</strong></li>"
 msgstr ""
 
-#: wp-to-twitter-manager.php:321
+#: wp-to-twitter-manager.php:325
 msgid "You have not connected WordPress to Twitter."
 msgstr ""
 
-#: wp-to-twitter-manager.php:325
+#: wp-to-twitter-manager.php:329
 msgid ""
 "<li class=\"error\"><strong>Your server does not appear to support the "
 "required methods for WP to Twitter to function.</strong> You can try it "
 "anyway - these tests aren't perfect.</li>"
 msgstr ""
 
-#: wp-to-twitter-manager.php:329
+#: wp-to-twitter-manager.php:333
 msgid ""
 "<li><strong>Your server should run WP to Twitter successfully.</strong></li>"
 msgstr ""
 
-#: wp-to-twitter-manager.php:346
+#: wp-to-twitter-manager.php:350
 msgid "WP to Twitter Options"
 msgstr ""
 
-#: wp-to-twitter-manager.php:356
+#: wp-to-twitter-manager.php:360
 msgid "Pledge to new features"
 msgstr ""
 
-#: wp-to-twitter-manager.php:356 wp-to-twitter.php:848
-msgid "Make a Donation"
-msgstr ""
-
-#: wp-to-twitter-manager.php:359
+#: wp-to-twitter-manager.php:363
 msgid "View Settings"
 msgstr ""
 
-#: wp-to-twitter-manager.php:359 wp-to-twitter.php:848
-msgid "Get Support"
-msgstr ""
-
-#: wp-to-twitter-manager.php:374
+#: wp-to-twitter-manager.php:378
 msgid "Shortcodes available in post update templates:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:376
+#: wp-to-twitter-manager.php:380
 msgid "<code>#title#</code>: the title of your blog post"
 msgstr ""
 
-#: wp-to-twitter-manager.php:377
+#: wp-to-twitter-manager.php:381
 msgid "<code>#blog#</code>: the title of your blog"
 msgstr ""
 
-#: wp-to-twitter-manager.php:378
+#: wp-to-twitter-manager.php:382
 msgid "<code>#post#</code>: a short excerpt of the post content"
 msgstr ""
 
-#: wp-to-twitter-manager.php:379
+#: wp-to-twitter-manager.php:383
 msgid "<code>#category#</code>: the first selected category for the post"
 msgstr ""
 
-#: wp-to-twitter-manager.php:380
+#: wp-to-twitter-manager.php:384
 msgid "<code>#date#</code>: the post date"
 msgstr ""
 
-#: wp-to-twitter-manager.php:381
+#: wp-to-twitter-manager.php:385
 msgid "<code>#url#</code>: the post URL"
 msgstr ""
 
-#: wp-to-twitter-manager.php:382
+#: wp-to-twitter-manager.php:386
 msgid "<code>#author#</code>: the post author"
 msgstr ""
 
-#: wp-to-twitter-manager.php:383
+#: wp-to-twitter-manager.php:387
 msgid ""
 "<code>#account#</code>: the twitter @reference for the account (or the "
 "author, if author settings are enabled and set.)"
 msgstr ""
 
-#: wp-to-twitter-manager.php:385
+#: wp-to-twitter-manager.php:389
 msgid ""
 "You can also create custom shortcodes to access WordPress custom fields. Use "
 "doubled square brackets surrounding the name of your custom field to add the "
@@ -413,331 +531,336 @@ msgid ""
 "[[custom_field]]</code></p>"
 msgstr ""
 
-#: wp-to-twitter-manager.php:390
+#: wp-to-twitter-manager.php:394
 msgid ""
 "<p>One or more of your last posts has failed to send it's status update to "
 "Twitter. Your Tweet has been saved in your post custom fields, and you can "
 "re-Tweet it at your leisure.</p>"
 msgstr ""
 
-#: wp-to-twitter-manager.php:394
+#: wp-to-twitter-manager.php:398
 msgid ""
 "<p>The query to the URL shortener API failed, and your URL was not shrunk. "
 "The full post URL was attached to your Tweet. Check with your URL shortening "
-"provider to see if there are any known issues. [<a href=\"http://blog.cli.gs"
-"\">Cli.gs Blog</a>] [<a href=\"http://blog.bit.ly\">Bit.ly Blog</a>]</p>"
+"provider to see if there are any known issues. [<a href=\"http://www."
+"stumbleupon.com/help/how-to-use-supr/\">Su.pr Help</a>] [<a href=\"http://"
+"blog.bit.ly\">Bit.ly Blog</a>]</p>"
 msgstr ""
 
-#: wp-to-twitter-manager.php:401
+#: wp-to-twitter-manager.php:405
 msgid "Clear 'WP to Twitter' Error Messages"
 msgstr ""
 
-#: wp-to-twitter-manager.php:414
+#: wp-to-twitter-manager.php:418
 msgid "Basic Settings"
 msgstr ""
 
-#: wp-to-twitter-manager.php:420
+#: wp-to-twitter-manager.php:424
 msgid "Tweet Templates"
 msgstr ""
 
-#: wp-to-twitter-manager.php:423
+#: wp-to-twitter-manager.php:427
 msgid "Update when a post is published"
 msgstr ""
 
-#: wp-to-twitter-manager.php:423
+#: wp-to-twitter-manager.php:427
 msgid "Text for new post updates:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:429 wp-to-twitter-manager.php:432
+#: wp-to-twitter-manager.php:433 wp-to-twitter-manager.php:436
 msgid "Update when a post is edited"
 msgstr ""
 
-#: wp-to-twitter-manager.php:429 wp-to-twitter-manager.php:432
+#: wp-to-twitter-manager.php:433 wp-to-twitter-manager.php:436
 msgid "Text for editing updates:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:433
+#: wp-to-twitter-manager.php:437
 msgid ""
 "You can not disable updates on edits when using Postie or similar plugins."
 msgstr ""
 
-#: wp-to-twitter-manager.php:437
+#: wp-to-twitter-manager.php:441
 msgid "Update Twitter when new Wordpress Pages are published"
 msgstr ""
 
-#: wp-to-twitter-manager.php:437
+#: wp-to-twitter-manager.php:441
 msgid "Text for new page updates:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:441
+#: wp-to-twitter-manager.php:445
 msgid "Update Twitter when WordPress Pages are edited"
 msgstr ""
 
-#: wp-to-twitter-manager.php:441
+#: wp-to-twitter-manager.php:445
 msgid "Text for page edit updates:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:445
+#: wp-to-twitter-manager.php:449
 msgid "Update Twitter when you post a Blogroll link"
 msgstr ""
 
-#: wp-to-twitter-manager.php:446
+#: wp-to-twitter-manager.php:450
 msgid "Text for new link updates:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:446
+#: wp-to-twitter-manager.php:450
 msgid ""
 "Available shortcodes: <code>#url#</code>, <code>#title#</code>, and "
 "<code>#description#</code>."
 msgstr ""
 
-#: wp-to-twitter-manager.php:450
+#: wp-to-twitter-manager.php:454
 msgid "Choose your short URL service (account settings below)"
 msgstr ""
 
-#: wp-to-twitter-manager.php:453
-msgid "Use Cli.gs for my URL shortener."
-msgstr ""
-
-#: wp-to-twitter-manager.php:454
-msgid "Use Bit.ly for my URL shortener."
-msgstr ""
-
-#: wp-to-twitter-manager.php:455
-msgid "YOURLS (installed on this server)"
-msgstr ""
-
-#: wp-to-twitter-manager.php:456
-msgid "YOURLS (installed on a remote server)"
-msgstr ""
-
 #: wp-to-twitter-manager.php:457
-msgid "Use WordPress as a URL shortener."
-msgstr ""
-
-#: wp-to-twitter-manager.php:458
 msgid "Don't shorten URLs."
 msgstr ""
 
+#: wp-to-twitter-manager.php:458
+msgid "Use Su.pr for my URL shortener."
+msgstr ""
+
+#: wp-to-twitter-manager.php:459
+msgid "Use Bit.ly for my URL shortener."
+msgstr ""
+
 #: wp-to-twitter-manager.php:460
+msgid "YOURLS (installed on this server)"
+msgstr ""
+
+#: wp-to-twitter-manager.php:461
+msgid "YOURLS (installed on a remote server)"
+msgstr ""
+
+#: wp-to-twitter-manager.php:462
+msgid "Use WordPress as a URL shortener."
+msgstr ""
+
+#: wp-to-twitter-manager.php:464
 msgid ""
 "Using WordPress as a URL shortener will send URLs to Twitter in the default "
 "URL format for WordPress: <code>http://domain.com/wpdir/?p=123</code>. "
 "Google Analytics is not available when using WordPress shortened URLs."
 msgstr ""
 
-#: wp-to-twitter-manager.php:466
+#: wp-to-twitter-manager.php:470
 msgid "Save WP->Twitter Options"
 msgstr ""
 
-#: wp-to-twitter-manager.php:475
+#: wp-to-twitter-manager.php:479
 msgid ""
 "<abbr title=\"Uniform Resource Locator\">URL</abbr> Shortener Account "
 "Settings"
 msgstr ""
 
-#: wp-to-twitter-manager.php:479
-msgid "Your Cli.gs account details"
+#: wp-to-twitter-manager.php:483
+msgid "Your Su.pr account details"
 msgstr ""
 
-#: wp-to-twitter-manager.php:484
+#: wp-to-twitter-manager.php:488
+msgid "Your Su.pr Username:"
+msgstr ""
+
+#: wp-to-twitter-manager.php:492
 msgid ""
-"Your Cli.gs <abbr title='application programming interface'>API</abbr> Key:"
+"Your Su.pr <abbr title='application programming interface'>API</abbr> Key:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:490
+#: wp-to-twitter-manager.php:498
 msgid ""
-"Don't have a Cli.gs account or Cligs API key? <a href='http://cli.gs/user/"
-"api/'>Get one free here</a>!<br />You'll need an API key in order to "
-"associate the Cligs you create with your Cligs account."
+"Don't have a Su.pr account or API key? <a href='http://su.pr/'>Get one here</"
+"a>!<br />You'll need an API key in order to associate the URLs you create "
+"with your Su.pr account."
 msgstr ""
 
-#: wp-to-twitter-manager.php:496
+#: wp-to-twitter-manager.php:504
 msgid "Your Bit.ly account details"
 msgstr ""
 
-#: wp-to-twitter-manager.php:501
+#: wp-to-twitter-manager.php:509
 msgid "Your Bit.ly username:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:505
+#: wp-to-twitter-manager.php:513
 msgid ""
 "Your Bit.ly <abbr title='application programming interface'>API</abbr> Key:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:512
+#: wp-to-twitter-manager.php:520
 msgid "Save Bit.ly API Key"
 msgstr ""
 
-#: wp-to-twitter-manager.php:512
+#: wp-to-twitter-manager.php:520
 msgid "Clear Bit.ly API Key"
 msgstr ""
 
-#: wp-to-twitter-manager.php:512
+#: wp-to-twitter-manager.php:520
 msgid ""
 "A Bit.ly API key and username is required to shorten URLs via the Bit.ly API "
 "and WP to Twitter."
 msgstr ""
 
-#: wp-to-twitter-manager.php:517
+#: wp-to-twitter-manager.php:525
 msgid "Your YOURLS account details"
 msgstr ""
 
-#: wp-to-twitter-manager.php:521
+#: wp-to-twitter-manager.php:529
 msgid "Path to your YOURLS config file (Local installations)"
 msgstr ""
 
-#: wp-to-twitter-manager.php:522 wp-to-twitter-manager.php:526
+#: wp-to-twitter-manager.php:530 wp-to-twitter-manager.php:534
 msgid "Example:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:525
+#: wp-to-twitter-manager.php:533
 msgid "URI to the YOURLS API (Remote installations)"
 msgstr ""
 
-#: wp-to-twitter-manager.php:529
+#: wp-to-twitter-manager.php:537
 msgid "Your YOURLS username:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:533
+#: wp-to-twitter-manager.php:541
 msgid "Your YOURLS password:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:533
+#: wp-to-twitter-manager.php:541
 msgid "<em>Saved</em>"
 msgstr ""
 
-#: wp-to-twitter-manager.php:537
+#: wp-to-twitter-manager.php:545
 msgid "Use Post ID for YOURLS url slug."
 msgstr ""
 
-#: wp-to-twitter-manager.php:542
+#: wp-to-twitter-manager.php:550
 msgid "Save YOURLS Account Info"
 msgstr ""
 
-#: wp-to-twitter-manager.php:542
+#: wp-to-twitter-manager.php:550
 msgid "Clear YOURLS password"
 msgstr ""
 
-#: wp-to-twitter-manager.php:542
+#: wp-to-twitter-manager.php:550
 msgid ""
 "A YOURLS password and username is required to shorten URLs via the remote "
 "YOURLS API and WP to Twitter."
 msgstr ""
 
-#: wp-to-twitter-manager.php:554
+#: wp-to-twitter-manager.php:562
 msgid "Advanced Settings"
 msgstr ""
 
-#: wp-to-twitter-manager.php:561
+#: wp-to-twitter-manager.php:569
 msgid "Advanced Tweet settings"
 msgstr ""
 
-#: wp-to-twitter-manager.php:563
+#: wp-to-twitter-manager.php:571
 msgid "Add tags as hashtags on Tweets"
 msgstr ""
 
-#: wp-to-twitter-manager.php:563
+#: wp-to-twitter-manager.php:571
 msgid "Strip nonalphanumeric characters"
 msgstr ""
 
-#: wp-to-twitter-manager.php:564
+#: wp-to-twitter-manager.php:572
 msgid "Spaces replaced with:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:566
+#: wp-to-twitter-manager.php:574
 msgid ""
 "Default replacement is an underscore (<code>_</code>). Use <code>[ ]</code> "
 "to remove spaces entirely."
 msgstr ""
 
-#: wp-to-twitter-manager.php:569
+#: wp-to-twitter-manager.php:577
 msgid "Maximum number of tags to include:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:570
+#: wp-to-twitter-manager.php:578
 msgid "Maximum length in characters for included tags:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:571
+#: wp-to-twitter-manager.php:579
 msgid ""
 "These options allow you to restrict the length and number of WordPress tags "
 "sent to Twitter as hashtags. Set to <code>0</code> or leave blank to allow "
 "any and all tags."
 msgstr ""
 
-#: wp-to-twitter-manager.php:574
+#: wp-to-twitter-manager.php:582
 msgid "Length of post excerpt (in characters):"
 msgstr ""
 
-#: wp-to-twitter-manager.php:574
+#: wp-to-twitter-manager.php:582
 msgid ""
 "By default, extracted from the post itself. If you use the 'Excerpt' field, "
 "that will be used instead."
 msgstr ""
 
-#: wp-to-twitter-manager.php:577
+#: wp-to-twitter-manager.php:585
 msgid "WP to Twitter Date Formatting:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:578
+#: wp-to-twitter-manager.php:586
 msgid ""
 "Default is from your general settings. <a href='http://codex.wordpress.org/"
 "Formatting_Date_and_Time'>Date Formatting Documentation</a>."
 msgstr ""
 
-#: wp-to-twitter-manager.php:582
+#: wp-to-twitter-manager.php:590
 msgid "Custom text before all Tweets:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:583
+#: wp-to-twitter-manager.php:591
 msgid "Custom text after all Tweets:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:586
+#: wp-to-twitter-manager.php:594
 msgid "Custom field for an alternate URL to be shortened and Tweeted:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:587
+#: wp-to-twitter-manager.php:595
 msgid ""
 "You can use a custom field to send an alternate URL for your post. The value "
 "is the name of a custom field containing your external URL."
 msgstr ""
 
-#: wp-to-twitter-manager.php:591
+#: wp-to-twitter-manager.php:599
 msgid "Special Cases when WordPress should send a Tweet"
 msgstr ""
 
-#: wp-to-twitter-manager.php:594
+#: wp-to-twitter-manager.php:602
 msgid "Do not post status updates by default"
 msgstr ""
 
-#: wp-to-twitter-manager.php:595
+#: wp-to-twitter-manager.php:603
 msgid ""
 "By default, all posts meeting other requirements will be posted to Twitter. "
 "Check this to change your setting."
 msgstr ""
 
-#: wp-to-twitter-manager.php:599
+#: wp-to-twitter-manager.php:607
 msgid ""
 "Send Twitter Updates on remote publication (Post by Email or XMLRPC Client)"
 msgstr ""
 
-#: wp-to-twitter-manager.php:601
+#: wp-to-twitter-manager.php:609
 msgid ""
 "I'm using a plugin to post by email, such as Postie. Only check this if your "
 "updates do not work."
 msgstr ""
 
-#: wp-to-twitter-manager.php:605
+#: wp-to-twitter-manager.php:613
 msgid "Update Twitter when a post is published using QuickPress"
 msgstr ""
 
-#: wp-to-twitter-manager.php:609
+#: wp-to-twitter-manager.php:617
 msgid "Google Analytics Settings"
 msgstr ""
 
-#: wp-to-twitter-manager.php:610
+#: wp-to-twitter-manager.php:618
 msgid ""
 "You can track the response from Twitter using Google Analytics by defining a "
 "campaign identifier here. You can either define a static identifier or a "
@@ -747,47 +870,47 @@ msgid ""
 "additional variable."
 msgstr ""
 
-#: wp-to-twitter-manager.php:614
+#: wp-to-twitter-manager.php:622
 msgid "Use a Static Identifier with WP-to-Twitter"
 msgstr ""
 
-#: wp-to-twitter-manager.php:615
+#: wp-to-twitter-manager.php:623
 msgid "Static Campaign identifier for Google Analytics:"
 msgstr ""
 
-#: wp-to-twitter-manager.php:619
+#: wp-to-twitter-manager.php:627
 msgid "Use a dynamic identifier with Google Analytics and WP-to-Twitter"
 msgstr ""
 
-#: wp-to-twitter-manager.php:620
+#: wp-to-twitter-manager.php:628
 msgid "What dynamic identifier would you like to use?"
 msgstr ""
 
-#: wp-to-twitter-manager.php:622
+#: wp-to-twitter-manager.php:630
 msgid "Category"
 msgstr ""
 
-#: wp-to-twitter-manager.php:623
+#: wp-to-twitter-manager.php:631
 msgid "Post ID"
 msgstr ""
 
-#: wp-to-twitter-manager.php:624
+#: wp-to-twitter-manager.php:632
 msgid "Post Title"
 msgstr ""
 
-#: wp-to-twitter-manager.php:625 wp-to-twitter-manager.php:639
+#: wp-to-twitter-manager.php:633 wp-to-twitter-manager.php:647
 msgid "Author"
 msgstr ""
 
-#: wp-to-twitter-manager.php:630
+#: wp-to-twitter-manager.php:638
 msgid "Individual Authors"
 msgstr ""
 
-#: wp-to-twitter-manager.php:633
+#: wp-to-twitter-manager.php:641
 msgid "Authors have individual Twitter accounts"
 msgstr ""
 
-#: wp-to-twitter-manager.php:633
+#: wp-to-twitter-manager.php:641
 msgid ""
 "Authors can set their username in their user profile. As of version 2.2.0, "
 "this feature no longer allows authors to post to their own Twitter accounts. "
@@ -796,201 +919,74 @@ msgid ""
 "user accounts are not enabled.)"
 msgstr ""
 
-#: wp-to-twitter-manager.php:636
+#: wp-to-twitter-manager.php:644
 msgid "Choose the lowest user group that can add their Twitter information"
 msgstr ""
 
-#: wp-to-twitter-manager.php:637
+#: wp-to-twitter-manager.php:645
 msgid "Subscriber"
 msgstr ""
 
-#: wp-to-twitter-manager.php:638
+#: wp-to-twitter-manager.php:646
 msgid "Contributor"
 msgstr ""
 
-#: wp-to-twitter-manager.php:640
+#: wp-to-twitter-manager.php:648
 msgid "Editor"
 msgstr ""
 
-#: wp-to-twitter-manager.php:641
+#: wp-to-twitter-manager.php:649
 msgid "Administrator"
 msgstr ""
 
-#: wp-to-twitter-manager.php:646
+#: wp-to-twitter-manager.php:654
 msgid "Disable Error Messages"
 msgstr ""
 
-#: wp-to-twitter-manager.php:649
+#: wp-to-twitter-manager.php:657
 msgid "Disable global URL shortener error messages."
 msgstr ""
 
-#: wp-to-twitter-manager.php:653
+#: wp-to-twitter-manager.php:661
 msgid "Disable global Twitter API error messages."
 msgstr ""
 
-#: wp-to-twitter-manager.php:657
+#: wp-to-twitter-manager.php:665
 msgid "Disable notification to implement OAuth"
 msgstr ""
 
-#: wp-to-twitter-manager.php:661
+#: wp-to-twitter-manager.php:669
 msgid "Get Debugging Data for OAuth Connection"
 msgstr ""
 
-#: wp-to-twitter-manager.php:667
+#: wp-to-twitter-manager.php:675
 msgid "Save Advanced WP->Twitter Options"
 msgstr ""
 
-#: wp-to-twitter-manager.php:677
+#: wp-to-twitter-manager.php:685
 msgid "Limit Updating Categories"
 msgstr ""
 
-#: wp-to-twitter-manager.php:681
+#: wp-to-twitter-manager.php:689
 msgid ""
 "Select which blog categories will be Tweeted. Uncheck all categories to "
 "disable category limits."
 msgstr ""
 
-#: wp-to-twitter-manager.php:684
+#: wp-to-twitter-manager.php:692
 msgid "<em>Category limits are disabled.</em>"
 msgstr ""
 
-#: wp-to-twitter-manager.php:698
+#: wp-to-twitter-manager.php:706
 msgid "Check Support"
 msgstr ""
 
-#: wp-to-twitter-manager.php:698
+#: wp-to-twitter-manager.php:706
 msgid ""
 "Check whether your server supports <a href=\"http://www.joedolson.com/"
 "articles/wp-to-twitter/\">WP to Twitter's</a> queries to the Twitter and URL "
 "shortening APIs. This test will send a status update to Twitter and shorten "
 "a URL using your selected methods."
-msgstr ""
-
-#: functions.php:212
-msgid ""
-"[<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>Hide</"
-"a>] If you're experiencing trouble, please copy these settings into any "
-"request for support."
-msgstr ""
-
-#: wp-to-twitter.php:49
-msgid ""
-"WP to Twitter requires PHP version 5 or above. Please upgrade PHP to run WP "
-"to Twitter."
-msgstr ""
-
-#: wp-to-twitter.php:69
-msgid ""
-"WP to Twitter requires WordPress 2.9.2 or a more recent version. <a href="
-"\"http://codex.wordpress.org/Upgrading_WordPress\">Please update your "
-"WordPress version!</a>"
-msgstr ""
-
-#: wp-to-twitter.php:83
-msgid ""
-"Twitter now requires authentication by OAuth. You will need you to update "
-"your <a href=\"%s\">settings</a> in order to continue to use WP to Twitter."
-msgstr ""
-
-#: wp-to-twitter.php:141
-msgid "200 OK: Success!"
-msgstr ""
-
-#: wp-to-twitter.php:145
-msgid ""
-"400 Bad Request: The request was invalid. This is the status code returned "
-"during rate limiting."
-msgstr ""
-
-#: wp-to-twitter.php:149
-msgid "401 Unauthorized: Authentication credentials were missing or incorrect."
-msgstr ""
-
-#: wp-to-twitter.php:153
-msgid ""
-"403 Forbidden: The request is understood, but it has been refused. This code "
-"is used when requests are being denied due to status update character limits."
-msgstr ""
-
-#: wp-to-twitter.php:157
-msgid "500 Internal Server Error: Something is broken at Twitter."
-msgstr ""
-
-#: wp-to-twitter.php:161
-msgid ""
-"503 Service Unavailable: The Twitter servers are up, but overloaded with "
-"requests Please try again later."
-msgstr ""
-
-#: wp-to-twitter.php:165
-msgid "502 Bad Gateway: Twitter is down or being upgraded."
-msgstr ""
-
-#: wp-to-twitter.php:314
-msgid ""
-"PLEASE NOTE: This is an internal server error at Cli.gs. If you continue to "
-"receive this error, you should change URL shorteners. This cannot be fixed "
-"in WP to Twitter."
-msgstr ""
-
-#. #-#-#-#-#  plugin.pot (WP to Twitter 2.2.8)  #-#-#-#-#
-#. Plugin Name of the plugin/theme
-#: wp-to-twitter.php:777
-msgid "WP to Twitter"
-msgstr ""
-
-#: wp-to-twitter.php:839
-msgid "Custom Twitter Post"
-msgstr ""
-
-#: wp-to-twitter.php:851
-msgid "Don't Tweet this post."
-msgstr ""
-
-#: wp-to-twitter.php:861
-msgid "This URL is direct and has not been shortened: "
-msgstr ""
-
-#: wp-to-twitter.php:918
-msgid "WP to Twitter User Settings"
-msgstr ""
-
-#: wp-to-twitter.php:922
-msgid "Use My Twitter Username"
-msgstr ""
-
-#: wp-to-twitter.php:923
-msgid "Tweet my posts with an @ reference to my username."
-msgstr ""
-
-#: wp-to-twitter.php:924
-msgid ""
-"Tweet my posts with an @ reference to both my username and to the main site "
-"username."
-msgstr ""
-
-#: wp-to-twitter.php:928
-msgid "Your Twitter Username"
-msgstr ""
-
-#: wp-to-twitter.php:929
-msgid "Enter your own Twitter username."
-msgstr ""
-
-#: wp-to-twitter.php:966
-msgid "Check the categories you want to tweet:"
-msgstr ""
-
-#: wp-to-twitter.php:983
-msgid "Set Categories"
-msgstr ""
-
-#: wp-to-twitter.php:1007
-msgid "<p>Couldn't locate the settings page.</p>"
-msgstr ""
-
-#: wp-to-twitter.php:1012
-msgid "Settings"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
