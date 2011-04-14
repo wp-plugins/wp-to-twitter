@@ -10,9 +10,9 @@ Posts a Twitter update when you update your WordPress blog or post to your blogr
 
 == Description ==
 
-[Make a Pledge at Fundry](https://fundry.com/project/10-wp-to-twitter).
-
 The WP-to-Twitter plugin posts a Twitter status update from your WordPress blog using your selected URL shortening service to provide a link back to your post from Twitter. 
+
+[Make a Pledge at Fundry](https://fundry.com/project/10-wp-to-twitter).
 
 For both services you can provide your information to maintain a list of your shortened URLs with your URL shortening service for statistics and your own records.
 
@@ -39,6 +39,11 @@ Translations:
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.2.10 =
+
+* Bug in user settings retrieval; don't know how long it's been a problem.
+* Added updated Italian translation
 
 = 2.2.9 =
 

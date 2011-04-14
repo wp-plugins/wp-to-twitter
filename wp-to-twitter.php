@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.2.9
+Version: 2.2.10
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -57,7 +57,7 @@ if ( version_compare( phpversion(), '5.0', '<' ) || !function_exists('curl_init'
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status;
-$version = "2.2.9";
+$version = "2.2.10";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -205,10 +205,10 @@ $thispostcategory = trim($thispostcategory);
 $thisauthor = get_the_author_meta( 'display_name',$post_author );
 
 if ( get_option( 'jd_individual_twitter_users' ) == 1 ) {
-	if ( get_user_meta( $authID, 'wp-to-twitter-enable-user' ) == 'mainAtTwitter' ) {
-	$thisaccount = "@" . stripcslashes(get_user_meta( $authID, 'wp-to-twitter-user-username' ));
-	} else if ( get_user_meta( $authID, 'wp-to-twitter-enable-user' ) == 'mainAtTwitterPlus' ) {
-	$thisaccount = "@" . stripcslashes(get_user_meta( $authID, 'wp-to-twitter-user-username' ) . ' @' . get_option( 'wtt_twitter_username' ));
+	if ( get_user_meta( $authID, 'wp-to-twitter-enable-user',true ) == 'mainAtTwitter' ) {
+	$thisaccount = "@" . stripcslashes(get_user_meta( $authID, 'wp-to-twitter-user-username',true ));
+	} else if ( get_user_meta( $authID, 'wp-to-twitter-enable-user',true ) == 'mainAtTwitterPlus' ) {
+	$thisaccount = "@" . stripcslashes(get_user_meta( $authID, 'wp-to-twitter-user-username',true ) . ' @' . get_option( 'wtt_twitter_username' ));
 	}
 } else {
 $thisaccount = "@".get_option('wtt_twitter_username');
@@ -940,8 +940,8 @@ function jd_twitter_profile() {
 		} else {
 			$user_edit = $user_ID;
 		}
-			$is_enabled = get_user_meta( $user_edit, 'wp-to-twitter-enable-user' );
-			$twitter_username = get_user_meta( $user_edit, 'wp-to-twitter-user-username' );
+			$is_enabled = get_user_meta( $user_edit, 'wp-to-twitter-enable-user',true );
+			$twitter_username = get_user_meta( $user_edit, 'wp-to-twitter-user-username',true );
 		?>
 		<h3><?php _e('WP to Twitter User Settings', 'wp-to-twitter'); ?></h3>
 		

@@ -105,7 +105,7 @@ $server_time = date_i18n( DATE_COOKIE  );
 			<h3>'.__('Connect to Twitter','wp-to-twitter').'</h3>
 			<div class="inside">
 			<br class="clear" />	
-			<p>Your server time is <code>'.$server_time.'</code>. If this is wrong, your server will not be able to connect with Twitter. (<strong>Note:</strong> your server time may not match your current time, but it should be correct for it\'s own time zone.)</p>
+			<p>'.__('Your server time is','my-calendar').' <code>'.$server_time.'</code>. '.__( 'If this is wrong, your server will not be able to connect with Twitter. (<strong>Note:</strong> your server time may not match your current time, but it should be correct for it\'s own time zone.)','my-calendar').'</p>
 			<p>'.__('The process to set up OAuth authentication for your web site is needlessly laborious. It is also confusing. However, this is the only method available from Twitter. Note that you will not add your Twitter username or password to WP to Twitter; they are not used in OAuth authentication.', 'wp-to-twitter').'</p> 
 			<form action="" method="post">
 				<fieldset class="options">
