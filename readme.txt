@@ -40,6 +40,10 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.2.11 = 
+
+* Missing break statement caused remote YOURLS URLs to be replaced with Su.pr URLs
+
 = 2.2.10 =
 
 * Bug in user settings retrieval; don't know how long it's been a problem.

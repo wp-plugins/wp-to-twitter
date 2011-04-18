@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.2.10
+Version: 2.2.11
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -57,7 +57,7 @@ if ( version_compare( phpversion(), '5.0', '<' ) || !function_exists('curl_init'
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status;
-$version = "2.2.10";
+$version = "2.2.11";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -379,6 +379,7 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='fa
 			} else {
 				$shrink = false;
 			}
+			break;
 			case 7:
 			if ( $suprapi != '') {
 				$decoded = jd_remote_json( "http://su.pr/api/shorten?longUrl=".$thispostlink."&login=".$suprlogin."&apiKey=".$suprapi );
@@ -1087,3 +1088,40 @@ add_action( 'save_post','post_jd_twitter' );
 add_action( 'admin_menu', 'jd_addTwitterAdminPages' );
 
 register_activation_hook( __FILE__, 'wptotwitter_activate' );
+
+// Add function from Luis Nobrega
+function jd_twit_comment( $comment_id, $approved ) {	
+	$_t = get_comment( $comment_id );
+	$post_ID = $_t->comment_post_ID;
+	$jd_tweet_this = get_post_meta( $post_ID, '_jd_tweet_this', TRUE);
+	
+		$jd_post_info = jd_post_info( $post_ID );
+	    $sentence = '';
+		$customTweet = stripcslashes( trim( $_POST['_jd_twitter'] ) );
+		
+				    $nptext = stripcslashes( get_option( 'oldpost-edited-text' ) );
+					$nptext = str_replace("editada", "respondida", $nptext);
+					$oldpost = true;
+				
+			$sentence = ( $customTweet != "" ) ? $customTweet : $nptext;
+			if ($jd_post_info['shortUrl'] != '') {
+				$shrink = $jd_post_info['shortUrl'];
+			} else {
+				$shrink = jd_shorten_link( $jd_post_info['postLink'], $jd_post_info['postTitle'], $post_ID );
+				store_url( $post_ID, $shrink );
+			}		
+			$sentence = custom_shortcodes( $sentence, $post_ID );					
+			$sentence = jd_truncate_tweet( $sentence, $jd_post_info['postTitle'], $jd_post_info['blogTitle'], $jd_post_info['postExcerpt'], $shrink, $jd_post_info['category'], $jd_post_info['postDate'], $post_ID, $jd_post_info['authId'] );		
+		
+			
+		if ( $sentence != '' ) {
+			
+			if (!in_category("Blog", $post_ID))
+				$sendToTwitter = ( get_option( 'x_jd_api_post_status' ) == '' )?jd_doTwitterAPIPost( $sentence ):jd_doUnknownAPIPost( $sentence, $jd_post_info['authId']  );
+				
+		}
+	
+	return $post_ID;
+}
+add_action( 'comment_post', 'jd_twit_comment', 10, 2 );
+?>
