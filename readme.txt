@@ -35,6 +35,7 @@ Translations:
 * Dutch: [Rene at WPwebshop](http://wpwebshop.com/premium-wordpress-plugins/)
 * Romanian: [Jibo](http://jibo.ro)
 * Danish: [Rasmus Himmelstrup](http://seoanalyst.dk)
+* Brazilian Portugese: [Matheus Bratfisch](http://www.matbra.com)
 
 New translations are always welcome! The translation file is in the download.
 
@@ -43,6 +44,7 @@ New translations are always welcome! The translation file is in the download.
 = 2.2.12 =
 
 * Bug fix release. Sorry.
+* Added translation to Brazilian Portugese [Matheus Bratfisch](http://www.matbra.com)
 
 = 2.2.11 = 
 
