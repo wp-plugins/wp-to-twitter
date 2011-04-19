@@ -45,7 +45,7 @@ $wpmu_plugin_url = $wp_content_url . '/mu-plugins';
 $wpmu_plugin_dir = $wp_content_dir . '/mu-plugins';
 
 
-if ( version_compare( phpversion(), '5.0', '<' ) || !function_exists('curl_init') ) {
+if ( version_compare( phpversion(), '5.0', '<' ) || !function_exists( 'curl_init' ) ) {
 	$warning = __('WP to Twitter requires PHP version 5 or above with cURL support. Please upgrade PHP or install cURL to run WP to Twitter.','wp-to-twitter' );
 	add_action('admin_notices', create_function( '', "echo \"<div class='error'><p>$warning</p></div>\";" ) );
 	
@@ -1088,7 +1088,7 @@ add_action( 'save_post','post_jd_twitter' );
 add_action( 'admin_menu', 'jd_addTwitterAdminPages' );
 
 register_activation_hook( __FILE__, 'wptotwitter_activate' );
-
+/*
 // Add function from Luis Nobrega
 function jd_twit_comment( $comment_id, $approved ) {	
 	$_t = get_comment( $comment_id );
@@ -1124,4 +1124,5 @@ function jd_twit_comment( $comment_id, $approved ) {
 	return $post_ID;
 }
 add_action( 'comment_post', 'jd_twit_comment', 10, 2 );
+*/
 ?>
