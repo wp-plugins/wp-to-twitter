@@ -1,4 +1,5 @@
 <?php
+	wpt_check_version();
 	if ( isset($_POST['oauth_settings'] ) ) {
 		$oauth_message = jd_update_oauth_settings();
 	}

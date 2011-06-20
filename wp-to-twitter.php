@@ -82,6 +82,14 @@ if ( !function_exists('wtt_oauth_test') ) {
 if ( !$oauth && get_option('disable_oauth_notice') != '1' ) {
 	add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } echo '<div class=\"error\"><p>".sprintf(__('Twitter requires authentication by OAuth. You will need to <a href="%s">update your settings</a> to complete installation of WP to Twitter.', 'wp-to-twitter'), admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'))."</p></div>';" ) );
 }
+
+function wpt_check_version() {
+	global $version;
+	$prev_version = get_option( 'wp_to_twitter_version' );
+	if ( version_compare( $prev_version,$version,"<" ) ) {
+		wptotwitter_activate();
+	}
+}
 	
 function wptotwitter_activate() {
 global $version;
