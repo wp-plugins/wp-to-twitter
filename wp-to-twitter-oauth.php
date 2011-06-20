@@ -123,21 +123,21 @@ $server_time = date_i18n( DATE_COOKIE  );
 				
 					<p>
 						<label for="wtt_app_consumer_key">'.__('Twitter Consumer Key', 'wp-to-twitter').'</label>
-						<input type="text" size="25" name="wtt_app_consumer_key" id="wtt_app_consumer_key" value="'.esc_attr( get_option('app_consumer_key') ).'" autocomplete="off">
+						<input type="text" size="25" name="wtt_app_consumer_key" id="wtt_app_consumer_key" value="'.esc_attr( get_option('app_consumer_key') ).'" />
 					</p>
 					<p>
 						<label for="wtt_app_consumer_secret">'.__('Twitter Consumer Secret', 'wp-to-twitter').'</label>
-						<input type="text" size="25" name="wtt_app_consumer_secret" id="wtt_app_consumer_secret" value="'.esc_attr( get_option('app_consumer_secret') ).'" autocomplete="off">
+						<input type="text" size="25" name="wtt_app_consumer_secret" id="wtt_app_consumer_secret" value="'.esc_attr( get_option('app_consumer_secret') ).'" />
 					</p>
 					<h4>'.__('3. Copy and paste your Access Token and Access Token Secret into the fields below','wp-to-twitter').'</h4>
 					<p>'.__('On the right hand side of your new application page at Twitter, click on \'My Access Token\'.','wp-to-twitter').'</p>
 					<p>
 						<label for="wtt_oauth_token">'.__('Access Token', 'wp-to-twitter').'</label>
-						<input type="text" size="25" name="wtt_oauth_token" id="wtt_oauth_token" value="'.esc_attr( get_option('oauth_token') ).'" autocomplete="off">
+						<input type="text" size="25" name="wtt_oauth_token" id="wtt_oauth_token" value="'.esc_attr( get_option('oauth_token') ).'" />
 					</p>
 					<p>
 						<label for="wtt_oauth_token_secret">'.__('Access Token Secret', 'wp-to-twitter').'</label>
-						<input type="text" size="25" name="wtt_oauth_token_secret" id="wtt_oauth_token_secret" value="'.esc_attr( get_option('oauth_token_secret') ).'" autocomplete="off">
+						<input type="text" size="25" name="wtt_oauth_token_secret" id="wtt_oauth_token_secret" value="'.esc_attr( get_option('oauth_token_secret') ).'" />
 					</p>
 				</fieldset>
 				<p class="submit">

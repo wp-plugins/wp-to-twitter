@@ -3,7 +3,19 @@
 		$oauth_message = jd_update_oauth_settings();
 	}
 	// FUNCTION to see if checkboxes should be checked
-	function jd_checkCheckbox( $theFieldname ) {
+	function jd_checkCheckbox( $theFieldname,$sub1=false,$sub2='' ) {
+		if ($sub1) {
+			$setting = get_option($theFieldname);
+			if ( $sub2 != '' ) {
+				$value = $setting[$sub1][$sub2];
+			} else {
+				$value = $setting[$sub1];
+			}
+			if ( $value == 1 ) {
+				echo 'checked="checked"';
+				return;
+			}
+		}
 		if( get_option( $theFieldname ) == '1'){
 			echo 'checked="checked"';
 		}
@@ -20,20 +32,27 @@
 
 	// SET DEFAULT OPTIONS
 	if ( get_option( 'twitterInitialised') != '1' ) {
-		update_option( 'newpost-published-update', '1' );
-		update_option( 'newpost-published-text', 'New post: #title# #url#' );
-		
-		update_option( 'oldpost-edited-update', '1' );
-		update_option( 'oldpost-edited-text', 'Post Edited: #title# #url#' );
-
-		update_option( 'jd_twit_pages','0' );
-		update_option( 'newpage-published-text','New page: #title# #url#' );
-		
-		update_option( 'jd_twit_edited_pages','0' );
-		update_option( 'oldpage-edited-text','Page edited: #title# #url#' );
+		$initial_settings = array( 
+			'post'=> array( 
+					'post-published-update'=>1,
+					'post-published-text'=>'New post: #title# #url#',
+					'post-edited-update'=>1,
+					'post-edited-text'=>'Post Edited: #title# #url#'
+					),
+			'page'=> array( 
+					'post-published-update'=>0,
+					'post-published-text'=>'New page: #title# #url#',
+					'post-edited-update'=>0,
+					'post-edited-text'=>'Page edited: #title# #url#'
+					)
+			);
+		update_option( 'wpt_post_types', $initial_settings );
 
 		update_option( 'jd_twit_blogroll', '1');
 		update_option( 'newlink-published-text', 'New link: #title# #url#' );
+		
+		update_option( 'comment-published-update', 0 );
+		update_option( 'comment-published-text', 'New comment: #title# #url#' );				
 		
 		update_option( 'limit_categories','0' );
 		update_option( 'jd_twit_quickpress', '1' );
@@ -145,28 +164,32 @@
 		update_option('wtt_user_permissions',$wtt_user_permissions);
 		update_option( 'disable_url_failure' , $_POST['disable_url_failure'] );
 		update_option( 'disable_twitter_failure' , $_POST['disable_twitter_failure'] );
-		update_option( 'jd_twit_postie' , (int) $_POST['jd_twit_postie'] );
-		if ( $_POST['jd_twit_postie'] == 1 ) {
-			update_option( 'oldpost-edited-update','1');
-		}
+
 		update_option( 'disable_oauth_notice' , $_POST['disable_oauth_notice'] );
 		update_option( 'wp_debug_oauth' , $_POST['wp_debug_oauth'] );
+		update_option( 'jd_donations' , $_POST['jd_donations'] );
 	
 	
 		$message .= __( 'WP to Twitter Advanced Options Updated' , 'wp-to-twitter');
 	}
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'options' ) {
 		// UPDATE OPTIONS
-		update_option( 'newpost-published-update', $_POST['newpost-published-update'] );
-		update_option( 'newpost-published-text', $_POST['newpost-published-text'] );
-		update_option( 'oldpost-edited-update', $_POST['oldpost-edited-update'] );
-		update_option( 'oldpost-edited-text', $_POST['oldpost-edited-text'] );
-		update_option( 'jd_twit_pages',$_POST['jd_twit_pages'] );
-		update_option( 'jd_twit_edited_pages',$_POST['jd_twit_edited_pages'] );
-		update_option( 'newpage-published-text', $_POST['newpage-published-text'] );
-		update_option( 'oldpage-edited-text', $_POST['oldpage-edited-text'] );		
+		$wpt_settings = get_option('wpt_post_types');
+		foreach($_POST['wpt_post_types'] as $key=>$value) {
+				$array = array( 
+					'post-published-update'=>$value["post-published-update"],
+					'post-published-text'=>$value["post-published-text"],
+					'post-edited-update'=>$value["post-edited-update"],
+					'post-edited-text'=>$value["post-edited-text"]
+					);
+				$wpt_settings[$key] = $array;
+		}
+		update_option( 'wpt_post_types', $wpt_settings );
+
 		update_option( 'newlink-published-text', $_POST['newlink-published-text'] );
 		update_option( 'jd_twit_blogroll',$_POST['jd_twit_blogroll'] );
+		update_option( 'comment-published-text', $_POST['comment-published-text'] );
+		update_option( 'comment-published-update',$_POST['comment-published-update'] );	
 		update_option( 'jd_shortener', $_POST['jd_shortener'] );
 
 		if ( get_option( 'jd_shortener' ) == 2 && ( get_option( 'bitlylogin' ) == "" || get_option( 'bitlyapi' ) == "" ) ) {
@@ -357,21 +380,31 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 <div class="resources">
 <img src="<?php echo $wp_to_twitter_directory; ?>/wp-to-twitter-logo.png" alt="WP to Twitter" />
 <p>
-<a href="https://fundry.com/project/10-wp-to-twitter"><?php _e("Pledge to new features",'wp-to-twitter'); ?></a> &middot; <a href="http://www.joedolson.com/donate.php"><?php _e("Make a Donation",'wp-to-twitter'); ?></a>
+<a href="https://fundry.com/project/10-wp-to-twitter"><?php _e("Pledge to new features",'wp-to-twitter'); ?></a><?php if ( get_option('jd_donations') != 1 ) { ?>
+ &middot; <a href="http://www.joedolson.com/donate.php"><?php _e("Make a Donation",'wp-to-twitter'); ?></a><?php } ?> &middot; <a href="?page=wp-to-twitter/wp-to-twitter.php&amp;export=settings"><?php _e("View Settings",'wp-to-twitter'); ?></a> &middot; <a href="http://www.joedolson.com/articles/wp-to-twitter/support/"><?php _e("Get Support",'wp-to-twitter'); ?></a>
 </p>
-<p>
-<a href="?page=wp-to-twitter/wp-to-twitter.php&amp;export=settings"><?php _e("View Settings",'wp-to-twitter'); ?></a> &middot; <a href="http://www.joedolson.com/articles/wp-to-twitter/support/"><?php _e("Get Support",'wp-to-twitter'); ?></a>
-</p>
+<?php if ( get_option('jd_donations') != 1 ) { ?>
 <div>
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <div>
 <input type="hidden" name="cmd" value="_s-xclick" />
 <input type="hidden" name="hosted_button_id" value="8490399" />
-<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" name="submit" alt="Donate" />
+<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" name="submit" alt="Donate" />
 <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
 </div>
 </form>
 </div>
+<?php } ?>
+
+<?php if ( get_option('jd_donations') != 1 ) { ?>
+<div class="ads">
+<script type="text/javascript">
+var psHost = (("https:" == document.location.protocol) ? "https://" : "http://");
+document.write(unescape("%3Cscript src='" + psHost + "pluginsponsors.com/direct/spsn/display.php?client=wp-to-twitter&amp;spot=' type='text/javascript'%3E%3C/script%3E"));
+</script>
+</div>
+<?php } ?>
+
 
 </div>
 
@@ -419,31 +452,45 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 	<div class="inside">
 		<br class="clear" />
 	<form method="post" action="">
-	<div>
-		<fieldset>
-			<legend><?php _e("Tweet Templates", 'wp-to-twitter'); ?></legend>
+	<div>	
+			<?php 
+			$post_types = get_post_types( '', 'names' );
+			$wpt_settings = get_option('wpt_post_types');
+
+				foreach( $post_types as $type ) {
+					if ( $type == 'attachment' || $type == 'nav_menu_item' || $type == 'revision' ) {
+					
+					} else {
+						$vowels = array( 'a','e','i','o','u' );
+						foreach ( $vowels as $vowel ) {
+							if ( strpos($type, $vowel ) === 0 ) { $word = 'an'; break; } else { $word = 'a'; }
+						}
+				?>
+			<fieldset>
+			<legend><?php _e("Settings for type '$type'",'wp-to-twitter' ); ?></legend>
 			<p>
-				<input type="checkbox" name="newpost-published-update" id="newpost-published-update" value="1" <?php jd_checkCheckbox('newpost-published-update')?> />
-				<label for="newpost-published-update"><strong><?php _e("Update when a post is published", 'wp-to-twitter'); ?></strong></label> <label for="newpost-published-text"><br /><?php _e("Text for new post updates:", 'wp-to-twitter'); ?></label> <input type="text" name="newpost-published-text" id="newpost-published-text" size="60" maxlength="120" value="<?php echo( esc_attr( stripslashes( get_option( 'newpost-published-text' ) ) ) ); ?>" />
+				<input type="checkbox" name="wpt_post_types[<?php echo $type; ?>][post-published-update]" id="<?php echo $type; ?>-post-published-update" value="1" <?php jd_checkCheckbox('wpt_post_types',$type,'post-published-update')?> />
+				<label for="<?php echo $type; ?>-post-published-update"><strong><?php _e("Update when $word $type is published", 'wp-to-twitter'); ?></strong></label> <label for="<?php echo $type; ?>-post-published-text"><br /><?php _e("Text for new $type updates:", 'wp-to-twitter'); ?></label> <input type="text" name="wpt_post_types[<?php echo $type; ?>][post-published-text]" id="<?php echo $type; ?>-post-published-text" size="60" maxlength="120" value="<?php echo( esc_attr( stripslashes( $wpt_settings[$type]['post-published-text'] ) ) ); ?>" />
 			</p>
-		
 			<p>
-			<?php if ( get_option( 'jd_twit_postie' ) != 1 ) { ?>
-				<input type="checkbox" name="oldpost-edited-update" id="oldpost-edited-update" value="1" <?php jd_checkCheckbox('oldpost-edited-update')?> />
-				<label for="oldpost-edited-update"><strong><?php _e("Update when a post is edited", 'wp-to-twitter'); ?></strong></label><br /><label for="oldpost-edited-text"><?php _e("Text for editing updates:", 'wp-to-twitter'); ?></label> <input type="text" name="oldpost-edited-text" id="oldpost-edited-text" size="60" maxlength="120" value="<?php echo( esc_attr( stripslashes( get_option('oldpost-edited-text' ) ) ) ); ?>" />		
-			<?php } else { ?>
-				<input type="checkbox" name="oldpost-edited-update" id="oldpost-edited-update" value="1" disabled="disabled" checked="checked" />
-				<label for="oldpost-edited-update"><strong><?php _e("Update when a post is edited", 'wp-to-twitter'); ?></strong></label><br /><label for="oldpost-edited-text"><?php _e("Text for editing updates:", 'wp-to-twitter'); ?></label> <input type="text" name="oldpost-edited-text" id="oldpost-edited-text" size="60" maxlength="120" value="<?php echo( esc_attr( stripslashes( get_option('oldpost-edited-text' ) ) ) ); ?>" readonly="readonly" />					
-				<br /><small><?php _e('You can not disable updates on edits when using Postie or similar plugins.'); ?></small>
-			<?php } ?>			</p>	
-			<p>
-				<input type="checkbox" name="jd_twit_pages" id="jd_twit_pages" value="1" <?php jd_checkCheckbox('jd_twit_pages')?> />
-				<label for="jd_twit_pages"><strong><?php _e("Update Twitter when new Wordpress Pages are published", 'wp-to-twitter'); ?></strong></label><br /><label for="newpage-published-text"><?php _e("Text for new page updates:", 'wp-to-twitter'); ?></label> <input type="text" name="newpage-published-text" id="newpage-published-text" size="60" maxlength="120" value="<?php echo( esc_attr( stripslashes( get_option('newpage-published-text' ) ) ) ); ?>" />	
+				<input type="checkbox" name="wpt_post_types[<?php echo $type; ?>][post-edited-update]" id="<?php echo $type; ?>-post-edited-update" value="1" <?php jd_checkCheckbox('wpt_post_types',$type,'post-edited-update')?> />
+				<label for="<?php echo $type; ?>-post-edited-update"><strong><?php _e("Update when $word $type is edited", 'wp-to-twitter'); ?></strong></label><br /><label for="<?php echo $type; ?>-post-edited-text"><?php _e("Text for $type editing updates:", 'wp-to-twitter'); ?></label> <input type="text" name="wpt_post_types[<?php echo $type; ?>][post-edited-text]" id="<?php echo $type; ?>-post-edited-text" size="60" maxlength="120" value="<?php echo( esc_attr( stripslashes( $wpt_settings[$type]['post-edited-text'] ) ) ); ?>" />	
 			</p>
+			</fieldset>
+			<?php
+					}
+				} 
+			?>
+			<fieldset>
+			<legend><?php _e('Settings for Comments','wp-to-twitter'); ?></legend>
 			<p>
-				<input type="checkbox" name="jd_twit_edited_pages" id="jd_twit_edited_pages" value="1" <?php jd_checkCheckbox('jd_twit_edited_pages')?> />
-				<label for="jd_twit_edited_pages"><strong><?php _e("Update Twitter when WordPress Pages are edited", 'wp-to-twitter'); ?></strong></label><br /><label for="oldpage-edited-text"><?php _e("Text for page edit updates:", 'wp-to-twitter'); ?></label> <input type="text" name="oldpage-edited-text" id="oldpage-edited-text" size="60" maxlength="120" value="<?php echo( esc_attr( stripslashes( get_option('oldpage-edited-text' ) ) ) ); ?>" />	
+				<input type="checkbox" name="comment-published-update" id="comment-published-update" value="1" <?php jd_checkCheckbox('comment-published-update')?> />
+				<label for="comment-published-update"><strong><?php _e("Update Twitter when new comments are posted", 'wp-to-twitter'); ?></strong></label><br />				
+				<label for="comment-published-text"><?php _e("Text for new comments:", 'wp-to-twitter'); ?></label> <input type="text" name="comment-published-text" id="comment-published-text" size="60" maxlength="120" value="<?php echo ( esc_attr( stripslashes( get_option( 'comment-published-text' ) ) ) ); ?>" />
 			</p>
+			</fieldset>					
+			<fieldset>
+			<legend><?php _e('Settings for Links','wp-to-twitter'); ?></legend>
 			<p>
 				<input type="checkbox" name="jd_twit_blogroll" id="jd_twit_blogroll" value="1" <?php jd_checkCheckbox('jd_twit_blogroll')?> />
 				<label for="jd_twit_blogroll"><strong><?php _e("Update Twitter when you post a Blogroll link", 'wp-to-twitter'); ?></strong></label><br />				
@@ -605,8 +652,6 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 			<p>
 				<input type="checkbox" name="jd_twit_remote" id="jd_twit_remote" value="1" <?php jd_checkCheckbox('jd_twit_remote')?> />
 				<label for="jd_twit_remote"><?php _e("Send Twitter Updates on remote publication (Post by Email or XMLRPC Client)", 'wp-to-twitter'); ?></label><br />
-				<input type="checkbox" name="jd_twit_postie" id="jd_twit_postie" value="1" <?php jd_checkCheckbox('jd_twit_postie')?> />
-				<label for="jd_twit_postie"><?php _e("I'm using a plugin to post by email, such as Postie. Only check this if your updates do not work.", 'wp-to-twitter'); ?></label>			
 			</p>
 			<p>
 				<input type="checkbox" name="jd_twit_quickpress" id="jd_twit_quickpress" value="1" <?php jd_checkCheckbox('jd_twit_quickpress')?> />
@@ -667,7 +712,11 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 			<p>
 				<input type="checkbox" name="wp_debug_oauth" id="wp_debug_oauth" value="1" <?php jd_checkCheckbox('wp_debug_oauth')?> />
 				<label for="wp_debug_oauth"><?php _e("Get Debugging Data for OAuth Connection", 'wp-to-twitter'); ?></label>
-			</p>			
+			</p>
+			<p>
+				<input type="checkbox" name="jd_donations" id="jd_donations" value="1" <?php jd_checkCheckbox('jd_donations')?> />
+				<label for="jd_donations"><strong><?php _e("I made a donation, so stop showing me ads, please.", 'wp-to-twitter'); ?></strong></label>
+			</p>
 		</fieldset>
 		<div>
 		<input type="hidden" name="submit-type" value="advanced" />
@@ -706,7 +755,7 @@ if ( get_option('limit_categories') == '0' ) {
 		<input type="submit" name="submit" value="<?php _e('Check Support','wp-to-twitter'); ?>" class="button-primary" /> <small><?php _e('Check whether your server supports <a href="http://www.joedolson.com/articles/wp-to-twitter/">WP to Twitter\'s</a> queries to the Twitter and URL shortening APIs. This test will send a status update to Twitter and shorten a URL using your selected methods.','wp-to-twitter'); ?></small>
 		</p>
 	</fieldset>
-	</form>	
+	</form>		
 </div>
 </div>
 <?php global $wp_version;

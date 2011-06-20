@@ -2,22 +2,12 @@
 if ( !defined( 'ABSPATH' ) && !defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 exit();
 } else {
-delete_option( 'newpost-published-update' );
-delete_option( 'newpost-published-text' );
-delete_option( 'newpost-published-showlink' );
-
-delete_option( 'oldpost-edited-update' );
-delete_option( 'oldpost-edited-text' );
-delete_option( 'oldpost-edited-showlink' );
-
-delete_option( 'jd_twit_pages' );
-delete_option( 'jd_twit_edited_pages' );
-delete_option( 'oldpage-edited-text' );
-delete_option( 'newpage-published-text' );
-
+delete_option( 'wpt_post_types' );
 delete_option( 'jd_twit_remote' );
-
 delete_option( 'jd_post_excerpt' );
+
+delete_option( 'comment-published-update');
+delete_option( 'comment-published-text');
 
 // Su.pr API
 delete_option( 'suprapi' );

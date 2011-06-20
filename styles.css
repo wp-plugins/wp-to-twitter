@@ -51,3 +51,30 @@ line-height: 1;
 #wp-to-twitter .inside em {
 color: #f33;
 }
+#wp-to-twitter .spsn-container {
+	background: #efefef!important;
+	border: 1px solid #f6f6f6!important;
+	text-shadow: rgba(255, 255, 255, 0.796875) 0px 1px 0px;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	position: relative;
+	padding:.5em !important;
+	margin: 0.4em 0 0.5em 0 !important;
+	font-size: 1.1em;
+}
+
+#wp-to-twitter .spsn-sponsor-heading {/* paragraph carrying a heading for the sponsorship message */ text-align: left; margin-top: -2px; padding: .8em; color: #666; }
+
+#wp-to-twitter .spsn-sponsor-text {/* paragraph containing the sponsorship message */}
+
+#wp-to-twitter .spsn-credit {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding:.8em !important;
+	color: #666;
+}
+#wp-to-twitter .spsn-sponsor-text a {
+	color: #21759B !important;
+}

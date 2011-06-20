@@ -3,26 +3,30 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.9.2
-Tested up to: 3.1.1
+Tested up to: 3.2-RC1
 Stable tag: trunk
 
 Posts a Twitter update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5 and cURL. 
 
 == Description ==
 
-The WP-to-Twitter plugin posts a Twitter status update from your WordPress blog using your selected URL shortening service to provide a link back to your post from Twitter. 
+WP to Twitter posts a Twitter status update from your WordPress blog using your URL shortening service to provide a link back to your post from Twitter. 
 
 [Make a Pledge at Fundry](https://fundry.com/project/10-wp-to-twitter).
 
-For both services you can provide your information to maintain a list of your shortened URLs with your URL shortening service for statistics and your own records.
+The plugin supports a default message template for updating or editing posts and pages, supports your custom post types, and also allows you to write a custom Tweet for each post which says whatever you want, using a selection of custom shortcodes to generate your text. 
 
-The plugin can send a default message for updating or editing posts or pages, but also allows you to write a custom Tweet for your post which says whatever you want, using a wide selection of custom shortcodes to create your text. 
+Additional features include: 
+
+* Use tags as Twitter hashtags
+* Use alternate URLs in place of post permalinks
+* Support for Google Analytics
 
 Any status update you write which is longer than the available space will automatically be truncated by the plugin. This applies to both the default messages and to your custom messages.
 
 Credits:
 
-Although it now bears almost no resemblance to the original sources, this plugin was once based on the Twitter Updater plugin by [Jonathan Dingman](http://www.firesidemedia.net/dev/), which he adapted from a plugin by Victoria Chan. Other contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com). Thanks to [Cory LaViska](http://abeautifulsite.net/notebook/71) for PHP 4 compatible `json_decode` and `json_encode`. Thanks to [Michal Migurski](http://mike.teczno.com) for authoring the JSON class. Other bug fixes and related citations can be found in the changelog.
+Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 Translations:
 
@@ -36,10 +40,18 @@ Translations:
 * Romanian: [Jibo](http://jibo.ro)
 * Danish: [Rasmus Himmelstrup](http://seoanalyst.dk)
 * Brazilian Portugese: [Matheus Bratfisch](http://www.matbra.com)
+* Japanese: [kndb](http://blog.layer8.sh/)
 
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.3.0 =
+
+* Added support for custom post types.
+* Added support for tweeting when comments are posted.
+* Bug fix: results of checking/unchecking 'Don't tweet this' box not consistent.
+* Added Japanese translation. [kndb](http://blog.layer8.sh/)
 
 = 2.2.12 =
 
@@ -493,7 +505,7 @@ Only posts which you scheduled or edited *after* installing the plugin will be T
 
 == Upgrade Notice ==
 
-
+Adds support for Custom Post Types.
 
 == Screenshots ==
 

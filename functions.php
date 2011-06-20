@@ -111,20 +111,29 @@ global $version;
 
 $bitlyapi = ( get_option ( 'bitlyapi' ) != '' )?"Saved.":"Blank.";
 $yourlsapi = ( get_option ( 'yourlsapi' ) != '' )?"Saved.":"Blank.";
-
+$post_type_settings = get_option('wpt_post_types');
+$group = array();
+if (is_array($post_type_settings)) {
+$post_types = array_keys($post_type_settings);
+	foreach ($post_types as $type) {
+		foreach ($post_type_settings[$type] as $key=>$value ) {
+			$group[$key] = $value;
+		}
+	}
+}
 $options = array( 
 	'app_consumer_key'=>get_option('app_consumer_key'),
 	'app_consumer_secret'=>get_option('app_consumer_secret'),
 	'bitlylogin'=>get_option( 'bitlylogin' ),
 	'bitlyapi'=>$bitlyapi,
-	'suprapi'=>get_option( 'suprapi' ),
+	'comment-published-update'=>get_option('comment-published-update'),
+	'comment-published-text'=>get_option('comment-published-text'),
+	
 	'disable_oauth_notice'=>get_option('disable_oauth_notice'),
 	'disable_url_failure'=>get_option('disable_url_failure' ),
 	'disable_twitter_failure'=>get_option('disable_twitter_failure' ),
 
 	'jd_twit_blogroll'=>get_option( 'jd_twit_blogroll' ),
-	'jd_twit_pages'=>get_option( 'jd_twit_pages' ),
-	'jd_twit_edited_pages'=>get_option( 'jd_twit_edited_pages' ),
 	'jd_keyword_format'=>get_option( 'jd_keyword_format' ),
 	'jd_replace_character'=>get_option( 'jd_replace_character' ),
 	'jd_max_tags'=>get_option('jd_max_tags'),
@@ -143,17 +152,9 @@ $options = array(
 
 	'limit_categories'=>get_option('limit_categories' ),
 
-	'newpost-published-update'=>get_option( 'newpost-published-update' ),
-	'newpost-published-text'=>get_option( 'newpost-published-text' ),
-	'newpage-published-text'=>get_option( 'newpage-published-text' ),
-	'newlink-published-text'=>get_option( 'newlink-published-text' ),
-
 	'oauth_token'=>get_option('oauth_token'),
 	'oauth_token_secret'=>get_option('oauth_token_secret'),
-	'oldpost-edited-update'=>get_option( 'oldpost-edited-update' ),
-	'oldpost-edited-text'=>get_option( 'oldpost-edited-text' ),
-	'oldpage-edited-text'=>get_option( 'oldpage-edited-text' ),
-
+	'suprapi'=>get_option( 'suprapi' ),
 
 	'tweet_categories'=>get_option('tweet_categories' ),
 	'twitterInitialised'=>get_option( 'twitterInitialised' ),
@@ -180,11 +181,11 @@ $options = array(
 	'yourlsurl' =>get_option( 'yourlsurl' ),
 	'yourlslogin'=>get_option( 'yourlslogin' )	
 );
-
+$result = array_merge($group,$options);
 echo "<div class=\"settings\">";
 echo "<strong>Raw Settings Output: Version $version</strong>";
 echo "<ol>";
-foreach ($options as $key=>$value) {
+foreach ($result as $key=>$value) {
 	echo "<li><code>$key</code>:$value</li>";
 }
 
