@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.3.0
+Version: 2.3.1
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -112,7 +112,7 @@ $upgrade = version_compare( $prev_version,"2.2.9","<" );
 			delete_option( 'cligslogin' );
 			delete_option( 'wp_cligs_error' );
 	}
-$upgrade = version_compare( $prev_version, "2.3.0","<" );
+$upgrade = version_compare( $prev_version, "2.3.1","<" );
 	if ($upgrade) {
 		$array = 
 			array(
@@ -541,7 +541,8 @@ function jd_get_post_meta( $post_ID, $value, $boolean ) {
 	return $return;
 }
 
-function jd_twit( $post_ID ) {	
+function jd_twit( $post_ID ) {
+	wpt_check_version();
 	$jd_tweet_this = get_post_meta( $post_ID, '_jd_tweet_this', TRUE);
 	if ( isset($_POST['_jd_tweet_this']) && $_POST['_jd_tweet_this'] == 'no' ) {
 			$jd_tweet_this = 'no';
@@ -600,7 +601,8 @@ function jd_twit( $post_ID ) {
 
 // Add Tweets on links in Blogroll
 function jd_twit_link( $link_ID )  {
-global $version;
+	wpt_check_version();
+	global $version;
 	$thislinkprivate = $_POST['link_visible'];
 	if ($thislinkprivate != 'N') {
 		$thislinkname = stripcslashes( $_POST['link_name'] );
@@ -633,6 +635,7 @@ global $version;
 
 // HANDLES SCHEDULED POSTS
 function jd_twit_future( $post_ID ) {
+	wpt_check_version();
     $post_ID = $post_ID->ID;
 	$jd_tweet_this = get_post_meta( $post_ID, '_jd_tweet_this', TRUE);	
 	if ( $jd_tweet_this != "no" ) {
@@ -641,7 +644,7 @@ function jd_twit_future( $post_ID ) {
 		$post_type_settings = get_option('wpt_post_types');
 		$post_types = array_keys($post_type_settings);
 
-		if ( in_array( $post_type, $post_types ) ) {		
+		if ( in_array( $post_type, $post_types ) ) {
 			$sentence = '';
 			$customTweet = get_post_meta( $post_ID, '_jd_twitter', TRUE ); 
 			$sentence = stripcslashes( $post_type_settings[$post_type]['post-published-text'] );
@@ -649,9 +652,9 @@ function jd_twit_future( $post_ID ) {
 			// Stores the post's short URL in a custom field for later use as needed.
 			store_url($post_ID, $shrink);
 				if ( $customTweet != "" ) {
-				$sentence = $customTweet;
-				}  
-			$sentence = custom_shortcodes( $sentence, $post_ID );			
+					$sentence = $customTweet;
+				} 
+			$sentence = custom_shortcodes( $sentence, $post_ID );
 			$sentence = jd_truncate_tweet( $sentence, $jd_post_info['postTitle'], $jd_post_info['blogTitle'], $jd_post_info['postExcerpt'], $shrink, $jd_post_info['category'], $jd_post_info['postDate'], $post_ID, $jd_post_info['authId'] );	
 			if ( $sentence != '' ) {
 				if ( get_option('limit_categories') == '0' || in_allowed_category( $jd_post_info['categoryIds'] ) ) {
@@ -661,7 +664,7 @@ function jd_twit_future( $post_ID ) {
 						update_option( 'wp_twitter_failure','1' );
 					}
 				}
-			}	
+			}
 		}
 		return $post_ID;
 	}	
@@ -669,6 +672,7 @@ function jd_twit_future( $post_ID ) {
 
 // Tweet from QuickPress (no custom fields, so can't control whether to tweet.)
 function jd_twit_quickpress( $post_ID ) {
+	wpt_check_version();
     $post_ID = $post_ID->ID;
 	$jd_post_info = jd_post_info ( $post_ID );
 		$post_type = $jd_post_info['postType'];
@@ -698,6 +702,7 @@ function jd_twit_quickpress( $post_ID ) {
 
 // HANDLES xmlrpc POSTS
 function jd_twit_xmlrpc( $post_ID ) {
+	wpt_check_version();
 	$get_post_info = get_post( $post_ID );
 	$post_status = $get_post_info->post_status;	
 	if ( get_option('oldpost-edited-update') != 1 && get_post_meta ( $post_ID, '_wp_jd_clig', TRUE ) != '' ) {
@@ -938,6 +943,7 @@ if ($post_status == 'publish') {
 </p>
 <?php } 
 function jd_add_twitter_outer_box() {
+	wpt_check_version();
 	$wpt_post_types = get_option('wpt_post_types');
 	if ( function_exists( 'add_meta_box' )) {
 		if ( is_array( $wpt_post_types ) ) {

@@ -46,6 +46,10 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.3.1 =
+
+* Added version check and update cycle into tweet routine
+
 = 2.3.0 =
 
 * Added support for custom post types.
@@ -505,7 +509,7 @@ Only posts which you scheduled or edited *after* installing the plugin will be T
 
 == Upgrade Notice ==
 
-Adds support for Custom Post Types.
+May fix a problem for some users.
 
 == Screenshots ==
 
