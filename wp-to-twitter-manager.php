@@ -142,7 +142,7 @@
 		$wp_to_twitter_failure = '';
 	}
 
-	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'advanced' ) {
+	if ( isset( $_POST['submit-type'] ) && $_POST['submit-type'] == 'advanced' ) {
 		update_option( 'jd_tweet_default', $_POST['jd_tweet_default'] );
 		update_option( 'jd_twit_remote',$_POST['jd_twit_remote'] );
 		update_option( 'jd_twit_custom_url', $_POST['jd_twit_custom_url'] );

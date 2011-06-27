@@ -46,6 +46,11 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.3.2 =
+
+* Fixed XMLRPC support
+* Updated Italian translation
+
 = 2.3.1 =
 
 * Added version check and update cycle into tweet routine
