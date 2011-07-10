@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.3.2
+Version: 2.3.3
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -142,7 +142,11 @@ $upgrade = version_compare( $prev_version, "2.3.1","<" );
 		delete_option( 'oldpost-edited-showlink' );
 		delete_option( 'jd_twit_pages' );
 		delete_option( 'jd_twit_edited_pages' );		
-		delete_option('jd_twit_postie');
+		delete_option( 'jd_twit_postie' );
+	}
+$upgrade = version_compare( $prev_version, "2.3.3","<" );
+	if ( $upgrade ) {
+		delete_option( 'jd_twit_quickpress' );
 	}
 	update_option( 'wp_to_twitter_version',$version );
 }	
@@ -150,11 +154,11 @@ $upgrade = version_compare( $prev_version, "2.3.1","<" );
 // Function checks for an alternate URL to be tweeted. Contribution by Bill Berry.	
 function external_or_permalink( $post_ID ) {
        $wtb_extlink_custom_field = get_option('jd_twit_custom_url'); 
-       $perma_link = get_permalink( $post_ID );
+       $permalink = get_permalink( $post_ID );
 			if ( $wtb_extlink_custom_field != '' ) {
 				$ex_link = get_post_meta($post_ID, $wtb_extlink_custom_field, true);
 			}
-       return ( $ex_link ) ? $ex_link : $perma_link;
+       return ( $ex_link ) ? $ex_link : $permalink;
 }
 
 // This function performs the API post to Twitter
@@ -378,7 +382,12 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='fa
 			$shrink = urldecode($thispostlink);
 			break;
 			case 4:
-			$shrink = home_url() . "/?p=" . $post_ID;
+				if ( function_exists( 'wp_get_shortlink' ) ) {
+					$shrink = wp_get_shortlink();
+					if ( !$shrink ) { $shrink = home_url( '?p=' . $post_ID ); }
+				} else {
+					$shrink = home_url( '?p=' . $post_ID );
+				}
 			break;
 			case 5:
 			// local YOURLS installation
@@ -544,11 +553,8 @@ function jd_get_post_meta( $post_ID, $value, $boolean ) {
 function jd_twit( $post_ID ) {
 	wpt_check_version();
 	$jd_tweet_this = get_post_meta( $post_ID, '_jd_tweet_this', TRUE);
-	if ( isset($_POST['_jd_tweet_this']) && $_POST['_jd_tweet_this'] == 'no' ) {
-			$jd_tweet_this = 'no';
-	} else if ( !isset($_POST['_jd_tweet_this'] ) && $jd_tweet_this == 'no' ) {
-			$jd_tweet_this = 'yes';
-	}
+	$newpost = false;
+	$oldpost = false;
 	if ( $jd_tweet_this != "no" ) {
 		$jd_post_info = jd_post_info( $post_ID );
 		$post_type = $jd_post_info['postType'];
@@ -557,19 +563,23 @@ function jd_twit( $post_ID ) {
 
 		if ( in_array( $post_type, $post_types ) ) {
 			$sentence = '';
-			$customTweet = stripcslashes( trim( $_POST['_jd_twitter'] ) );
-			if ( ( $jd_post_info['postStatus'] == 'publish' || $_POST['publish'] == 'Publish') && ( isset($_POST['prev_status']) && ($_POST['prev_status'] == 'draft' || $_POST['prev_status'] == 'pending') || (isset($_POST['original_post_status']) && ( $_POST['original_post_status'] == 'draft' || $_POST['original_post_status'] =='pending' || $_POST['original_post_status'] == 'auto-draft' ) ) ) ) {
-			// publish new post
-					if ( $post_type_settings[$post_type]['post-published-update'] == '1' ) {
-						$nptext = stripcslashes( $post_type_settings[$post_type]['post-published-text'] );	
-						$newpost = true;
-					}
-			} else if ( (( $_POST['originalaction'] == "editpost" ) && ( ( $_POST['prev_status'] == 'publish' ) || ($_POST['original_post_status'] == 'publish') ) ) && $jd_post_info['postStatus'] == 'publish') {
+			$customTweet = ( isset( $_POST['_jd_twitter'] ) )?stripcslashes( trim( $_POST['_jd_twitter'] ) ):'';
+			// excluded post statuses that should never be tweeted
+			if ( $jd_post_info['postStatus'] != 'draft' && $jd_post_info['postStatus'] != 'auto-draft' && $jd_post_info['postStatus'] != 'private' && $jd_post_info['postStatus'] != 'inherit' && $jd_post_info['postStatus'] != 'trash' && $jd_post_info['postStatus'] != 'pending' ) {
+				// if ops is set and equals 'publish', this is being edited. Otherwise, it's a new post.
+				if ( isset($_POST['original_post_status']) && $_POST['original_post_status'] == 'publish' ) {
 					// if this is an old post and editing updates are enabled
 					if ( $post_type_settings[$post_type]['post-edited-update'] == '1' ) {
 						$nptext = stripcslashes( $post_type_settings[$post_type]['post-edited-text'] );
 						$oldpost = true;
 					}
+				} else {
+					if ( $post_type_settings[$post_type]['post-published-update'] == '1' ) {
+						$nptext = stripcslashes( $post_type_settings[$post_type]['post-published-text'] );	
+						$newpost = true;
+					}
+				}
+
 			}
 			if ($newpost || $oldpost) {
 				$sentence = ( $customTweet != "" ) ? $customTweet : $nptext;
@@ -670,36 +680,6 @@ function jd_twit_future( $post_ID ) {
 	}	
 } // END jd_twit_future
 
-// Tweet from QuickPress (no custom fields, so can't control whether to tweet.)
-function jd_twit_quickpress( $post_ID ) {
-	wpt_check_version();
-    $post_ID = $post_ID->ID;
-	$jd_post_info = jd_post_info ( $post_ID );
-		$post_type = $jd_post_info['postType'];
-		$post_type_settings = get_option('wpt_post_types');
-		$post_types = array_keys($post_type_settings);
-
-		if ( in_array( $post_type, $post_types ) ) {		
-		$sentence = '';	
-		$sentence = stripcslashes(get_option( $post_type_settings[$post_type]['post-published-text'] ));
-		$shrink = jd_shorten_link( $jd_post_info['postLink'], $jd_post_info['postTitle'], $post_ID );
-			// Stores the posts CLIG in a custom field for later use as needed.
-			store_url($post_ID, $shrink);			
-			$sentence = custom_shortcodes( $sentence, $post_ID );		
-			$sentence = jd_truncate_tweet( $sentence, $jd_post_info['postTitle'], $jd_post_info['blogTitle'], $jd_post_info['postExcerpt'], $shrink, $jd_post_info['category'], $jd_post_info['postDate'], $post_ID, $jd_post_info['authId'] );		
-			if ( $sentence != '' ) {
-				if ( get_option('limit_categories') == '0' || in_allowed_category( $jd_post_info['categoryIds'] ) ) {
-					$sendToTwitter = jd_doTwitterAPIPost( $sentence );
-					update_post_meta( $post_ID,'_jd_wp_twitter',urldecode( $sentence ) );
-					if ($sendToTwitter == false ) {
-						update_option( 'wp_twitter_failure','1' );
-					}
-				}
-			}
-		}
-		return $post_ID;	
-} // END jd_twit_quickpress
-
 // HANDLES xmlrpc POSTS
 function jd_twit_xmlrpc( $post_ID ) {
 	wpt_check_version();
@@ -713,9 +693,9 @@ function jd_twit_xmlrpc( $post_ID ) {
 		if ( get_option('jd_tweet_default') != '1' && get_option('jd_twit_remote') == '1' ) {
 			$poststatus = $jd_post_info['postStatus'];
 			if ( $poststatus == 'publish' ) {
-			$sentence = stripcslashes( $post_type_settings[$post_type]['post-published-text'] );
+				$sentence = stripcslashes( $post_type_settings[$post_type]['post-published-text'] );
 			} else {
-			$sentence = stripcslashes( $post_type_settings[$post_type]['post-edited-text'] );			
+				$sentence = stripcslashes( $post_type_settings[$post_type]['post-edited-text'] );			
 			}
 			$shrink = jd_shorten_link( $jd_post_info['postLink'], $jd_post_info['postTitle'], $post_ID );
 			// Stores the posts CLIG in a custom field for later use as needed.
@@ -874,10 +854,14 @@ global $post, $jd_plugin_url, $jd_donate_url;
 	}
 	$jd_twitter = htmlspecialchars( stripcslashes( get_post_meta($post_id, '_jd_twitter', true ) ) );
 	$jd_tweet_this = get_post_meta( $post_id, '_jd_tweet_this', true );
-	if ( ( get_option( 'jd_tweet_default' ) == '1' && $jd_tweet_this != '' ) || $jd_tweet_this == 'no') {
-		$jd_selected = ' checked="checked"';
+	
+	// "no" means 'Don't Tweet' (is checked)
+	if ( get_option( 'jd_tweet_default' ) == '1' || ( $jd_tweet_this == 'no' ) ) {
+		$jd_tweet_this_inverse = "yes";
+		$jd_t_text = __("Tweet this post.", 'wp-to-twitter');		
 		} else {
-		$jd_selected = '';		
+		$jd_tweet_this_inverse = "no";	
+		$jd_t_text = __("Don't Tweet this post.", 'wp-to-twitter');			
 		}
 	$jd_short = get_post_meta( $post_id, '_wp_jd_clig', true );
 	$shortener = "Cli.gs";
@@ -930,7 +914,7 @@ echo "<p class='error'><strong>Previous Tweet:</strong> <a href='http://twitter.
 <a target="__blank" href="<?php echo $jd_donate_url; ?>"><?php _e('Make a Donation', 'wp-to-twitter', 'wp-to-twitter') ?></a> &bull; <a target="__blank" href="<?php echo $jd_plugin_url; ?>"><?php _e('Get Support', 'wp-to-twitter', 'wp-to-twitter') ?></a> &raquo;
 </p>
 <p>
-<input type="checkbox" name="_jd_tweet_this" value="no"<?php echo esc_attr( $jd_selected ); ?> id="jd_tweet_this" /> <label for="jd_tweet_this"><?php _e("Don't Tweet this post.", 'wp-to-twitter'); ?></label>
+<input type="checkbox" name="_jd_tweet_this" value="<?php echo $jd_tweet_this_inverse; ?>" id="jd_tweet_this" /> <label for="jd_tweet_this"><?php echo $jd_t_text; ?></label>
 </p>
 <p>
 <?php
@@ -976,15 +960,16 @@ function post_jd_twitter( $id ) {
 	if ( get_post_meta ( $id, "_jd_post_meta_fixed", true ) != 'true' ) {
 		jd_fix_post_meta( $id );
 	}
-		if (isset($_POST[ '_jd_twitter' ])) {
+		if ( isset( $_POST[ '_jd_twitter' ] ) ) {
 			$jd_twitter = $_POST[ '_jd_twitter' ];
 			update_post_meta( $id, '_jd_twitter', $jd_twitter );
 		}
-		if (isset($_POST[ '_jd_tweet_this' ])) {
-			$jd_tweet_this = esc_attr($_POST[ '_jd_tweet_this' ]);
+		if ( isset($_POST[ '_jd_tweet_this' ]) ) {
+			$jd_tweet_this = ( $_POST[ '_jd_tweet_this' ] == 'no')?'no':'yes';
 			update_post_meta( $id, '_jd_tweet_this', $jd_tweet_this );
 		} else {
-			update_post_meta( $id, '_jd_tweet_this', '' );
+			$jd_tweet_default = ( get_option( 'jd_tweet_default' ) == 0 )?'yes':'no';
+			update_post_meta( $id, '_jd_tweet_this', $jd_tweet_default );
 		}
 }
 
@@ -1132,11 +1117,7 @@ add_action( 'future_to_publish', 'jd_twit_future', 16, 1 );
 		}
 	}
 
-if ( get_option( 'jd_twit_quickpress' ) == '1' ) {
-	add_action( 'new_to_publish', 'jd_twit_quickpress', 16 ); 
-}
-
-if ( get_option( 'jd_twit_remote' ) == '1' ) {
+	if ( get_option( 'jd_twit_remote' ) == '1' ) {
 	add_action( 'xmlrpc_publish_post', 'jd_twit_xmlrpc' ); 
 	add_action( 'publish_phone', 'jd_twit_xmlrpc' ); // to add later
 }

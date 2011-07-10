@@ -56,7 +56,6 @@
 		update_option( 'comment-published-text', 'New comment: #title# #url#' );				
 		
 		update_option( 'limit_categories','0' );
-		update_option( 'jd_twit_quickpress', '1' );
 		update_option( 'jd_shortener', '1' );
 		update_option( 'use_tags_as_hashtags', '0' );
 		update_option( 'jd_strip_nonan', '0' );
@@ -146,7 +145,6 @@
 		update_option( 'jd_tweet_default', $_POST['jd_tweet_default'] );
 		update_option( 'jd_twit_remote',$_POST['jd_twit_remote'] );
 		update_option( 'jd_twit_custom_url', $_POST['jd_twit_custom_url'] );
-		update_option( 'jd_twit_quickpress', $_POST['jd_twit_quickpress'] );
 		update_option( 'use_tags_as_hashtags', $_POST['use_tags_as_hashtags'] );
 		update_option( 'jd_strip_nonan', $_POST['jd_strip_nonan'] );
 		update_option( 'jd_twit_prepend', $_POST['jd_twit_prepend'] );	
@@ -178,9 +176,9 @@
 		$wpt_settings = get_option('wpt_post_types');
 		foreach($_POST['wpt_post_types'] as $key=>$value) {
 				$array = array( 
-					'post-published-update'=>$value["post-published-update"],
+					'post-published-update'=>( isset( $value["post-published-update"] ) )?$value["post-published-update"]:"",
 					'post-published-text'=>$value["post-published-text"],
-					'post-edited-update'=>$value["post-edited-update"],
+					'post-edited-update'=>( isset( $value["post-edited-update"] ) )?$value["post-edited-update"]:"",
 					'post-edited-text'=>$value["post-edited-text"]
 					);
 				$wpt_settings[$key] = $array;
@@ -188,9 +186,9 @@
 		update_option( 'wpt_post_types', $wpt_settings );
 
 		update_option( 'newlink-published-text', $_POST['newlink-published-text'] );
-		update_option( 'jd_twit_blogroll',$_POST['jd_twit_blogroll'] );
+		update_option( 'jd_twit_blogroll',(isset($_POST['jd_twit_blogroll']) )?$_POST['jd_twit_blogroll']:"" );
 		update_option( 'comment-published-text', $_POST['comment-published-text'] );
-		update_option( 'comment-published-update',$_POST['comment-published-update'] );	
+		update_option( 'comment-published-update',(isset($_POST['comment-published-update']) )?$_POST['comment-published-update']:"" );	
 		update_option( 'jd_shortener', $_POST['jd_shortener'] );
 
 		if ( get_option( 'jd_shortener' ) == 2 && ( get_option( 'bitlylogin' ) == "" || get_option( 'bitlyapi' ) == "" ) ) {
@@ -653,10 +651,6 @@ document.write(unescape("%3Cscript src='" + psHost + "pluginsponsors.com/direct/
 			<p>
 				<input type="checkbox" name="jd_twit_remote" id="jd_twit_remote" value="1" <?php jd_checkCheckbox('jd_twit_remote')?> />
 				<label for="jd_twit_remote"><?php _e("Send Twitter Updates on remote publication (Post by Email or XMLRPC Client)", 'wp-to-twitter'); ?></label><br />
-			</p>
-			<p>
-				<input type="checkbox" name="jd_twit_quickpress" id="jd_twit_quickpress" value="1" <?php jd_checkCheckbox('jd_twit_quickpress')?> />
-				<label for="jd_twit_quickpress"><?php _e("Update Twitter when a post is published using QuickPress", 'wp-to-twitter'); ?></label>
 			</p>
 		</fieldset>
 		<fieldset>

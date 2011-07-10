@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.9.2
-Tested up to: 3.2-RC1
+Tested up to: 3.2
 Stable tag: trunk
 
 Posts a Twitter update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5 and cURL. 
@@ -30,7 +30,7 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 Translations:
 
-* Italian: [Gianni Diurno](http://www.gidibao.net)
+* Italian: [Gianni Diurno](http://www.gidibao.net) [up to date]
 * Spanish: [David Gil P&eacute;rez](http://www.sohelet.com)
 * Russian: [Burkov Boris](http://chernobog.ru)
 * French: [Fr&eacute;d&eacute;ric Million](http://www.traducteurs.com)
@@ -45,6 +45,13 @@ Translations:
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.3.3 =
+
+* Improved support for non-standard publishing mechanisms. 
+* Fixed 'Tweet this' option. 
+* Quickpress setting made obsolete
+* Now uses wp_get_shortlink() when available for generating WP-based shortlink.
 
 = 2.3.2 =
 
