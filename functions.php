@@ -117,24 +117,35 @@ if (is_array($post_type_settings)) {
 $post_types = array_keys($post_type_settings);
 	foreach ($post_types as $type) {
 		foreach ($post_type_settings[$type] as $key=>$value ) {
-			$group[$key] = $value;
+			$group[$type][$key] = $value;
 		}
 	}
 }
 $options = array( 
-	'app_consumer_key'=>get_option('app_consumer_key'),
-	'app_consumer_secret'=>get_option('app_consumer_secret'),
-	'bitlylogin'=>get_option( 'bitlylogin' ),
-	'bitlyapi'=>$bitlyapi,
 	'comment-published-update'=>get_option('comment-published-update'),
 	'comment-published-text'=>get_option('comment-published-text'),
 	
-	'disable_oauth_notice'=>get_option('disable_oauth_notice'),
-	'disable_url_failure'=>get_option('disable_url_failure' ),
-	'disable_twitter_failure'=>get_option('disable_twitter_failure' ),
-
 	'jd_twit_blogroll'=>get_option( 'jd_twit_blogroll' ),
+
+	'jd_shortener'=>get_option( 'jd_shortener' ),
+	
+	'wtt_twitter_username'=>get_option( 'wtt_twitter_username' ),
+	'app_consumer_key'=>get_option('app_consumer_key'),
+	'app_consumer_secret'=>get_option('app_consumer_secret'),
+	'oauth_token'=>get_option('oauth_token'),
+	'oauth_token_secret'=>get_option('oauth_token_secret'),
+	
+	'suprapi'=>get_option( 'suprapi' ),
+	'bitlylogin'=>get_option( 'bitlylogin' ),
+	'bitlyapi'=>$bitlyapi,
+	'yourlsapi'=>$yourlsapi,
+	'yourlspath'=>get_option( 'yourlspath' ),
+	'yourlsurl' =>get_option( 'yourlsurl' ),
+	'yourlslogin'=>get_option( 'yourlslogin' ),	
 	'jd_keyword_format'=>get_option( 'jd_keyword_format' ),
+	
+	'use_tags_as_hashtags'=>get_option( 'use_tags_as_hashtags' ),	
+	'jd_strip_nonan'=>get_option( 'jd_strip_nonan' ),
 	'jd_replace_character'=>get_option( 'jd_replace_character' ),
 	'jd_max_tags'=>get_option('jd_max_tags'),
 	'jd_max_characters'=>get_option('jd_max_characters'),	
@@ -143,49 +154,45 @@ $options = array(
 	'jd_twit_prepend'=>get_option( 'jd_twit_prepend' ),
 	'jd_twit_append'=>get_option( 'jd_twit_append' ),
 	'jd_twit_custom_url'=>get_option( 'jd_twit_custom_url' ),
+	
 	'jd_tweet_default'=>get_option( 'jd_tweet_default' ),
 	'jd_twit_remote'=>get_option( 'jd_twit_remote' ),
-	'jd_twit_quickpress'=>get_option( 'jd_twit_quickpress' ),
-	'jd_individual_twitter_users'=>get_option( 'jd_individual_twitter_users' ),
-	'jd_shortener'=>get_option( 'jd_shortener' ),
-	'jd_dynamic_analytics'=>get_option( 'jd_dynamic_analytics' ),
-
-	'limit_categories'=>get_option('limit_categories' ),
-
-	'oauth_token'=>get_option('oauth_token'),
-	'oauth_token_secret'=>get_option('oauth_token_secret'),
-	'suprapi'=>get_option( 'suprapi' ),
-
-	'tweet_categories'=>get_option('tweet_categories' ),
-	'twitterInitialised'=>get_option( 'twitterInitialised' ),
-	'twitter-analytics-campaign'=>get_option( 'twitter-analytics-campaign' ),
-
+	
 	'use-twitter-analytics'=>get_option( 'use-twitter-analytics' ),
-	'use_tags_as_hashtags'=>get_option( 'use_tags_as_hashtags' ),	
+	'twitter-analytics-campaign'=>get_option( 'twitter-analytics-campaign' ),
 	'use_dynamic_analytics'=>get_option( 'use_dynamic_analytics' ),
-
+	'jd_dynamic_analytics'=>get_option( 'jd_dynamic_analytics' ),
+	
+	'jd_individual_twitter_users'=>get_option( 'jd_individual_twitter_users' ),
+	'wtt_user_permissions'=>get_option('wtt_user_permissions'),
+	
 	'wp_twitter_failure'=>get_option( 'wp_twitter_failure' ),
 	'wp_url_failure' =>get_option( 'wp_url_failure' ),
 	'wp_bitly_error'=>get_option( 'wp_bitly_error' ),
 	'wp_supr_error'=>get_option( 'wp_supr_error' ),
 	'wp_to_twitter_version'=>get_option( 'wp_to_twitter_version'),
-	'wtt_twitter_username'=>get_option( 'wtt_twitter_username' ),
-	'wtt_user_permissions'=>get_option('wtt_user_permissions'),
+	
+	'disable_url_failure'=>get_option('disable_url_failure' ),
+	'disable_twitter_failure'=>get_option('disable_twitter_failure' ),
+	'disable_oauth_notice'=>get_option('disable_oauth_notice'),
 	'wp_debug_oauth'=>get_option('wp_debug_oauth'),
-
-	'x-login'=>get_option( 'x-login' ),
-	'x-pw'=>get_option( 'x-pw' ),
-
-	'yourlsapi'=>$yourlsapi,
-	'yourlspath'=>get_option( 'yourlspath' ),
-	'yourlsurl' =>get_option( 'yourlsurl' ),
-	'yourlslogin'=>get_option( 'yourlslogin' )	
+	'jd_donations'=>get_option( 'jd_donations' ),
+	
+	'tweet_categories'=>get_option('tweet_categories' ),
+	'limit_categories'=>get_option('limit_categories' ),
+	'twitterInitialised'=>get_option( 'twitterInitialised' )	
 );
-$result = array_merge($group,$options);
 echo "<div class=\"settings\">";
 echo "<strong>Raw Settings Output: Version $version</strong>";
 echo "<ol>";
-foreach ($result as $key=>$value) {
+foreach ( $group as $key=>$value)  {
+	echo "<li><code>$key</code>:<ul>";
+	foreach ( $value as $k=>$v ) {
+		echo "<li><code>$k</code>: $v</li>";
+	}
+	echo "</ul></li>";
+}
+foreach ($options as $key=>$value) {
 	echo "<li><code>$key</code>:$value</li>";
 }
 

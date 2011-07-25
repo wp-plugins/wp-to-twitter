@@ -78,6 +78,7 @@
 		update_option( 'wp_url_failure','0' );
 		// Default publishing options.
 		update_option( 'jd_tweet_default', '0' );
+		update_option( 'wpt_inline_edits', '0' );
 		// Note that default options are set.
 		update_option( 'twitterInitialised', '1' );	
 		//Twitter API
@@ -143,6 +144,7 @@
 
 	if ( isset( $_POST['submit-type'] ) && $_POST['submit-type'] == 'advanced' ) {
 		update_option( 'jd_tweet_default', $_POST['jd_tweet_default'] );
+		update_option( 'wpt_inline_edits', $_POST['wpt_inline_edits'] );		
 		update_option( 'jd_twit_remote',$_POST['jd_twit_remote'] );
 		update_option( 'jd_twit_custom_url', $_POST['jd_twit_custom_url'] );
 		update_option( 'use_tags_as_hashtags', $_POST['use_tags_as_hashtags'] );
@@ -649,6 +651,12 @@ document.write(unescape("%3Cscript src='" + psHost + "pluginsponsors.com/direct/
 				<small><?php _e("By default, all posts meeting other requirements will be posted to Twitter. Check this to change your setting.", 'wp-to-twitter'); ?></small>
 			</p>
 			<p>
+				<input type="checkbox" name="wpt_inline_edits" id="wpt_inline_edits" value="1" <?php jd_checkCheckbox('wpt_inline_edits')?> />
+				<label for="wpt_inline_edits"><?php _e("Allow status updates from Quick Edit", 'wp-to-twitter'); ?></label><br />
+				<small><?php _e("If checked, all posts edited individually or in bulk through the Quick Edit feature will be tweeted.", 'wp-to-twitter'); ?></small>
+
+			</p>
+			<p>
 				<input type="checkbox" name="jd_twit_remote" id="jd_twit_remote" value="1" <?php jd_checkCheckbox('jd_twit_remote')?> />
 				<label for="jd_twit_remote"><?php _e("Send Twitter Updates on remote publication (Post by Email or XMLRPC Client)", 'wp-to-twitter'); ?></label><br />
 			</p>
@@ -710,7 +718,7 @@ document.write(unescape("%3Cscript src='" + psHost + "pluginsponsors.com/direct/
 			</p>
 			<p>
 				<input type="checkbox" name="jd_donations" id="jd_donations" value="1" <?php jd_checkCheckbox('jd_donations')?> />
-				<label for="jd_donations"><strong><?php _e("I made a donation, so stop showing me ads, please.", 'wp-to-twitter'); ?></strong></label>
+				<label for="jd_donations"><strong><?php _e("I made a donation, so stop showing me ads, please. <a href='http://pluginsponsors.com/privacy.html'>PluginSponsors.com Privacy Policy</a>", 'wp-to-twitter'); ?></strong></label>
 			</p>
 		</fieldset>
 		<div>

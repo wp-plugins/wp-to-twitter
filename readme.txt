@@ -30,7 +30,8 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 Translations:
 
-* Italian: [Gianni Diurno](http://www.gidibao.net) [up to date]
+* Italian: [Gianni Diurno](http://www.gidibao.net) [2.3.3]
+* Ukrainian: [Alyona Lompar](http://www.webhostinggeeks.com) [2.3.3]
 * Spanish: [David Gil P&eacute;rez](http://www.sohelet.com)
 * Russian: [Burkov Boris](http://chernobog.ru)
 * French: [Fr&eacute;d&eacute;ric Million](http://www.traducteurs.com)
@@ -45,6 +46,15 @@ Translations:
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.3.4 =
+
+* Re-wrote instructions for connecting to OAuth to reflect redesigned Twitter Apps registration process
+* Code clean-up to remove some redundancies
+* Bug fixes: 
+	- Occasional double tweeting on future post seems to be fixed
+	- Tweeting on edits/quick edits when not checked
+* Added Ukrainian translation
 
 = 2.3.3 =
 

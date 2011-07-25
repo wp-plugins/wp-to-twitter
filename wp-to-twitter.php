@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.3.3
+Version: 2.3.4
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -56,7 +56,7 @@ if ( version_compare( phpversion(), '5.0', '<' ) || !function_exists( 'curl_init
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status;
-$version = "2.3.2";
+$version = "2.3.4";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -71,7 +71,7 @@ $exit_msg=__('WP to Twitter requires WordPress 2.9.2 or a more recent version. <
 if ( version_compare( $wp_version,"2.9.2","<" )) {
 	exit ($exit_msg);
 }
-	
+
  // check for OAuth configuration
 if ( !function_exists('wtt_oauth_test') ) {
 	$oauth = false;
@@ -90,7 +90,7 @@ function wpt_check_version() {
 		wptotwitter_activate();
 	}
 }
-	
+
 function wptotwitter_activate() {
 global $version;
 $prev_version = get_option( 'wp_to_twitter_version' );
@@ -147,6 +147,10 @@ $upgrade = version_compare( $prev_version, "2.3.1","<" );
 $upgrade = version_compare( $prev_version, "2.3.3","<" );
 	if ( $upgrade ) {
 		delete_option( 'jd_twit_quickpress' );
+	}
+$upgrade = version_compare( $prev_version, "2.3.4","<" );
+	if ( $upgrade ) {
+		add_option( 'wpt_inline_edits', '0' );
 	}
 	update_option( 'wp_to_twitter_version',$version );
 }	
@@ -555,6 +559,12 @@ function jd_twit( $post_ID ) {
 	$jd_tweet_this = get_post_meta( $post_ID, '_jd_tweet_this', TRUE);
 	$newpost = false;
 	$oldpost = false;
+	$is_inline_edit = false;
+	if ( get_option('wpt_inline_edits') != 1 ) {
+		if ( isset($_POST['_inline_edit']) ) return;
+	} else {
+		if ( isset($_POST['_inline_edit']) ) { $is_inline_edit = true; }
+	}	
 	if ( $jd_tweet_this != "no" ) {
 		$jd_post_info = jd_post_info( $post_ID );
 		$post_type = $jd_post_info['postType'];
@@ -567,7 +577,7 @@ function jd_twit( $post_ID ) {
 			// excluded post statuses that should never be tweeted
 			if ( $jd_post_info['postStatus'] != 'draft' && $jd_post_info['postStatus'] != 'auto-draft' && $jd_post_info['postStatus'] != 'private' && $jd_post_info['postStatus'] != 'inherit' && $jd_post_info['postStatus'] != 'trash' && $jd_post_info['postStatus'] != 'pending' ) {
 				// if ops is set and equals 'publish', this is being edited. Otherwise, it's a new post.
-				if ( isset($_POST['original_post_status']) && $_POST['original_post_status'] == 'publish' ) {
+				if ( ( isset($_POST['original_post_status']) && $_POST['original_post_status'] == 'publish' ) || $is_inline_edit == true ) {
 					// if this is an old post and editing updates are enabled
 					if ( $post_type_settings[$post_type]['post-edited-update'] == '1' ) {
 						$nptext = stripcslashes( $post_type_settings[$post_type]['post-edited-text'] );
@@ -642,44 +652,6 @@ function jd_twit_link( $link_ID )  {
 	return '';
 	}
 }
-
-// HANDLES SCHEDULED POSTS
-function jd_twit_future( $post_ID ) {
-	wpt_check_version();
-    $post_ID = $post_ID->ID;
-	$jd_tweet_this = get_post_meta( $post_ID, '_jd_tweet_this', TRUE);	
-	if ( $jd_tweet_this != "no" ) {
-		$jd_post_info = jd_post_info( $post_ID );
-		$post_type = $jd_post_info['postType'];
-		$post_type_settings = get_option('wpt_post_types');
-		$post_types = array_keys($post_type_settings);
-
-		if ( in_array( $post_type, $post_types ) ) {
-			$sentence = '';
-			$customTweet = get_post_meta( $post_ID, '_jd_twitter', TRUE ); 
-			$sentence = stripcslashes( $post_type_settings[$post_type]['post-published-text'] );
-			$shrink = jd_shorten_link( $jd_post_info['postLink'], $jd_post_info['postTitle'], $post_ID );
-			// Stores the post's short URL in a custom field for later use as needed.
-			store_url($post_ID, $shrink);
-				if ( $customTweet != "" ) {
-					$sentence = $customTweet;
-				} 
-			$sentence = custom_shortcodes( $sentence, $post_ID );
-			$sentence = jd_truncate_tweet( $sentence, $jd_post_info['postTitle'], $jd_post_info['blogTitle'], $jd_post_info['postExcerpt'], $shrink, $jd_post_info['category'], $jd_post_info['postDate'], $post_ID, $jd_post_info['authId'] );	
-			if ( $sentence != '' ) {
-				if ( get_option('limit_categories') == '0' || in_allowed_category( $jd_post_info['categoryIds'] ) ) {
-				$sendToTwitter = jd_doTwitterAPIPost( $sentence );
-				update_post_meta( $post_ID,'_jd_wp_twitter',urldecode( $sentence ) );
-					if ( $sendToTwitter == false ) {
-						update_option( 'wp_twitter_failure','1' );
-					}
-				}
-			}
-		}
-		return $post_ID;
-	}	
-} // END jd_twit_future
-
 // HANDLES xmlrpc POSTS
 function jd_twit_xmlrpc( $post_ID ) {
 	wpt_check_version();
@@ -1062,7 +1034,7 @@ function jd_list_categories() {
 // Add the administrative settings to the "Settings" menu.
 function jd_addTwitterAdminPages() {
     if ( function_exists( 'add_submenu_page' ) ) {
-		 $plugin_page = add_options_page( 'WP -> Twitter', 'WP -> Twitter', 'manage_options', __FILE__, 'jd_wp_Twitter_manage_page' );
+		 $plugin_page = add_options_page( 'WP to Twitter', 'WP to Twitter', 'manage_options', __FILE__, 'jd_wp_Twitter_manage_page' );
 		 add_action( 'admin_head-'. $plugin_page, 'jd_addTwitterAdminStyles' );
     }
  }
@@ -1108,7 +1080,7 @@ if ( get_option( 'disable_twitter_failure' ) != '1' ) {
 if ( get_option( 'jd_twit_blogroll' ) == '1' ) {
 	add_action( 'add_link', 'jd_twit_link' );
 }
-add_action( 'future_to_publish', 'jd_twit_future', 16, 1 );
+add_action( 'future_to_publish', 'jd_twit', 16, 1 );
 	$post_type_settings = get_option('wpt_post_types');
 	if ( is_array( $post_type_settings ) ) {
 		$post_types = array_keys($post_type_settings);

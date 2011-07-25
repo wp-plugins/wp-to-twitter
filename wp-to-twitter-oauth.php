@@ -106,20 +106,25 @@ $server_time = date_i18n( DATE_COOKIE  );
 			<div class="inside">
 			<br class="clear" />	
 			<p>'.__('Your server time is','my-calendar').' <code>'.$server_time.'</code>. '.__( 'If this is wrong, your server will not be able to connect with Twitter. (<strong>Note:</strong> your server time may not match your current time, but it should be correct for it\'s own time zone.)','my-calendar').'</p>
-			<p>'.__('The process to set up OAuth authentication for your web site is needlessly laborious. It is also confusing. However, this is the only method available from Twitter. Note that you will not add your Twitter username or password to WP to Twitter; they are not used in OAuth authentication.', 'wp-to-twitter').'</p> 
+			<p>'.__('The process to set up OAuth authentication for your web site is needlessly laborious. However, this is the method available. Note that you will not add your Twitter username or password to WP to Twitter; they are not used in OAuth authentication.', 'wp-to-twitter').'</p> 
 			<form action="" method="post">
 				<fieldset class="options">
 					<h4>'.__('1. Register this site as an application on ', 'wp-to-twitter') . '<a href="http://dev.twitter.com/apps/new" target="_blank">'.__('Twitter\'s application registration page','wp-to-twitter').'</a></h4>
 						<ul>
-						<li>'.__('If you\'re not currently logged in, use the Twitter username and password which you want associated with this site' , 'wp-to-twitter').'</li>
+						<li>'.__('If you\'re not currently logged in, log-in with the Twitter username and password which you want associated with this site' , 'wp-to-twitter').'</li>
 						<li>'.__('Your Application\'s Name will be what shows up after "via" in your twitter stream. Your application name cannot include the word "Twitter." Use the name of your web site.' , 'wp-to-twitter').'</li>
 						<li>'.__('Your Application Description can be whatever you want.','wp-to-twitter').'</li>
-						<li>'.__('Application Type should be set on ' , 'wp-to-twitter').'<strong>'.__('Browser' , 'wp-to-twitter').'</strong></li>
-						<li>'.__('The Callback URL should be ' , 'wp-to-twitter').'<strong>'.  get_bloginfo( 'url' ) .'</strong></li>
-						<li>'.__('Default Access type must be set to ' , 'wp-to-twitter').'<strong>'.__('Read &amp; Write' , 'wp-to-twitter').'</strong> '.__('(this is NOT the default)' , 'wp-to-twitter').'</li>
+						<li>'.__('The WebSite and Callback URL should be ' , 'wp-to-twitter').'<strong>'.  get_bloginfo( 'url' ) .'</strong></li>					
 						</ul>
-					<p><em>'.__('Once you have registered your site as an application, you will be provided with a consumer key and a consumer secret.' , 'wp-to-twitter').'</em></p>
-					<h4>'.__('2. Copy and paste your consumer key and consumer secret into the fields below' , 'wp-to-twitter').'</h4>
+					<p>'.__('Agree to the Developer Rules of the Road and continue.','wp-to-twitter').'</p>
+					<h4>'.__('2. Switch to "Settings" tab in Twitter apps','wp-to-twitter').'</h4>
+						<ul>
+						<li>'.__('Select "Read and Write" for the Application Type' , 'wp-to-twitter').'</li>
+						<li>'.__('Update the application settings' , 'wp-to-twitter').'</li>
+						<li>'.__('Return to Details tab and create your access token. Refresh page to view your access tokens.','wp-to-twitter').'</li>		
+						</ul>					
+					<p><em>'.__('Once you have registered your site as an application, you will be provided with four keys.' , 'wp-to-twitter').'</em></p>
+					<h4>'.__('3. Copy and paste your consumer key and consumer secret into the fields below' , 'wp-to-twitter').'</h4>
 				
 					<p>
 						<label for="wtt_app_consumer_key">'.__('Twitter Consumer Key', 'wp-to-twitter').'</label>
@@ -129,8 +134,8 @@ $server_time = date_i18n( DATE_COOKIE  );
 						<label for="wtt_app_consumer_secret">'.__('Twitter Consumer Secret', 'wp-to-twitter').'</label>
 						<input type="text" size="25" name="wtt_app_consumer_secret" id="wtt_app_consumer_secret" value="'.esc_attr( get_option('app_consumer_secret') ).'" />
 					</p>
-					<h4>'.__('3. Copy and paste your Access Token and Access Token Secret into the fields below','wp-to-twitter').'</h4>
-					<p>'.__('On the right hand side of your new application page at Twitter, click on \'My Access Token\'.','wp-to-twitter').'</p>
+					<h4>'.__('4. Copy and paste your Access Token and Access Token Secret into the fields below','wp-to-twitter').'</h4>
+					<p>'.__('If the Access level reported for your Access Token is not "Read and write", you will need to delete your application from Twitter and start over. Don\'t blame me, I\'m not the _______ who designed this process.','wp-to-twitter').'</p>
 					<p>
 						<label for="wtt_oauth_token">'.__('Access Token', 'wp-to-twitter').'</label>
 						<input type="text" size="25" name="wtt_oauth_token" id="wtt_oauth_token" value="'.esc_attr( get_option('oauth_token') ).'" />

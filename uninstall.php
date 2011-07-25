@@ -27,6 +27,8 @@ delete_option( 'jd_twit_blogroll' );
 
 // Default publishing options.
 delete_option( 'jd_tweet_default' );
+delete_option( 'wpt_inline_edits' );
+
 // Note that default options are set.
 delete_option( 'twitterInitialised' );
 delete_option( 'wp_twitter_failure' );
@@ -47,6 +49,7 @@ delete_option( 'twitter-analytics-campaign' );
 delete_option( 'use-twitter-analytics' );
 delete_option( 'jd_twit_custom_url' );
 delete_option( 'jd_shortener' );
+delete_option( 'jd_strip_nonan' );
 
 delete_option( 'jd_individual_twitter_users' );
 delete_option( 'use_tags_as_hashtags' );
