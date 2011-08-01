@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.9.2
-Tested up to: 3.2
+Tested up to: 3.2.1
 Stable tag: trunk
 
 Posts a Twitter update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5 and cURL. 
@@ -30,7 +30,7 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 Translations:
 
-* Italian: [Gianni Diurno](http://www.gidibao.net) [2.3.3]
+* Italian: [Gianni Diurno](http://www.gidibao.net) [2.3.4]
 * Ukrainian: [Alyona Lompar](http://www.webhostinggeeks.com) [2.3.3]
 * Spanish: [David Gil P&eacute;rez](http://www.sohelet.com)
 * Russian: [Burkov Boris](http://chernobog.ru)
@@ -47,12 +47,19 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.3.5 =
+
+* Bug fix to custom shortcode support to allow use of multiple custom shortcodes simultaneously
+* Bug fix to (hopefully) solve duplicate posting when tags are included on scheduled posts.
+* Added comparison of your server time to Twitter's server time for information when installing.
+* Updated Italian translation.
+
 = 2.3.4 =
 
 * Re-wrote instructions for connecting to OAuth to reflect redesigned Twitter Apps registration process
 * Code clean-up to remove some redundancies
 * Bug fixes: 
-	- Occasional double tweeting on future post seems to be fixed
+	- Occasional double tweeting on future post seems to be fixed.
 	- Tweeting on edits/quick edits when not checked
 * Added Ukrainian translation
 

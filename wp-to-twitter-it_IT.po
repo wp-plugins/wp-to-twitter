@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP to Twitter in italiano\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-26 21:27+0100\n"
-"PO-Revision-Date: 2011-06-26 21:34+0100\n"
+"POT-Creation-Date: 2011-07-27 09:35+0100\n"
+"PO-Revision-Date: 2011-07-27 09:55+0100\n"
 "Last-Translator: Gianni Diurno (aka gidibao) <gidibao[at]gmail[dot]com>\n"
 "Language-Team: Gianni Diurno | gidibao.net\n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: wp-to-twitter/functions.php:194
+#: wp-to-twitter/functions.php:201
 msgid "[<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>Hide</a>] If you're experiencing trouble, please copy these settings into any request for support."
 msgstr "[<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>Nascondi</a>] Qualora avessi riscontrato dei problemi, allega queste impostazioni alle richieste di supporto."
 
@@ -202,7 +202,7 @@ msgid "Pledge to new features"
 msgstr "Nuove funzioni in arrivo"
 
 #: wp-to-twitter/wp-to-twitter-manager.php:385
-#: wp-to-twitter/wp-to-twitter.php:926
+#: wp-to-twitter/wp-to-twitter.php:886
 msgid "Make a Donation"
 msgstr "Effettua una donazione"
 
@@ -211,7 +211,7 @@ msgid "View Settings"
 msgstr "Visualizza impostazioni"
 
 #: wp-to-twitter/wp-to-twitter-manager.php:385
-#: wp-to-twitter/wp-to-twitter.php:926
+#: wp-to-twitter/wp-to-twitter.php:886
 msgid "Get Support"
 msgstr "Supporto"
 
@@ -505,136 +505,140 @@ msgid "By default, all posts meeting other requirements will be posted to Twitte
 msgstr "Come funzione predefinita, tutti i post che soddisfano i requisiti saranno pubblicati su Twitter. Metti il segno di spunta per modificare le impostazioni."
 
 #: wp-to-twitter/wp-to-twitter-manager.php:655
+msgid "Allow status updates from Quick Edit"
+msgstr "Permetti aggiornamenti stato via Quick Edit"
+
+#: wp-to-twitter/wp-to-twitter-manager.php:656
+msgid "If checked, all posts edited individually or in bulk through the Quick Edit feature will be tweeted."
+msgstr "Se attivo, tutti gli articoli modificati singolarmente/massa via Quick Edit saranno inviati a Twitter."
+
+#: wp-to-twitter/wp-to-twitter-manager.php:661
 msgid "Send Twitter Updates on remote publication (Post by Email or XMLRPC Client)"
 msgstr "Invio degli aggiornamenti di Twitter via punti di pubblicazione remoti (Email o client XMLRPC)"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:659
-msgid "Update Twitter when a post is published using QuickPress"
-msgstr "Aggiorna Twitter quando un articolo é stato pubblicato via QuickPress"
-
-#: wp-to-twitter/wp-to-twitter-manager.php:663
+#: wp-to-twitter/wp-to-twitter-manager.php:665
 msgid "Google Analytics Settings"
 msgstr "Impostazioni Google Analytics"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:664
+#: wp-to-twitter/wp-to-twitter-manager.php:666
 msgid "You can track the response from Twitter using Google Analytics by defining a campaign identifier here. You can either define a static identifier or a dynamic identifier. Static identifiers don't change from post to post; dynamic identifiers are derived from information relevant to the specific post. Dynamic identifiers will allow you to break down your statistics by an additional variable."
 msgstr "Puoi tracciare la risposta da Twitter utilizzando Google Analytics definendo qui l'identificatore. Puoi definire un identificatore statico oppure uno dinamico. Gli identificatori statici non mutano da post a post mentre quelli dinamici derivano dalle informazioni di maggior rilievo appartenenti a quel post specifico. Gli identificatori dinamici ti permetteranno di analizzare le tue statistiche attraverso una variabile aggiuntiva."
 
-#: wp-to-twitter/wp-to-twitter-manager.php:668
+#: wp-to-twitter/wp-to-twitter-manager.php:670
 msgid "Use a Static Identifier with WP-to-Twitter"
 msgstr "Utilizza un identificatore statico per WP-to-Twitter"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:669
+#: wp-to-twitter/wp-to-twitter-manager.php:671
 msgid "Static Campaign identifier for Google Analytics:"
 msgstr "Identificatore statico Google Analytics:"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:673
+#: wp-to-twitter/wp-to-twitter-manager.php:675
 msgid "Use a dynamic identifier with Google Analytics and WP-to-Twitter"
 msgstr "Utilizza un identificatore dinamico per Google Analytics e WP-to-Twitter"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:674
+#: wp-to-twitter/wp-to-twitter-manager.php:676
 msgid "What dynamic identifier would you like to use?"
 msgstr "Quale identificatore dinamico desideri utilizzare?"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:676
+#: wp-to-twitter/wp-to-twitter-manager.php:678
 msgid "Category"
 msgstr "Categoria"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:677
+#: wp-to-twitter/wp-to-twitter-manager.php:679
 msgid "Post ID"
 msgstr "ID post"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:678
+#: wp-to-twitter/wp-to-twitter-manager.php:680
 msgid "Post Title"
 msgstr "Titolo post"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:679
-#: wp-to-twitter/wp-to-twitter-manager.php:693
+#: wp-to-twitter/wp-to-twitter-manager.php:681
+#: wp-to-twitter/wp-to-twitter-manager.php:695
 msgid "Author"
 msgstr "Autore"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:684
+#: wp-to-twitter/wp-to-twitter-manager.php:686
 msgid "Individual Authors"
 msgstr "Autori singoli"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:687
+#: wp-to-twitter/wp-to-twitter-manager.php:689
 msgid "Authors have individual Twitter accounts"
 msgstr "Gli autori hanno degli account personali su Twitter"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:687
+#: wp-to-twitter/wp-to-twitter-manager.php:689
 msgid "Authors can set their username in their user profile. As of version 2.2.0, this feature no longer allows authors to post to their own Twitter accounts. It can only add an @reference to the author. This @reference is placed using the <code>#account#</code> shortcode. (It will pick up the main account if user accounts are not enabled.)"
 msgstr "Gli autori possono impostare il proprio nome utente nel loro profilo utente. A partire dalla versione 2.2.0, questa funzione non permetterà più agli autori di inviare i propri messaggi ai loro account di Twitter. Potrà essere aggiunto il solo riferimento @ all'autore. Questo riferimento @ verrà posizionato facendo uso dello shortcode <code>#account#</code>. (Verrà utilizzato l'account principale se gli account utente non saranno attivati.)"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:690
+#: wp-to-twitter/wp-to-twitter-manager.php:692
 msgid "Choose the lowest user group that can add their Twitter information"
 msgstr "Scegli il ruolo utente di minima che può aggiungere le proprie info Twitter "
 
-#: wp-to-twitter/wp-to-twitter-manager.php:691
+#: wp-to-twitter/wp-to-twitter-manager.php:693
 msgid "Subscriber"
 msgstr "Sottoscrittore"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:692
+#: wp-to-twitter/wp-to-twitter-manager.php:694
 msgid "Contributor"
 msgstr "Collaboratore"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:694
+#: wp-to-twitter/wp-to-twitter-manager.php:696
 msgid "Editor"
 msgstr "Editore"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:695
+#: wp-to-twitter/wp-to-twitter-manager.php:697
 msgid "Administrator"
 msgstr "Amministratore"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:700
+#: wp-to-twitter/wp-to-twitter-manager.php:702
 msgid "Disable Error Messages"
 msgstr "Disattiva i messaggi di errore"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:703
+#: wp-to-twitter/wp-to-twitter-manager.php:705
 msgid "Disable global URL shortener error messages."
 msgstr "Disattiva i messaggi di errore abbreviatore URL globale."
 
-#: wp-to-twitter/wp-to-twitter-manager.php:707
+#: wp-to-twitter/wp-to-twitter-manager.php:709
 msgid "Disable global Twitter API error messages."
 msgstr "Disattiva i messaggi di errore globali API Twitter."
 
-#: wp-to-twitter/wp-to-twitter-manager.php:711
+#: wp-to-twitter/wp-to-twitter-manager.php:713
 msgid "Disable notification to implement OAuth"
 msgstr "Disattiva la notifica per implementare OAuth"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:715
+#: wp-to-twitter/wp-to-twitter-manager.php:717
 msgid "Get Debugging Data for OAuth Connection"
 msgstr "Ottieni i dati di Debugging per la connessione OAuth"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:719
-msgid "I made a donation, so stop showing me ads, please."
-msgstr "Ho effettuato una donazione - non mostrare più la pubblicità!"
+#: wp-to-twitter/wp-to-twitter-manager.php:721
+msgid "I made a donation, so stop showing me ads, please. <a href='http://pluginsponsors.com/privacy.html'>PluginSponsors.com Privacy Policy</a>"
+msgstr "Ho effettuato una donazione: non mostrare la pubblicità. <a href='http://pluginsponsors.com/privacy.html'>PluginSponsors.com Privacy Policy</a>"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:725
+#: wp-to-twitter/wp-to-twitter-manager.php:727
 msgid "Save Advanced WP->Twitter Options"
 msgstr "Salva avanzate WP->Opzioni Twitter"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:735
+#: wp-to-twitter/wp-to-twitter-manager.php:737
 msgid "Limit Updating Categories"
 msgstr "Limite aggiornamento categorie"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:739
+#: wp-to-twitter/wp-to-twitter-manager.php:741
 msgid "Select which blog categories will be Tweeted. Uncheck all categories to disable category limits."
 msgstr "Seleziona quali categorie del blog saranno oggetto dei messaggi su Twitter. Seleziona tutte le categorie per disattivare i limiti categoria. "
 
-#: wp-to-twitter/wp-to-twitter-manager.php:742
+#: wp-to-twitter/wp-to-twitter-manager.php:744
 msgid "<em>Category limits are disabled.</em>"
 msgstr "<em>Le limitazioni alle categorie non sono attive.</em>"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:756
+#: wp-to-twitter/wp-to-twitter-manager.php:758
 msgid "Check Support"
 msgstr "Supporto"
 
-#: wp-to-twitter/wp-to-twitter-manager.php:756
+#: wp-to-twitter/wp-to-twitter-manager.php:758
 msgid "Check whether your server supports <a href=\"http://www.joedolson.com/articles/wp-to-twitter/\">WP to Twitter's</a> queries to the Twitter and URL shortening APIs. This test will send a status update to Twitter and shorten a URL using your selected methods."
 msgstr "Metti il segno di spunta nel caso in cui il tuo server supportasse le query di <a href=\"http://www.joedolson.com/articles/wp-to-twitter/\">WP to Twitter</a> per Twitter e per le API per l'abbreviazione degli URL. Questo test invierà a Twitter un aggiornamento dello stato e renderà breve l'URL utilizzando il metodo da te selezionato."
 
 #: wp-to-twitter/wp-to-twitter-oauth.php:105
-#: wp-to-twitter/wp-to-twitter-oauth.php:144
+#: wp-to-twitter/wp-to-twitter-oauth.php:149
 msgid "Connect to Twitter"
 msgstr "Collegati a Twitter"
 
@@ -647,8 +651,8 @@ msgid "If this is wrong, your server will not be able to connect with Twitter. (
 msgstr "Se errata, il tuo server non sarà in grado di connettersi a Twitter. (<strong>Nota:</strong> l'ora del server potrebbe non coincidere con il tuo fuso orario, ma deve essere esatta in relazione alla proprio.)"
 
 #: wp-to-twitter/wp-to-twitter-oauth.php:109
-msgid "The process to set up OAuth authentication for your web site is needlessly laborious. It is also confusing. However, this is the only method available from Twitter. Note that you will not add your Twitter username or password to WP to Twitter; they are not used in OAuth authentication."
-msgstr "La procedura di impostazione della autentificazione OAuth per il tuo sito é piuttosto laboriosa nonché confusa. Comunque, questa é l'unica soluzione disponibile offertaci da Twitter. Ti ricordo che non potrai, mai ed in nessun caso, inserire il tuo nome utente oppure la password di Twitter in WP to Twitter poiché essi non verranno utilizzati per l'autentificazione OAuth."
+msgid "The process to set up OAuth authentication for your web site is needlessly laborious. However, this is the method available. Note that you will not add your Twitter username or password to WP to Twitter; they are not used in OAuth authentication."
+msgstr "La procedura di impostazione della autentificazione OAuth per il tuo sito é piuttosto laboriosa nonché confusa. Comunque, questa é l'unica soluzione disponibile. Ti ricordo che non potrai inserire il tuo nome utente oppure la password di Twitter in WP to Twitter poiché essi non verranno utilizzati per l'autentificazione OAuth."
 
 #: wp-to-twitter/wp-to-twitter-oauth.php:112
 msgid "1. Register this site as an application on "
@@ -659,8 +663,8 @@ msgid "Twitter's application registration page"
 msgstr "pagina di registrazione applicazione Twitter"
 
 #: wp-to-twitter/wp-to-twitter-oauth.php:114
-msgid "If you're not currently logged in, use the Twitter username and password which you want associated with this site"
-msgstr "Qualora non fossi collegato, utilizza il nome utente e la password che desideri associare a questo sito"
+msgid "If you're not currently logged in, log-in with the Twitter username and password which you want associated with this site"
+msgstr "Qualora non fossi collegato, utilizza il nome utente e la password di Twitter che desideri associare a questo sito"
 
 #: wp-to-twitter/wp-to-twitter-oauth.php:115
 msgid "Your Application's Name will be what shows up after \"via\" in your twitter stream. Your application name cannot include the word \"Twitter.\" Use the name of your web site."
@@ -671,86 +675,86 @@ msgid "Your Application Description can be whatever you want."
 msgstr "La descrizione per la tua applicazione é un testo a tua discrezione."
 
 #: wp-to-twitter/wp-to-twitter-oauth.php:117
-msgid "Application Type should be set on "
-msgstr "Il tipo di applicazione deve essere impostato a "
-
-#: wp-to-twitter/wp-to-twitter-oauth.php:117
-msgid "Browser"
-msgstr "Browser"
-
-#: wp-to-twitter/wp-to-twitter-oauth.php:118
-msgid "The Callback URL should be "
-msgstr "Il Callback URL dovrebbe essere "
+msgid "The WebSite and Callback URL should be "
+msgstr "Il sito web ed il Callback URL dovrebbere essere "
 
 #: wp-to-twitter/wp-to-twitter-oauth.php:119
-msgid "Default Access type must be set to "
-msgstr "Il tipo di accesso predefinito deve essere impostato a "
+msgid "Agree to the Developer Rules of the Road and continue."
+msgstr "Acconsenti a Developer Rules of the Road e prosegui."
 
-#: wp-to-twitter/wp-to-twitter-oauth.php:119
-msgid "Read &amp; Write"
-msgstr "Leggi &amp; Scrivi"
-
-#: wp-to-twitter/wp-to-twitter-oauth.php:119
-msgid "(this is NOT the default)"
-msgstr "(questo NON é il predefinito)"
-
-#: wp-to-twitter/wp-to-twitter-oauth.php:121
-msgid "Once you have registered your site as an application, you will be provided with a consumer key and a consumer secret."
-msgstr "Una volta registrato il tuo sito come applicazione, ti verranno forniti una consumer key ed un consumer secret."
+#: wp-to-twitter/wp-to-twitter-oauth.php:120
+msgid "2. Switch to \"Settings\" tab in Twitter apps"
+msgstr "2. Vai alla tab \"Settings\" sotto Twitter apps"
 
 #: wp-to-twitter/wp-to-twitter-oauth.php:122
-msgid "2. Copy and paste your consumer key and consumer secret into the fields below"
+msgid "Select \"Read and Write\" for the Application Type"
+msgstr "Seleziona \"Read and Write\" per il tipo di applicazione"
+
+#: wp-to-twitter/wp-to-twitter-oauth.php:123
+msgid "Update the application settings"
+msgstr "Aggiorna impostazioni applicazione"
+
+#: wp-to-twitter/wp-to-twitter-oauth.php:124
+msgid "Return to Details tab and create your access token. Refresh page to view your access tokens."
+msgstr "Ritorna alla tab Dettaglio e crea il tuo token di accesso. Ricarica la pagina per vedere i tuoi token."
+
+#: wp-to-twitter/wp-to-twitter-oauth.php:126
+msgid "Once you have registered your site as an application, you will be provided with four keys."
+msgstr "Una volta registrato il tuo sito come applicazione, ti saranno fornite quattro chiavi."
+
+#: wp-to-twitter/wp-to-twitter-oauth.php:127
+msgid "3. Copy and paste your consumer key and consumer secret into the fields below"
 msgstr "2. Copia ed incolla nei campi qui sotto la tua consumer key ed il consumer secret"
 
-#: wp-to-twitter/wp-to-twitter-oauth.php:125
+#: wp-to-twitter/wp-to-twitter-oauth.php:130
 msgid "Twitter Consumer Key"
 msgstr "Twitter Consumer Key"
 
-#: wp-to-twitter/wp-to-twitter-oauth.php:129
+#: wp-to-twitter/wp-to-twitter-oauth.php:134
 msgid "Twitter Consumer Secret"
 msgstr "Twitter Consumer Secret"
 
-#: wp-to-twitter/wp-to-twitter-oauth.php:132
-msgid "3. Copy and paste your Access Token and Access Token Secret into the fields below"
+#: wp-to-twitter/wp-to-twitter-oauth.php:137
+msgid "4. Copy and paste your Access Token and Access Token Secret into the fields below"
 msgstr "3. Copia ed incolla nei campi qui sotto il tuo token di accesso e secret"
 
-#: wp-to-twitter/wp-to-twitter-oauth.php:133
-msgid "On the right hand side of your new application page at Twitter, click on 'My Access Token'."
-msgstr "Clicca su 'My Access Token' posizionato alla destra della pagina della applicazione."
+#: wp-to-twitter/wp-to-twitter-oauth.php:138
+msgid "If the Access level reported for your Access Token is not \"Read and write\", you will need to delete your application from Twitter and start over. Don't blame me, I'm not the _______ who designed this process."
+msgstr "Qualora ti venisse comunicato che il tuo token di accesso non fosse \"Read and write\", dovrai cancellare da Twitter l'applicazione e ricominciare da capo. Non prendertela con me! Non sono lo _______ che ha sviluppato questa procedura."
 
-#: wp-to-twitter/wp-to-twitter-oauth.php:135
+#: wp-to-twitter/wp-to-twitter-oauth.php:140
 msgid "Access Token"
 msgstr "Token d'accesso"
 
-#: wp-to-twitter/wp-to-twitter-oauth.php:139
+#: wp-to-twitter/wp-to-twitter-oauth.php:144
 msgid "Access Token Secret"
 msgstr "Token d'accesso - Secret"
 
-#: wp-to-twitter/wp-to-twitter-oauth.php:154
+#: wp-to-twitter/wp-to-twitter-oauth.php:159
 msgid "Disconnect from Twitter"
 msgstr "Disconnettiti da Twitter"
 
-#: wp-to-twitter/wp-to-twitter-oauth.php:161
+#: wp-to-twitter/wp-to-twitter-oauth.php:166
 msgid "Twitter Username "
 msgstr "Nome utente Twitter"
 
-#: wp-to-twitter/wp-to-twitter-oauth.php:162
+#: wp-to-twitter/wp-to-twitter-oauth.php:167
 msgid "Consumer Key "
 msgstr "Consumer Key "
 
-#: wp-to-twitter/wp-to-twitter-oauth.php:163
+#: wp-to-twitter/wp-to-twitter-oauth.php:168
 msgid "Consumer Secret "
 msgstr "Consumer Secret "
 
-#: wp-to-twitter/wp-to-twitter-oauth.php:164
+#: wp-to-twitter/wp-to-twitter-oauth.php:169
 msgid "Access Token "
 msgstr "Token d'accesso"
 
-#: wp-to-twitter/wp-to-twitter-oauth.php:165
+#: wp-to-twitter/wp-to-twitter-oauth.php:170
 msgid "Access Token Secret "
 msgstr "Token d'accesso - Secret"
 
-#: wp-to-twitter/wp-to-twitter-oauth.php:168
+#: wp-to-twitter/wp-to-twitter-oauth.php:173
 msgid "Disconnect Your WordPress and Twitter Account"
 msgstr "Scollega il tuo account WordPress e Twitter"
 
@@ -767,89 +771,122 @@ msgstr "WP to Twitter richiede WordPress 2.9.2 o superiore. <a href=\"http://cod
 msgid "Twitter requires authentication by OAuth. You will need to <a href=\"%s\">update your settings</a> to complete installation of WP to Twitter."
 msgstr "Twitter necessita una autentificazione via OAuth. Aggiorna le tue <a href=\"%s\">impostazioni</a> per completare l'installazione di WP to Twitter."
 
-#: wp-to-twitter/wp-to-twitter.php:189
+#: wp-to-twitter/wp-to-twitter.php:197
 msgid "200 OK: Success!"
 msgstr "200 OK: Successo!"
 
-#: wp-to-twitter/wp-to-twitter.php:193
+#: wp-to-twitter/wp-to-twitter.php:201
 msgid "400 Bad Request: The request was invalid. This is the status code returned during rate limiting."
 msgstr "400 Bad Request: La richiesta non é valida. L'utilizzo di questo codice é relativo al limite delle chiamate."
 
-#: wp-to-twitter/wp-to-twitter.php:197
+#: wp-to-twitter/wp-to-twitter.php:205
 msgid "401 Unauthorized: Authentication credentials were missing or incorrect."
 msgstr "401 Unauthorized: quando mancano oppure sono inesatte le credenziali per l'autentificazione."
 
-#: wp-to-twitter/wp-to-twitter.php:201
+#: wp-to-twitter/wp-to-twitter.php:209
 msgid "403 Forbidden: The request is understood, but it has been refused. This code is used when requests are understood, but are denied by Twitter. Reasons include exceeding the 140 character limit or the API update limit."
 msgstr "403 Forbidden: La richiesta é stata compresa, ma viene rifiutata. Questo codice viene utilizzato per indicare che, sebbene le richieste siano state comprese, vengono rifiutate da Twitter (superamento limite dei 140 caratteri o limite di aggiornamento API)."
 
-#: wp-to-twitter/wp-to-twitter.php:205
+#: wp-to-twitter/wp-to-twitter.php:213
 msgid "500 Internal Server Error: Something is broken at Twitter."
 msgstr "500 Internal Server Error: problemi interni a Twitter."
 
-#: wp-to-twitter/wp-to-twitter.php:209
+#: wp-to-twitter/wp-to-twitter.php:217
 msgid "503 Service Unavailable: The Twitter servers are up, but overloaded with requests Please try again later."
 msgstr "503 Service Unavailable: The Twitter servers are up, but overloaded with requests Please try again later."
 
-#: wp-to-twitter/wp-to-twitter.php:213
+#: wp-to-twitter/wp-to-twitter.php:221
 msgid "502 Bad Gateway: Twitter is down or being upgraded."
 msgstr "502 Bad Gateway: Twitter é down oppure sotto aggiornamento."
 
-#: wp-to-twitter/wp-to-twitter.php:847
+#: wp-to-twitter/wp-to-twitter.php:803
 msgid "WP to Twitter"
 msgstr "WP to Twitter"
 
-#: wp-to-twitter/wp-to-twitter.php:917
-msgid "Custom Twitter Post"
-msgstr "Messaggio personalizzato Twitter"
+#: wp-to-twitter/wp-to-twitter.php:833
+msgid "Tweet this post."
+msgstr "Segnala a Twitter questo articolo."
 
-#: wp-to-twitter/wp-to-twitter.php:929
+#: wp-to-twitter/wp-to-twitter.php:836
 msgid "Don't Tweet this post."
 msgstr "Non segnalare a Twitter questo articolo."
 
-#: wp-to-twitter/wp-to-twitter.php:939
+#: wp-to-twitter/wp-to-twitter.php:877
+msgid "Custom Twitter Post"
+msgstr "Messaggio personalizzato Twitter"
+
+#: wp-to-twitter/wp-to-twitter.php:899
 msgid "This URL is direct and has not been shortened: "
 msgstr "Questo URL é diretto e non può essere abbreviato: "
 
-#: wp-to-twitter/wp-to-twitter.php:1000
+#: wp-to-twitter/wp-to-twitter.php:961
 msgid "WP to Twitter User Settings"
 msgstr "Impostazioni WP to Twitter User"
 
-#: wp-to-twitter/wp-to-twitter.php:1004
+#: wp-to-twitter/wp-to-twitter.php:965
 msgid "Use My Twitter Username"
 msgstr "Utilizza il mio nome utente Twitter"
 
-#: wp-to-twitter/wp-to-twitter.php:1005
+#: wp-to-twitter/wp-to-twitter.php:966
 msgid "Tweet my posts with an @ reference to my username."
 msgstr "Segnala i miei articoli con un riferimento @ correlato al mio nome utente."
 
-#: wp-to-twitter/wp-to-twitter.php:1006
+#: wp-to-twitter/wp-to-twitter.php:967
 msgid "Tweet my posts with an @ reference to both my username and to the main site username."
 msgstr "Segnala i miei articoli con un riferimento @ correlato tanto al mio nome utente per il sito principale quanto al mio nome utente."
 
-#: wp-to-twitter/wp-to-twitter.php:1010
+#: wp-to-twitter/wp-to-twitter.php:971
 msgid "Your Twitter Username"
 msgstr "Nome utente Twitter"
 
-#: wp-to-twitter/wp-to-twitter.php:1011
+#: wp-to-twitter/wp-to-twitter.php:972
 msgid "Enter your own Twitter username."
 msgstr "Inserisci il tuo nome utente Twitter"
 
-#: wp-to-twitter/wp-to-twitter.php:1050
+#: wp-to-twitter/wp-to-twitter.php:1011
 msgid "Check the categories you want to tweet:"
 msgstr "Seleziona le gategorie per i messaggi:"
 
-#: wp-to-twitter/wp-to-twitter.php:1067
+#: wp-to-twitter/wp-to-twitter.php:1028
 msgid "Set Categories"
 msgstr "Imposta le categorie"
 
-#: wp-to-twitter/wp-to-twitter.php:1091
+#: wp-to-twitter/wp-to-twitter.php:1052
 msgid "<p>Couldn't locate the settings page.</p>"
 msgstr "<p>Non é possibile localizzare la pagina delle impostazioni.</p>"
 
-#: wp-to-twitter/wp-to-twitter.php:1096
+#: wp-to-twitter/wp-to-twitter.php:1057
 msgid "Settings"
 msgstr "Impostazioni"
+
+#~ msgid "Update Twitter when a post is published using QuickPress"
+#~ msgstr ""
+#~ "Aggiorna Twitter quando un articolo é stato pubblicato via QuickPress"
+
+#~ msgid "I made a donation, so stop showing me ads, please."
+#~ msgstr "Ho effettuato una donazione - non mostrare più la pubblicità!"
+
+#~ msgid "Application Type should be set on "
+#~ msgstr "Il tipo di applicazione deve essere impostato a "
+
+#~ msgid "Browser"
+#~ msgstr "Browser"
+
+#~ msgid "Default Access type must be set to "
+#~ msgstr "Il tipo di accesso predefinito deve essere impostato a "
+
+#~ msgid "Read &amp; Write"
+#~ msgstr "Leggi &amp; Scrivi"
+
+#~ msgid "(this is NOT the default)"
+#~ msgstr "(questo NON é il predefinito)"
+
+#~ msgid ""
+#~ "On the right hand side of your new application page at Twitter, click on "
+#~ "'My Access Token'."
+#~ msgstr ""
+#~ "Clicca su 'My Access Token' posizionato alla destra della pagina della "
+#~ "applicazione."
 
 #~ msgid "Tweet Templates"
 #~ msgstr "Template messaggio"

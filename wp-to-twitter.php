@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.3.4
+Version: 2.3.5
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -56,7 +56,7 @@ if ( version_compare( phpversion(), '5.0', '<' ) || !function_exists( 'curl_init
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status;
-$version = "2.3.4";
+$version = "2.3.5";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -80,7 +80,7 @@ if ( !function_exists('wtt_oauth_test') ) {
 }
  
 if ( !$oauth && get_option('disable_oauth_notice') != '1' ) {
-	add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } echo '<div class=\"error\"><p>".sprintf(__('Twitter requires authentication by OAuth. You will need to <a href="%s">update your settings</a> to complete installation of WP to Twitter.', 'wp-to-twitter'), admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'))."</p></div>';" ) );
+	add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } echo '<div class=\"error\"><p>".sprintf(__("Twitter requires authentication by OAuth. You will need to <a href='%s'>update your settings</a> to complete installation of WP to Twitter.", 'wp-to-twitter'), admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'))."</p></div>';" ) );
 }
 
 function wpt_check_version() {
@@ -260,13 +260,13 @@ if ( get_option( 'jd_individual_twitter_users' ) == 1 ) {
 $thisaccount = "@".get_option('wtt_twitter_username');
 }
 	if ( get_option( 'use_tags_as_hashtags' ) == '1'  && $sentence != '' ) {
-	$sentence = $sentence . " " . generate_hash_tags( $post_ID );
+		$sentence = $sentence . " " . generate_hash_tags( $post_ID );
 	}	
 	if ( get_option( 'jd_twit_prepend' ) != "" && $sentence != '' ) {
-	$sentence = get_option( 'jd_twit_prepend' ) . " " . $sentence;
+		$sentence = get_option( 'jd_twit_prepend' ) . " " . $sentence;
 	}
 	if ( get_option( 'jd_twit_append' ) != "" && $sentence != '' ) {
-	$sentence = $sentence . " " . get_option( 'jd_twit_append' );
+		$sentence = $sentence . " " . get_option( 'jd_twit_append' );
 	}
 $post_sentence = str_ireplace( "#account#", $thisaccount, $sentence );
 $post_sentence = str_ireplace( "#url#", $thisposturl, $post_sentence );
@@ -599,7 +599,7 @@ function jd_twit( $post_ID ) {
 					$shrink = jd_shorten_link( $jd_post_info['postLink'], $jd_post_info['postTitle'], $post_ID );
 					store_url( $post_ID, $shrink );
 				}
-				$sentence = custom_shortcodes( $sentence, $post_ID );					
+				$sentence = custom_shortcodes( $sentence, $post_ID );
 				$sentence = jd_truncate_tweet( $sentence, $jd_post_info['postTitle'], $jd_post_info['blogTitle'], $jd_post_info['postExcerpt'], $shrink, $jd_post_info['category'], $jd_post_info['postDate'], $post_ID, $jd_post_info['authId'] );		
 			}
 				
@@ -789,7 +789,7 @@ $max_characters = get_option( 'jd_max_characters' );
 		}
 	$hashtags = trim( $hashtags );
 	if ( mb_strlen( $hashtags ) <= 1 ) {
-	$hashtags = "";
+		$hashtags = "";
 	}		
 	return $hashtags;	
 }
@@ -977,11 +977,11 @@ function jd_twitter_profile() {
 }
 
 function custom_shortcodes( $sentence, $post_ID ) {
-	$pattern = '/\[\[.*\]\]/';
+	$pattern = '/([([\[\]?)([A-Za-z0-9-_])*(\]\]]?)+/';
 	$params = array(0=>"[[",1=>"]]");
-	preg_match($pattern,$sentence, $matches);
-	if ($matches) {
-		foreach ($matches as $value) {
+	preg_match_all($pattern,$sentence, $matches);
+	if ($matches && is_array($matches[0])) {
+		foreach ($matches[0] as $value) {
 			$shortcode = "$value";
 			$field = str_replace($params, "", $shortcode);
 			$custom = get_post_meta( $post_ID, $field, TRUE );
@@ -1080,7 +1080,8 @@ if ( get_option( 'disable_twitter_failure' ) != '1' ) {
 if ( get_option( 'jd_twit_blogroll' ) == '1' ) {
 	add_action( 'add_link', 'jd_twit_link' );
 }
-add_action( 'future_to_publish', 'jd_twit', 16, 1 );
+// If this action happens too early, it can't catch the tags. Not sure why not, but 30 seems to be consistently late enough.
+add_action( 'future_to_publish', 'jd_twit', 30, 1 );
 	$post_type_settings = get_option('wpt_post_types');
 	if ( is_array( $post_type_settings ) ) {
 		$post_types = array_keys($post_type_settings);

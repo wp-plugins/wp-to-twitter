@@ -98,14 +98,21 @@ function wtt_connect_oauth() {
 echo '<div class="ui-sortable meta-box-sortables">';
 echo '<div class="postbox">';
 echo '<div class="handlediv" title="Click to toggle"><br/></div>';
-$server_time = date_i18n( DATE_COOKIE  );
+$server_time = date( DATE_COOKIE );
+
+$response = wp_remote_get( "https://api.twitter.com/1/");
+if ( is_wp_error( $response ) ) {
+	$date = __('There was an error querying Twitter\'s servers.','wp-to-twitter');
+} else {
+	$date = date( DATE_COOKIE, strtotime($response['headers']['date']) );
+}
 
 	if ( !wtt_oauth_test() ) {
 		print('	
 			<h3>'.__('Connect to Twitter','wp-to-twitter').'</h3>
 			<div class="inside">
 			<br class="clear" />	
-			<p>'.__('Your server time is','my-calendar').' <code>'.$server_time.'</code>. '.__( 'If this is wrong, your server will not be able to connect with Twitter. (<strong>Note:</strong> your server time may not match your current time, but it should be correct for it\'s own time zone.)','my-calendar').'</p>
+			<p>'.__('Your server time:','wp-to-twitter').' <code>'.$server_time.'</code>. Twitter\'s current server time: <code>'.$date.'</code>. '.__( 'If these times are not within 5 minutes of each other, your server will not be able to connect to Twitter.','wp-to-twitter').'</p>
 			<p>'.__('The process to set up OAuth authentication for your web site is needlessly laborious. However, this is the method available. Note that you will not add your Twitter username or password to WP to Twitter; they are not used in OAuth authentication.', 'wp-to-twitter').'</p> 
 			<form action="" method="post">
 				<fieldset class="options">
@@ -176,8 +183,7 @@ $server_time = date_i18n( DATE_COOKIE  );
 					'.wp_nonce_field('wtt_twitter_disconnect', '_wpnonce', true, false).wp_referer_field(false).' 
 				</div>		
 			</form>
-			</div>
-			');
+			<p>'.__('Your server time:','wp-to-twitter').' <code>'.$server_time.'</code>.<br />'.__('Twitter\'s current server time: ','wp-to-twitter').'<code>'.$date.'</code>.</p><p> '.__( 'If these times are not within 5 minutes of each other, your server could lose it\'s connection with Twitter.','wp-to-twitter').'</p></div>');
 	}
 echo "</div>";
 echo "</div>";
