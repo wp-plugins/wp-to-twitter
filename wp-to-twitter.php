@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.3.5
+Version: 2.3.6
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -56,7 +56,7 @@ if ( version_compare( phpversion(), '5.0', '<' ) || !function_exists( 'curl_init
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status;
-$version = "2.3.5";
+$version = "2.3.6";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -80,7 +80,9 @@ if ( !function_exists('wtt_oauth_test') ) {
 }
  
 if ( !$oauth && get_option('disable_oauth_notice') != '1' ) {
-	add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } echo '<div class=\"error\"><p>".sprintf(__("Twitter requires authentication by OAuth. You will need to <a href='%s'>update your settings</a> to complete installation of WP to Twitter.", 'wp-to-twitter'), admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'))."</p></div>';" ) );
+	$message = sprintf(__("Twitter requires authentication by OAuth. You will need to <a href='%s'>update your settings</a> to complete installation of WP to Twitter.", 'wp-to-twitter'), admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'));
+	add_action('admin_notices', create_function( "", "if ( ! current_user_can( 'manage_options' ) ) { return; } else { 
+	echo \"<div class='error'><p>$message</p></div>\";}" ) );
 }
 
 function wpt_check_version() {

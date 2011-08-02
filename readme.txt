@@ -47,6 +47,10 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.3.6 =
+
+* Error in runtime created function fixed.
+
 = 2.3.5 =
 
 * Bug fix to custom shortcode support to allow use of multiple custom shortcodes simultaneously
