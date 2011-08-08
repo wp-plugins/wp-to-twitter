@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.3.6
+Version: 2.3.7
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -56,7 +56,7 @@ if ( version_compare( phpversion(), '5.0', '<' ) || !function_exists( 'curl_init
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status;
-$version = "2.3.6";
+$version = "2.3.7";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -66,10 +66,10 @@ $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 $jd_donate_url = "http://www.joedolson.com/donate.php";
 
 // Check whether a supported version is in use.
-$exit_msg=__('WP to Twitter requires WordPress 2.9.2 or a more recent version. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update your WordPress version!</a>','wp-to-twitter');
+$exit_msg=__('WP to Twitter requires WordPress 2.9.2 or a more recent version, but some features will not work below 3.0.6. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update WordPress to continue using WP to Twitter with all features!</a>','wp-to-twitter');
 
-if ( version_compare( $wp_version,"2.9.2","<" )) {
-	exit ($exit_msg);
+if ( version_compare( $wp_version,"3.0.6","<" )) {
+	echo "<div class='error'><p>".($exit_msg)."</p></div>";
 }
 
  // check for OAuth configuration
@@ -558,7 +558,7 @@ function jd_get_post_meta( $post_ID, $value, $boolean ) {
 
 function jd_twit( $post_ID ) {
 	wpt_check_version();
-	$jd_tweet_this = get_post_meta( $post_ID, '_jd_tweet_this', TRUE);
+	$jd_tweet_this = get_post_meta( $post_ID, '_jd_tweet_this', true );
 	$newpost = false;
 	$oldpost = false;
 	$is_inline_edit = false;
@@ -566,18 +566,19 @@ function jd_twit( $post_ID ) {
 		if ( isset($_POST['_inline_edit']) ) return;
 	} else {
 		if ( isset($_POST['_inline_edit']) ) { $is_inline_edit = true; }
-	}	
+	}
 	if ( $jd_tweet_this != "no" ) {
 		$jd_post_info = jd_post_info( $post_ID );
 		$post_type = $jd_post_info['postType'];
 		$post_type_settings = get_option('wpt_post_types');
 		$post_types = array_keys($post_type_settings);
-
 		if ( in_array( $post_type, $post_types ) ) {
 			$sentence = '';
-			$customTweet = ( isset( $_POST['_jd_twitter'] ) )?stripcslashes( trim( $_POST['_jd_twitter'] ) ):'';
+			$cT = get_post_meta( $post_ID, '_jd_twitter', true );
+			$customTweet = ( $cT != '' )?stripcslashes( trim( $cT ) ):'';
 			// excluded post statuses that should never be tweeted
-			if ( $jd_post_info['postStatus'] != 'draft' && $jd_post_info['postStatus'] != 'auto-draft' && $jd_post_info['postStatus'] != 'private' && $jd_post_info['postStatus'] != 'inherit' && $jd_post_info['postStatus'] != 'trash' && $jd_post_info['postStatus'] != 'pending' ) {
+			if ( $jd_post_info['postStatus'] != 'draft' && $jd_post_info['postStatus'] != 'auto-draft' && $jd_post_info['postStatus'] != 'private' && $jd_post_info['postStatus'] != 'inherit' && $jd_post_info['postStatus'] != 'trash' ) {
+				// && $jd_post_info['postStatus'] != 'pending'
 				// if ops is set and equals 'publish', this is being edited. Otherwise, it's a new post.
 				if ( ( isset($_POST['original_post_status']) && $_POST['original_post_status'] == 'publish' ) || $is_inline_edit == true ) {
 					// if this is an old post and editing updates are enabled
@@ -1079,11 +1080,24 @@ if ( get_option( 'disable_twitter_failure' ) != '1' ) {
 		add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } echo '<div class=\"error\"><p>';_e('There\'s been an error posting your Twitter status! <a href=\"".get_bloginfo('wpurl')."/wp-admin/options-general.php?page=wp-to-twitter/wp-to-twitter.php\">Visit your WP to Twitter settings page</a> to get more information and to clear this error message.','wp-to-twitter'); echo '</p></div>';" ) );
 	}
 }
+
+add_action( 'in_plugin_update_message-wp-to-twitter/wp-to-twitter.php', 'wpt_plugin_update_message' );
+function wpt_plugin_update_message() {
+	global $mc_version;
+	define('PLUGIN_README_URL',  'http://svn.wp-plugins.org/wp-to-twitter/trunk/readme.txt');
+	$response = wp_remote_get( PLUGIN_README_URL, array ('user-agent' => 'WordPress/WP to Twitter' . $mc_version . '; ' . get_bloginfo( 'url' ) ) );
+	if ( ! is_wp_error( $response ) || is_array( $response ) ) {
+		$data = $response['body'];
+		$bits=explode('== Upgrade Notice ==',$data);
+		echo '<div id="mc-upgrade"><p><strong style="color:#c22;">Upgrade Notes:</strong> '.nl2br(trim($bits[1])).'</p></div>';
+	} else {
+		printf(__('<br /><strong>Note:</strong> Please review the <a class="thickbox" href="%1$s">changelog</a> before upgrading.','wp-to-twitter'),'plugin-install.php?tab=plugin-information&amp;plugin=wp-to-twitter&amp;TB_iframe=true&amp;width=640&amp;height=594');
+	}
+}
+
 if ( get_option( 'jd_twit_blogroll' ) == '1' ) {
 	add_action( 'add_link', 'jd_twit_link' );
 }
-// If this action happens too early, it can't catch the tags. Not sure why not, but 30 seems to be consistently late enough.
-add_action( 'future_to_publish', 'jd_twit', 30, 1 );
 	$post_type_settings = get_option('wpt_post_types');
 	if ( is_array( $post_type_settings ) ) {
 		$post_types = array_keys($post_type_settings);
@@ -1092,7 +1106,7 @@ add_action( 'future_to_publish', 'jd_twit', 30, 1 );
 		}
 	}
 
-	if ( get_option( 'jd_twit_remote' ) == '1' ) {
+if ( get_option( 'jd_twit_remote' ) == '1' ) {
 	add_action( 'xmlrpc_publish_post', 'jd_twit_xmlrpc' ); 
 	add_action( 'publish_phone', 'jd_twit_xmlrpc' ); // to add later
 }
@@ -1101,5 +1115,3 @@ if ( get_option('comment-published-update') == 1 ) {
 }
 add_action( 'save_post','post_jd_twitter', 10 );
 add_action( 'admin_menu', 'jd_addTwitterAdminPages' );
-
-register_activation_hook( __FILE__, 'wptotwitter_activate' );

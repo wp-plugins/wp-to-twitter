@@ -2,7 +2,7 @@
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
-Requires at least: 2.9.2
+Requires at least: 2.9.2 (partial)
 Tested up to: 3.2.1
 Stable tag: trunk
 
@@ -46,6 +46,13 @@ Translations:
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.3.7 =
+
+* Double tweeting problem fixed.
+* Missing custom tweets fixed.
+* Revised WordPress version support notes.
+* I hope.
 
 = 2.3.6 =
 
@@ -542,7 +549,7 @@ Only posts which you scheduled or edited *after* installing the plugin will be T
 
 == Upgrade Notice ==
 
-May fix a problem for some users.
+In WordPress version 2.9.2, scheduled posts will not work correctly. Other features should be fine.
 
 == Screenshots ==
 
