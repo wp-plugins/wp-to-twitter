@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.3.7
+Version: 2.3.8
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -56,7 +56,7 @@ if ( version_compare( phpversion(), '5.0', '<' ) || !function_exists( 'curl_init
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wp_version,$version,$jd_plugin_url,$jdwp_api_post_status;
-$version = "2.3.7";
+$version = "2.3.8";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -69,7 +69,9 @@ $jd_donate_url = "http://www.joedolson.com/donate.php";
 $exit_msg=__('WP to Twitter requires WordPress 2.9.2 or a more recent version, but some features will not work below 3.0.6. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update WordPress to continue using WP to Twitter with all features!</a>','wp-to-twitter');
 
 if ( version_compare( $wp_version,"3.0.6","<" )) {
+	if (is_admin()) {
 	echo "<div class='error'><p>".($exit_msg)."</p></div>";
+	}
 }
 
  // check for OAuth configuration
