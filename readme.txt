@@ -30,13 +30,16 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 Translations:
 
-* Italian: [Gianni Diurno](http://www.gidibao.net) [2.3.4]
+* Italian: [Gianni Diurno](http://www.gidibao.net) [2.3.8]
+* Lithuanian [Nata Strazda](http://www.designcontest.com) [2.3.8]
+* Simplified Chinese: [HostUCan](http://www.hostucan.com) [2.3.8]
+* Traditional Chinese: [HostUCan](http://www.hostucan.com) [2.3.8]
+* Belarussian: [Alex Alexandrov](http://www.webhostingrating.com) [2.3.8]
 * Ukrainian: [Alyona Lompar](http://www.webhostinggeeks.com) [2.3.3]
 * Spanish: [David Gil P&eacute;rez](http://www.sohelet.com)
 * Russian: [Burkov Boris](http://chernobog.ru)
 * French: [Fr&eacute;d&eacute;ric Million](http://www.traducteurs.com)
 * Estonian: [Raivo Ratsep](http://raivoratsep.com)
-* Simplified Chinese: [Joe Francis](http://blog.francistm.com)
 * Dutch: [Rene at WPwebshop](http://wpwebshop.com/premium-wordpress-plugins/)
 * Romanian: [Jibo](http://jibo.ro)
 * Danish: [Rasmus Himmelstrup](http://seoanalyst.dk)
@@ -551,13 +554,13 @@ No. They're private.
 
 Only posts which you scheduled or edited *after* installing the plugin will be Tweeted. Any future posts written before installing the plugin will be ignored by WP to Twitter.
 
-== Upgrade Notice ==
-
- - 2.3.8: Warning about 2.9.2 limited support no longer displays on public site.
- - 2.3.7: In WordPress version 2.9.2, scheduled posts will not work correctly. Other features should be fine.
-
 == Screenshots ==
 
 1. WP to Twitter main settings page.
 2. WP to Twitter custom Tweet settings.
 3. WP to Twitter user settings.
+
+== Upgrade Notice ==
+
+ - 2.3.8: Warning about 2.9.2 limited support no longer displays on public site.
+ - 2.3.7: In WordPress version 2.9.2, scheduled posts will not work correctly. Other features should be fine.
