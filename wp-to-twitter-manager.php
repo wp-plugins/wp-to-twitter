@@ -1,5 +1,11 @@
 <?php
 	wpt_check_version();
+	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'clear-error' ) {
+		update_option( 'wp_twitter_failure','0' );
+		update_option( 'wp_url_failure','0' );
+		$message =  __("WP to Twitter Errors Cleared", 'wp-to-twitter');
+	}
+	
 	if ( isset($_POST['oauth_settings'] ) ) {
 		$oauth_message = jd_update_oauth_settings();
 	}
@@ -21,9 +27,13 @@
 			echo 'checked="checked"';
 		}
 	}
-	function jd_checkSelect( $theFieldname, $theValue ) {
-		if( get_option( $theFieldname ) == $theValue ){
-			echo 'selected="selected"';
+	function jd_checkSelect( $theFieldname, $theValue, $type='select' ) {
+		if( get_option( $theFieldname ) == $theValue ) {
+			if ( $type == 'select' ) {
+				echo 'selected="selected"';
+			} else {
+				echo 'checked="checked"';
+			}
 		}
 	}
 	$wp_twitter_error = FALSE;
@@ -81,8 +91,8 @@
 		update_option( 'wpt_inline_edits', '0' );
 		// Note that default options are set.
 		update_option( 'twitterInitialised', '1' );	
-		//Twitter API
-		update_option( 'jd_keyword_format', '1' );
+		//YOURLS API
+		update_option( 'jd_keyword_format', '0' );
 	}
 	if ( get_option( 'twitterInitialised') == '1' && get_option( 'jd_post_excerpt' ) == "" ) { 
 		update_option( 'jd_post_excerpt', 30 );
@@ -122,16 +132,10 @@
 			');
 		}
 	}
-	
-	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'clear-error' ) {
-		update_option( 'wp_twitter_failure','0' );
-		update_option( 'wp_url_failure','0' );
-		$message =  __("WP to Twitter Errors Cleared", 'wp-to-twitter');
-	}
-	
+		
 	// Error messages on status update or url shortener failures	
 	if ( get_option( 'wp_twitter_failure' ) == '1' ) {
-			
+		$wp_to_twitter_failure = '';
 			if ( get_option( 'wp_twitter_failure' ) == '1' ) {
 				$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers to post your new blog post. Your tweet has been stored in a custom field attached to the post, so you can Tweet it manually if you wish! ", 'wp-to-twitter') . "</p>";
 			} else if ( get_option( 'wp_twitter_failure' ) == '2') {
@@ -259,7 +263,11 @@
 		}
 		if ( $_POST['jd_keyword_format'] != '' ) {
 			update_option( 'jd_keyword_format', $_POST['jd_keyword_format'] );
+			if ( $_POST['jd_keyword_format'] == 1 ) {
 			$message .= __( "YOURLS will use Post ID for short URL slug.",'wp-to-twitter');
+			} else {
+			$message .= __( "YOURLS will use your custom keyword for short URL slug.",'wp-to-twitter');
+			}
 		} else {
 			update_option( 'jd_keyword_format','' );
 			$message .= __( "YOURLS will not use Post ID for the short URL slug.",'wp-to-twitter');
@@ -363,6 +371,7 @@ function jd_check_functions() {
 ?>
 
 <div class="wrap" id="wp-to-twitter">
+<?php wpt_marginal_function(); ?>
 <?php if ( $message ) { ?>
 <div id="message" class="updated fade"><?php echo $message; ?></div>
 <?php } ?>
@@ -382,7 +391,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 <img src="<?php echo $wp_to_twitter_directory; ?>/wp-to-twitter-logo.png" alt="WP to Twitter" />
 <p>
 <a href="https://fundry.com/project/10-wp-to-twitter"><?php _e("Pledge to new features",'wp-to-twitter'); ?></a><?php if ( get_option('jd_donations') != 1 ) { ?>
- &middot; <a href="http://www.joedolson.com/donate.php"><?php _e("Make a Donation",'wp-to-twitter'); ?></a><?php } ?> &middot; <a href="?page=wp-to-twitter/wp-to-twitter.php&amp;export=settings"><?php _e("View Settings",'wp-to-twitter'); ?></a> &middot; <a href="http://www.joedolson.com/articles/wp-to-twitter/support/"><?php _e("Get Support",'wp-to-twitter'); ?></a>
+ &middot; <a href="http://www.joedolson.com/donate.php"><?php _e("Make a Donation",'wp-to-twitter'); ?></a><?php } ?> &middot; <a href="?page=wp-to-twitter/wp-to-twitter.php&amp;export=settings"><?php _e("View Settings",'wp-to-twitter'); ?></a> &middot; <a href="<?php echo admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'); ?>#get-support"><?php _e("Get Support",'wp-to-twitter'); ?></a>
 </p>
 <?php if ( get_option('jd_donations') != 1 ) { ?>
 <div>
@@ -448,7 +457,7 @@ document.write(unescape("%3Cscript src='" + psHost + "pluginsponsors.com/direct/
 <div class="ui-sortable meta-box-sortables">
 <div class="postbox">
 
-	<div class="handlediv" title="Click to toggle"><br/></div>
+	
 	<h3><?php _e('Basic Settings','wp-to-twitter'); ?></h3>
 	<div class="inside">
 		<br class="clear" />
@@ -489,6 +498,7 @@ document.write(unescape("%3Cscript src='" + psHost + "pluginsponsors.com/direct/
 				<label for="comment-published-update"><strong><?php _e("Update Twitter when new comments are posted", 'wp-to-twitter'); ?></strong></label><br />				
 				<label for="comment-published-text"><?php _e("Text for new comments:", 'wp-to-twitter'); ?></label> <input type="text" name="comment-published-text" id="comment-published-text" size="60" maxlength="120" value="<?php echo ( esc_attr( stripslashes( get_option( 'comment-published-text' ) ) ) ); ?>" />
 			</p>
+			<p><?php _e('In addition to the above short tags, comment templates can use <code>#commenter#</code> to post the commenter\'s provided name in the Tweet. <strong>Use this feature at your own risk</strong>, as it provides the ability for anybody who can post a comment on your site to post a phrase of their choice in your Twitter stream.','wp-to-twitter'); ?>
 			</fieldset>					
 			<fieldset>
 			<legend><?php _e('Settings for Links','wp-to-twitter'); ?></legend>
@@ -505,6 +515,7 @@ document.write(unescape("%3Cscript src='" + psHost + "pluginsponsors.com/direct/
 				<option value="3" <?php jd_checkSelect('jd_shortener','3'); ?>><?php _e("Don't shorten URLs.", 'wp-to-twitter'); ?></option>
 				<option value="7" <?php jd_checkSelect('jd_shortener','7'); ?>><?php _e("Use Su.pr for my URL shortener.", 'wp-to-twitter'); ?></option> 
 				<option value="2" <?php jd_checkSelect('jd_shortener','2'); ?>><?php _e("Use Bit.ly for my URL shortener.", 'wp-to-twitter'); ?></option>
+				<option value="8" <?php jd_checkSelect('jd_shortener','8'); ?>><?php _e("Use Goo.gl as a URL shortener.", 'wp-to-twitter'); ?></option> 				
 				<option value="5" <?php jd_checkSelect('jd_shortener','5'); ?>><?php _e("YOURLS (installed on this server)", 'wp-to-twitter'); ?></option>
 				<option value="6" <?php jd_checkSelect('jd_shortener','6'); ?>><?php _e("YOURLS (installed on a remote server)", 'wp-to-twitter'); ?></option>		
 				<option value="4" <?php jd_checkSelect('jd_shortener','4'); ?>><?php _e("Use WordPress as a URL shortener.", 'wp-to-twitter'); ?></option> 
@@ -523,7 +534,7 @@ document.write(unescape("%3Cscript src='" + psHost + "pluginsponsors.com/direct/
 </div>
 <div class="ui-sortable meta-box-sortables">
 <div class="postbox">
-			<div class="handlediv" title="Click to toggle"><br/></div>
+			
 				<h3><?php _e('<abbr title="Uniform Resource Locator">URL</abbr> Shortener Account Settings','wp-to-twitter'); ?></h3>
 
 				<div class="inside">
@@ -583,14 +594,17 @@ document.write(unescape("%3Cscript src='" + psHost + "pluginsponsors.com/direct/
 		</p>
 		<p>
 		<label for="yourlslogin"><?php _e("Your YOURLS username:", 'wp-to-twitter'); ?></label>
-		<input type="text" name="yourlslogin" id="yourlslogin" value="<?php echo ( esc_attr( get_option( 'yourlslogin' ) ) ) ?>" />
+		<input type="text" name="yourlslogin" id="yourlslogin" size="30" value="<?php echo ( esc_attr( get_option( 'yourlslogin' ) ) ) ?>" />
 		</p>	
 		<p>
 		<label for="yourlsapi"><?php _e("Your YOURLS password:", 'wp-to-twitter'); ?> <?php if ( get_option( 'yourlsapi' ) != '') { _e("<em>Saved</em>",'wp-to-twitter'); } ?></label>
-		<input type="text" name="yourlsapi" id="yourlsapi" size="40" value="" />
+		<input type="password" name="yourlsapi" id="yourlsapi" size="30" value="" />
 		</p>
 		<p>
-		<input type="checkbox" name="jd_keyword_format" id="jd_keyword_format" value="1" <?php jd_checkCheckbox( 'jd_keyword_format' ); ?> /> 		<label for="jd_keyword_format"><?php _e("Use Post ID for YOURLS url slug.",'wp-to-twitter'); ?></label>
+		<input type="radio" name="jd_keyword_format" id="jd_keyword_id" value="1" <?php jd_checkSelect( 'jd_keyword_format',1,'checkbox' ); ?> /> 		<label for="jd_keyword_id"><?php _e("Post ID for YOURLS url slug.",'wp-to-twitter'); ?></label><br />
+		<input type="radio" name="jd_keyword_format" id="jd_keyword" value="2" <?php jd_checkSelect( 'jd_keyword_format',2,'checkbox' ); ?> /> 		<label for="jd_keyword"><?php _e("Custom keyword for YOURLS url slug.",'wp-to-twitter'); ?></label><br />
+		<input type="radio" name="jd_keyword_format" id="jd_keyword_default" value="0" <?php jd_checkSelect( 'jd_keyword_format',0,'checkbox' ); ?> /> <label for="jd_keyword_default"><?php _e("Default: sequential URL numbering.",'wp-to-twitter'); ?></label>
+		<?php echo get_option('jd_keyword_format'); ?>
 		</p>
 		<div>
 		<input type="hidden" name="submit-type" value="yourlsapi" />
@@ -606,7 +620,7 @@ document.write(unescape("%3Cscript src='" + psHost + "pluginsponsors.com/direct/
 
 <div class="ui-sortable meta-box-sortables">
 <div class="postbox">
-	<div class="handlediv" title="Click to toggle"><br/></div>
+	
 	<h3><?php _e('Advanced Settings','wp-to-twitter'); ?></h3>
 	<div class="inside">
 		<br class="clear" />
@@ -732,8 +746,6 @@ document.write(unescape("%3Cscript src='" + psHost + "pluginsponsors.com/direct/
 </div>
 <div class="ui-sortable meta-box-sortables">
 <div class="postbox">
-
-	<div class="handlediv" title="Click to toggle"><br/></div>
 	<h3><?php _e('Limit Updating Categories','wp-to-twitter'); ?></h3>
 	<div class="inside">
 		<br class="clear" />
@@ -751,6 +763,13 @@ if ( get_option('limit_categories') == '0' ) {
 	</div>
 	</div>
 
+	<div class="postbox" id="get-support">
+	<h3><?php _e('Get Plug-in Support','wp-to-twitter'); ?></h3>
+	<div class="inside">
+<?php wpt_get_support_form(); ?>
+</div>
+</div>
+	
 	<form method="post" action="">
 	<fieldset>
 	<input type="hidden" name="submit-type" value="check-support" />

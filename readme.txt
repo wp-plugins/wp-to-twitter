@@ -50,6 +50,18 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.3.9 =
+
+* Fixed issue with category detection
+* Changed one function name to a non-generic name.
+* Modified remote URL calls; should fix problem contacting Bit.ly
+* Added template tag #commenter# available in comment tweet template. Use with caution.
+* Added plug-in support request form.
+* Fixed bug where custom tweet text was over written in a quick edit
+* Fixed "Don't Tweet this Post' checkbox
+* Added Goo.gl as an additional URL shortener.
+* Added custom keyword option for YOURLS shortener.
+
 = 2.3.8 =
 
 * Bug fix: Warning message about 2.9.2 limited support no longer displays on public site.

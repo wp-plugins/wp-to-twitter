@@ -112,7 +112,7 @@ if ( is_wp_error( $response ) ) {
 			<h3>'.__('Connect to Twitter','wp-to-twitter').'</h3>
 			<div class="inside">
 			<br class="clear" />	
-			<p>'.__('Your server time:','wp-to-twitter').' <code>'.$server_time.'</code>. Twitter\'s current server time: <code>'.$date.'</code>. '.__( 'If these times are not within 5 minutes of each other, your server will not be able to connect to Twitter.','wp-to-twitter').'</p>
+			<p>'.__('Your server time:','wp-to-twitter').' <code>'.$server_time.'</code>'.__("Twitter\'s current server time:").' <code>'.$date.'</code>. '.__( 'If these times are not within 5 minutes of each other, your server will not be able to connect to Twitter.','wp-to-twitter').'</p>
 			<p>'.__('The process to set up OAuth authentication for your web site is needlessly laborious. However, this is the method available. Note that you will not add your Twitter username or password to WP to Twitter; they are not used in OAuth authentication.', 'wp-to-twitter').'</p> 
 			<form action="" method="post">
 				<fieldset class="options">
@@ -142,7 +142,7 @@ if ( is_wp_error( $response ) ) {
 						<input type="text" size="25" name="wtt_app_consumer_secret" id="wtt_app_consumer_secret" value="'.esc_attr( get_option('app_consumer_secret') ).'" />
 					</p>
 					<h4>'.__('4. Copy and paste your Access Token and Access Token Secret into the fields below','wp-to-twitter').'</h4>
-					<p>'.__('If the Access level reported for your Access Token is not "Read and write", you will need to delete your application from Twitter and start over. Don\'t blame me, I\'m not the _______ who designed this process.','wp-to-twitter').'</p>
+					<p>'.__('If the Access level reported for your Access Token is not "Read and write", you need to go back to step 2 and generate a new Access Token.','wp-to-twitter').'</p>
 					<p>
 						<label for="wtt_oauth_token">'.__('Access Token', 'wp-to-twitter').'</label>
 						<input type="text" size="25" name="wtt_oauth_token" id="wtt_oauth_token" value="'.esc_attr( get_option('oauth_token') ).'" />
@@ -169,6 +169,7 @@ if ( is_wp_error( $response ) ) {
 			<br class="clear" />			
 			<form action="" method="post">
 				<div id="wtt_authentication_display">
+				<p>'.__('Connected, but getting a notice that your Authentication credentials are missing or incorrect? Check whether your Access token has read and write permission. If not, you\'ll need to create a new token.','wp-to-twitter').'</p>
 					<fieldset class="options">
 						<p><strong class="auth_label">'.__('Twitter Username ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('wtt_twitter_username').'</code></p>
 						<p><strong class="auth_label">'.__('Consumer Key ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('app_consumer_key').'</code></p>
