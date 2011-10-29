@@ -574,5 +574,4 @@ Only posts which you scheduled or edited *after* installing the plugin will be T
 
 == Upgrade Notice ==
 
- - 2.3.8: Warning about 2.9.2 limited support no longer displays on public site.
- - 2.3.7: In WordPress version 2.9.2, scheduled posts will not work correctly. Other features should be fine.
+ - 2.3.9: Added Goo.gl support, custom YOURLS keywords, bug fixes.
