@@ -50,6 +50,10 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.3.10 = 
+
+* Did not expect people would submit support requests without actually adding a message. Message now required. 
+
 = 2.3.9 =
 
 * Fixed issue with category detection
@@ -575,3 +579,4 @@ Only posts which you scheduled or edited *after* installing the plugin will be T
 == Upgrade Notice ==
 
  - 2.3.9: Added Goo.gl support, custom YOURLS keywords, bug fixes.
+ - 2.3.10: Support request form message field now required.

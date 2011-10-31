@@ -281,10 +281,10 @@ Version: $theme_version
 ==Active Plugins:==
 $plugins_string
 ";
-	if ( isset($_POST['mc_support']) ) {
+	if ( isset($_POST['wpt_support']) ) {
 		$nonce=$_REQUEST['_wpnonce'];
-		if (! wp_verify_nonce($nonce,'my-calendar-nonce') ) die("Security check failed");	
-		$request = stripslashes($_POST['support_request']);
+		if (! wp_verify_nonce($nonce,'wp-to-twitter-nonce') ) die("Security check failed");	
+		$request = ( !empty($_POST['support_request']) )?stripslashes($_POST['support_request']):false;
 		$has_donated = ( $_POST['has_donated'] == 'on')?"Donor":"No donation";
 		$has_read_faq = ( $_POST['has_read_faq'] == 'on')?"Read FAQ":false;
 		$subject = "WP to Twitter support request. $has_donated";
@@ -293,6 +293,8 @@ $plugins_string
 
 		if ( !$has_read_faq ) {
 			echo "<div class='message error'><p>".__('Please read the FAQ and other Help documents before making a support request.','wp-to-twitter')."</p></div>";
+		} else if ( !$request ) {
+			echo "<div class='message error'><p>".__('Please describe your problem. I\'m not psychic.','wp-to-twitter')."</p></div>";
 		} else {
 			wp_mail( "plugins@joedolson.com",$subject,$message,$from );
 		
@@ -306,7 +308,7 @@ $plugins_string
 	
 	echo "
 	<form method='post' action='".admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php')."'>
-		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('my-calendar-nonce')."' /></div>
+		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('wp-to-twitter-nonce')."' /></div>
 		<div>
 		<p>".
 		__('Please note: I do keep records of those who have donated, but if your donation came from somebody other than your account at this web site, please note this in your message.','wp-to-twitter')
@@ -320,10 +322,10 @@ $plugins_string
 		<label for='support_request'>Support Request:</label><br /><textarea name='support_request' id='support_request' cols='80' rows='10'>".stripslashes($request)."</textarea>
 		</p>
 		<p>
-		<input type='submit' value='".__('Send Support Request','my-calendar')."' name='mc_support' class='button-primary' />
+		<input type='submit' value='".__('Send Support Request','wp-to-twitter')."' name='wpt_support' class='button-primary' />
 		</p>
 		<p>".
-		__('The following additional information will be sent with your support request:','my-calendar')
+		__('The following additional information will be sent with your support request:','wp-to-twitter')
 		."</p>
 		<div class='mc_support'>
 		".wpautop($data)."
