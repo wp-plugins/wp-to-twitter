@@ -169,7 +169,7 @@ if ( is_wp_error( $response ) ) {
 			<br class="clear" />			
 			<form action="" method="post">
 				<div id="wtt_authentication_display">
-				<p>'.__('Connected, but getting a notice that your Authentication credentials are missing or incorrect? Check whether your Access token has read and write permission. If not, you\'ll need to create a new token.','wp-to-twitter').'</p>
+				<p>'.__('<strong>Troubleshooting tip:</strong> Connected, but getting a notice that your Authentication credentials are missing or incorrect? Check whether your Access token has read and write permission. If not, you\'ll need to create a new token.','wp-to-twitter').'</p>
 					<fieldset class="options">
 						<p><strong class="auth_label">'.__('Twitter Username ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('wtt_twitter_username').'</code></p>
 						<p><strong class="auth_label">'.__('Consumer Key ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('app_consumer_key').'</code></p>
