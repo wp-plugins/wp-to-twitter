@@ -408,10 +408,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 
 <?php if ( get_option('jd_donations') != 1 ) { ?>
 <div class="ads">
-<script type="text/javascript">
-var psHost = (("https:" == document.location.protocol) ? "https://" : "http://");
-document.write(unescape("%3Cscript src='" + psHost + "pluginsponsors.com/direct/spsn/display.php?client=wp-to-twitter&amp;spot=' type='text/javascript'%3E%3C/script%3E"));
-</script>
+<p><?php _e('<strong>Notice</strong>: I can no longer provide any support services on WP to Twitter without a donation. All apologies.','wp-to-twitter'); ?></p>
 </div>
 <?php } ?>
 
@@ -766,6 +763,7 @@ if ( get_option('limit_categories') == '0' ) {
 	<div class="postbox" id="get-support">
 	<h3><?php _e('Get Plug-in Support','wp-to-twitter'); ?></h3>
 	<div class="inside">
+	<p><?php _e('Support requests without a donation will not be answered, but will be treated as bug reports.','wp-to-twitter'); ?></p>
 <?php wpt_get_support_form(); ?>
 </div>
 </div>

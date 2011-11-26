@@ -1,4 +1,4 @@
-=== Plugin Name ===
+=== WP to Twitter ===
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
@@ -49,6 +49,13 @@ Translations:
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.3.11 =
+
+* Error in commenter field; accidentally defined braces as template wrapper instead of hashes
+* Text updates
+* Removed PluginSponsors.com 
+* Changed API query address to https.
 
 = 2.3.10 = 
 

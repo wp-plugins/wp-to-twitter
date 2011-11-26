@@ -301,7 +301,7 @@ $plugins_string
 			if ( $has_donated == 'Donor' || $has_purchased == 'Purchaser' ) {
 				echo "<div class='message updated'><p>".__('Thank you for supporting the continuing development of this plug-in! I\'ll get back to you as soon as I can.','wp-to-twitter')."</p></div>";		
 			} else {
-				echo "<div class='message updated'><p>".__('I\'ll get back to you as soon as I can, after dealing with any support requests from plug-in supporters.','wp-to-twitter')."</p></div>";				
+				echo "<div class='message updated'><p>".__('I cannot provide free support, but will treat your request as a bug report, and will incorporate any permanent solutions I discover into the plug-in.','wp-to-twitter')."</p></div>";				
 			}
 		}
 	}
@@ -311,8 +311,12 @@ $plugins_string
 		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('wp-to-twitter-nonce')."' /></div>
 		<div>
 		<p>".
-		__('Please note: I do keep records of those who have donated, but if your donation came from somebody other than your account at this web site, please note this in your message.','wp-to-twitter')
-		."<p>
+		__('<strong>Please note</strong>: I do keep records of those who have donated, but if your donation came from somebody other than your account at this web site, you must note this in your message.','wp-to-twitter')
+		."</p>
+		<p>
+		<code>".__('From:','wp-to-twitter')." \"$current_user->display_name\" &lt;$current_user->user_email&gt;</code>
+		</p>
+		<p>
 		<input type='checkbox' name='has_read_faq' id='has_read_faq' value='on' /> <label for='has_read_faq'>".__('I have read <a href="http://www.joedolson.com/articles/wp-to-twitter/support-2/">the FAQ for this plug-in</a>.','wp-to-twitter')." <span>(required)</span></label>
 		</p>
 		<p>

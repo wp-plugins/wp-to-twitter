@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.3.10
+Version: 2.3.11
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -56,11 +56,11 @@ if ( version_compare( phpversion(), '5.0', '<' ) || !function_exists( 'curl_init
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wp_version,$wpt_version,$jd_plugin_url,$jdwp_api_post_status;
-$wpt_version = "2.3.10";
+$wpt_version = "2.3.11";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
-$jdwp_api_post_status = "http://api.twitter.com/1/statuses/update.json";
+$jdwp_api_post_status = "https://api.twitter.com/1/statuses/update.json";
 
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 $jd_donate_url = "http://www.joedolson.com/donate.php";
@@ -210,7 +210,7 @@ function jd_doTwitterAPIPost( $twit ) {
 						break;
 					case '403':
 						$return = false;
-						$error = __("403 Forbidden: The request is understood, but it has been refused. This code is used when requests are understood, but are denied by Twitter. Reasons include exceeding the 140 character limit or the API update limit.",'wp-to-twitter');
+						$error = __("403 Forbidden: The request is understood, but it has been refused. This code is used when requests are understood, but are denied by Twitter. Reasons can include: Too many tweets created in a short time or the same tweet text was submitted twice in a row, among others. This is not an error by WP to Twitter.",'wp-to-twitter');
 						break;
 					case '500':
 						$return = false;
@@ -218,7 +218,7 @@ function jd_doTwitterAPIPost( $twit ) {
 						break;
 					case '503':
 						$return = false;
-						$error = __("503 Service Unavailable: The Twitter servers are up, but overloaded with requests Please try again later.",'wp-to-twitter');
+						$error = __("503 Service Unavailable: The Twitter servers are up, but overloaded with requests - Please try again later.",'wp-to-twitter');
 						break;
 					case '502':
 						$return = false;
@@ -729,7 +729,7 @@ function jd_twit_comment( $comment_id, $approved ) {
 			store_url( $post_ID, $shrink );
 		}		
 		$sentence = jd_truncate_tweet( $sentence, $jd_post_info['postTitle'], $jd_post_info['blogTitle'], $jd_post_info['postExcerpt'], $shrink, $jd_post_info['category'], $jd_post_info['postDate'], $post_ID, $jd_post_info['authId'] );		
-		$sentence = str_replace("{commenter}",$commenter,$sentence);
+		$sentence = str_replace("#commenter#",$commenter,$sentence);
 		if ( $sentence != '' ) {
 			$sendToTwitter = jd_doTwitterAPIPost( $sentence );
 		}
