@@ -50,6 +50,10 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.3.13 =
+
+* Fixes missing function_exists check for Normalizer.
+
 = 2.3.12 =
 
 * Links added in link manager were getting run through the manual WP link shortener
@@ -563,5 +567,4 @@ Right here: [WP to Twitter FAQ](http://www.joedolson.com/articles/wp-to-twitter/
 
 == Upgrade Notice ==
 
- - 2.3.9: Added Goo.gl support, custom YOURLS keywords, bug fixes.
- - 2.3.10: Support request form message field now required.
+* 2.3.13 Fixes missing function_exists check in 2.3.12.
