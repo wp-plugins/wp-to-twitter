@@ -82,7 +82,6 @@ switch ( $_POST['oauth_settings'] ) {
 			if (!wp_verify_nonce($_POST['_wpnonce'], 'wtt_twitter_disconnect')) {
 				wp_die('Oops, please try again.');
 			}
-			
 			update_option('app_consumer_key', '');
 			update_option('app_consumer_secret', '');
 			update_option('oauth_token', '');
@@ -111,7 +110,6 @@ if ( is_wp_error( $response ) ) {
 		print('	
 			<h3>'.__('Connect to Twitter','wp-to-twitter').'</h3>
 			<div class="inside">
-			<br class="clear" />	
 			<p>'.__('Your server time:','wp-to-twitter').' <code>'.$server_time.'</code>'.__("Twitter\'s current server time:").' <code>'.$date.'</code>. '.__( 'If these times are not within 5 minutes of each other, your server will not be able to connect to Twitter.','wp-to-twitter').'</p>
 			<p>'.__('The process to set up OAuth authentication for your web site is needlessly laborious. However, this is the method available. Note that you will not add your Twitter username or password to WP to Twitter; they are not used in OAuth authentication.', 'wp-to-twitter').'</p> 
 			<form action="" method="post">
@@ -164,24 +162,24 @@ if ( is_wp_error( $response ) ) {
 	else if ( wtt_oauth_test() ) {
 		print('	
 			<h3>'.__('Disconnect from Twitter','wp-to-twitter').'</h3>
-		
 			<div class="inside">
-			<br class="clear" />			
 			<form action="" method="post">
 				<div id="wtt_authentication_display">
 				<p>'.__('<strong>Troubleshooting tip:</strong> Connected, but getting a notice that your Authentication credentials are missing or incorrect? Check whether your Access token has read and write permission. If not, you\'ll need to create a new token.','wp-to-twitter').'</p>
 					<fieldset class="options">
-						<p><strong class="auth_label">'.__('Twitter Username ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('wtt_twitter_username').'</code></p>
-						<p><strong class="auth_label">'.__('Consumer Key ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('app_consumer_key').'</code></p>
-						<p><strong class="auth_label">'.__('Consumer Secret ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('app_consumer_secret').'</code></p>
-						<p><strong class="auth_label">'.__('Access Token ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('oauth_token').'</code></p>
-						<p><strong class="auth_label">'.__('Access Token Secret ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('oauth_token_secret').'</code></p>
+					<ul>
+						<li><strong class="auth_label">'.__('Twitter Username ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('wtt_twitter_username').'</code></li>
+						<li><strong class="auth_label">'.__('Consumer Key ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('app_consumer_key').'</code></li>
+						<li><strong class="auth_label">'.__('Consumer Secret ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('app_consumer_secret').'</code></li>
+						<li><strong class="auth_label">'.__('Access Token ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('oauth_token').'</code></li>
+						<li><strong class="auth_label">'.__('Access Token Secret ', 'wp-to-twitter').'</strong> <code class="auth_code">'.get_option('oauth_token_secret').'</code></li>
+					</ul>
 					</fieldset>
-					<p class="submit">
+					<div>
 					<input type="submit" name="submit" class="button-primary" value="'.__('Disconnect Your WordPress and Twitter Account', 'wp-to-twitter').'" />
-					</p>
 					<input type="hidden" name="oauth_settings" value="wtt_twitter_disconnect" class="hidden" style="display: none;" />
-					'.wp_nonce_field('wtt_twitter_disconnect', '_wpnonce', true, false).wp_referer_field(false).' 
+					'.wp_nonce_field('wtt_twitter_disconnect', '_wpnonce', true, false).wp_referer_field(false).'
+					</div>
 				</div>		
 			</form>
 			<p>'.__('Your server time:','wp-to-twitter').' <code>'.$server_time.'</code>.<br />'.__('Twitter\'s current server time: ','wp-to-twitter').'<code>'.$date.'</code>.</p><p> '.__( 'If these times are not within 5 minutes of each other, your server could lose it\'s connection with Twitter.','wp-to-twitter').'</p></div>');

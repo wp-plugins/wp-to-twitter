@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.9.2 (partial)
-Tested up to: 3.2.1
+Tested up to: 3.4-alpha
 Stable tag: trunk
 
 Posts a Twitter update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5 and cURL. 
@@ -49,6 +49,16 @@ Translations:
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.3.12 =
+
+* Links added in link manager were getting run through the manual WP link shortener
+* Added appropriate normalizer call for PHP versions above 5
+* Adjustment to tweet truncation to hopefully avoid runaway truncating.
+* Added a new FAQ to my web site about character counting.
+* Fixed URL wrapper error with fopen()
+* Bug fix: Switched 'tweet this post' checkbox to a radio selector for simpler logic.
+* Now saving all past tweets for each post.
 
 = 2.3.11 =
 
@@ -541,41 +551,9 @@ New translations are always welcome! The translation file is in the download.
 
 == Frequently Asked Questions ==
 
-= I can't connect to Twitter using OAuth. What's wrong? =
+= Where are your Frequently Asked Questions? Why aren't they here? =
 
-The most likely problems that I've found so far are either that you don't have cURL support or that your server time is incorrect. Check with your host to verify these possibilities. 
-
-= Hey! Why did you remove Cli.gs support! =
-
-First, I could no longer get it to work for me. If I can't run a single successful test with it, I can't just randomly trust it will work for somebody else. Second, the number of unsolvable support requests I received for Cli.gs was too great to justify keeping it in the plug-in. Still need it? You can download the [last version with Cli.gs support here](http://downloads.wordpress.org/plugin/wp-to-twitter.2.2.8.zip).
-
-= Do I have to have a Twitter.com account to use this plugin? =
-
-Yes, you need an account with Twitter to use this plugin.
-
-= Do I have to have a URL shortener account to use this plugin? =
-
-You don't need any URL shortener accounts to use this plugin. However, you may need an account with specific URL shorteners to use the plug-in to your best advantage.
-
-= Twitter goes down a lot. What happens if it's not available? =
-
-If Twitter isn't available, you'll get a message telling you that there's been an error with your Twitter status update. The Tweet you were going to send will be saved in your post meta fields, so you can grab it and post it manually if you wish.
-
-= What if my URL shortener isn't available when I make my post? =
-
-If your URL shortening service isn't available, your tweet will be sent using it's normal post permalink. You'll also get an error message letting you know that there was a problem contacting your URL shortener.
-
-= What if my server doesn't support the methods you use to contact these other sites? =
-
-Well, there isn't much I can do about that - but the plugin will check and see whether or not the needed methods work. If they don't, you will find a warning message on your settings page. 
-
-= If I mark a blogroll link as private, will it be posted to Twitter? =
-
-No. They're private. 
-
-= Scheduled posting doesn't work. What's wrong? =
-
-Only posts which you scheduled or edited *after* installing the plugin will be Tweeted. Any future posts written before installing the plugin will be ignored by WP to Twitter.
+Right here: [WP to Twitter FAQ](http://www.joedolson.com/articles/wp-to-twitter/support-2/). I don't maintain them here because I would prefer to only maintain one copy. This is better for everybody, since the responses are much more likely to be up to date!
 
 == Screenshots ==
 

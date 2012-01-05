@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.3.11
+Version: 2.3.12
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -56,7 +56,7 @@ if ( version_compare( phpversion(), '5.0', '<' ) || !function_exists( 'curl_init
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wp_version,$wpt_version,$jd_plugin_url,$jdwp_api_post_status;
-$wpt_version = "2.3.11";
+$wpt_version = "2.3.12";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -181,15 +181,8 @@ function jd_doTwitterAPIPost( $twit ) {
 		return FALSE;
 		} else {
 			if ( wtt_oauth_test() && ( $connection = wtt_oauth_connection() ) ) {
-				$connection->post(
-					$jdwp_api_post_status
-					, array(
-						'status' => $twit
-						, 'source' => 'wp-to-twitter'
-					)
-				);
-
-				$http_code = $connection->http_code;
+				$connection->post( $jdwp_api_post_status, array( 'status' => $twit, 'source' => 'wp-to-twitter'	) );
+				$http_code = ($connection)?$connection->http_code:'failed';
 				/*
 				echo "<pre>";
 				print_r($connection);
@@ -238,32 +231,36 @@ function jd_doTwitterAPIPost( $twit ) {
 }
 
 function fake_normalize( $string ) {
-    return preg_replace( '~&([a-z]{1,2})(acute|cedil|circ|grave|lig|orn|ring|slash|th|tilde|uml);~i', '$1', htmlentities( $string, ENT_QUOTES, 'UTF-8' ) );
+	if ( version_compare( PHP_VERSION, '5.0.0', '>=' ) ) {
+		return normalizer_normalize( $string );
+	} else {
+		return preg_replace( '~&([a-z]{1,2})(acute|cedil|circ|grave|lig|orn|ring|slash|th|tilde|uml);~i', '$1', htmlentities( $string, ENT_QUOTES, 'UTF-8' ) );
+	}
 }
 
 
 function jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $thispostexcerpt, $thisposturl, $thispostcategory, $thisdate, $post_ID, $authID=FALSE ) {
-$post_length = 140;
-$sentence = trim($sentence);
-$thisposttitle = trim($thisposttitle);
-$thisblogtitle = trim($thisblogtitle);
-$thispostexcerpt = trim($thispostexcerpt);
-$thisposturl = trim($thisposturl);
-$thispostcategory = trim($thispostcategory);
-	$post = get_post( $post_ID );
-	$post_author = $post->post_author;
-$thisauthor = get_the_author_meta( 'display_name',$post_author );
+	$sentence = trim($sentence);
+	// generate all template variable values
+	$thisposttitle = trim($thisposttitle);
+	$thisblogtitle = trim($thisblogtitle);
+	$thispostexcerpt = trim($thispostexcerpt);
+	$thisposturl = trim($thisposturl);
+	$thispostcategory = trim($thispostcategory);
+		$post = get_post( $post_ID );
+		$post_author = $post->post_author;
+	$thisauthor = get_the_author_meta( 'display_name',$post_author );
 
-if ( get_option( 'jd_individual_twitter_users' ) == 1 ) {
-	if ( get_user_meta( $authID, 'wp-to-twitter-enable-user',true ) == 'mainAtTwitter' ) {
-	$thisaccount = "@" . stripcslashes(get_user_meta( $authID, 'wp-to-twitter-user-username',true ));
-	} else if ( get_user_meta( $authID, 'wp-to-twitter-enable-user',true ) == 'mainAtTwitterPlus' ) {
-	$thisaccount = "@" . stripcslashes(get_user_meta( $authID, 'wp-to-twitter-user-username',true ) . ' @' . get_option( 'wtt_twitter_username' ));
+	if ( get_option( 'jd_individual_twitter_users' ) == 1 ) {
+		if ( get_user_meta( $authID, 'wp-to-twitter-enable-user',true ) == 'mainAtTwitter' ) {
+			$thisaccount = "@" . stripcslashes(get_user_meta( $authID, 'wp-to-twitter-user-username',true ));
+		} else if ( get_user_meta( $authID, 'wp-to-twitter-enable-user',true ) == 'mainAtTwitterPlus' ) {
+			$thisaccount = "@" . stripcslashes(get_user_meta( $authID, 'wp-to-twitter-user-username',true ) . ' @' . get_option( 'wtt_twitter_username' ));
+		}
+	} else {
+		$thisaccount = "@".get_option('wtt_twitter_username');
 	}
-} else {
-$thisaccount = "@".get_option('wtt_twitter_username');
-}
-	if ( get_option( 'use_tags_as_hashtags' ) == '1'  && $sentence != '' ) {
+	if ( get_option( 'use_tags_as_hashtags' ) == '1' && $sentence != '' ) {
 		$sentence = $sentence . " " . generate_hash_tags( $post_ID );
 	}	
 	if ( get_option( 'jd_twit_prepend' ) != "" && $sentence != '' ) {
@@ -272,51 +269,47 @@ $thisaccount = "@".get_option('wtt_twitter_username');
 	if ( get_option( 'jd_twit_append' ) != "" && $sentence != '' ) {
 		$sentence = $sentence . " " . get_option( 'jd_twit_append' );
 	}
-$post_sentence = str_ireplace( "#account#", $thisaccount, $sentence );
-$post_sentence = str_ireplace( "#url#", $thisposturl, $post_sentence );
-$post_sentence = str_ireplace( '#title#', $thisposttitle, $post_sentence );
-$post_sentence = str_ireplace ( '#blog#',$thisblogtitle, $post_sentence );
-$post_sentence = str_ireplace ( '#post#',$thispostexcerpt, $post_sentence );
-$post_sentence = str_ireplace ( '#category#',$thispostcategory, $post_sentence );
-$post_sentence = str_ireplace ( '#date#', $thisdate, $post_sentence );
-$post_sentence = str_ireplace ( '#author#', $thisauthor, $post_sentence );
+	// create full unconditional post sentence - prior to truncation
+	$post_sentence = str_ireplace( '#account#', $thisaccount, $sentence );
+	$post_sentence = str_ireplace( '#url#', $thisposturl, $post_sentence );
+	$post_sentence = str_ireplace( '#title#', $thisposttitle, $post_sentence );
+	$post_sentence = str_ireplace( '#blog#',$thisblogtitle, $post_sentence );
+	$post_sentence = str_ireplace( '#post#',$thispostexcerpt, $post_sentence );
+	$post_sentence = str_ireplace( '#category#',$thispostcategory, $post_sentence );
+	$post_sentence = str_ireplace( '#date#', $thisdate, $post_sentence );
+	$post_sentence = str_ireplace( '#author#', $thisauthor, $post_sentence );
 
-$str_length = mb_strlen( urldecode( fake_normalize( $post_sentence ) ) );
-$length = get_option( 'jd_post_excerpt' );
+	// check total length 
+	$str_length = mb_strlen( urldecode( fake_normalize( $post_sentence ) ) );
+	// what is the excerpt supposed to be?
+	$length = get_option( 'jd_post_excerpt' );
 
-$length_array = array();
-//$order = get_option( 'jd_truncation_sort_order' );
-$length_array['thispostexcerpt'] = mb_strlen(fake_normalize($thispostexcerpt));
-$length_array['thisblogtitle'] = mb_strlen(fake_normalize($thisblogtitle));
-$length_array['thisposttitle'] = mb_strlen(fake_normalize($thisposttitle));
-$length_array['thispostcategory'] = mb_strlen(fake_normalize($thispostcategory));
-$length_array['thisdate'] = mb_strlen(fake_normalize($thisdate));
-$length_array['thisauthor'] = mb_strlen(fake_normalize($thisauthor));
-$length_array['thisaccount'] = mb_strlen(fake_normalize($thisaccount));
+	// build an array of variable names and the number of characters in that variable.
+	$length_array = array();
+	$length_array['thispostexcerpt'] = mb_strlen(fake_normalize($thispostexcerpt));
+	$length_array['thisblogtitle'] = mb_strlen(fake_normalize($thisblogtitle));
+	$length_array['thisposttitle'] = mb_strlen(fake_normalize($thisposttitle));
+	$length_array['thispostcategory'] = mb_strlen(fake_normalize($thispostcategory));
+	$length_array['thisdate'] = mb_strlen(fake_normalize($thisdate));
+	$length_array['thisauthor'] = mb_strlen(fake_normalize($thisauthor));
+	$length_array['thisaccount'] = mb_strlen(fake_normalize($thisaccount));
 
-//echo $thispostexcerpt;
-//echo "<pre>";
-//echo $post_sentence."<br />";
-//print_r($length_array);
-
-if ( $str_length > $post_length ) {
-	foreach($length_array AS $key=>$value) {
-		if ( ( $str_length > $post_length ) && ($str_length - $value) < $post_length ) {
-			$trim = $str_length - $post_length;
-			$old_value = ${$key};
-			$new_value = mb_substr( $old_value,0,-( $trim ) );
-			$post_sentence = str_ireplace( $old_value,$new_value,$post_sentence );
-			$str_length = mb_strlen( urldecode( fake_normalize( $post_sentence ) ) );
+	// if the total length is too long, truncate items until the length is appropriate. 
+	// truncation is in order of items which can most afford to be truncated. URL is never truncated.
+	if ( $str_length > 140 ) {
+		foreach($length_array AS $key=>$value) {
+			$str_length = mb_strlen( urldecode( fake_normalize( trim( $post_sentence ) ) ) );
+			if ( $str_length > 140 ) {
+				$trim = $str_length - 140;
+				$old_value = ${$key};
+				$new_value = mb_substr( $old_value,0,-( $trim ) );
+				$post_sentence = str_ireplace( $old_value,$new_value,$post_sentence );
+			} 
 		}
 	}
-}
-if ( mb_strlen( fake_normalize ( $post_sentence ) ) > 140 ) { $post_sentence = substr( $post_sentence,0,139 ); }
-$sentence = $post_sentence;
-//echo "<br />$sentence";
-//echo "</pre>";
-//die;
-
-return $sentence;
+	if ( mb_strlen( fake_normalize ( $post_sentence ) ) > 140 ) { $post_sentence = substr( $post_sentence,0,139 ); }
+	$sentence = $post_sentence;
+	return $sentence;
 }
 
 function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='false' ) {
@@ -392,11 +385,15 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='fa
 			$shrink = urldecode($thispostlink);
 			break;
 			case 4:
-				if ( function_exists( 'wp_get_shortlink' ) ) {
-					$shrink = wp_get_shortlink();
-					if ( !$shrink ) { $shrink = home_url( '?p=' . $post_ID ); }
+				if ( $testmode == 'link' ) {
+					$shrink = urldecode($thispostlink);
 				} else {
-					$shrink = home_url( '?p=' . $post_ID );
+					if ( function_exists( 'wp_get_shortlink' ) ) {
+						$shrink = wp_get_shortlink();
+						if ( !$shrink ) { $shrink = home_url( '?p=' . $post_ID ); }
+					} else {
+						$shrink = home_url( '?p=' . $post_ID );
+					}
 				}
 			break;
 			case 5:
@@ -625,11 +622,13 @@ function jd_twit( $post_ID ) {
 				$sentence = custom_shortcodes( $sentence, $post_ID );
 				$sentence = jd_truncate_tweet( $sentence, $jd_post_info['postTitle'], $jd_post_info['blogTitle'], $jd_post_info['postExcerpt'], $shrink, $jd_post_info['category'], $jd_post_info['postDate'], $post_ID, $jd_post_info['authId'] );		
 			}
-				
 			if ( $sentence != '' ) {
 				if ( get_option('limit_categories') == '0' || in_allowed_category( $jd_post_info['categoryIds'] ) ) {
 					$sendToTwitter = jd_doTwitterAPIPost( $sentence );
-					update_post_meta( $post_ID,'_jd_wp_twitter',urldecode( $sentence ) );
+					$jwt = get_post_meta( $post_ID, '_jd_wp_twitter', true );
+					$jwt[] = urldecode( $sentence );
+					$_POST['_jd_wp_twitter'] = $jwt;
+					update_post_meta( $post_ID,'_jd_wp_twitter', $jwt );
 					if ( $sendToTwitter == false ) {
 						update_option( 'wp_twitter_failure','1' );
 					}
@@ -701,7 +700,9 @@ function jd_twit_xmlrpc( $post_ID ) {
 			if ( $sentence != '' ) {	
 				if ( get_option('limit_categories') == '0' || in_allowed_category( $jd_post_info['categoryIds'] ) ) {
 					$sendToTwitter = jd_doTwitterAPIPost( $sentence );
-					update_post_meta( $post_ID,'_jd_wp_twitter',urldecode( $sentence ) );
+					$jwt = get_post_meta( $post_ID, '_jd_wp_twitter', true );
+					$jwt[] = urldecode( $sentence );
+					update_post_meta( $post_ID,'_jd_wp_twitter', $jwt );					
 					if ($sendToTwitter == false ) {
 						update_option('wp_twitter_failure','1');
 					}
@@ -742,31 +743,14 @@ add_action('admin_menu','jd_add_twitter_outer_box');
 function store_url($post_ID, $url) {
 	$shortener = get_option( 'jd_shortener' );
 	switch ($shortener) {
-		case 0:
-		case 1:
-		$ext = '_wp';
-		break;
-		case 2:
-		$ext = '_bitly';
-		break;
-		case 3:
-		$ext = '_url';
-		break;
-		case 4:
-		$ext = '_wp';
-		case 5:
-		case 6:
-		$ext = '_yourls';
-		break;
-		case 7:
-		$ext = '_supr';
-		break;
-		case 8:
-		$ext = '_goo';
-		break;
-		default:
-		$ext = '_ind';
-		break;
+		case 0:	case 1:	$ext = '_wp';break;
+		case 2:	$ext = '_bitly';break;
+		case 3:	$ext = '_url';break;
+		case 4:	$ext = '_wp';break;
+		case 5:	case 6:	$ext = '_yourls';break;
+		case 7:	$ext = '_supr';	break;
+		case 8:	$ext = '_goo';	break;
+		default:$ext = '_ind';
 	}
 	if ( get_post_meta ( $post_ID, "_wp_jd$ext", TRUE ) != $url ) {
 		update_post_meta ( $post_ID, "_wp_jd$ext", $url );
@@ -854,8 +838,7 @@ global $post, $jd_plugin_url, $jd_donate_url;
 	}
 	$jd_twitter = esc_attr( stripcslashes( get_post_meta($post_id, '_jd_twitter', true ) ) );
 	$jd_tweet_this = get_post_meta( $post_id, '_jd_tweet_this', true );
-	$jd_t_text = __("Don't Tweet this post.", 'wp-to-twitter');			
-	
+	if ( $jd_tweet_this == '' ) { $jd_tweet_this = ( get_option( 'jd_tweet_default' ) == '1' )?'no':'yes'; }
 	$jd_short = get_post_meta( $post_id, '_wp_jd_clig', true );
 	$shortener = "Cli.gs";
 	if ( $jd_short == "" ) {
@@ -882,7 +865,7 @@ global $post, $jd_plugin_url, $jd_donate_url;
 		$jd_direct = get_post_meta( $post_id, '_wp_jd_url', true );
 	}		
 	$jd_expansion = get_post_meta( $post_id, '_wp_jd_target', true );
-	$previous_tweet = get_post_meta ( $post_id, '_jd_wp_twitter', true );
+	$previous_tweets = get_post_meta ( $post_id, '_jd_wp_twitter', true );
 	?>
 <script type="text/javascript">
 <!-- Begin
@@ -891,13 +874,23 @@ cntfield.value = field.value.length;
 }
 //  End -->
 </script>
-<?php if ( $previous_tweet != '' ) {
-echo "<p class='error'><strong>Previous Tweet:</strong> <a href='http://twitter.com/?status=$previous_tweet'>$previous_tweet</a></p>";
-} ?>
+<?php if ( !is_array( $previous_tweets ) && $previous_tweets != '' ) { $previous_tweets = array( 0=>$previous_tweets ); } ?>
+<?php if ( ! empty( $previous_tweets ) ) { ?>
+
+<p class='error'><strong><?php _e('Previous Tweets','wp-to-twitter'); ?>:</strong></p>
+<ul>
+<?php
+	foreach ( $previous_tweets as $previous_tweet ) {
+		if ( $previous_tweet != '' ) {
+			$hidden_fields .= "<input type='hidden' name='_jd_wp_twitter[]' value='".esc_attr($previous_tweet)."' />";
+			echo "<li>$previous_tweet <a href='http://twitter.com/?status=$previous_tweet'>Retweet this</a></li>";
+		}
+	}
+?>
+</ul>
+<?php echo "<div>".$hidden_fields."</div>"; } ?>
 <p>
-<label for="jd_twitter"><?php _e("Custom Twitter Post", 'wp-to-twitter', 'wp-to-twitter') ?></label><br /><textarea style="width:95%;" name="_jd_twitter" id="jd_twitter" rows="2" cols="60"
-	onKeyDown="countChars(document.post.jd_twitter,document.post.twitlength)"
-	onKeyUp="countChars(document.post.jd_twitter,document.post.twitlength)"><?php echo esc_attr( $jd_twitter ); ?></textarea>
+<label for="jtw"><?php _e("Custom Twitter Post", 'wp-to-twitter', 'wp-to-twitter') ?></label><br /><textarea class="attachmentlinks" name="_jd_twitter" id="jtw" rows="2" cols="60" onKeyDown="countChars(document.post.jtw,document.post.twitlength)" onKeyUp="countChars(document.post.jtw,document.post.twitlength)"><?php echo esc_attr( $jd_twitter ); ?></textarea>
 </p>
 <p><input readonly type="text" name="twitlength" size="3" maxlength="3" value="<?php echo esc_attr( mb_strlen( $description) ); ?>" />
 <?php $minus_length = $post_length - 21; ?>
@@ -910,18 +903,16 @@ echo "<p class='error'><strong>Previous Tweet:</strong> <a href='http://twitter.
 	}
 ?>
 <p>
-<a target="__blank" href="<?php echo admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'); ?>#get-support"><?php _e('Make a Donation', 'wp-to-twitter', 'wp-to-twitter') ?></a> &bull; <a target="__blank" href="<?php echo $jd_plugin_url; ?>"><?php _e('Get Support', 'wp-to-twitter', 'wp-to-twitter') ?></a> &raquo;
+<a target="__blank" href="<?php echo admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'); ?>#get-support"><?php _e('Get Support', 'wp-to-twitter', 'wp-to-twitter') ?></a> &bull; <a target="__blank" href="<?php echo $jd_donate_url; ?>"><?php _e('Make a Donation', 'wp-to-twitter', 'wp-to-twitter') ?></a> &raquo;
 </p>
 <?php
 	// "no" means 'Don't Tweet' (is checked)
-	if ( get_option( 'jd_tweet_default' ) == '1' || ( $jd_tweet_this == 'no' ) ) {
-		$checked = ' checked="checked"';
-	} else {
-		$checked = '';
-	}
+	$nochecked = ( $jd_tweet_this == 'no' )?' checked="checked"':'';
+	$yeschecked = ( $jd_tweet_this == 'yes' )?' checked="checked"':'';
+	
 ?>
 <p>
-<input type="checkbox" name="_jd_tweet_this" value="no" id="jd_tweet_this"<?php echo $checked; ?> /> <label for="jd_tweet_this"><?php echo $jd_t_text; ?></label>
+<input type="radio" name="_jd_tweet_this" value="no" id="jtn"<?php echo $nochecked; ?> /> <label for="jtn"><?php _e("Don't Tweet this post.", 'wp-to-twitter'); ?></label> <input type="radio" name="_jd_tweet_this" value="yes" id="jty"<?php echo $yeschecked; ?> /> <label for="jty"><?php _e("Tweet this post.", 'wp-to-twitter'); ?></label>
 </p>
 <p>
 <?php
@@ -977,12 +968,18 @@ function post_jd_twitter( $id ) {
 			$jd_twitter = $_POST[ '_jd_twitter' ];
 			update_post_meta( $id, '_jd_twitter', $jd_twitter );
 		}
+		if ( isset( $_POST[ '_jd_wp_twitter' ] ) ) {
+			$jd_wp_twitter = $_POST[ '_jd_wp_twitter' ];
+			update_post_meta( $id, '_jd_wp_twitter', $jd_wp_twitter );
+		}
 		if ( isset($_POST[ '_jd_tweet_this' ]) ) {
 			$jd_tweet_this = ( $_POST[ '_jd_tweet_this' ] == 'no')?'no':'yes';
 			update_post_meta( $id, '_jd_tweet_this', $jd_tweet_this );
 		} else {
-			$jd_tweet_default = ( get_option( 'jd_tweet_default' ) == 0 )?'yes':'no';
-			update_post_meta( $id, '_jd_tweet_this', $jd_tweet_default );
+			if ( isset($_POST['_wpnonce'] ) ) {
+				$jd_tweet_default = ( get_option( 'jd_tweet_default' ) == 1 )?'no':'yes';
+				update_post_meta( $id, '_jd_tweet_this', $jd_tweet_default );
+			}
 		}
 }
 

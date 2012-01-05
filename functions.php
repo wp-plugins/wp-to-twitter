@@ -236,7 +236,7 @@ get_currentuserinfo();
 	$php_version = phpversion();
 
 	// theme data
-	$theme_path = get_bloginfo('stylesheet_url');
+	$theme_path = get_stylesheet_directory().'/style.css';
 	$theme = get_theme_data($theme_path);
 		$theme_name = $theme['Name'];
 		$theme_uri = $theme['URI'];

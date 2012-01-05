@@ -13,11 +13,7 @@
 	function jd_checkCheckbox( $theFieldname,$sub1=false,$sub2='' ) {
 		if ($sub1) {
 			$setting = get_option($theFieldname);
-			if ( $sub2 != '' ) {
-				$value = $setting[$sub1][$sub2];
-			} else {
-				$value = $setting[$sub1];
-			}
+			$value = ( $sub2 != '' )?$setting[$sub1][$sub2]:$setting[$sub1];
 			if ( $value == 1 ) {
 				echo 'checked="checked"';
 				return;
@@ -29,11 +25,7 @@
 	}
 	function jd_checkSelect( $theFieldname, $theValue, $type='select' ) {
 		if( get_option( $theFieldname ) == $theValue ) {
-			if ( $type == 'select' ) {
-				echo 'selected="selected"';
-			} else {
-				echo 'checked="checked"';
-			}
+			echo ( $type == 'select' )?'selected="selected"':'checked="checked"';
 		}
 	}
 	$wp_twitter_error = FALSE;
@@ -58,13 +50,10 @@
 					)
 			);
 		update_option( 'wpt_post_types', $initial_settings );
-
 		update_option( 'jd_twit_blogroll', '1');
 		update_option( 'newlink-published-text', 'New link: #title# #url#' );
-		
 		update_option( 'comment-published-update', 0 );
 		update_option( 'comment-published-text', 'New comment: #title# #url#' );				
-		
 		update_option( 'limit_categories','0' );
 		update_option( 'jd_shortener', '1' );
 		update_option( 'use_tags_as_hashtags', '0' );
@@ -73,7 +62,6 @@
 		update_option('jd_max_characters',15);	
 		update_option('jd_replace_character','_');
 		update_option('wtt_user_permissions','manage_options');
-		
 		update_option( 'jd_twit_remote', '0' );
 		update_option( 'jd_post_excerpt', 30 );
 		// Use Google Analytics with Twitter
@@ -136,13 +124,12 @@
 	// Error messages on status update or url shortener failures	
 	if ( get_option( 'wp_twitter_failure' ) == '1' ) {
 		$wp_to_twitter_failure = '';
-			if ( get_option( 'wp_twitter_failure' ) == '1' ) {
-				$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers to post your new blog post. Your tweet has been stored in a custom field attached to the post, so you can Tweet it manually if you wish! ", 'wp-to-twitter') . "</p>";
-			} else if ( get_option( 'wp_twitter_failure' ) == '2') {
-				$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers to post your <strong>new link</strong>! You'll have to post it manually, I'm afraid. ", 'wp-to-twitter') . "</p>";
-			}
-			
-		} else {
+		if ( get_option( 'wp_twitter_failure' ) == '1' ) {
+			$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers to post your new blog post. Your tweet has been stored in a custom field attached to the post, so you can Tweet it manually if you wish! ", 'wp-to-twitter') . "</p>";
+		} else if ( get_option( 'wp_twitter_failure' ) == '2') {
+			$wp_to_twitter_failure .= "<p>" . __("Sorry! I couldn't get in touch with the Twitter servers to post your <strong>new link</strong>! You'll have to post it manually, I'm afraid. ", 'wp-to-twitter') . "</p>";
+		}
+	} else {
 		$wp_to_twitter_failure = '';
 	}
 
@@ -169,12 +156,9 @@
 		update_option('wtt_user_permissions',$wtt_user_permissions);
 		update_option( 'disable_url_failure' , $_POST['disable_url_failure'] );
 		update_option( 'disable_twitter_failure' , $_POST['disable_twitter_failure'] );
-
 		update_option( 'disable_oauth_notice' , $_POST['disable_oauth_notice'] );
 		update_option( 'wp_debug_oauth' , $_POST['wp_debug_oauth'] );
 		update_option( 'jd_donations' , $_POST['jd_donations'] );
-	
-	
 		$message .= __( 'WP to Twitter Advanced Options Updated' , 'wp-to-twitter');
 	}
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'options' ) {
@@ -190,7 +174,6 @@
 				$wpt_settings[$key] = $array;
 		}
 		update_option( 'wpt_post_types', $wpt_settings );
-
 		update_option( 'newlink-published-text', $_POST['newlink-published-text'] );
 		update_option( 'jd_twit_blogroll',(isset($_POST['jd_twit_blogroll']) )?$_POST['jd_twit_blogroll']:"" );
 		update_option( 'comment-published-text', $_POST['comment-published-text'] );
@@ -209,13 +192,10 @@
 			$message .= __( 'You must add your YOURLS server path in order to shorten URLs with a remote installation of YOURLS.' , 'wp-to-twitter');
 			$message .= "<br />";
 		}		
-		
 		$message .= __( 'WP to Twitter Options Updated' , 'wp-to-twitter');
-
 	}
 
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'setcategories' ) {
-		
 		if ( is_array($_POST['categories'])) {
 			$categories = $_POST['categories'];
 			update_option('limit_categories','1');
@@ -226,7 +206,6 @@
 			update_option('tweet_categories','');
 			$message = __("Category limits unset.",'wp-to-twitter');
 		}
-	
 	}
 		
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'yourlsapi' ) {
@@ -307,14 +286,10 @@
 			$message = __("Bit.ly Login not added - <a href='http://bit.ly/account/'>get one here</a>! ", 'wp-to-twitter');
 		}
 	}
-	///*
 	// Check whether the server has supported for needed functions.
 	if (  isset($_POST['submit-type']) && $_POST['submit-type'] == 'check-support' ) {
 		$message = jd_check_functions();
 	}
-// If you're attempting to solve the "settings page doesn't display" problem, begin your comment here. 
-
-
 
 function jd_check_functions() {
 	$message = "<div class='update'><ul>";
@@ -323,10 +298,8 @@ function jd_check_functions() {
 	$shortener = get_option( 'jd_shortener' );
 	$title = urlencode( 'Your blog home' );
 	$shrink = jd_shorten_link( $testurl, $title, false, 'true' );
-
 	$api_url = $jdwp_api_post_status;
 	$yourls_URL = "";
-		
 	if ($shrink == FALSE) {
 		if ($shortener == 1) {
 			$error = htmlentities( get_option('wp_supr_error') );
@@ -341,7 +314,6 @@ function jd_check_functions() {
 		$message .= __("<li><strong>WP to Twitter successfully contacted your selected URL shortening service.</strong>  The following link should point to your blog homepage:",'wp-to-twitter');
 		$message .= " <a href='$shrink'>$shrink</a></li>";	
 	}
-		
 	//check twitter credentials
 	if ( wtt_oauth_test() ) {
 		$rand = rand(1000000,9999999);
@@ -379,14 +351,8 @@ function jd_check_functions() {
 <?php if (isset($_GET['export']) && $_GET['export'] == "settings") {
 print_settings();
 } ?>
-
 <h2><?php _e("WP to Twitter Options", 'wp-to-twitter'); ?></h2>
-
-<?php //echo get_option('jd_last_tweet'); ?>
-
-<?php  
-$wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dirname( plugin_basename(__FILE__) );
-?>
+<?php $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dirname( plugin_basename(__FILE__) ); ?>
 <div class="resources">
 <img src="<?php echo $wp_to_twitter_directory; ?>/wp-to-twitter-logo.png" alt="WP to Twitter" />
 <p>
@@ -405,14 +371,11 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 </form>
 </div>
 <?php } ?>
-
 <?php if ( get_option('jd_donations') != 1 ) { ?>
 <div class="ads">
-<p><?php _e('<strong>Notice</strong>: I can no longer provide any support services on WP to Twitter without a donation. All apologies.','wp-to-twitter'); ?></p>
+<p><?php _e('<strong>Notice</strong>: I can no longer provide help with WP to Twitter without your support. My apologies.','wp-to-twitter'); ?></p>
 </div>
 <?php } ?>
-
-
 </div>
 
 <p><?php _e("Shortcodes available in post update templates:", 'wp-to-twitter'); ?></p>
@@ -438,7 +401,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 		_e("<p>The query to the URL shortener API failed, and your URL was not shrunk. The full post URL was attached to your Tweet. Check with your URL shortening provider to see if there are any known issues. [<a href=\"http://www.stumbleupon.com/help/how-to-use-supr/\">Su.pr Help</a>] [<a href=\"http://blog.bit.ly\">Bit.ly Blog</a>]</p>", 'wp-to-twitter');
 		}
 		echo $wp_to_twitter_failure;
-		?>
+?>
 		</div>
 	<form method="post" action="">
 	<div><input type="hidden" name="submit-type" value="clear-error" /></div>
@@ -457,9 +420,9 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 	
 	<h3><?php _e('Basic Settings','wp-to-twitter'); ?></h3>
 	<div class="inside">
-		<br class="clear" />
 	<form method="post" action="">
 	<div>	
+		<input type="submit" name="submit" value="<?php _e("Save WP->Twitter Options", 'wp-to-twitter'); ?>" class="button-primary button-side" />	
 			<?php 
 			$post_types = get_post_types( '', 'names' );
 			$wpt_settings = get_option('wpt_post_types');
@@ -556,15 +519,13 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 	</form>
 	</div>
 	<div class="panel">
-	
 <h4 class="bitly"><span><?php _e("Your Bit.ly account details", 'wp-to-twitter'); ?></span></h4>
 	<form method="post" action="">
-	
 	<div>
 		<p>
 		<label for="bitlylogin"><?php _e("Your Bit.ly username:", 'wp-to-twitter'); ?></label>
 		<input type="text" name="bitlylogin" id="bitlylogin" value="<?php echo ( esc_attr( get_option( 'bitlylogin' ) ) ) ?>" />
-		</p>	
+		<br /><small><?php _e('This must be a standard Bit.ly account. Your Twitter or Facebook log-in will not work.','wp-to-twitter'); ?></small></p>	
 		<p>
 		<label for="bitlyapi"><?php _e("Your Bit.ly <abbr title='application programming interface'>API</abbr> Key:", 'wp-to-twitter'); ?></label>
 		<input type="text" name="bitlyapi" id="bitlyapi" size="40" value="<?php echo ( esc_attr( get_option( 'bitlyapi' ) ) ) ?>" />
@@ -620,10 +581,9 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 	
 	<h3><?php _e('Advanced Settings','wp-to-twitter'); ?></h3>
 	<div class="inside">
-		<br class="clear" />
 	<form method="post" action="">
 	<div>		
-
+	<input type="submit" name="submit" value="<?php _e("Save Advanced WP->Twitter Options", 'wp-to-twitter'); ?>" class="button-primary button-side" />	
 			<fieldset>
 				<legend><?php _e("Advanced Tweet settings","wp-to-twitter"); ?></legend>
 			<p>
@@ -641,7 +601,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 				<label for="jd_post_excerpt"><?php _e("Length of post excerpt (in characters):", 'wp-to-twitter'); ?></label> <input type="text" name="jd_post_excerpt" id="jd_post_excerpt" size="3" maxlength="3" value="<?php echo ( esc_attr( get_option( 'jd_post_excerpt' ) ) ) ?>" /><br /><small><?php _e("By default, extracted from the post itself. If you use the 'Excerpt' field, that will be used instead.", 'wp-to-twitter'); ?></small>
 			</p>				
 			<p>
-				<label for="jd_date_format"><?php _e("WP to Twitter Date Formatting:", 'wp-to-twitter'); ?></label> <input type="text" name="jd_date_format" id="jd_date_format" size="12" maxlength="12" value="<?php if (get_option('jd_date_format')=='') { echo ( esc_attr( get_option('date_format') ) ); } else { echo ( esc_attr( get_option( 'jd_date_format' ) ) ); }?>" /> (<?php if ( get_option( 'jd_date_format' ) != '' ) { echo date_i18n( get_option( 'jd_date_format' ) ); } else { echo date_i18n( get_option( 'date_format' ) ); } ?>)<br />
+				<label for="jd_date_format"><?php _e("WP to Twitter Date Formatting:", 'wp-to-twitter'); ?></label> <input type="text" name="jd_date_format" id="jd_date_format" size="12" maxlength="12" value="<?php if (get_option('jd_date_format')=='') { echo ( esc_attr( get_option('date_format') ) ); } else { echo ( esc_attr( get_option( 'jd_date_format' ) ) ); }?>" /> (<?php if ( get_option( 'jd_date_format' ) != '' ) { echo date_i18n( get_option( 'jd_date_format' ) ); } else { echo "<em>".date_i18n( get_option( 'date_format' ) )."</em>"; } ?>)<br />
 				<small><?php _e("Default is from your general settings. <a href='http://codex.wordpress.org/Formatting_Date_and_Time'>Date Formatting Documentation</a>.", 'wp-to-twitter'); ?></small>
 			</p>
 			
@@ -684,7 +644,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 			<p>
 				<input type="checkbox" name="use-dynamic-analytics" id="use-dynamic-analytics" value="1" <?php jd_checkCheckbox('use_dynamic_analytics')?> />
 				<label for="use-dynamic-analytics"><?php _e("Use a dynamic identifier with Google Analytics and WP-to-Twitter", 'wp-to-twitter'); ?></label><br />
-			<label for="jd-dynamic-analytics"><?php _e("What dynamic identifier would you like to use?","wp-to-twitter"); ?></label><br />
+			<label for="jd-dynamic-analytics"><?php _e("What dynamic identifier would you like to use?","wp-to-twitter"); ?></label> 
 				<select name="jd-dynamic-analytics" id="jd-dynamic-analytics">
 					<option value="post_category"<?php jd_checkSelect( 'jd_dynamic_analytics','post_category'); ?>><?php _e("Category","wp-to-twitter"); ?></option>
 					<option value="post_ID"<?php jd_checkSelect( 'jd_dynamic_analytics','post_ID'); ?>><?php _e("Post ID","wp-to-twitter"); ?></option>
@@ -697,7 +657,7 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 		<legend><?php _e('Individual Authors','wp-to-twitter'); ?></legend>
 			<p>
 				<input type="checkbox" name="jd_individual_twitter_users" id="jd_individual_twitter_users" value="1" <?php jd_checkCheckbox('jd_individual_twitter_users')?> />
-				<label for="jd_individual_twitter_users"><?php _e("Authors have individual Twitter accounts", 'wp-to-twitter'); ?></label><br /><small><?php _e('Authors can set their username in their user profile. As of version 2.2.0, this feature no longer allows authors to post to their own Twitter accounts. It can only add an @reference to the author. This @reference is placed using the <code>#account#</code> shortcode. (It will pick up the main account if user accounts are not enabled.)', 'wp-to-twitter'); ?></small>
+				<label for="jd_individual_twitter_users"><?php _e("Authors have individual Twitter accounts", 'wp-to-twitter'); ?></label><br /><small><?php _e('Authors can add their username in their user profile. This feature can only add an @reference to the author. The @reference is placed using the <code>#account#</code> shortcode, which will pick up the main account if user accounts are not enabled.', 'wp-to-twitter'); ?></small>
 			</p>
 		    <p>
 			<label for="wtt_user_permissions"><?php _e('Choose the lowest user group that can add their Twitter information','wp-to-twitter'); ?></label> <select id="wtt_user_permissions" name="wtt_user_permissions">
@@ -711,26 +671,15 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 		</fieldset>
 		<fieldset>
 		<legend><?php _e('Disable Error Messages','wp-to-twitter'); ?></legend>
-			<p>
-				<input type="checkbox" name="disable_url_failure" id="disable_url_failure" value="1" <?php jd_checkCheckbox('disable_url_failure')?> />
-				<label for="disable_url_failure"><?php _e("Disable global URL shortener error messages.", 'wp-to-twitter'); ?></label>
-			</p>
-			<p>
-				<input type="checkbox" name="disable_twitter_failure" id="disable_twitter_failure" value="1" <?php jd_checkCheckbox('disable_twitter_failure')?> />
-				<label for="disable_twitter_failure"><?php _e("Disable global Twitter API error messages.", 'wp-to-twitter'); ?></label>
-			</p>
-			<p>
-				<input type="checkbox" name="disable_oauth_notice" id="disable_oauth_notice" value="1" <?php jd_checkCheckbox('disable_oauth_notice')?> />
-				<label for="disable_oauth_notice"><?php _e("Disable notification to implement OAuth", 'wp-to-twitter'); ?></label>
-			</p>
-			<p>
-				<input type="checkbox" name="wp_debug_oauth" id="wp_debug_oauth" value="1" <?php jd_checkCheckbox('wp_debug_oauth')?> />
-				<label for="wp_debug_oauth"><?php _e("Get Debugging Data for OAuth Connection", 'wp-to-twitter'); ?></label>
-			</p>
-			<p>
-				<input type="checkbox" name="jd_donations" id="jd_donations" value="1" <?php jd_checkCheckbox('jd_donations')?> />
-				<label for="jd_donations"><strong><?php _e("I made a donation, so stop showing me ads, please. <a href='http://pluginsponsors.com/privacy.html'>PluginSponsors.com Privacy Policy</a>", 'wp-to-twitter'); ?></strong></label>
-			</p>
+			<ul>
+			<li><input type="checkbox" name="disable_url_failure" id="disable_url_failure" value="1" <?php jd_checkCheckbox('disable_url_failure')?> />	<label for="disable_url_failure"><?php _e("Disable global URL shortener error messages.", 'wp-to-twitter'); ?></label></li>
+			<li><input type="checkbox" name="disable_twitter_failure" id="disable_twitter_failure" value="1" <?php jd_checkCheckbox('disable_twitter_failure')?> />	<label for="disable_twitter_failure"><?php _e("Disable global Twitter API error messages.", 'wp-to-twitter'); ?></label></li>
+			<li><input type="checkbox" name="disable_oauth_notice" id="disable_oauth_notice" value="1" <?php jd_checkCheckbox('disable_oauth_notice')?> /> <label for="disable_oauth_notice"><?php _e("Disable notification to implement OAuth", 'wp-to-twitter'); ?></label></li>
+			<li><input type="checkbox" name="wp_debug_oauth" id="wp_debug_oauth" value="1" <?php jd_checkCheckbox('wp_debug_oauth')?> />
+				<label for="wp_debug_oauth"><?php _e("Get Debugging Data for OAuth Connection", 'wp-to-twitter'); ?></label></li>
+			<li><input type="checkbox" name="jd_donations" id="jd_donations" value="1" <?php jd_checkCheckbox('jd_donations')?> />
+				<label for="jd_donations"><strong><?php _e("I made a donation, so stop whinging at me, please.", 'wp-to-twitter'); ?></strong></label></li>
+			</ul>
 		</fieldset>
 		<div>
 		<input type="hidden" name="submit-type" value="advanced" />
@@ -745,7 +694,6 @@ $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dir
 <div class="postbox">
 	<h3><?php _e('Limit Updating Categories','wp-to-twitter'); ?></h3>
 	<div class="inside">
-		<br class="clear" />
 		<p>
 		<?php _e('Select which blog categories will be Tweeted. Uncheck all categories to disable category limits.','wp-to-twitter'); ?>
 <?php
