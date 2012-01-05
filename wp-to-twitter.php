@@ -231,7 +231,7 @@ function jd_doTwitterAPIPost( $twit ) {
 }
 
 function fake_normalize( $string ) {
-	if ( version_compare( PHP_VERSION, '5.0.0', '>=' ) ) {
+	if ( version_compare( PHP_VERSION, '5.0.0', '>=' ) && function_exists('normalizer_normalize') ) {
 		return normalizer_normalize( $string );
 	} else {
 		return preg_replace( '~&([a-z]{1,2})(acute|cedil|circ|grave|lig|orn|ring|slash|th|tilde|uml);~i', '$1', htmlentities( $string, ENT_QUOTES, 'UTF-8' ) );
