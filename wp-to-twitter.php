@@ -3,11 +3,11 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.3.13
+Version: 2.3.14
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
-/*  Copyright 2008-2011  Joseph C Dolson  (email : wp-to-twitter@joedolson.com)
+/*  Copyright 2008-2012  Joseph C Dolson  (email : wp-to-twitter@joedolson.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ if ( version_compare( phpversion(), '5.0', '<' ) || !function_exists( 'curl_init
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wp_version,$wpt_version,$jd_plugin_url,$jdwp_api_post_status;
-$wpt_version = "2.3.13";
+$wpt_version = "2.3.14";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -626,6 +626,7 @@ function jd_twit( $post_ID ) {
 				if ( get_option('limit_categories') == '0' || in_allowed_category( $jd_post_info['categoryIds'] ) ) {
 					$sendToTwitter = jd_doTwitterAPIPost( $sentence );
 					$jwt = get_post_meta( $post_ID, '_jd_wp_twitter', true );
+					if ( !is_array( $jwt ) ){ $jwt=array(); }
 					$jwt[] = urldecode( $sentence );
 					$_POST['_jd_wp_twitter'] = $jwt;
 					update_post_meta( $post_ID,'_jd_wp_twitter', $jwt );
@@ -701,6 +702,7 @@ function jd_twit_xmlrpc( $post_ID ) {
 				if ( get_option('limit_categories') == '0' || in_allowed_category( $jd_post_info['categoryIds'] ) ) {
 					$sendToTwitter = jd_doTwitterAPIPost( $sentence );
 					$jwt = get_post_meta( $post_ID, '_jd_wp_twitter', true );
+					if ( !is_array( $jwt ) ){ $jwt=array(); }					
 					$jwt[] = urldecode( $sentence );
 					update_post_meta( $post_ID,'_jd_wp_twitter', $jwt );					
 					if ($sendToTwitter == false ) {

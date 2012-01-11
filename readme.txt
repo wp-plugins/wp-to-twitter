@@ -30,7 +30,7 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 Translations:
 
-* Italian: [Gianni Diurno](http://www.gidibao.net) [2.3.8]
+* Italian: [Gianni Diurno](http://www.gidibao.net) [2.3.14]
 * Lithuanian [Nata Strazda](http://www.designcontest.com) [2.3.8]
 * Simplified Chinese: [HostUCan](http://www.hostucan.com) [2.3.8]
 * Traditional Chinese: [HostUCan](http://www.hostucan.com) [2.3.8]
@@ -49,6 +49,11 @@ Translations:
 New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
+
+= 2.3.14 =
+
+* Bug fix for value treated as array without verifying
+* Update to Italian translation
 
 = 2.3.13 =
 
@@ -567,4 +572,4 @@ Right here: [WP to Twitter FAQ](http://www.joedolson.com/articles/wp-to-twitter/
 
 == Upgrade Notice ==
 
-* 2.3.13 Fixes missing function_exists check in 2.3.12.
+* 2.3.14 Bug fix: array check when saving past tweets; updated Italian translation.
