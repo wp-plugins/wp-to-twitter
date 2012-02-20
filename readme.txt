@@ -50,6 +50,19 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.3.15 =
+
+* Eliminated unnecessary duplication in error messages.
+* If application is not authenticated, status updates on posting now fail silently.
+* Added additional error help if cURL is not supported.
+* Improved error response information for other http_code responses from Twitter
+* Added reminder of your template format to WP to Twitter custom box
+* Moved tags from an option to a template tag.
+* Fixed bug where shortcodes were not stripped from post excerpts
+* Bug fix: If a scheduled post was edited once, without changing publishing time, custom tweet text was lost.
+* Added support for the app_publish_post hook
+* Bug fix: XMLRPC published edits to Twitter when post updates on edit disabled
+
 = 2.3.14 =
 
 * Bug fix for value treated as array without verifying
@@ -572,4 +585,4 @@ Right here: [WP to Twitter FAQ](http://www.joedolson.com/articles/wp-to-twitter/
 
 == Upgrade Notice ==
 
-* 2.3.14 Bug fix: array check when saving past tweets; updated Italian translation.
+* 2.3.15 Assorted bug fixes: XMLRPC, custom tweet text issues, etc. Added #tags# to templates, removed tags option.
