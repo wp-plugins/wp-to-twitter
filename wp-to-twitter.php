@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.3.15
+Version: 2.3.16
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -56,7 +56,7 @@ if ( version_compare( phpversion(), '5.0', '<' ) || ! function_exists( 'curl_ini
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wp_version,$wpt_version,$jd_plugin_url,$jdwp_api_post_status;
-$wpt_version = "2.3.15";
+$wpt_version = "2.3.16";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -619,7 +619,8 @@ function jd_twit( $post_ID ) {
 		$post_info = jd_post_info( $post_ID );
 		$post_type = $post_info['postType'];
 		// if the post modified date and the post date are the same, this is new.
-		$new = wpt_date_equal( $post_info['_postModified'], $post_info['_postDate'] );		
+		$new = wpt_date_equal( $post_info['_postModified'], $post_info['_postDate'] );	
+		// post modified = updated? // postdate == published? therefore: posts which have been updated after creation (scheduled, updated in draft) may not turn up as new. // postStatus == future
 		$post_type_settings = get_option('wpt_post_types');
 		$post_types = array_keys($post_type_settings);
 		if ( in_array( $post_type, $post_types ) ) {
@@ -630,7 +631,7 @@ function jd_twit( $post_ID ) {
 			if ( $post_info['postStatus'] != 'draft' && $post_info['postStatus'] != 'auto-draft' && $post_info['postStatus'] != 'private' && $post_info['postStatus'] != 'inherit' && $post_info['postStatus'] != 'trash' ) {
 				// && $post_info['postStatus'] != 'pending'
 				// if ops is set and equals 'publish', this is being edited. Otherwise, it's a new post.
-				if ( $new == 0 || $is_inline_edit == true ) {
+				if ( ( $new == 0 && $post_info['postStatus'] != 'future' ) || $is_inline_edit == true ) {
 					// if this is an old post and editing updates are enabled
 					if ( $post_type_settings[$post_type]['post-edited-update'] == '1' ) {
 						$nptext = stripcslashes( $post_type_settings[$post_type]['post-edited-text'] );
@@ -1014,7 +1015,7 @@ function post_jd_twitter( $id ) {
 	if ( isset( $_POST[ '_jd_twitter' ] ) && $_POST['_jd_twitter'] != '' ) {
 		$jd_twitter = $_POST[ '_jd_twitter' ];
 		update_post_meta( $id, '_jd_twitter', $jd_twitter );
-	}
+	} 
 	if ( isset( $_POST[ '_jd_wp_twitter' ] ) && $_POST['_jd_wp_twitter'] != '' ) {
 		$jd_wp_twitter = $_POST[ '_jd_wp_twitter' ];
 		update_post_meta( $id, '_jd_wp_twitter', $jd_wp_twitter );

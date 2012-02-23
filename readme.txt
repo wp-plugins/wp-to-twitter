@@ -50,6 +50,10 @@ New translations are always welcome! The translation file is in the download.
 
 == Changelog ==
 
+= 2.3.16 =
+
+* Bug fix: Change in 2.3.15 to fix XMLRPC publishing edits also classed scheduled posts as edits. 
+
 = 2.3.15 =
 
 * Eliminated unnecessary duplication in error messages.
@@ -585,4 +589,5 @@ Right here: [WP to Twitter FAQ](http://www.joedolson.com/articles/wp-to-twitter/
 
 == Upgrade Notice ==
 
+* 2.3.16 Fixes issue with scheduled posts failing to tweet if status updates on post edit are disabled
 * 2.3.15 Assorted bug fixes: XMLRPC, custom tweet text issues, etc. Added #tags# to templates, removed tags option.
