@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the WP to Twitter package.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP to Twitter 2.3.15\n"
+"Project-Id-Version: WP to Twitter 2.3.17\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/wp-to-twitter\n"
-"POT-Creation-Date: 2012-02-20 22:49:05+00:00\n"
+"POT-Creation-Date: 2012-03-06 21:27:16+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -280,7 +280,7 @@ msgstr ""
 msgid "Pledge to new features"
 msgstr ""
 
-#: wp-to-twitter-manager.php:349 wp-to-twitter.php:954
+#: wp-to-twitter-manager.php:349 wp-to-twitter.php:956
 msgid "Make a Donation"
 msgstr ""
 
@@ -288,7 +288,7 @@ msgstr ""
 msgid "View Settings"
 msgstr ""
 
-#: wp-to-twitter-manager.php:349 wp-to-twitter.php:954
+#: wp-to-twitter-manager.php:349 wp-to-twitter.php:956
 msgid "Get Support"
 msgstr ""
 
@@ -1057,83 +1057,83 @@ msgstr ""
 msgid "No Twitter OAuth connection found."
 msgstr ""
 
-#. #-#-#-#-#  plugin.pot (WP to Twitter 2.3.15)  #-#-#-#-#
+#. #-#-#-#-#  plugin.pot (WP to Twitter 2.3.17)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
-#: wp-to-twitter.php:854
+#: wp-to-twitter.php:856
 msgid "WP to Twitter"
 msgstr ""
 
-#: wp-to-twitter.php:926
+#: wp-to-twitter.php:928
 msgid "Previous Tweets"
 msgstr ""
 
-#: wp-to-twitter.php:939
+#: wp-to-twitter.php:941
 msgid "Custom Twitter Post"
 msgstr ""
 
-#: wp-to-twitter.php:945
+#: wp-to-twitter.php:947
 msgid "Your template:"
 msgstr ""
 
-#: wp-to-twitter.php:950
+#: wp-to-twitter.php:952
 msgid "YOURLS Custom Keyword"
 msgstr ""
 
-#: wp-to-twitter.php:963
+#: wp-to-twitter.php:965
 msgid "Don't Tweet this post."
 msgstr ""
 
-#: wp-to-twitter.php:963
+#: wp-to-twitter.php:965
 msgid "Tweet this post."
 msgstr ""
 
-#: wp-to-twitter.php:973
+#: wp-to-twitter.php:975
 msgid "This URL is direct and has not been shortened: "
 msgstr ""
 
-#: wp-to-twitter.php:1045
+#: wp-to-twitter.php:1047
 msgid "WP to Twitter User Settings"
 msgstr ""
 
-#: wp-to-twitter.php:1049
+#: wp-to-twitter.php:1051
 msgid "Use My Twitter Username"
 msgstr ""
 
-#: wp-to-twitter.php:1050
+#: wp-to-twitter.php:1052
 msgid "Tweet my posts with an @ reference to my username."
 msgstr ""
 
-#: wp-to-twitter.php:1051
+#: wp-to-twitter.php:1053
 msgid ""
 "Tweet my posts with an @ reference to both my username and to the main site "
 "username."
 msgstr ""
 
-#: wp-to-twitter.php:1055
+#: wp-to-twitter.php:1057
 msgid "Your Twitter Username"
 msgstr ""
 
-#: wp-to-twitter.php:1056
+#: wp-to-twitter.php:1058
 msgid "Enter your own Twitter username."
 msgstr ""
 
-#: wp-to-twitter.php:1095
+#: wp-to-twitter.php:1097
 msgid "Check the categories you want to tweet:"
 msgstr ""
 
-#: wp-to-twitter.php:1112
+#: wp-to-twitter.php:1114
 msgid "Set Categories"
 msgstr ""
 
-#: wp-to-twitter.php:1136
+#: wp-to-twitter.php:1138
 msgid "<p>Couldn't locate the settings page.</p>"
 msgstr ""
 
-#: wp-to-twitter.php:1141
+#: wp-to-twitter.php:1143
 msgid "Settings"
 msgstr ""
 
-#: wp-to-twitter.php:1175
+#: wp-to-twitter.php:1177
 msgid ""
 "<br /><strong>Note:</strong> Please review the <a class=\"thickbox\" href=\"%"
 "1$s\">changelog</a> before upgrading."
