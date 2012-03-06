@@ -12,21 +12,18 @@ Posts a Twitter update when you update your WordPress blog or post to your blogr
 
 WP to Twitter posts a Twitter status update from your WordPress blog using your URL shortening service to provide a link back to your post from Twitter. 
 
-[Make a Pledge at Fundry](https://fundry.com/project/10-wp-to-twitter).
-
-The plugin supports a default message template for updating or editing posts and pages, supports your custom post types, and also allows you to write a custom Tweet for each post which says whatever you want, using a selection of custom shortcodes to generate your text. 
+The plugin supports a default Tweet template for updating or editing posts and pages, supports your custom post types, and also allows you to write a custom Tweet for each post which says whatever you want, using a selection of custom shortcodes to generate your text. 
 
 Additional features include: 
 
 * Use tags as Twitter hashtags
 * Use alternate URLs in place of post permalinks
 * Support for Google Analytics
+* Support for XMLRPC remote clients
 
-Any status update you write which is longer than the available space will automatically be truncated by the plugin. This applies to both the default messages and to your custom messages.
+Want new features? [Make a Pledge at Fundry](https://fundry.com/project/10-wp-to-twitter).
 
-Credits:
-
-Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
+Any status update you write which is longer than the available space will be truncated by the plugin. This applies to both default messages and to your custom messages.
 
 Translations:
 
@@ -46,9 +43,18 @@ Translations:
 * Brazilian Portugese: [Matheus Bratfisch](http://www.matbra.com)
 * Japanese: [kndb](http://blog.layer8.sh/)
 
-New translations are always welcome! The translation file is in the download.
+New translations are always welcome! The translation source file is in the WP to Twitter download.
+
+Credits:
+
+Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.3.17 =
+
+* Bug fix: Custom tweet text not sent for custom post types if the post was not saved prior to publishing.
+* Bug fix: Scheduled posts would not tweet if certain plug-ins were installed, due to modifications of post dates.
 
 = 2.3.16 =
 
@@ -581,6 +587,10 @@ New translations are always welcome! The translation file is in the download.
 
 Right here: [WP to Twitter FAQ](http://www.joedolson.com/articles/wp-to-twitter/support-2/). I don't maintain them here because I would prefer to only maintain one copy. This is better for everybody, since the responses are much more likely to be up to date!
 
+= How can I help you make WP to Twitter a better plug-in? =
+
+Writing and maintaining a plug-in is a lot of work. You can help me by providing detailed support requests (which saves me time), or by providing financial support via my [plug-in donations page](http://www.joedolson.com/donate.php). Believe me, any small donation really makes a difference!
+
 == Screenshots ==
 
 1. WP to Twitter main settings page.
@@ -589,5 +599,4 @@ Right here: [WP to Twitter FAQ](http://www.joedolson.com/articles/wp-to-twitter/
 
 == Upgrade Notice ==
 
-* 2.3.16 Fixes issue with scheduled posts failing to tweet if status updates on post edit are disabled
-* 2.3.15 Assorted bug fixes: XMLRPC, custom tweet text issues, etc. Added #tags# to templates, removed tags option.
+* 2.3.17 Bug fixes for scheduled posts in combination with certain plug-ins; custom tweet text for custom post types with instant publish

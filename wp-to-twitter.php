@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.3.16
+Version: 2.3.17
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -56,7 +56,7 @@ if ( version_compare( phpversion(), '5.0', '<' ) || ! function_exists( 'curl_ini
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wp_version,$wpt_version,$jd_plugin_url,$jdwp_api_post_status;
-$wpt_version = "2.3.16";
+$wpt_version = "2.3.17";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -619,13 +619,14 @@ function jd_twit( $post_ID ) {
 		$post_info = jd_post_info( $post_ID );
 		$post_type = $post_info['postType'];
 		// if the post modified date and the post date are the same, this is new.
-		$new = wpt_date_equal( $post_info['_postModified'], $post_info['_postDate'] );	
+		$new = wpt_date_compare( $post_info['_postModified'], $post_info['_postDate'] );	
 		// post modified = updated? // postdate == published? therefore: posts which have been updated after creation (scheduled, updated in draft) may not turn up as new. // postStatus == future
 		$post_type_settings = get_option('wpt_post_types');
 		$post_types = array_keys($post_type_settings);
 		if ( in_array( $post_type, $post_types ) ) {
 			$sentence = '';
 			$cT = get_post_meta( $post_ID, '_jd_twitter', true );
+			if ( isset( $_POST['_jd_twitter'] ) && $_POST['_jd_twitter'] != '' ) { $cT = $_POST['_jd_twitter']; }
 			$customTweet = ( $cT != '' )?stripcslashes( trim( $cT ) ):'';
 			// excluded post statuses that should never be tweeted
 			if ( $post_info['postStatus'] != 'draft' && $post_info['postStatus'] != 'auto-draft' && $post_info['postStatus'] != 'private' && $post_info['postStatus'] != 'inherit' && $post_info['postStatus'] != 'trash' ) {
@@ -716,7 +717,7 @@ function jd_twit_xmlrpc( $post_ID ) {
 	$settings = get_option('wpt_post_types');
 	$post_types = array_keys($settings);
 	// if the post modified date and the post date are the same, this is new.
-	$new = wpt_date_equal( $post_info['_postModified'], $post_info['_postDate'] );
+	$new = wpt_date_compare( $post_info['_postModified'], $post_info['_postDate'] );
 	if ( in_array( $post_type, $post_types ) ) {		
 		$sentence = '';	
 		if ( get_option('jd_tweet_default') != '1' && get_option('jd_twit_remote') == '1' ) {
@@ -1174,8 +1175,10 @@ function wpt_plugin_update_message() {
 		echo '<div id="mc-upgrade"><p><strong style="color:#c22;">Upgrade Notes:</strong> '.nl2br(trim($bits[1])).'</p></div>';
 	} else {
 		printf(__('<br /><strong>Note:</strong> Please review the <a class="thickbox" href="%1$s">changelog</a> before upgrading.','wp-to-twitter'),'plugin-install.php?tab=plugin-information&amp;plugin=wp-to-twitter&amp;TB_iframe=true&amp;width=640&amp;height=594');
-	}
+		}
 }
+
+add_action( 'save_post','post_jd_twitter', 10 );
 
 if ( get_option( 'jd_twit_blogroll' ) == '1' ) {
 	add_action( 'add_link', 'jd_twit_link' );
@@ -1196,5 +1199,4 @@ if ( get_option( 'jd_twit_remote' ) == '1' ) {
 if ( get_option('comment-published-update') == 1 ) {
 	add_action( 'comment_post', 'jd_twit_comment', 10, 2 );
 }
-add_action( 'save_post','post_jd_twitter', 10 );
 add_action( 'admin_menu', 'jd_addTwitterAdminPages' );
