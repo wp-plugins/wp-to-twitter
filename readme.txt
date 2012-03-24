@@ -21,12 +21,11 @@ Additional features include:
 * Support for Google Analytics
 * Support for XMLRPC remote clients
 
-Want new features? [Make a Pledge at Fundry](https://fundry.com/project/10-wp-to-twitter).
-
 Any status update you write which is longer than the available space will be truncated by the plugin. This applies to both default messages and to your custom messages.
 
 Translations:
 
+* Brazilian Portugese: [Miriam de Paula](http://wpmidia.com.br) [2.3.17]
 * Italian: [Gianni Diurno](http://www.gidibao.net) [2.3.14]
 * Lithuanian [Nata Strazda](http://www.designcontest.com) [2.3.8]
 * Simplified Chinese: [HostUCan](http://www.hostucan.com) [2.3.8]
@@ -40,7 +39,6 @@ Translations:
 * Dutch: [Rene at WPwebshop](http://wpwebshop.com/premium-wordpress-plugins/)
 * Romanian: [Jibo](http://jibo.ro)
 * Danish: [Rasmus Himmelstrup](http://seoanalyst.dk)
-* Brazilian Portugese: [Matheus Bratfisch](http://www.matbra.com)
 * Japanese: [kndb](http://blog.layer8.sh/)
 
 New translations are always welcome! The translation source file is in the WP to Twitter download.
@@ -50,6 +48,11 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.3.18 =
+
+* Bug fix: resolved case where new backdated posts were treated as edits.
+* Some changes to tweet truncating routines to avoid modifying the URL during truncation.
 
 = 2.3.17 =
 

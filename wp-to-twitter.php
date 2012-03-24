@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Twitter status update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.3.17
+Version: 2.3.18
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -56,7 +56,7 @@ if ( version_compare( phpversion(), '5.0', '<' ) || ! function_exists( 'curl_ini
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wp_version,$wpt_version,$jd_plugin_url,$jdwp_api_post_status;
-$wpt_version = "2.3.17";
+$wpt_version = "2.3.18";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -275,8 +275,7 @@ function jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $thispost
 	$thisposturl = trim($thisposturl);
 	$thispostcategory = trim($thispostcategory);
 		$post = get_post( $post_ID );
-		$post_author = $post->post_author;
-	$thisauthor = get_the_author_meta( 'display_name',$post_author );
+	$thisauthor = get_the_author_meta( 'display_name',$post->post_author );
 	$thistags = generate_hash_tags( $post_ID );
 	
 	if ( get_option( 'jd_individual_twitter_users' ) == 1 ) {
@@ -307,35 +306,47 @@ function jd_truncate_tweet( $sentence, $thisposttitle, $thisblogtitle, $thispost
 
 	// check total length 
 	$str_length = mb_strlen( urldecode( fake_normalize( $post_sentence ) ) );
-	// what is the excerpt supposed to be?
-	$length = get_option( 'jd_post_excerpt' );
+	if ( $str_length < 140 ) {
+		if ( mb_strlen( fake_normalize ( $post_sentence ) ) > 140 ) { $post_sentence = substr( $post_sentence,0,139 ); }	
+		return $post_sentence;
+	} else {
 
-	// build an array of variable names and the number of characters in that variable.
-	$length_array = array();
-	$length_array['thispostexcerpt'] = mb_strlen(fake_normalize($thispostexcerpt));
-	$length_array['thisblogtitle'] = mb_strlen(fake_normalize($thisblogtitle));
-	$length_array['thisposttitle'] = mb_strlen(fake_normalize($thisposttitle));
-	$length_array['thispostcategory'] = mb_strlen(fake_normalize($thispostcategory));
-	$length_array['thisdate'] = mb_strlen(fake_normalize($thisdate));
-	$length_array['thisauthor'] = mb_strlen(fake_normalize($thisauthor));
-	$length_array['thisaccount'] = mb_strlen(fake_normalize($thisaccount));
-	$length_array['thistags'] = mb_strlen(fake_normalize($thistags));
-	// if the total length is too long, truncate items until the length is appropriate. 
-	// truncation is in order of items which can most afford to be truncated. URL is never truncated.
-	if ( $str_length > 140 ) {
-		foreach($length_array AS $key=>$value) {
-			$str_length = mb_strlen( urldecode( fake_normalize( trim( $post_sentence ) ) ) );
-			if ( $str_length > 140 ) {
-				$trim = $str_length - 140;
-				$old_value = ${$key};
-				$new_value = mb_substr( $old_value,0,-( $trim ) );
-				$post_sentence = str_ireplace( $old_value,$new_value,$post_sentence );
-			} 
+		// what is the excerpt supposed to be?
+		$length = get_option( 'jd_post_excerpt' );
+		// build an array of variable names and the number of characters in that variable.
+		$length_array = array();
+		$length_array['thispostexcerpt'] = mb_strlen(fake_normalize($thispostexcerpt));
+		$length_array['thisposttitle'] = mb_strlen(fake_normalize($thisposttitle));
+		$length_array['thisdate'] = mb_strlen(fake_normalize($thisdate));		
+		$length_array['thispostcategory'] = mb_strlen(fake_normalize($thispostcategory));
+		$length_array['thisblogtitle'] = mb_strlen(fake_normalize($thisblogtitle));
+		$length_array['thisauthor'] = mb_strlen(fake_normalize($thisauthor));
+		$length_array['thisaccount'] = mb_strlen(fake_normalize($thisaccount));
+		$length_array['thistags'] = mb_strlen(fake_normalize($thistags));
+		// if the total length is too long, truncate items until the length is appropriate. 
+		// truncation is in order of items which can most afford to be truncated. URL is never truncated.
+		if ( $str_length > 140 ) {
+			foreach($length_array AS $key=>$value) {
+				$str_length = mb_strlen( urldecode( fake_normalize( trim( $post_sentence ) ) ) );
+				if ( $str_length > 140 ) {
+					$trim = $str_length - 140;
+					$old_value = ${$key};
+					// prevent URL from being modified
+					$post_sentence = str_ireplace( $thisposturl, '#url#', $post_sentence ); 
+					// modify the value and replace old with new
+					$new_value = mb_substr( $old_value,0,-( $trim ) );
+					$post_sentence = str_ireplace( $old_value,$new_value,$post_sentence );
+					// put URL back before checking length
+					$post_sentence = str_ireplace( '#url#', $thisposturl, $post_sentence ); 					
+				} else {
+					if ( mb_strlen( fake_normalize ( $post_sentence ) ) > 140 ) { $post_sentence = substr( $post_sentence,0,139 ); }
+					return $post_sentence; 
+				}
+			}
 		}
+		if ( mb_strlen( fake_normalize ( $post_sentence ) ) > 140 ) { $post_sentence = substr( $post_sentence,0,139 ); }
 	}
-	if ( mb_strlen( fake_normalize ( $post_sentence ) ) > 140 ) { $post_sentence = substr( $post_sentence,0,139 ); }
-	$sentence = $post_sentence;
-	return $sentence;
+	return $post_sentence;
 }
 
 function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='false' ) {
@@ -372,9 +383,9 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='fa
 				}
 				$this_campaign = urlencode($this_campaign);
 				if ( strpos( $thispostlink,"%3F" ) === FALSE || strpos( $thispostlink,"?" ) === FALSE ) {
-				$thispostlink .= "?";
+					$thispostlink .= "?";
 				} else {
-				$thispostlink .= "&";
+					$thispostlink .= "&";
 				}
 				$thispostlink .= "utm_campaign=$this_campaign&utm_medium=twitter&utm_source=twitter";
 			}
@@ -619,7 +630,9 @@ function jd_twit( $post_ID ) {
 		$post_info = jd_post_info( $post_ID );
 		$post_type = $post_info['postType'];
 		// if the post modified date and the post date are the same, this is new.
-		$new = wpt_date_compare( $post_info['_postModified'], $post_info['_postDate'] );	
+		$new = wpt_date_compare( $post_info['_postModified'], $post_info['_postDate'] );
+		// if this post is not previously published but has been backdated: lit. if post date is edited, but save option is 'publish'
+		if ( $new == 0 && ( isset( $_POST['edit_date'] ) && $_POST['edit_date'] == 1 && !isset( $_POST['save'] ) ) ) { $new = 1; }
 		// post modified = updated? // postdate == published? therefore: posts which have been updated after creation (scheduled, updated in draft) may not turn up as new. // postStatus == future
 		$post_type_settings = get_option('wpt_post_types');
 		$post_types = array_keys($post_type_settings);

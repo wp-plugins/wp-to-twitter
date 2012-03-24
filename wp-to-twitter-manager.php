@@ -345,8 +345,7 @@ print_settings();
 <div class="resources">
 <img src="<?php echo $wp_to_twitter_directory; ?>/wp-to-twitter-logo.png" alt="WP to Twitter" />
 <p>
-<a href="https://fundry.com/project/10-wp-to-twitter"><?php _e("Pledge to new features",'wp-to-twitter'); ?></a><?php if ( get_option('jd_donations') != 1 ) { ?>
- &middot; <a href="http://www.joedolson.com/donate.php"><?php _e("Make a Donation",'wp-to-twitter'); ?></a><?php } ?> &middot; <a href="?page=wp-to-twitter/wp-to-twitter.php&amp;export=settings"><?php _e("View Settings",'wp-to-twitter'); ?></a> &middot; <a href="<?php echo admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'); ?>#get-support"><?php _e("Get Support",'wp-to-twitter'); ?></a>
+<a href="?page=wp-to-twitter/wp-to-twitter.php&amp;export=settings"><?php _e("View Settings",'wp-to-twitter'); ?></a><?php if ( get_option('jd_donations') != 1 ) { ?> &middot; <a href="http://www.joedolson.com/donate.php"><strong><?php _e("Make a Donation",'wp-to-twitter'); ?></strong></a><?php } ?> &middot; <a href="<?php echo admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'); ?>#get-support"><?php _e("Get Support",'wp-to-twitter'); ?></a>
 </p>
 <?php if ( get_option('jd_donations') != 1 ) { ?>
 <div>
