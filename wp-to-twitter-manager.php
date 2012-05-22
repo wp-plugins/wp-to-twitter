@@ -123,8 +123,11 @@ function wpt_update_settings() {
 		update_option('jd_max_tags',3);
 		update_option('jd_max_characters',15);	
 		update_option('jd_replace_character','_');
-		update_option('wtt_user_permissions','manage_options');
-		update_option('wtt_show_custom_tweet','edit_posts');
+		update_option('wtt_user_permissions','administrator');
+		$administrator = get_role('administrator');
+		$administrator->add_cap('wpt_twitter_oauth');
+		$administrator->add_cap('wpt_twitter_custom');
+		update_option('wtt_show_custom_tweet','administrator');
 
 		update_option( 'jd_twit_remote', '0' );
 		update_option( 'jd_post_excerpt', 30 );
@@ -208,9 +211,65 @@ function wpt_update_settings() {
 		update_option( 'twitter-analytics-campaign', $_POST['twitter-analytics-campaign'] );
 		update_option( 'jd_individual_twitter_users', $_POST['jd_individual_twitter_users'] );
 		$wtt_user_permissions = $_POST['wtt_user_permissions'];
+		$prev = get_option('wtt_user_permissions');
+		if ( $wtt_user_permissions != $prev ) {
+			$subscriber = get_role('subscriber'); $subscriber->remove_cap('wpt_twitter_oauth');
+			$contributor = get_role('contributor'); $contributor->remove_cap('wpt_twitter_oauth');
+			$author = get_role('author'); $author->remove_cap('wpt_twitter_oauth');
+			$editor = get_role('editor'); $editor->remove_cap('wpt_twitter_oauth');
+			switch ( $wtt_user_permissions ) {
+				case 'subscriber': $subscriber->add_cap('wpt_twitter_oauth'); $contributor->add_cap('wpt_twitter_oauth'); $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth');   break;
+				case 'contributor': $contributor->add_cap('wpt_twitter_oauth'); $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth');  break;
+				case 'author': $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth'); break;
+				case 'editor':$editor->add_cap('wpt_twitter_oauth'); break;
+				default: 
+					$role = get_role( $wtt_user_permissions ); 
+					$role->add_cap('wpt_twitter_oauth');
+				break;
+			}
+		}
 		update_option( 'wtt_user_permissions',$wtt_user_permissions);
+		
 		$wtt_show_custom_tweet = $_POST['wtt_show_custom_tweet'];
+		$prev = get_option('wtt_show_custom_tweet');
+		if ( $wtt_show_custom_tweet != $prev ) {
+			$subscriber = get_role('subscriber'); $subscriber->remove_cap('wpt_twitter_custom');
+			$contributor = get_role('contributor'); $contributor->remove_cap('wpt_twitter_custom');
+			$author = get_role('author'); $author->remove_cap('wpt_twitter_custom');
+			$editor = get_role('editor'); $editor->remove_cap('wpt_twitter_custom');
+			switch ( $wtt_show_custom_tweet ) {
+				case 'subscriber': $subscriber->add_cap('wpt_twitter_custom'); $contributor->add_cap('wpt_twitter_custom'); $author->add_cap('wpt_twitter_custom'); $editor->add_cap('wpt_twitter_custom');   break;
+				case 'contributor': $contributor->add_cap('wpt_twitter_custom'); $author->add_cap('wpt_twitter_custom'); $editor->add_cap('wpt_twitter_custom');  break;
+				case 'author': $author->add_cap('wpt_twitter_custom'); $editor->add_cap('wpt_twitter_custom'); break;
+				case 'editor':$editor->add_cap('wpt_twitter_custom'); break;
+				default: 
+					$role = get_role( $wtt_show_custom_tweet ); 
+					$role->add_cap('wpt_twitter_custom');
+				break;
+			}
+		}
 		update_option( 'wtt_show_custom_tweet',$wtt_show_custom_tweet);
+		
+		$wpt_twitter_switch = $_POST['wpt_twitter_switch'];
+		$prev = get_option('wpt_twitter_switch');
+		if ( $wpt_twitter_switch != $prev ) {
+			$subscriber = get_role('subscriber'); $subscriber->remove_cap('wpt_twitter_switch');
+			$contributor = get_role('contributor'); $contributor->remove_cap('wpt_twitter_switch');
+			$author = get_role('author'); $author->remove_cap('wpt_twitter_switch');
+			$editor = get_role('editor'); $editor->remove_cap('wpt_twitter_switch');
+			switch ( $wpt_twitter_switch ) {
+				case 'subscriber': $subscriber->add_cap('wpt_twitter_switch'); $contributor->add_cap('wpt_twitter_switch'); $author->add_cap('wpt_twitter_switch'); $editor->add_cap('wpt_twitter_switch');   break;
+				case 'contributor': $contributor->add_cap('wpt_twitter_switch'); $author->add_cap('wpt_twitter_switch'); $editor->add_cap('wpt_twitter_switch');  break;
+				case 'author': $author->add_cap('wpt_twitter_switch'); $editor->add_cap('wpt_twitter_switch'); break;
+				case 'editor':$editor->add_cap('wpt_twitter_switch'); break;
+				default: 
+					$role = get_role( $wpt_twitter_switch ); 
+					$role->add_cap('wpt_twitter_switch');
+				break;
+			}
+		}
+		update_option( 'wpt_twitter_switch',$wpt_twitter_switch);
+		
 		update_option( 'disable_url_failure' , ( isset( $_POST['disable_url_failure'] ) )?$_POST['disable_url_failure']:0 );
 		update_option( 'disable_twitter_failure' , ( isset( $_POST['disable_twitter_failure'] ) )?$_POST['disable_twitter_failure']:0 );
 		update_option( 'disable_oauth_notice' , ( isset( $_POST['disable_oauth_notice'] ) )?$_POST['disable_oauth_notice']:0 );
@@ -669,32 +728,28 @@ function wpt_update_settings() {
 		$roles = $wp_roles->get_names();
 		$options = '';
 		$permissions = '';
+		$switcher = '';
 		foreach ( $roles as $role=>$rolename ) {
 			$permissions .= ($role !='subscriber')?"<option value='$role'".wtt_option_selected(get_option('wtt_user_permissions'),$role,'option').">$rolename</option>\n":'';
 			$options .= ($role !='subscriber')?"<option value='$role'".wtt_option_selected(get_option('wtt_show_custom_tweet'),$role,'option').">$rolename</option>\n":'';
-		}			
+			$switcher .= ($role !='subscriber')?"<option value='$role'".wtt_option_selected(get_option('wpt_twitter_switch'),$role,'option').">$rolename</option>\n":'';			
+		}
 		?>
 		    <p>
 			<label for="wtt_user_permissions"><?php _e('Choose the lowest user group that can add their Twitter information','wp-to-twitter'); ?></label> <select id="wtt_user_permissions" name="wtt_user_permissions">
-				<?php echo $permissions; /*
-				<option value="read"<?php echo wtt_option_selected(get_option('wtt_user_permissions'),'read','option'); ?>><?php _e('Subscriber','wp-to-twitter')?></option>
-				<option value="edit_posts"<?php echo wtt_option_selected(get_option('wtt_user_permissions'),'edit_posts','option'); ?>><?php _e('Contributor','wp-to-twitter')?></option>
-				<option value="publish_posts"<?php echo wtt_option_selected(get_option('wtt_user_permissions'),'publish_posts','option'); ?>><?php _e('Author','wp-to-twitter')?></option>
-				<option value="moderate_comments"<?php echo wtt_option_selected(get_option('wtt_user_permissions'),'moderate_comments','option'); ?>><?php _e('Editor','wp-to-twitter')?></option>
-				<option value="manage_options"<?php echo wtt_option_selected(get_option('wtt_user_permissions'),'manage_options','option'); ?>><?php _e('Administrator','wp-to-twitter')?></option>
-				*/ ?>
+				<?php echo $permissions; ?>
 			</select> 
 			</p>
 		    <p>
 			<label for="wtt_show_custom_tweet"><?php _e('Choose the lowest user group that can see the Custom Tweet options when posting','wp-to-twitter'); ?></label> <select id="wtt_show_custom_tweet" name="wtt_show_custom_tweet">
-				<?php echo $options; /*
-				<option value="edit_posts"<?php echo wtt_option_selected(get_option('wtt_show_custom_tweet'),'edit_posts','option'); ?>><?php _e('Contributor','wp-to-twitter')?></option>
-				<option value="publish_posts"<?php echo wtt_option_selected(get_option('wtt_show_custom_tweet'),'publish_posts','option'); ?>><?php _e('Author','wp-to-twitter')?></option>
-				<option value="moderate_comments"<?php echo wtt_option_selected(get_option('wtt_show_custom_tweet'),'moderate_comments','option'); ?>><?php _e('Editor','wp-to-twitter')?></option>
-				<option value="manage_options"<?php echo wtt_option_selected(get_option('wtt_show_custom_tweet'),'manage_options','option'); ?>><?php _e('Administrator','wp-to-twitter')?></option>
-				*/ ?>
+				<?php echo $options; ?>
 			</select> 
-			</p>			
+			</p>
+			<p>
+			<label for="wpt_twitter_switch"><?php _e('User groups above this can toggle the Tweet/Don\'t Tweet option, but not see other custom tweet options.','wp-to-twitter'); ?></label> <select id="wpt_twitter_switch" name="wpt_twitter_switch">
+				<?php echo $switcher; ?>
+			</select> 
+			</p>
 		</fieldset>
 		<fieldset>
 		<legend><?php _e('Disable Error Messages','wp-to-twitter'); ?></legend>
@@ -764,12 +819,12 @@ function wpt_update_settings() {
 			<div class="inside resources">
 			<ul>
 			<li><a href="?page=wp-to-twitter/wp-to-twitter.php&amp;export=settings"><?php _e("View Settings",'wp-to-twitter'); ?></a></li>
-			<?php if ( function_exists( 'wpt_pro_exists' ) ) { $support = admin_url('admin.php?page=wp-to-twitter'); } else { $support = admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php');} ?>
+			<?php if ( function_exists( 'wpt_pro_exists' ) ) { $support = admin_url('admin.php?page=wp-tweets-pro'); } else { $support = admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php');} ?>
 			<li><a href="<?php echo $support; ?>#get-support"><?php _e("Get Support",'wp-to-twitter'); ?></a></li>
 			</ul>
 			<?php if ( get_option('jd_donations') != 1 && !function_exists( 'wpt_pro_exists' )  ) { ?>
 			<div>
-			<p><?php _e('Make a donation today! Every donation counts - donate $2, $10, or $100 and help me keep this plug-in running!','wp-to-twitter'); ?></p>
+			<p><?php _e('<a href="http://www.joedolson.com/donate.php">Make a donation today!</a> Every donation counts - donate $2, $10, or $100 and help me keep this plug-in running!','wp-to-twitter'); ?></p>
 			<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 				<div>
 				<input type="hidden" name="cmd" value="_s-xclick" />

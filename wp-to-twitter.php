@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.4.0
+Version: 2.4.1
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -43,6 +43,7 @@ $wp_plugin_url = $wp_content_url . '/plugins';
 $wp_plugin_dir = $wp_content_dir . '/plugins';
 $wpmu_plugin_url = $wp_content_url . '/mu-plugins';
 $wpmu_plugin_dir = $wp_content_dir . '/mu-plugins';
+include_once( ABSPATH . 'wp-admin/includes/plugin.php' ); // required in order to access is_plugin_active()
 
 if ( version_compare( phpversion(), '5.0', '<' ) ) {
 	$warning = __('WP to Twitter requires PHP version 5 or above. Please upgrade PHP to run WP to Twitter.','wp-to-twitter' );
@@ -57,14 +58,14 @@ require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 if ( function_exists( 'wpt_pro_exists' ) ) {}
 
 global $wp_version,$wpt_version,$jd_plugin_url,$jdwp_api_post_status;
-$wpt_version = "2.4.0";
+$wpt_version = "2.4.1";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
 $jdwp_api_post_status = "https://api.twitter.com/1/statuses/update.json";
 
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
-$jd_donate_url = "http://www.joedolson.com/donate.php";
+$jd_donate_url = "http://www.joedolson.com/articles/wp-tweets-pro/";
 
 function wpt_marginal_function() {
 global $wp_version;
@@ -85,9 +86,10 @@ function wpt_check_oauth( $auth=false ) {
 	return $oauth;
 }
 if ( !wpt_check_oauth() && get_option('disable_oauth_notice') != '1' ) {
-		$message = sprintf(__("Twitter requires authentication by OAuth. You will need to <a href='%s'>update your settings</a> to complete installation of WP to Twitter.", 'wp-to-twitter'), admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'));
-		add_action('admin_notices', create_function( "", "if ( ! current_user_can( 'manage_options' ) ) { return; } else { 
-			echo \"<div class='error'><p>$message</p></div>\";}" ) );
+	$admin_url = ( is_plugin_active('wp-tweets-pro/wpt-pro-functions.php') )?admin_url('admin.php?page=wp-tweets-pro'):admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php');
+	$message = sprintf(__("Twitter requires authentication by OAuth. You will need to <a href='%s'>update your settings</a> to complete installation of WP to Twitter.", 'wp-to-twitter'), $admin_url );
+	add_action('admin_notices', create_function( "", "if ( ! current_user_can( 'manage_options' ) ) { return; } else { 
+		echo \"<div class='error'><p>$message</p></div>\";}" ) );
 }
 
 function wpt_check_version() {
@@ -190,6 +192,34 @@ $upgrade = version_compare( $prev_version, "2.4.0","<" );
 		}
 		update_option( 'wtt_user_permissions',$update );
 	}
+$upgrade = version_compare( $prev_version, "2.4.1","<" );
+	$subscriber = get_role('subscriber');
+	$contributor = get_role('contributor');
+	$author = get_role('author');
+	$editor = get_role('editor');
+	$administrator = get_role('administrator');
+	$administrator->add_cap('wpt_twitter_oauth');
+	$administrator->add_cap('wpt_twitter_custom');
+	switch ( get_option('wtt_user_permissions') ) {
+		case 'subscriber': $subscriber->add_cap('wpt_twitter_oauth'); $contributor->add_cap('wpt_twitter_oauth'); $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth');   break;
+		case 'contributor': $contributor->add_cap('wpt_twitter_oauth'); $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth');  break;
+		case 'author': $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth'); break;
+		case 'editor':$editor->add_cap('wpt_twitter_oauth'); break;
+		default: 
+			$role = get_role( get_option('wtt_user_permissions') ); 
+			$role->add_cap('wpt_twitter_oauth');
+		break;
+	}
+	switch ( get_option('wtt_show_custom_tweet') ) {
+		case 'subscriber': $subscriber->add_cap('wpt_twitter_custom'); $contributor->add_cap('wpt_twitter_custom'); $author->add_cap('wpt_twitter_custom'); $editor->add_cap('wpt_twitter_custom');   break;
+		case 'contributor': $contributor->add_cap('wpt_twitter_custom'); $author->add_cap('wpt_twitter_custom'); $editor->add_cap('wpt_twitter_custom');  break;
+		case 'author': $author->add_cap('wpt_twitter_custom'); $editor->add_cap('wpt_twitter_custom'); break;
+		case 'editor':$editor->add_cap('wpt_twitter_custom'); break;
+		default: 
+			$role = get_role( get_option('wtt_show_custom_tweet') ); 
+			$role->add_cap('wpt_twitter_custom');
+		break;
+	}
 	update_option( 'wp_to_twitter_version',$wpt_version );
 }	
 	
@@ -274,7 +304,7 @@ function fake_normalize( $string ) {
 	}
 }
 
-function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID ) {
+function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID, $retweet=false ) {
 	$sentence = trim(custom_shortcodes( $sentence, $post_ID ));				
 	// generate all template variable values
 	$auth = $postinfo['authId'];
@@ -288,7 +318,6 @@ function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID ) {
 	$thistags = generate_hash_tags( $post_ID );
 	$thisaccount = "@".get_option('wtt_twitter_username');
 	$thisdate = trim($postinfo['postDate']);
-
 	if ( get_option( 'jd_individual_twitter_users' ) == 1 ) {
 		if ( get_user_meta( $auth, 'wtt_twitter_username', true ) == '' ) {
 			if ( get_user_meta( $auth, 'wp-to-twitter-enable-user',true ) == 'mainAtTwitter' ) {
@@ -298,11 +327,13 @@ function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID ) {
 			}
 		}
 	}
-	if ( get_option( 'jd_twit_prepend' ) != "" && $sentence != '' ) {
-		$sentence = get_option( 'jd_twit_prepend' ) . " " . $sentence;
-	}
-	if ( get_option( 'jd_twit_append' ) != "" && $sentence != '' ) {
-		$sentence = $sentence . " " . get_option( 'jd_twit_append' );
+	if ( !$retweet ) {	
+		if ( get_option( 'jd_twit_prepend' ) != "" && $sentence != '' ) {
+			$sentence = get_option( 'jd_twit_prepend' ) . " " . $sentence;
+		}
+		if ( get_option( 'jd_twit_append' ) != "" && $sentence != '' ) {
+			$sentence = $sentence . " " . get_option( 'jd_twit_append' );
+		}
 	}
 	$encoding = get_option('blog_charset');
 	// create full unconditional post sentence - prior to truncation
@@ -714,7 +745,7 @@ function jd_twit( $post_ID ) {
 					if ( function_exists( 'wpt_pro_exists' ) ) {
 						$auth = $post_info['authId'];
 						$user = get_userdata( $auth );
-						if ( user_can( $user, 'update_core' ) ) { $auth = false; } // This is the super admin.
+						//if ( user_can( $user, 'update_core' ) ) { $auth = false; } // This is the super admin. No, it's not.
 						if ( $post_info['wpt_delay_tweet'] == 0 || $post_info['wpt_no_delay'] == 'on' ) {
 							$sendToTwitter = jd_doTwitterAPIPost( $sentence, $auth );
 						} else {
@@ -725,10 +756,10 @@ function jd_twit( $post_ID ) {
 						if ( $post_info['wpt_retweet_after'] != 0 && $post_info['wpt_no_repost'] != 'on' ) {
 							$repeat = $post_info['wpt_retweet_repeat'];
 							for ( $i=1;$i<=$repeat;$i++ ) {
-								if ( $i == 1 ) { $retweet = jd_truncate_tweet( trim( get_option( 'wpt_prepend_rt' ).' '.$sentence ), $post_info, $shrink, $post_ID ); }
-								if ( $i == 2 ) { $retweet = jd_truncate_tweet( trim( get_option( 'wpt_prepend_rt2' ).' '.$sentence ), $post_info, $shrink, $post_ID ); }
+								if ( $i == 1 ) { $retweet = jd_truncate_tweet( trim( get_option( 'wpt_prepend_rt' ).' '.$sentence ), $post_info, $shrink, $post_ID,true ); }
+								if ( $i == 2 ) { $retweet = jd_truncate_tweet( trim( get_option( 'wpt_prepend_rt2' ).' '.$sentence ), $post_info, $shrink, $post_ID,true ); }
 								if ( $i == 3 ) { $retweet = $sentence; }
-								if ( $i == 4 ) { $retweet = jd_truncate_tweet( trim( get_option( 'wpt_prepend_rt' ).' '.$sentence ), $post_info, $shrink, $post_ID ); }
+								if ( $i == 4 ) { $retweet = jd_truncate_tweet( trim( get_option( 'wpt_prepend_rt' ).' '.$sentence ), $post_info, $shrink, $post_ID,true ); }
 								$time = ($post_info['wpt_retweet_after'])*(60*60)*$i;
 								wp_schedule_single_event( time()+$time, 'wpt_schedule_tweet_action', array( 'id'=>$auth, 'sentence'=>$retweet, 'rt'=>$i ) );
 								$sendToTwitter = true;
@@ -791,6 +822,7 @@ function jd_twit_link( $link_ID )  {
 // HANDLES xmlrpc POSTS
 function jd_twit_xmlrpc( $post_ID ) {
 	wpt_check_version();
+	
 	$post_info = jd_post_info( $post_ID );	
 	$post_type = $post_info['postType'];
 	$settings = get_option('wpt_post_types');
@@ -829,7 +861,7 @@ function jd_twit_xmlrpc( $post_ID ) {
 					if ( function_exists( 'wpt_pro_exists' ) ) {
 						$auth = $post_info['authId'];
 						$user = get_userdata( $auth );
-						if ( user_can( $user, 'update_core' ) ) { $auth = false; } // This is the super admin.
+						//if ( user_can( $user, 'update_core' ) ) { $auth = false; } // This is the super admin. No, it's not.
 						if ( $post_info['wpt_delay_tweet'] == 0 || $post_info['wpt_no_delay'] == 'on' ) {
 							$sendToTwitter = jd_doTwitterAPIPost( $sentence, $auth );
 						} else {
@@ -839,8 +871,11 @@ function jd_twit_xmlrpc( $post_ID ) {
 						}
 						if ( $post_info['wpt_retweet_after'] != 0 && $post_info['wpt_no_repost'] != 'on' ) {
 							$repeat = $post_info['wpt_retweet_repeat'];
-							$retweet = trim( get_option( 'wpt_prepend_rt' ).' '.$sentence.' '.get_option( 'wpt_prepend_rt2' ) );
 							for ( $i=1;$i<=$repeat;$i++ ) {
+								if ( $i == 1 ) { $retweet = jd_truncate_tweet( trim( get_option( 'wpt_prepend_rt' ).' '.$sentence ), $post_info, $shrink, $post_ID,true ); }
+								if ( $i == 2 ) { $retweet = jd_truncate_tweet( trim( get_option( 'wpt_prepend_rt2' ).' '.$sentence ), $post_info, $shrink, $post_ID,true ); }
+								if ( $i == 3 ) { $retweet = $sentence; }
+								if ( $i == 4 ) { $retweet = jd_truncate_tweet( trim( get_option( 'wpt_prepend_rt' ).' '.$sentence ), $post_info, $shrink, $post_ID,true ); }
 								$time = ($post_info['wpt_retweet_after'])*(60*60)*$i;
 								wp_schedule_single_event( time()+$time, 'wpt_schedule_tweet_action', array( 'id'=>$auth, 'sentence'=>$retweet, 'rt'=>$i ) );
 								$sendToTwitter = true;
@@ -1018,7 +1053,7 @@ $hidden_fields = '';
 ?>
 </ul>
 <?php echo "<div>".$hidden_fields."</div>"; } ?>
-<?php if ( current_user_can( get_option('wtt_show_custom_tweet') ) || get_option('wtt_show_custom_tweet') == '' ) { ?>
+<?php if ( current_user_can( 'wpt_twitter_custom' ) ) { ?>
 <p>
 <label for="jtw"><?php _e("Custom Twitter Post", 'wp-to-twitter', 'wp-to-twitter') ?></label><br /><textarea class="attachmentlinks" name="_jd_twitter" id="jtw" rows="2" cols="60" onKeyDown="countChars(document.post.jtw,document.post.twitlength)" onKeyUp="countChars(document.post.jtw,document.post.twitlength)"><?php echo esc_attr( $jd_twitter ); ?></textarea>
 </p>
@@ -1036,27 +1071,32 @@ $hidden_fields = '';
 ?>
 <p>
 <?php if ( !function_exists( 'wpt_pro_exists' ) ) { ?>
-<a target="_blank" href="<?php echo admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'); ?>#get-support"><?php _e('Get Support', 'wp-to-twitter', 'wp-to-twitter') ?></a> &bull; <a target="__blank" href="<?php echo $jd_donate_url; ?>"><?php _e('Make a Donation', 'wp-to-twitter', 'wp-to-twitter') ?></a> &raquo;
+<a target="_blank" href="<?php echo admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'); ?>#get-support"><?php _e('Get Support', 'wp-to-twitter', 'wp-to-twitter') ?></a> &bull; <a target="__blank" href="<?php echo $jd_donate_url; ?>"><?php _e('Upgrade to WP Tweets Pro', 'wp-to-twitter', 'wp-to-twitter') ?></a> &raquo;
 <?php } else { ?>
-<a target="_blank" href="<?php echo admin_url('admin.php?page=wp-to-twitter'); ?>#get-support"><?php _e('Get Support', 'wp-to-twitter', 'wp-to-twitter') ?></a> &raquo;
+<a target="_blank" href="<?php echo admin_url('admin.php?page=wp-tweets-pro'); ?>#get-support"><?php _e('Get Support', 'wp-to-twitter', 'wp-to-twitter') ?></a> &raquo;
 <?php } ?>
 </p>
+<?php } ?>
+<?php if ( current_user_can( 'wpt_twitter_custom' ) || current_user_can( 'wpt_twitter_switch' ) ) { ?>
 <?php
 	// "no" means 'Don't Tweet' (is checked)
 	$nochecked = ( $jd_tweet_this == 'no' )?' checked="checked"':'';
 	$yeschecked = ( $jd_tweet_this == 'yes' )?' checked="checked"':'';
 ?>
 <p><input type="radio" name="_jd_tweet_this" value="no" id="jtn"<?php echo $nochecked; ?> /> <label for="jtn"><?php _e("Don't Tweet this post.", 'wp-to-twitter'); ?></label> <input type="radio" name="_jd_tweet_this" value="yes" id="jty"<?php echo $yeschecked; ?> /> <label for="jty"><?php _e("Tweet this post.", 'wp-to-twitter'); ?></label></p>
+<?php } ?>
 <?php /* WPT PRO */ ?>
 <?php 
 if ( function_exists('wpt_pro_exists') ) { 
 	wpt_schedule_values( $post_id ); 
 } ?>
 <?php /* WPT PRO */ ?>
-<?php } else { ?>
+<?php if ( !current_user_can( 'wpt_twitter_custom' ) || !current_user_can( 'wpt_twitter_switch' ) ) { ?>
 <div>
 <p><?php _e('Access to customizing WP to Twitter values is not allowed for your user role.','wp-to-twitter'); ?></p>
-<input type="hidden" name='_jd_tweet_this' value='$jd_tweet_this' />
+<?php if ( !current_user_can( 'wpt_twitter_switch' ) ) { ?>
+<input type="hidden" name='_jd_tweet_this' value='<?php echo $jd_tweet_this; ?>' />
+<?php } ?>
 <input type="hidden" name='_jd_twitter' value='' />
 <?php 
 if ( function_exists('wpt_pro_exists') ) { 
@@ -1139,7 +1179,7 @@ function post_jd_twitter( $id ) {
 function jd_twitter_profile() {
 	global $user_ID;
 	get_currentuserinfo();
-	if ( current_user_can( get_option('wtt_user_permissions') ) ) {
+	if ( current_user_can( 'wpt_twitter_oauth' ) ) {
 		$user_edit = ( isset($_GET['user_id']) )?(int) $_GET['user_id']:$user_ID; 
 
 		$is_enabled = get_user_meta( $user_edit, 'wp-to-twitter-enable-user',true );
@@ -1160,8 +1200,8 @@ function jd_twitter_profile() {
 		</tr>
 		</table>
 		<?php if ( function_exists('wpt_schedule_tweet') ) { ?>
-		<?php if ( function_exists('wtt_connect_oauth') && !user_can( $user_edit, 'update_core' ) ) { wtt_connect_oauth( $user_edit ); } ?>
-		<?php if ( function_exists('wtt_connect_oauth') && user_can( $user_edit, 'update_core' ) ) { echo "<p><em>".__('You are this site\'s super administrator; you will always post using the primary site Twitter account.','wp-to-twitter').'</em></p>'; } ?>
+		<?php if ( function_exists('wtt_connect_oauth') ) { wtt_connect_oauth( $user_edit ); } ?>
+		<?php if ( user_can( $user_edit, 'update_core' ) ) { echo "<p><em>".__('Note: if all site administrators have set-up their own Twitter accounts, the primary site account (as set on the settings page) is not required, and won\'t be used.','wp-to-twitter').'</em></p>'; } ?>
 		<?php } ?>
 
 <?php

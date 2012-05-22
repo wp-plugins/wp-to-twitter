@@ -51,6 +51,16 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.4.1 =
+
+* I had mistakenly restricted WP Tweets PRO administrators from setting their own accounts, which was a problem for sites with multiple admin-level authors.
+* Revised permissions model to use custom capability to control access to user accounts rather than default capabilities.
+* Also switched to custom capability to control access to custom tweet options.
+* URL to settings page pointed to wrong location if WP Tweets PRO was installed before configuring WP to Twitter.
+* Support request form submitted to invalid URL if WP Tweets PRO installed.
+* If append or prepend fields were in use, they were duplicated in Tweets on reposts.
+* Added option so that users can be allowed to toggle the Tweet/Don't Tweet custom option without being able to edit other permissions.
+
 = 2.4.0 =
 
 * Bug fix/change: Twitter automatically shortens all URLs sent. As a result, all URLs are by definition 19 characters for the purpose of Tweeting. WP to Twitter now measures the value of the #url# tag as 19 characters, regardless of actual length.
@@ -605,7 +615,7 @@ Right here: [WP to Twitter FAQ](http://www.joedolson.com/articles/wp-to-twitter/
 
 = How can I help you make WP to Twitter a better plug-in? =
 
-Writing and maintaining a plug-in is a lot of work. You can help me by providing detailed support requests (which saves me time), or by providing financial support via my [plug-in donations page](http://www.joedolson.com/donate.php). Believe me, any small donation really makes a difference!
+Writing and maintaining a plug-in is a lot of work. You can help me by providing detailed support requests (which saves me time), or by providing financial support, either via my [plug-in donations page](http://www.joedolson.com/donate.php) or by [upgrading to WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/). Believe me, any small donation really makes a difference!
 
 == Screenshots ==
 
