@@ -51,6 +51,10 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.4.2 =
+
+* 2.4.1 had an error in the upgrade routine which broke the upgrade. 
+
 = 2.4.1 =
 
 * I had mistakenly restricted WP Tweets PRO administrators from setting their own accounts, which was a problem for sites with multiple admin-level authors.
