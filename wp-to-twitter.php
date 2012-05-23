@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.4.2
+Version: 2.4.3
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -58,7 +58,7 @@ require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 if ( function_exists( 'wpt_pro_exists' ) ) {}
 
 global $wp_version,$wpt_version,$jd_plugin_url,$jdwp_api_post_status;
-$wpt_version = "2.4.2";
+$wpt_version = "2.4.3";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -106,20 +106,20 @@ $prev_version = get_option( 'wp_to_twitter_version' );
 // this is a switch to plan for future versions
 $upgrade = version_compare( $prev_version,"2.2.9","<" );
 	if ($upgrade) {
-			delete_option( 'x-twitterlogin' );
-			delete_option( 'twitterlogin' );
-			delete_option( 'twitterpw' );
-			delete_option( 'jd-use-link-title' );
-			delete_option( 'jd-use-link-description' );
-			delete_option( 'jd_use_both_services' );
-			delete_option( 'jd-twitter-service-name' );
-			delete_option( 'jd_api_post_status' );
-			delete_option( 'jd-twitter-char-limit' );
-			delete_option( 'x-twitterpw' );	
-			delete_option( 'x_jd_api_post_status' );
-			delete_option( 'cligsapi' );
-			delete_option( 'cligslogin' );
-			delete_option( 'wp_cligs_error' );
+		delete_option( 'x-twitterlogin' );
+		delete_option( 'twitterlogin' );
+		delete_option( 'twitterpw' );
+		delete_option( 'jd-use-link-title' );
+		delete_option( 'jd-use-link-description' );
+		delete_option( 'jd_use_both_services' );
+		delete_option( 'jd-twitter-service-name' );
+		delete_option( 'jd_api_post_status' );
+		delete_option( 'jd-twitter-char-limit' );
+		delete_option( 'x-twitterpw' );	
+		delete_option( 'x_jd_api_post_status' );
+		delete_option( 'cligsapi' );
+		delete_option( 'cligslogin' );
+		delete_option( 'wp_cligs_error' );
 	}
 $upgrade = version_compare( $prev_version, "2.3.1","<" );
 	if ($upgrade) {
@@ -200,6 +200,7 @@ $upgrade = version_compare( $prev_version, "2.4.1","<" );
 	$administrator = get_role('administrator');
 	$administrator->add_cap('wpt_twitter_oauth');
 	$administrator->add_cap('wpt_twitter_custom');
+	$administrator->add_cap('wpt_twitter_switch');
 	switch ( get_option('wtt_user_permissions') ) {
 		case 'subscriber': $subscriber->add_cap('wpt_twitter_oauth'); $contributor->add_cap('wpt_twitter_oauth'); $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth');   break;
 		case 'contributor': $contributor->add_cap('wpt_twitter_oauth'); $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth');  break;
@@ -253,7 +254,11 @@ function jd_doTwitterAPIPost( $twit, $auth=false ) {
 		if ( wtt_oauth_test( $auth ) && ( $connection = wtt_oauth_connection( $auth ) ) ) {
 			$connection->post( $jdwp_api_post_status, array( 'status' => $twit, 'source' => 'wp-to-twitter'	) );
 			$http_code = ($connection)?$connection->http_code:'failed';
-			
+		} else if ( wtt_oauth_test( false ) && ( $connection = wtt_oauth_connection( false ) ) ) {
+			$connection->post( $jdwp_api_post_status, array( 'status' => $twit, 'source' => 'wp-to-twitter'	) );
+			$http_code = ($connection)?$connection->http_code:'failed';		
+		}
+		if ( $connection ) {
 			switch ($http_code) {
 				case '200':
 					$return = true;
@@ -288,6 +293,9 @@ function jd_doTwitterAPIPost( $twit, $auth=false ) {
 					$error = __("<strong>Code $http_code</strong>: Twitter did not return a recognized response code.",'wp-to-twitter');
 					break;
 			}
+			// debugging
+			//wp_mail('joe@joedolson.com','Response code',"$http_code $error" );
+			// end debugging
 			$update = ( !$auth )?update_option( 'jd_last_tweet',$twit ):update_user_meta( $auth, 'wpt_last_tweet',$twit );
 			if ( !$return ) {
 				update_option( 'jd_status_message',$error );
@@ -1059,7 +1067,7 @@ $hidden_fields = '';
 ?>
 </ul>
 <?php echo "<div>".$hidden_fields."</div>"; } ?>
-<?php if ( current_user_can( 'wpt_twitter_custom' ) ) { ?>
+<?php if ( current_user_can( 'wpt_twitter_custom' ) || current_user_can('update_core') ) { ?>
 <p>
 <label for="jtw"><?php _e("Custom Twitter Post", 'wp-to-twitter', 'wp-to-twitter') ?></label><br /><textarea class="attachmentlinks" name="_jd_twitter" id="jtw" rows="2" cols="60" onKeyDown="countChars(document.post.jtw,document.post.twitlength)" onKeyUp="countChars(document.post.jtw,document.post.twitlength)"><?php echo esc_attr( $jd_twitter ); ?></textarea>
 </p>
@@ -1083,7 +1091,7 @@ $hidden_fields = '';
 <?php } ?>
 </p>
 <?php } ?>
-<?php if ( current_user_can( 'wpt_twitter_custom' ) || current_user_can( 'wpt_twitter_switch' ) ) { ?>
+<?php if ( current_user_can( 'wpt_twitter_custom' ) || current_user_can( 'wpt_twitter_switch' ) || current_user_can('update_core') ) { ?>
 <?php
 	// "no" means 'Don't Tweet' (is checked)
 	$nochecked = ( $jd_tweet_this == 'no' )?' checked="checked"':'';
@@ -1185,7 +1193,7 @@ function post_jd_twitter( $id ) {
 function jd_twitter_profile() {
 	global $user_ID;
 	get_currentuserinfo();
-	if ( current_user_can( 'wpt_twitter_oauth' ) ) {
+	if ( current_user_can( 'wpt_twitter_oauth' ) || current_user_can('update_core') ) {
 		$user_edit = ( isset($_GET['user_id']) )?(int) $_GET['user_id']:$user_ID; 
 
 		$is_enabled = get_user_meta( $user_edit, 'wp-to-twitter-enable-user',true );
@@ -1297,7 +1305,8 @@ global $wp_plugin_url, $wp_plugin_dir;
 
 function jd_plugin_action($links, $file) {
 	if ( $file == plugin_basename(dirname(__FILE__).'/wp-to-twitter.php') )
-		$links[] = "<a href='options-general.php?page=wp-to-twitter/wp-to-twitter.php'>" . __('Settings', 'wp-to-twitter', 'wp-to-twitter') . "</a>";
+		$admin_url = ( is_plugin_active('wp-tweets-pro/wpt-pro-functions.php') )?admin_url('admin.php?page=wp-tweets-pro'):admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php');
+		$links[] = "<a href='$admin_url'>" . __('Settings', 'wp-to-twitter', 'wp-to-twitter') . "</a>";
 	return $links;
 }
 //Add Plugin Actions to WordPress

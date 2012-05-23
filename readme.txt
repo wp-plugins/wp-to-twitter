@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.9.2 (partial)
-Tested up to: 3.4-alpha
+Tested up to: 3.4-beta4
 Stable tag: trunk
 
 Posts a Twitter update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5. 
@@ -50,6 +50,12 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.4.3 =
+
+* Bug fix: In some cases, Administrators were not granted permissions to add custom tweets and other capability restricted tasks.
+* MAJOR bug fix: broke an element of the authorization routine which caused an early exit out of posting to Twitter for some users.
+* Settings link on plugins listing incorrect if WP Tweets Pro enabled. 
 
 = 2.4.2 =
 
@@ -629,4 +635,5 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
+* 2.4.3 Major bug fixes
 * 2.4.0 Support for WP_http, redesign, release of PRO upgrade, bug fixes.

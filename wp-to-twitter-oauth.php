@@ -2,11 +2,16 @@
 // WPT PRO: Apply contextual usage so that all functions can be used by independent users. //
 
 // function to test credentials
-function wtt_oauth_test( $auth=false ) {
+function wtt_oauth_test( $auth=false, $context='' ) {
 	if ( !$auth ) {
 		return ( wtt_oauth_credentials_to_hash() == get_option('wtt_oauth_hash') );
 	} else {
-		return ( wtt_oauth_credentials_to_hash( $auth ) == get_user_meta( $auth,'wtt_oauth_hash',true ) );	
+		$return = ( wtt_oauth_credentials_to_hash( $auth ) == get_user_meta( $auth,'wtt_oauth_hash',true ) );
+		if ( !$return && $context != 'verify' ) {
+			return ( wtt_oauth_credentials_to_hash() == get_option('wtt_oauth_hash') );
+		} else {
+			return $return;
+		}
 	}
 }
 // function to make connection
@@ -154,7 +159,7 @@ $class = ( $auth )?'wpt-profile':'wpt-settings';
 $form = ( !$auth )?'<form action="" method="post">':'';
 $nonce = ( !$auth )?wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, false).wp_referer_field(false).'</form>':'';
 
-	if ( !wtt_oauth_test( $auth ) ) {
+	if ( !wtt_oauth_test( $auth,'verify' ) ) {
 		$ack = ( !$auth )?esc_attr( get_option('app_consumer_key') ):esc_attr( get_user_meta( $auth,'app_consumer_key', true ) );
 		$acs = ( !$auth )?esc_attr( get_option('app_consumer_secret') ):esc_attr( get_user_meta( $auth,'app_consumer_secret', true ) );
 		$ot = ( !$auth )?esc_attr( get_option('oauth_token') ):esc_attr( get_user_meta( $auth,'oauth_token', true ) );

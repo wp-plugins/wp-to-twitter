@@ -127,6 +127,7 @@ function wpt_update_settings() {
 		$administrator = get_role('administrator');
 		$administrator->add_cap('wpt_twitter_oauth');
 		$administrator->add_cap('wpt_twitter_custom');
+		$administrator->add_cap('wpt_twitter_switch');
 		update_option('wtt_show_custom_tweet','administrator');
 
 		update_option( 'jd_twit_remote', '0' );
