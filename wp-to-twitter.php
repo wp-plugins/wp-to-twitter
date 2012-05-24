@@ -798,7 +798,7 @@ function store_url($post_ID, $url) {
 		case 5:	case 6:	$ext = '_yourls';$target = jd_expand_yourl( $url, $shortener );break;
 		case 7:	$ext = '_supr';$target = jd_expand_url( $url );	break;
 		case 8:	$ext = '_goo';$target = jd_expand_url( $url ); break;
-		default:$ext = '_ind'$target = $url;;
+		default:$ext = '_ind';$target = $url;
 	}
 	if ( get_post_meta ( $post_ID, "_wp_jd$ext", TRUE ) != $url ) {
 		update_post_meta ( $post_ID, "_wp_jd$ext", $url );
