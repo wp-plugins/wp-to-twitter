@@ -275,6 +275,8 @@ function wpt_update_settings() {
 		update_option( 'disable_twitter_failure' , ( isset( $_POST['disable_twitter_failure'] ) )?$_POST['disable_twitter_failure']:0 );
 		update_option( 'disable_oauth_notice' , ( isset( $_POST['disable_oauth_notice'] ) )?$_POST['disable_oauth_notice']:0 );
 		update_option( 'wp_debug_oauth' , ( isset( $_POST['wp_debug_oauth'] ) )?$_POST['wp_debug_oauth']:0 );
+		update_option( 'wpt_http' , ( isset( $_POST['wpt_http'] ) )?$_POST['wpt_http']:0 );
+		
 		update_option( 'jd_donations' , ( isset( $_POST['jd_donations'] ) )?$_POST['jd_donations']:0 );
 		$wpt_truncation_order = $_POST['wpt_truncation_order'];
 		update_option( 'wpt_truncation_order', $wpt_truncation_order );
@@ -429,14 +431,14 @@ function wpt_update_settings() {
 		}		
 		if ( get_option( 'wp_url_failure' ) == '1' ) {
 		_e("<p>The query to the URL shortener API failed, and your URL was not shrunk. The full post URL was attached to your Tweet. Check with your URL shortening provider to see if there are any known issues.</p>", 'wp-to-twitter');
-		}
-?>
-		</div>
-		<form method="post" action="">
+		} ?>
+		<?php $admin_url = ( is_plugin_active('wp-tweets-pro/wpt-pro-functions.php') )?admin_url('admin.php?page=wp-tweets-pro'):admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'); ?>
+		<form method="post" action="<?php echo $admin_url; ?>">
 		<div><input type="hidden" name="submit-type" value="clear-error" /></div>
 		<?php $nonce = wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, false).wp_referer_field(false);  echo "<div>$nonce</div>"; ?>	
 		<p><input type="submit" name="submit" value="<?php _e("Clear 'WP to Twitter' Error Messages", 'wp-to-twitter'); ?>" class="button-primary" /></p>
-		</form>
+		</form>		
+		</div>
 <?php
 }
 ?>	
@@ -692,9 +694,17 @@ function wpt_update_settings() {
 				<small><?php _e("If checked, all posts edited individually or in bulk through the Quick Edit feature will be Tweeted.", 'wp-to-twitter'); ?></small>
 
 			</p>
+			<?php if ( function_exists( 'wpt_pro_exists') && get_option( 'wpt_delay_tweets' ) > 0 ) { 
+				$r_disabled = " disabled='disabled'"; 
+				$r_message = "<em>".__('Delaying tweets with WP Tweets PRO moves Tweeting to an publishing-independent action.','wp-to-twitter' )."</em>"; 
+			} else { 
+				$r_disabled = ''; 
+				$r_message = '';
+			} ?>
 			<p>
-				<input type="checkbox" name="jd_twit_remote" id="jd_twit_remote" value="1" <?php echo jd_checkCheckbox('jd_twit_remote')?> />
+				<input type="checkbox"<?php echo $r_disabled; ?> name="jd_twit_remote" id="jd_twit_remote" value="1" <?php echo jd_checkCheckbox('jd_twit_remote')?> />
 				<label for="jd_twit_remote"><?php _e("Send Twitter Updates on remote publication (Post by Email or XMLRPC Client)", 'wp-to-twitter'); ?></label><br />
+				<?php echo $r_message; ?>
 			</p>
 		</fieldset>
 		<fieldset>
@@ -760,6 +770,8 @@ function wpt_update_settings() {
 			<li><input type="checkbox" name="disable_oauth_notice" id="disable_oauth_notice" value="1" <?php echo jd_checkCheckbox('disable_oauth_notice')?> /> <label for="disable_oauth_notice"><?php _e("Disable notification to implement OAuth", 'wp-to-twitter'); ?></label></li>
 			<li><input type="checkbox" name="wp_debug_oauth" id="wp_debug_oauth" value="1" <?php echo jd_checkCheckbox('wp_debug_oauth')?> />
 				<label for="wp_debug_oauth"><?php _e("Get Debugging Data for OAuth Connection", 'wp-to-twitter'); ?></label></li>
+			<li><input type="checkbox" name="wpt_http" id="wpt_http" value="1" <?php echo jd_checkCheckbox('wpt_http')?> />
+				<label for="wpt_http"><?php _e("Switch to <code>http</code> connection. (Default is https)", 'wp-to-twitter'); ?></label></li>				
 			<li><input type="checkbox" name="jd_donations" id="jd_donations" value="1" <?php echo jd_checkCheckbox('jd_donations')?> />
 				<label for="jd_donations"><strong><?php _e("I made a donation, so stop whinging at me, please.", 'wp-to-twitter'); ?></strong></label></li>
 			</ul>

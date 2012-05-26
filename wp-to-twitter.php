@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.4.3
+Version: 2.4.4
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -23,7 +23,6 @@ Author URI: http://www.joedolson.com/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 if ( version_compare( get_bloginfo( 'version' ) , '3.0' , '<' ) && is_ssl() ) {
 	$wp_content_url = str_replace( 'http://' , 'https://' , get_option( 'siteurl' ) );
 } else {
@@ -38,11 +37,7 @@ if ( defined('WP_CONTENT_URL') ) {
 if ( defined('WP_CONTENT_DIR') ) {
 	$wp_content_dir = constant('WP_CONTENT_DIR');
 }
-
-$wp_plugin_url = $wp_content_url . '/plugins';
-$wp_plugin_dir = $wp_content_dir . '/plugins';
-$wpmu_plugin_url = $wp_content_url . '/mu-plugins';
-$wpmu_plugin_dir = $wp_content_dir . '/mu-plugins';
+$wp_plugin_url = $wp_content_url . '/plugins';$wp_plugin_dir = $wp_content_dir . '/plugins';$wpmu_plugin_url = $wp_content_url . '/mu-plugins';$wpmu_plugin_dir = $wp_content_dir . '/mu-plugins';
 include_once( ABSPATH . 'wp-admin/includes/plugin.php' ); // required in order to access is_plugin_active()
 
 if ( version_compare( phpversion(), '5.0', '<' ) ) {
@@ -55,14 +50,13 @@ require_once( $wp_plugin_dir . '/wp-to-twitter/wp-to-twitter-manager.php' );
 // include service functions
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
-if ( function_exists( 'wpt_pro_exists' ) ) {}
-
 global $wp_version,$wpt_version,$jd_plugin_url,$jdwp_api_post_status;
-$wpt_version = "2.4.3";
+$wpt_version = "2.4.4";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
-$jdwp_api_post_status = "https://api.twitter.com/1/statuses/update.json";
+$protocol = ( get_option( 'wpt_http' ) == '1' )?'http:':'https:';
+$jdwp_api_post_status = "$protocol//api.twitter.com/1/statuses/update.json";
 
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 $jd_donate_url = "http://www.joedolson.com/articles/wp-tweets-pro/";
@@ -421,6 +415,8 @@ function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID, $retwe
 				}
 			}
 		}
+		// this is needed in case a tweet needs to be truncated outright and the truncation values aren't in the above.
+		if ( mb_strlen( fake_normalize ( $post_sentence ) ) > 140 ) { $post_sentence = mb_substr( $post_sentence,0,139,$encoding ); }			
 	}
 	return $post_sentence;
 }
@@ -672,12 +668,13 @@ function jd_post_info( $post_ID ) {
 	$values['categoryIds'] = $category_ids;
 	$values['category'] = $category;
 		$excerpt_length = get_option( 'jd_post_excerpt' );
-	$values['postExcerpt'] = ( trim( $get_post_info->post_excerpt ) == "" )?@mb_substr( strip_tags( strip_shortcodes( $get_post_info->post_content ) ), 0, $excerpt_length ):@mb_substr( strip_tags( strip_shortcodes( $get_post_info->post_excerpt ) ), 0, $excerpt_length );
+	$post_excerpt = ( trim( $get_post_info->post_excerpt ) == "" )?@mb_substr( strip_tags( strip_shortcodes( $get_post_info->post_content ) ), 0, $excerpt_length ):@mb_substr( strip_tags( strip_shortcodes( $get_post_info->post_excerpt ) ), 0, $excerpt_length );
+	$values['postExcerpt'] = html_entity_decode( $post_excerpt, ENT_COMPAT, get_option('blog_charset') );
 	$thisposttitle =  stripcslashes( strip_tags( $get_post_info->post_title ) );
 		if ($thisposttitle == "") {
 			$thisposttitle =  stripcslashes( strip_tags( $_POST['title'] ) );
 		}
-	$values['postTitle'] = $thisposttitle;
+	$values['postTitle'] = html_entity_decode( $thisposttitle, ENT_COMPAT, get_option('blog_charset') );
 	$values['postLink'] = external_or_permalink( $post_ID );
 	$values['blogTitle'] = get_bloginfo( 'name' );
 	$values['shortUrl'] = get_post_meta( $post_ID, '_wp_jd_clig', TRUE );
@@ -1304,9 +1301,10 @@ global $wp_plugin_url, $wp_plugin_dir;
 }
 
 function jd_plugin_action($links, $file) {
-	if ( $file == plugin_basename(dirname(__FILE__).'/wp-to-twitter.php') )
+	if ( $file == plugin_basename(dirname(__FILE__).'/wp-to-twitter.php') ) {
 		$admin_url = ( is_plugin_active('wp-tweets-pro/wpt-pro-functions.php') )?admin_url('admin.php?page=wp-tweets-pro'):admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php');
 		$links[] = "<a href='$admin_url'>" . __('Settings', 'wp-to-twitter', 'wp-to-twitter') . "</a>";
+	}
 	return $links;
 }
 //Add Plugin Actions to WordPress

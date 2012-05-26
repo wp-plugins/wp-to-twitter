@@ -76,7 +76,8 @@ switch ( $post['oauth_settings'] ) {
 				}
 				$message = 'failed';
 				if ( $connection = wtt_oauth_connection( $auth ) ) {
-					$data = $connection->get('https://api.twitter.com/1/account/verify_credentials.json');
+					$protocol = ( get_option( 'wpt_http' ) == '1' )?'http:':'https:';
+					$data = $connection->get($protocol.'//api.twitter.com/1/account/verify_credentials.json');
 					if ($connection->http_code == '200') {
 						$error_information = '';
 						$decode = json_decode($data);
@@ -148,12 +149,26 @@ if ( !$auth ) {
 	echo '<div class="postbox">';
 }
 $server_time = date( DATE_COOKIE );
-
-$response = wp_remote_get( "https://api.twitter.com/1/");
+$protocol = ( get_option( 'wpt_http' ) == '1' )?'http:':'https:';
+$response = wp_remote_get( "$protocol//api.twitter.com/1/" );
 if ( is_wp_error( $response ) ) {
-	$date = __('There was an error querying Twitter\'s servers.','wp-to-twitter');
+	$warning = '';
+	$error = $response->errors;
+	if ( is_array( $error ) ) {
+		$warning = "<ul>";
+		foreach ( $error as $k=>$e ) {
+			foreach ( $e as $v ) {
+				$warning .= "<li>".$v."</li>";
+			}
+		}
+		$warning .= "</ul>";
+	}
+	if ( strpos( $warning, 'SSL' ) !== false ) { $ssl = __("SSL Problems? Try <a href='#wpt_http'>switching to <code>http</code> queries</a>.<br />",'wp-to-twitter'); } else { $ssl = __('Error Message:','wp-to-twitter'); }
+	$date = __("There was an error querying Twitter's servers",'wp-to-twitter');
+	$errors = "<p>".$ssl.$warning."</p>";
 } else {
 	$date = date( DATE_COOKIE, strtotime($response['headers']['date']) );
+	$errors = '';
 }
 $class = ( $auth )?'wpt-profile':'wpt-settings';
 $form = ( !$auth )?'<form action="" method="post">':'';
@@ -172,6 +187,7 @@ $nonce = ( !$auth )?wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, fals
 			<div class="notes">
 			<h4>'.__('WP to Twitter Set-up','wp-to-twitter').'</h4>
 			<p>'.__('Your server time:','wp-to-twitter').' <code>'.$server_time.'</code> '.__("Twitter's time:").' <code>'.$date.'</code>.'.__( 'If these timestamps are not within 5 minutes of each other, your server will not connect to Twitter.','wp-to-twitter').'</p>
+			'.$errors.'
 			<p>'.__('<em>Note</em>: you will not add your Twitter user information to WP to Twitter; it is not used in this authentication method.', 'wp-to-twitter').'</p> 
 			</div>
 			'.$form.'
@@ -255,7 +271,9 @@ $nonce = ( !$auth )?wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, fals
 					</div>
 				</div>		
 				'.$nonce.'
-			<p>'.__('Your server time:','wp-to-twitter').' <code>'.$server_time.'</code>.<br />'.__('Twitter\'s current server time: ','wp-to-twitter').'<code>'.$date.'</code>.</p><p> '.__( 'If these times are not within 5 minutes of each other, your server could lose its connection with Twitter.','wp-to-twitter').'</p></div>');
+			<p>'.__('Your server time:','wp-to-twitter').' <code>'.$server_time.'</code>.<br />'.__('Twitter\'s current server time: ','wp-to-twitter').'<code>'.$date.'</code>.</p>
+			'.$errors.'
+			<p> '.__( 'If these times are not within 5 minutes of each other, your server could lose its connection with Twitter.','wp-to-twitter').'</p></div>');
 	}
 	if ( !$auth ) {
 		echo "</div>";

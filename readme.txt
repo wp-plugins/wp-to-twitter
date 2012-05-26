@@ -51,6 +51,14 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.4.4 =
+
+* Bug fix: Truncation error if no crucial elements are truncatable
+* Bug fix: Unclosed if/else caused empty Settings link on plugins page. 
+* Bug fix: "Post on XMLRPC" option must not be selected if using WP Tweets Pro with XML RPC
+* Bug fix: Windows Live Writer (and perhaps other apps) send entity-converted characters on XMLRPC post; need to decode entities in text before sending to Twitter.
+* Bug fix/change: Provides option to switch to http connections to Twitter if https connection returns SSL errors.
+
 = 2.4.3 =
 
 * Bug fix: In some cases, Administrators were not granted permissions to add custom tweets and other capability restricted tasks.
@@ -635,5 +643,4 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
-* 2.4.3 Major bug fixes
-* 2.4.0 Support for WP_http, redesign, release of PRO upgrade, bug fixes.
+* 2.4.4 Various bug fixes. 
