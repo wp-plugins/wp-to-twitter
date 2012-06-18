@@ -879,6 +879,7 @@ function wpt_update_settings() {
 			<li><?php _e("<code>#post#</code>: a short excerpt of the post content", 'wp-to-twitter'); ?></li>
 			<li><?php _e("<code>#category#</code>: the first selected category for the post", 'wp-to-twitter'); ?></li>
 			<li><?php _e("<code>#date#</code>: the post date", 'wp-to-twitter'); ?></li>
+			<li><?php _e("<code>#modified</code>: the post modified date", 'wp-to-twitter'); ?></li>
 			<li><?php _e("<code>#url#</code>: the post URL", 'wp-to-twitter'); ?></li>
 			<li><?php _e("<code>#author#</code>: the post author",'wp-to-twitter'); ?></li>
 			<li><?php _e("<code>#account#</code>: the twitter @reference for the account (or the author, if author settings are enabled and set.)",'wp-to-twitter'); ?></li>

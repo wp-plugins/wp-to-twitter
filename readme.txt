@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.9.2 (partial)
-Tested up to: 3.4-beta4
+Tested up to: 3.4
 Stable tag: trunk
 
 Posts a Twitter update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5. 
@@ -27,7 +27,7 @@ Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) to 
 
 Translations:
 
-* Brazilian Portugese: [Miriam de Paula](http://wpmidia.com.br) [2.3.17]
+* Brazilian Portugese: [Miriam de Paula](http://wpmidia.com.br) [2.4.4]
 * Italian: [Gianni Diurno](http://www.gidibao.net) [2.3.14]
 * Lithuanian [Nata Strazda](http://www.designcontest.com) [2.3.8]
 * Simplified Chinese: [HostUCan](http://www.hostucan.com) [2.3.8]
@@ -50,6 +50,16 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.4.5 =
+
+* Added #modified# to use post modified date in templates.
+* Corrected unstripped slashes for template preview in WP to Twitter post box
+* Character count for custom tweet text was incorrect on initial load in edit mode. 
+* Replaced character counter with a more Twitter-like character counter (counting down.)
+* Removed JavaScript from post box so that WP to Twitter box is properly draggable.
+* Added ampersand to normalizer function
+* Updated Brazilian Portuguese translation
 
 = 2.4.4 =
 

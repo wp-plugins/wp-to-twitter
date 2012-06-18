@@ -251,12 +251,13 @@ $nonce = ( !$auth )?wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, fals
 		} else {
 			$submit = '<input type="checkbox" name="oauth_settings" value="wtt_twitter_disconnect" id="disconnect" /> <label for="disconnect">'.__('Disconnect your WordPress and Twitter Account','wp-to-twitter').'</label>';
 		}
+		$warning =  ( get_option('wpt_authentication_missing') == 'true' )?'<p>'.__('<strong>Troubleshooting tip:</strong> Connected, but getting a notice that your Authentication credentials are missing or incorrect? Check whether your Access token has read and write permission. If not, you\'ll need to create a new token.','wp-to-twitter').'</p>':'';
+
 		print('	
 			<h3>'.__('Disconnect from Twitter','wp-to-twitter').'</h3>
 			<div class="inside '.$class.'">
 			'.$form.'
 				<div id="wtt_authentication_display">
-				<p>'.__('<strong>Troubleshooting tip:</strong> Connected, but getting a notice that your Authentication credentials are missing or incorrect? Check whether your Access token has read and write permission. If not, you\'ll need to create a new token.','wp-to-twitter').'</p>
 					<fieldset class="options">
 					<ul>
 						<li><strong class="auth_label">'.__('Twitter Username ', 'wp-to-twitter').'</strong> <code class="auth_code">'.$uname.'</code></li>
