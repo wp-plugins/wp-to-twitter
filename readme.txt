@@ -28,8 +28,8 @@ Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) to 
 
 Translations:
 
+* Italian: Aurelio DeRosa  [2.4.5]
 * Brazilian Portugese: [Miriam de Paula](http://wpmidia.com.br) [2.4.4]
-* Italian: [Gianni Diurno](http://www.gidibao.net) [2.3.14]
 * Lithuanian [Nata Strazda](http://www.designcontest.com) [2.3.8]
 * Simplified Chinese: [HostUCan](http://www.hostucan.com) [2.3.8]
 * Traditional Chinese: [HostUCan](http://www.hostucan.com) [2.3.8]
