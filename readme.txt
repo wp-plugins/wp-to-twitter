@@ -4,6 +4,7 @@ Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.9.2 (partial)
 Tested up to: 3.4
+License: GPLv2 or later
 Stable tag: trunk
 
 Posts a Twitter update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5. 
@@ -43,13 +44,27 @@ Translations:
 * Danish: [Rasmus Himmelstrup](http://seoanalyst.dk)
 * Japanese: [kndb](http://blog.layer8.sh/)
 
-New translations are always welcome! The translation source file is in the WP to Twitter download.
+Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
 
 Credits:
 
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.4.6 =
+
+* Added strip_tags to custom template tag values.
+* Tweet character counter now processes values for #title#, #url# and #blog#. Courtesy of Arnout Veenman.
+* Truncation array error bug fix courtesy of Arnout Veenman.
+* Truncation routine tags modification courtesy of Arnout Veenman.
+* Bug fix: bug fix for final truncation check.
+* Change: #author# template tag now returns the Twitter account @ reference if it's available, user's display name if not.
+* Bug fix: Su.pr uses the longURL as an array key - the ampersands in URL needed to be encoded.
+* Bug fix: WP to Twitter box showed up on disabled post types.
+* Bug fix: undefined variable when posting using Su.pr as shortener.
+* Change: changed Bit.ly API url to new recommended query URL.
+* Change: moved character counter under Custom Tweet box so there's sufficient space if the meta box is in a side position.
 
 = 2.4.5 =
 

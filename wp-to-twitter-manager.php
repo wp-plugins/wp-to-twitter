@@ -16,12 +16,12 @@ function jd_checkCheckbox( $theFieldname,$sub1=false,$sub2='' ) {
 		return 'checked="checked"';
 	}
 }
+
 function jd_checkSelect( $theFieldname, $theValue, $type='select' ) {
 	if( get_option( $theFieldname ) == $theValue ) {
 		echo ( $type == 'select' )?'selected="selected"':'checked="checked"';
 	}
 }
-
 
 function jd_check_functions() {
 	$message = "<div class='update'><ul>";
@@ -144,6 +144,7 @@ function wpt_update_settings() {
 		update_option( 'wp_url_failure','0' );
 		// Default publishing options.
 		update_option( 'jd_tweet_default', '0' );
+		update_option( 'je_tweet_default_edit','0' );
 		update_option( 'wpt_inline_edits', '0' );
 		// Note that default options are set.
 		update_option( 'twitterInitialised', '1' );	
@@ -195,6 +196,7 @@ function wpt_update_settings() {
 		
 	if ( isset( $_POST['submit-type'] ) && $_POST['submit-type'] == 'advanced' ) {
 		update_option( 'jd_tweet_default', ( isset( $_POST['jd_tweet_default'] ) )?$_POST['jd_tweet_default']:0 );
+		update_option( 'jd_tweet_default', ( isset( $_POST['jd_tweet_default'] ) )?$_POST['jd_tweet_default']:0 );		
 		update_option( 'wpt_inline_edits', ( isset( $_POST['wpt_inline_edits'] ) )?$_POST['wpt_inline_edits']:0 );		
 		update_option( 'jd_twit_remote',( isset( $_POST['jd_twit_remote'] ) )?$_POST['jd_twit_remote']:0 );
 		update_option( 'jd_twit_custom_url', $_POST['jd_twit_custom_url'] );
@@ -497,7 +499,7 @@ function wpt_update_settings() {
 				<label for="comment-published-update"><strong><?php _e("Update Twitter when new comments are posted", 'wp-to-twitter'); ?></strong></label><br />				
 				<label for="comment-published-text"><?php _e("Text for new comments:", 'wp-to-twitter'); ?></label> <input type="text" name="comment-published-text" id="comment-published-text" size="60" maxlength="120" value="<?php echo ( esc_attr( stripslashes( get_option( 'comment-published-text' ) ) ) ); ?>" />
 			</p>
-			<p><?php _e('In addition to the above short tags, comment templates can use <code>#commenter#</code> to post the commenter\'s provided name in the Tweet. <strong>Use this feature at your own risk</strong>, as it provides the ability for anybody who can post a comment on your site to post a phrase of their choice in your Twitter stream.','wp-to-twitter'); ?>
+			<p><?php _e('In addition to the above short tags, comment templates can use <code>#commenter#</code> to post the commenter\'s provided name in the Tweet. <em>Use this feature at your own risk</em>, as it will let anybody who can post a comment on your site post a phrase in your Twitter stream.','wp-to-twitter'); ?>
 			</fieldset>					
 			<fieldset>
 			<legend><?php _e('Settings for Links','wp-to-twitter'); ?></legend>
@@ -518,8 +520,7 @@ function wpt_update_settings() {
 				<option value="5" <?php jd_checkSelect('jd_shortener','5'); ?>><?php _e("YOURLS (installed on this server)", 'wp-to-twitter'); ?></option>
 				<option value="6" <?php jd_checkSelect('jd_shortener','6'); ?>><?php _e("YOURLS (installed on a remote server)", 'wp-to-twitter'); ?></option>		
 				<option value="4" <?php jd_checkSelect('jd_shortener','4'); ?>><?php _e("Use WordPress as a URL shortener.", 'wp-to-twitter'); ?></option> 
-			</select><br />		
-			<small><?php _e("Using WordPress as a URL shortener will send URLs to Twitter in the default URL format for WordPress: <code>http://domain.com/wpdir/?p=123</code>. Google Analytics is not available when using WordPress shortened URLs.", 'wp-to-twitter'); ?></small>
+			</select>
 			</p>
 			</fieldset>
 				<div>
@@ -533,19 +534,16 @@ function wpt_update_settings() {
 </div>
 <div class="ui-sortable meta-box-sortables">
 <div class="postbox">
-			
-				<h3><?php _e('<abbr title="Uniform Resource Locator">URL</abbr> Shortener Account Settings','wp-to-twitter'); ?></h3>
-
-				<div class="inside">
+<h3><?php _e('<abbr title="Uniform Resource Locator">URL</abbr> Shortener Account Settings','wp-to-twitter'); ?></h3>
+	<div class="inside">
 		<div class="panel">
-<h4 class="supr"><span><?php _e("Your Su.pr account details", 'wp-to-twitter'); ?></span></h4>
-
+		<h4 class="supr"><span><?php _e("Your Su.pr account details", 'wp-to-twitter'); ?> <?php _e('(optional)','wp-to-twitter'); ?></span></h4>
 	<form method="post" action="">
 	<div>
 		<p>
 		<label for="suprlogin"><?php _e("Your Su.pr Username:", 'wp-to-twitter'); ?></label>
 		<input type="text" name="suprlogin" id="suprlogin" size="40" value="<?php echo ( esc_attr( get_option( 'suprlogin' ) ) ) ?>" />
-		</p>	
+		</p>
 		<p>
 		<label for="suprapi"><?php _e("Your Su.pr <abbr title='application programming interface'>API</abbr> Key:", 'wp-to-twitter'); ?></label>
 		<input type="text" name="suprapi" id="suprapi" size="40" value="<?php echo ( esc_attr( get_option( 'suprapi' ) ) ) ?>" />
@@ -664,7 +662,8 @@ function wpt_update_settings() {
 				'blogname'=>4,
 				'author'=>5,
 				'account'=>6,
-				'tags'=>7 );
+				'tags'=>7,
+				'modified'=>8 );
 			$preferred_order = get_option( 'wpt_truncation_order' );
 			if ( is_array( $preferred_order ) ) { $default_order = $preferred_order; }
 			asort($default_order);
@@ -686,6 +685,8 @@ function wpt_update_settings() {
 			<p>
 				<input type="checkbox" name="jd_tweet_default" id="jd_tweet_default" value="1" <?php echo jd_checkCheckbox('jd_tweet_default')?> />
 				<label for="jd_tweet_default"><?php _e("Do not post Tweets by default", 'wp-to-twitter'); ?></label><br />
+				<input type="checkbox" name="jd_tweet_default_edit" id="jd_tweet_default_edit" value="1" <?php echo jd_checkCheckbox('jd_tweet_default_edit')?> />
+				<label for="jd_tweet_default_edit"><?php _e("Do not post Tweets by default (editing only)", 'wp-to-twitter'); ?></label><br />				
 				<small><?php _e("By default, all posts meeting other requirements will be posted to Twitter. Check this to change your setting.", 'wp-to-twitter'); ?></small>
 			</p>
 			<p>
@@ -879,7 +880,7 @@ function wpt_update_settings() {
 			<li><?php _e("<code>#post#</code>: a short excerpt of the post content", 'wp-to-twitter'); ?></li>
 			<li><?php _e("<code>#category#</code>: the first selected category for the post", 'wp-to-twitter'); ?></li>
 			<li><?php _e("<code>#date#</code>: the post date", 'wp-to-twitter'); ?></li>
-			<li><?php _e("<code>#modified</code>: the post modified date", 'wp-to-twitter'); ?></li>
+			<li><?php _e("<code>#modified#</code>: the post modified date", 'wp-to-twitter'); ?></li>
 			<li><?php _e("<code>#url#</code>: the post URL", 'wp-to-twitter'); ?></li>
 			<li><?php _e("<code>#author#</code>: the post author",'wp-to-twitter'); ?></li>
 			<li><?php _e("<code>#account#</code>: the twitter @reference for the account (or the author, if author settings are enabled and set.)",'wp-to-twitter'); ?></li>

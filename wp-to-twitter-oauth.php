@@ -252,6 +252,7 @@ $nonce = ( !$auth )?wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, fals
 			$submit = '<input type="checkbox" name="oauth_settings" value="wtt_twitter_disconnect" id="disconnect" /> <label for="disconnect">'.__('Disconnect your WordPress and Twitter Account','wp-to-twitter').'</label>';
 		}
 		$warning =  ( get_option('wpt_authentication_missing') == 'true' )?'<p>'.__('<strong>Troubleshooting tip:</strong> Connected, but getting a notice that your Authentication credentials are missing or incorrect? Check whether your Access token has read and write permission. If not, you\'ll need to create a new token.','wp-to-twitter').'</p>':'';
+		$diff = ( abs( time() - strtotime($response['headers']['date']) ) > 300 )?'<p> '.__( 'Your time stamps are more than 5 minutes apart. Your server could lose its connection with Twitter.','wp-to-twitter').'</p>':'';
 
 		print('	
 			<h3>'.__('Disconnect from Twitter','wp-to-twitter').'</h3>
@@ -273,8 +274,7 @@ $nonce = ( !$auth )?wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, fals
 				</div>		
 				'.$nonce.'
 			<p>'.__('Your server time:','wp-to-twitter').' <code>'.$server_time.'</code>.<br />'.__('Twitter\'s current server time: ','wp-to-twitter').'<code>'.$date.'</code>.</p>
-			'.$errors.'
-			<p> '.__( 'If these times are not within 5 minutes of each other, your server could lose its connection with Twitter.','wp-to-twitter').'</p></div>');
+			'.$errors.$diff.'</div>' );
 	}
 	if ( !$auth ) {
 		echo "</div>";
