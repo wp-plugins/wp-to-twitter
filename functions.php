@@ -259,7 +259,7 @@ get_currentuserinfo();
 		$theme_parent = $theme->Template;
 		$theme_version = $theme->Version;	
 	} else {
-	$theme_path = get_stylesheet_directory().'/style.css';	
+	$theme_path = get_stylesheet_directory().'/style.css';
 	$theme = get_theme_data($theme_path);
 		$theme_name = $theme['Name'];
 		$theme_uri = $theme['ThemeURI'];

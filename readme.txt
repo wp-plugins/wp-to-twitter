@@ -13,7 +13,7 @@ Posts a Twitter update when you update your WordPress blog or post to your blogr
 
 WP to Twitter posts a Twitter status update from your WordPress blog using your URL shortening service to provide a link back to your post from Twitter. 
 
-The plugin supports a default Tweet template for updating or editing posts and pages, supports your custom post types, and also allows you to write a custom Tweet for each post which says whatever you want, using a selection of custom shortcodes to generate your text. 
+The plugin supports a default Tweet template for updating or editing posts and pages, supports your custom post types, and allows you to write a custom Tweet for each post which says whatever you want, using a selection of custom shortcodes to generate your text. 
 
 Additional features include: 
 
@@ -24,11 +24,17 @@ Additional features include:
 
 Any status update you write which is longer than the available space will be truncated by the plugin. This applies to both default messages and to your custom messages.
 
-Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) to gain additional features.
+Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) for extra features, including:
+
+* Each author can set up their own Twitter account
+* Time delayed Tweeting
+* Scheduled Tweet management
+* [and more!](http://www.joedolson.com/articles/wp-tweets-pro/)
 
 Translations:
 
-* Italian: Aurelio DeRosa  [2.4.5]
+* Italian: Updated by [Gianni Diurno](http://www.gidibao.net) and [Aurelio De Rosa](http://www.audero.it)  [2.4.6]
+* Dutch: [Rashid Niamat](http://niamatmediagroup.nl/) [2.4.6]
 * Brazilian Portugese: [Miriam de Paula](http://wpmidia.com.br) [2.4.4]
 * Lithuanian [Nata Strazda](http://www.designcontest.com) [2.3.8]
 * Simplified Chinese: [HostUCan](http://www.hostucan.com) [2.3.8]
@@ -39,7 +45,6 @@ Translations:
 * Russian: [Burkov Boris](http://chernobog.ru)
 * French: [Fr&eacute;d&eacute;ric Million](http://www.traducteurs.com)
 * Estonian: [Raivo Ratsep](http://raivoratsep.com)
-* Dutch: [Rene at WPwebshop](http://wpwebshop.com/premium-wordpress-plugins/)
 * Romanian: [Jibo](http://jibo.ro)
 * Danish: [Rasmus Himmelstrup](http://seoanalyst.dk)
 * Japanese: [kndb](http://blog.layer8.sh/)
@@ -51,6 +56,15 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.4.7 =
+
+* Bug fix: Fatal error could be triggered if WP HTTP query returns error object.
+* Bug fix: Fixed missing index when saving users without changing Twitter options.
+* Bug fix: With custom post types, save_post ran after publish_{custom_post_type}. Moved save metadata function into publish_{cpt} action.
+* Bug fix: 2.4.1 upgrade cycle was still running for all upgrades. 
+* Change: suggest HTTP switch for any connection error, since not all SSL related errors report as such.
+* Italian and Dutch translations updated.
 
 = 2.4.6 =
 

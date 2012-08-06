@@ -465,7 +465,7 @@ function wpt_update_settings() {
 	<div>	
 		<input type="submit" name="submit" value="<?php _e("Save WP->Twitter Options", 'wp-to-twitter'); ?>" class="button-primary button-side" />	
 			<?php 
-			$post_types = get_post_types( '', 'names' );
+			$post_types = get_post_types( array('public'=>true), 'names' );
 			$wpt_settings = get_option('wpt_post_types');
 
 				foreach( $post_types as $type ) {
@@ -832,9 +832,9 @@ function wpt_update_settings() {
 			<?php } ?>
 			<div class="inside resources">
 			<ul>
-			<li><a href="?page=wp-to-twitter/wp-to-twitter.php&amp;export=settings"><?php _e("View Settings",'wp-to-twitter'); ?></a></li>
+			<li><a href="?page=wp-to-twitter/wp-to-twitter.php&amp;export=settings"><?php _e("View Settings",'wp-to-twitter'); ?></a> / 
 			<?php if ( function_exists( 'wpt_pro_exists' ) ) { $support = admin_url('admin.php?page=wp-tweets-pro'); } else { $support = admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php');} ?>
-			<li><a href="<?php echo $support; ?>#get-support"><?php _e("Get Support",'wp-to-twitter'); ?></a></li>
+			<a href="<?php echo $support; ?>#get-support"><?php _e("Get Support",'wp-to-twitter'); ?></a></li>
 			</ul>
 			<?php if ( get_option('jd_donations') != 1 && !function_exists( 'wpt_pro_exists' )  ) { ?>
 			<div>
@@ -857,7 +857,7 @@ function wpt_update_settings() {
 		<div class="postbox">
 			<h3><strong><?php _e('Upgrade Now!','wp-to-twitter'); ?></strong></h3>
 			<div class="inside purchase">
-				<strong><a href="http://www.joedolson.com/articles/wp-tweets-pro/"><?php _e('Upgrade to <strong>WP Tweets PRO</strong> for more control!','wp-to-twitter'); ?></a></strong>
+				<strong><a href="http://www.joedolson.com/articles/wp-tweets-pro/"><?php _e('Upgrade to <strong>WP Tweets PRO</strong> for more options!','wp-to-twitter'); ?></a></strong>
 			<p><?php _e('Extra features with the PRO upgrade:','wp-to-twitter'); ?></p>
 			<ul>
 				<li><?php _e('Users can post to their own Twitter accounts','wp-to-twitter'); ?></li>
@@ -885,6 +885,9 @@ function wpt_update_settings() {
 			<li><?php _e("<code>#author#</code>: the post author",'wp-to-twitter'); ?></li>
 			<li><?php _e("<code>#account#</code>: the twitter @reference for the account (or the author, if author settings are enabled and set.)",'wp-to-twitter'); ?></li>
 			<li><?php _e("<code>#tags#</code>: your tags modified into hashtags. See options in the Advanced Settings section, below.",'wp-to-twitter'); ?></li>
+<?php if ( function_exists('wpt_pro_exists') ) { ?>
+			<li><?php _e("<code>#reference#</code>: Used only in co-tweeting. @reference to main account when posted to author account, @reference to author account in post to main account.",'wp-to-twitter'); ?></li> 
+<?php } ?>
 			</ul>
 			<p><?php _e("You can also create custom shortcodes to access WordPress custom fields. Use doubled square brackets surrounding the name of your custom field to add the value of that custom field to your status update. Example: <code>[[custom_field]]</code></p>", 'wp-to-twitter'); ?>
 		</div>

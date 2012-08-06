@@ -48,6 +48,7 @@ function wtt_oauth_credentials_to_hash( $auth=false ) {
 }
 // response to settings updates
 function jd_update_oauth_settings( $auth=false, $post=false ) {
+if ( isset($post['oauth_settings'] ) ) {
 switch ( $post['oauth_settings'] ) {
 	case 'wtt_oauth_test':
 			if ( !wp_verify_nonce( $post['_wpnonce'], 'wp-to-twitter-nonce' ) && !$auth ) {
@@ -141,6 +142,7 @@ switch ( $post['oauth_settings'] ) {
 	}
 	return "Nothing";
 }
+}
 
 // connect or disconnect form
 function wtt_connect_oauth( $auth=false ) {
@@ -163,7 +165,7 @@ if ( is_wp_error( $response ) ) {
 		}
 		$warning .= "</ul>";
 	}
-	if ( strpos( $warning, 'SSL' ) !== false ) { $ssl = __("SSL Problems? Try <a href='#wpt_http'>switching to <code>http</code> queries</a>.<br />",'wp-to-twitter'); } else { $ssl = __('Error Message:','wp-to-twitter'); }
+	$ssl = __("Connection Problems? Try <a href='#wpt_http'>switching to <code>http</code> queries</a>.<br />",'wp-to-twitter');
 	$date = __("There was an error querying Twitter's servers",'wp-to-twitter');
 	$errors = "<p>".$ssl.$warning."</p>";
 } else {
@@ -252,7 +254,11 @@ $nonce = ( !$auth )?wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, fals
 			$submit = '<input type="checkbox" name="oauth_settings" value="wtt_twitter_disconnect" id="disconnect" /> <label for="disconnect">'.__('Disconnect your WordPress and Twitter Account','wp-to-twitter').'</label>';
 		}
 		$warning =  ( get_option('wpt_authentication_missing') == 'true' )?'<p>'.__('<strong>Troubleshooting tip:</strong> Connected, but getting a notice that your Authentication credentials are missing or incorrect? Check whether your Access token has read and write permission. If not, you\'ll need to create a new token.','wp-to-twitter').'</p>':'';
-		$diff = ( abs( time() - strtotime($response['headers']['date']) ) > 300 )?'<p> '.__( 'Your time stamps are more than 5 minutes apart. Your server could lose its connection with Twitter.','wp-to-twitter').'</p>':'';
+		if ( !is_wp_error( $response ) ) { 
+			$diff = ( abs( time() - strtotime($response['headers']['date']) ) > 300 )?'<p> '.__( 'Your time stamps are more than 5 minutes apart. Your server could lose its connection with Twitter.','wp-to-twitter').'</p>':''; 
+		} else { 
+			$diff = __( 'WP to Twitter could not contact Twitter\'s remote server. Here is the error triggered: ','wp-to-twitter' ).$errors;
+		}
 
 		print('	
 			<h3>'.__('Disconnect from Twitter','wp-to-twitter').'</h3>
