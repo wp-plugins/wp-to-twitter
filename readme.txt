@@ -687,4 +687,4 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
-* 2.4.4 Various bug fixes. 
+* 2.4.8 Broken #account# template tag.
