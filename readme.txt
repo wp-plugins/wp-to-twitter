@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.9.2 (partial)
-Tested up to: 3.4
+Tested up to: 3.4.1
 License: GPLv2 or later
 Stable tag: trunk
 
@@ -56,6 +56,11 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.4.8 =
+
+* Bug fix: #account# shortcode broken in 2.4.7
+* Bug fix: Missing function if WP Tweets PRO installed but not upgraded to 1.2.0
 
 = 2.4.7 =
 

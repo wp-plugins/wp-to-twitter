@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.4.7
+Version: 2.4.8
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -57,7 +57,7 @@ require_once( $wp_plugin_dir . '/wp-to-twitter/wp-to-twitter-manager.php' );
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wpt_version,$jd_plugin_url,$jdwp_api_post_status;
-$wpt_version = "2.4.7";
+$wpt_version = "2.4.8";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -247,7 +247,7 @@ function external_or_permalink( $post_ID ) {
 function jd_doTwitterAPIPost( $twit, $auth=false, $id=false ) {
 	// prevent duplicate Tweets
 	if ( !wpt_check_oauth( $auth )	) { 
-			if ( function_exists( 'wpt_pro_exists' ) ) { // for PRO users, save error data. 
+			if ( function_exists( 'wpt_pro_exists' ) && function_exists( 'wpt_save_error' ) ) { // for PRO users, save error data. 
 				wpt_save_error( $id, $auth, $twit, __('This account is not authorized to post to Twitter.','wp-tweets-pro'), '401', time() );
 			}
 			return true; 
@@ -255,7 +255,7 @@ function jd_doTwitterAPIPost( $twit, $auth=false, $id=false ) {
 
 	$check = ( !$auth )?get_option('jd_last_tweet'):get_user_meta( $auth, 'wpt_last_tweet', true ); // get user's last tweet
 	if ( $check == $twit || $twit == '' || !$twit ) {
-			if ( function_exists( 'wpt_pro_exists' ) ) { // for PRO users, save error data. 
+			if ( function_exists( 'wpt_pro_exists' ) && function_exists( 'wpt_save_error' ) ) { // for PRO users, save error data. 
 				wpt_save_error( $id, $auth, $twit, __('This tweet is identical to another Tweet recently sent to this account.','wp-tweets-pro'), '403', time() );
 			}	
 		return true;
@@ -309,7 +309,7 @@ function jd_doTwitterAPIPost( $twit, $auth=false, $id=false ) {
 			//wp_mail('joe@joedolson.com','Response code',"$http_code $error" );
 			// end debugging
 			$update = ( !$auth )?update_option( 'jd_last_tweet',$twit ):update_user_meta( $auth, 'wpt_last_tweet',$twit );
-			if ( function_exists( 'wpt_pro_exists' ) ) { // for PRO users, save error data. 
+			if ( function_exists( 'wpt_pro_exists' ) && function_exists( 'wpt_save_error' ) ) { // for PRO users, save error data. 
 				wpt_save_error( $id, $auth, $twit, $error, $http_code, time() );
 			}
 			if ( $http_code == '200' ) {
@@ -383,9 +383,9 @@ function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID, $retwe
 	// create full unconditional post sentence - prior to truncation
 	$post_sentence = str_ireplace( '#account#', $account, $sentence );
 	if ( function_exists('wpt_pro_exists') ) {
-		$post_sentence = str_ireplace( '#reference#', $reference, $sentence );
+		$post_sentence = str_ireplace( '#reference#', $reference, $post_sentence );
 	} else {
-		$post_sentence = str_ireplace( '#reference#', '', $sentence );	
+		$post_sentence = str_ireplace( '#reference#', '', $post_sentence );	
 	}
 	$post_sentence = str_ireplace( '#url#', $thisposturl, $post_sentence );
 	$post_sentence = str_ireplace( '#title#', $title, $post_sentence );
