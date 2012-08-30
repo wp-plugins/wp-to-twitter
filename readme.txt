@@ -7,13 +7,13 @@ Tested up to: 3.4.1
 License: GPLv2 or later
 Stable tag: trunk
 
-Posts a Twitter update when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Requires PHP 5. 
+Auto-posts a Twitter update when you update your WordPress blog or blogroll, with your chosen URL shortening service. Requires PHP 5. 
 
 == Description ==
 
-WP to Twitter posts a Twitter status update from your WordPress blog using your URL shortening service to provide a link back to your post from Twitter. 
+WP to Twitter automatically posts a Tweet from your WordPress blog to Twitter using your URL shortening service to provide a link back to your post from Twitter. 
 
-The plugin supports a default Tweet template for updating or editing posts and pages, supports your custom post types, and allows you to write a custom Tweet for each post which says whatever you want, using a selection of custom shortcodes to generate your text. 
+The plugin supports a customizable Tweet template for updating or editing posts and pages, supports your custom post types, and allows you to write a custom Tweet for each post, using a selection of custom template tags to generate the text. 
 
 Additional features include: 
 
@@ -21,19 +21,22 @@ Additional features include:
 * Use alternate URLs in place of post permalinks
 * Support for Google Analytics
 * Support for XMLRPC remote clients
+* Support for Google Analytics
+* Limiting Tweeting from specific categories
 
-Any status update you write which is longer than the available space will be truncated by the plugin. This applies to both default messages and to your custom messages.
+Any status update you write which is longer than 140 characters will be truncated by the plugin. 
 
 Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) for extra features, including:
 
 * Each author can set up their own Twitter account
 * Time delayed Tweeting
 * Scheduled Tweet management
+* Co-Tweet to site and author Twitter accounts
 * [and more!](http://www.joedolson.com/articles/wp-tweets-pro/)
 
 Translations:
 
-* Italian: Updated by [Gianni Diurno](http://www.gidibao.net) and [Aurelio De Rosa](http://www.audero.it)  [2.4.6]
+* Italian: Updated by [Gianni Diurno](http://www.gidibao.net) and [Aurelio De Rosa](http://www.audero.it)  [2.4.8]
 * Dutch: [Rashid Niamat](http://niamatmediagroup.nl/) [2.4.6]
 * Brazilian Portugese: [Miriam de Paula](http://wpmidia.com.br) [2.4.4]
 * Lithuanian [Nata Strazda](http://www.designcontest.com) [2.3.8]
@@ -56,6 +59,15 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.4.9 =
+
+* Bug (notice) fix: undefined variable.
+* Bug fix: url encoding on Retweet links
+* Removed some functions providing upgrade support with older versions of WP to Twitter (pre OAuth)
+* Fixed bug in WP Tweets PRO which broke archiving of past Tweets. (Requires WP Tweets PRO 1.2.1)
+* Added support for Twitter Friendly Links if installed.
+* Added: Saves failed tweets for reference and manual tweeting.
 
 = 2.4.8 =
 

@@ -164,7 +164,7 @@ function wpt_update_settings() {
 				</div>
 
 			');
-		} else if ( $oauth_message == "fail" ) {
+		} else if ( $oauth_message == "failed" ) {
 			print('
 				<div id="message" class="updated fade">
 					<p>'.__('WP to Twitter failed to connect with Twitter. Try enabling OAuth debugging.', 'wp-to-twitter').'</p>
@@ -520,6 +520,7 @@ function wpt_update_settings() {
 				<option value="5" <?php jd_checkSelect('jd_shortener','5'); ?>><?php _e("YOURLS (installed on this server)", 'wp-to-twitter'); ?></option>
 				<option value="6" <?php jd_checkSelect('jd_shortener','6'); ?>><?php _e("YOURLS (installed on a remote server)", 'wp-to-twitter'); ?></option>		
 				<option value="4" <?php jd_checkSelect('jd_shortener','4'); ?>><?php _e("Use WordPress as a URL shortener.", 'wp-to-twitter'); ?></option> 
+				<?php if ( function_exists( 'twitter_link' ) ) { ?><option value="9" <?php jd_checkSelect('jd_shortener','9'); ?>><?php _e("Use Twitter Friendly Links.", 'wp-to-twitter'); ?></option><?php } ?>
 			</select>
 			</p>
 			</fieldset>

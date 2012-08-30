@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.4.8
+Version: 2.4.9
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -57,7 +57,7 @@ require_once( $wp_plugin_dir . '/wp-to-twitter/wp-to-twitter-manager.php' );
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wpt_version,$jd_plugin_url,$jdwp_api_post_status;
-$wpt_version = "2.4.8";
+$wpt_version = "2.4.9";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -243,21 +243,24 @@ function external_or_permalink( $post_ID ) {
        return ( $ex_link ) ? $ex_link : $permalink;
 }
 
+function wpt_saves_error( $id, $auth, $twit, $error, $http_code, $ts ) {
+	$http_code = (int) $http_code;
+	if ( $http_code != 200 ) {
+		add_post_meta( $id, '_wpt_failed', array( 'author'=>$auth, 'sentence'=>$twit, 'error'=>$error,'code'=>$http_code, 'timestamp'=>$ts ) );
+	}
+}
+
 // This function performs the API post to Twitter
 function jd_doTwitterAPIPost( $twit, $auth=false, $id=false ) {
 	// prevent duplicate Tweets
 	if ( !wpt_check_oauth( $auth )	) { 
-			if ( function_exists( 'wpt_pro_exists' ) && function_exists( 'wpt_save_error' ) ) { // for PRO users, save error data. 
-				wpt_save_error( $id, $auth, $twit, __('This account is not authorized to post to Twitter.','wp-tweets-pro'), '401', time() );
-			}
+			wpt_saves_error( $id, $auth, $twit, __('This account is not authorized to post to Twitter.','wp-tweets-pro'), '401', time() );
 			return true; 
 	} // exit silently if not authorized
 
 	$check = ( !$auth )?get_option('jd_last_tweet'):get_user_meta( $auth, 'wpt_last_tweet', true ); // get user's last tweet
 	if ( $check == $twit || $twit == '' || !$twit ) {
-			if ( function_exists( 'wpt_pro_exists' ) && function_exists( 'wpt_save_error' ) ) { // for PRO users, save error data. 
-				wpt_save_error( $id, $auth, $twit, __('This tweet is identical to another Tweet recently sent to this account.','wp-tweets-pro'), '403', time() );
-			}	
+		wpt_saves_error( $id, $auth, $twit, __('This tweet is identical to another Tweet recently sent to this account.','wp-tweets-pro'), '403', time() );
 		return true;
 	} else {
 		global $jdwp_api_post_status;
@@ -309,16 +312,14 @@ function jd_doTwitterAPIPost( $twit, $auth=false, $id=false ) {
 			//wp_mail('joe@joedolson.com','Response code',"$http_code $error" );
 			// end debugging
 			$update = ( !$auth )?update_option( 'jd_last_tweet',$twit ):update_user_meta( $auth, 'wpt_last_tweet',$twit );
-			if ( function_exists( 'wpt_pro_exists' ) && function_exists( 'wpt_save_error' ) ) { // for PRO users, save error data. 
-				wpt_save_error( $id, $auth, $twit, $error, $http_code, time() );
-			}
+			wpt_saves_error( $id, $auth, $twit, $error, $http_code, time() );
 			if ( $http_code == '200' ) {
 				$jwt = get_post_meta( $id, '_jd_wp_twitter', true );
 				if ( !is_array( $jwt ) ){ $jwt=array(); }
 				$jwt[] = urldecode( $twit );
 				if ( empty($_POST) ) { $_POST = array(); }
 				$_POST['_jd_wp_twitter'] = $jwt;
-				update_post_meta( $id,'_jd_wp_twitter', $jwt );			
+				update_post_meta( $id,'_jd_wp_twitter', $jwt );
 			}
 			if ( !$return ) {
 				update_option( 'jd_status_message',$error );
@@ -535,11 +536,10 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='fa
 			case 1:
 			$shrink = urldecode($thispostlink);
 			case 4:
-				if ( function_exists('wp_get_shortlink') ) {
+				$shrink = urldecode($thispostlink);				
+				if ( function_exists('wp_get_shortlink') ) { // use wp_get_shortlink if available
 					$shrink = wp_get_shortlink( $post_ID );
-				} else {
-					$shrink = urldecode($thispostlink);				
-				}
+				} 
 			break;
 			case 2: // updated to v3 3/31/2010
 			$decoded = jd_remote_json( "http://api.bitly.com/v3/shorten?longUrl=".$thispostlink."&login=".$bitlylogin."&apiKey=".$bitlyapi."&format=json" );
@@ -627,6 +627,13 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='fa
 				//$url = $decoded['id'];
 				$shrink = $decoded->id;
 				if ( !is_valid_url($shrink) ) { $shrink = false; }
+			break;
+			case 9:
+			// Twitter Friendly Links
+				$shrink = urldecode($thispostlink);
+				if ( function_exists( 'twitter_link' ) ) { // use twitter_link if available
+					$shrink = twitter_link( $post_ID );
+				}
 			break;
 		}
 		if ($testmode != 'true') {
@@ -774,6 +781,7 @@ function jd_twit( $post_ID ) {
 	wpt_check_version();
 	$jd_tweet_this = get_post_meta( $post_ID, '_jd_tweet_this', true );
 	$newpost = $oldpost = $is_inline_edit = false;
+	$sentence = '';
 	if ( get_option('wpt_inline_edits') != 1 ) {
 		if ( isset($_POST['_inline_edit']) ) { return; }
 	} else {
@@ -852,14 +860,14 @@ function jd_twit( $post_ID ) {
 							$sendToTwitter = jd_doTwitterAPIPost( $sentence, $auth, $post_ID );
 							if ( $post_info['wpt_cotweet'] == 1 && $auth_verified ) {
 								$offset = rand(60,240);	// delay co-tweet by 1-4 minutes.
-								wp_schedule_single_event( time()+$offset, 'wpt_schedule_tweet_action', array( 'id'=>false, 'sentence'=>$sentence2, 'rt'=>0 ) );
+								wp_schedule_single_event( time()+$offset, 'wpt_schedule_tweet_action', array( 'id'=>false, 'sentence'=>$sentence2, 'rt'=>0, 'post_id'=>$post_ID ) );
 							}
 						} else {
 							$time = ( (int) $post_info['wpt_delay_tweet'] )*60;
-							wp_schedule_single_event( time()+$time, 'wpt_schedule_tweet_action', array( 'id'=>$auth, 'sentence'=>$sentence, 'rt'=>0 ) );
+							wp_schedule_single_event( time()+$time, 'wpt_schedule_tweet_action', array( 'id'=>$auth, 'sentence'=>$sentence, 'rt'=>0, 'post_id'=>$post_ID ) );
 							if ( $post_info['wpt_cotweet'] == 1 && $auth_verified ) {
 								$offset = rand(60,240);	// delay co-tweet by 1-4 minutes.						
-								wp_schedule_single_event( time()+$time+$offset, 'wpt_schedule_tweet_action', array( 'id'=>false, 'sentence'=>$sentence2, 'rt'=>0 ) );
+								wp_schedule_single_event( time()+$time+$offset, 'wpt_schedule_tweet_action', array( 'id'=>false, 'sentence'=>$sentence2, 'rt'=>0, 'post_id'=>$post_ID ) );
 							}
 							$sendToTwitter = true;
 						}
@@ -888,10 +896,10 @@ function jd_twit( $post_ID ) {
 									$retweet2 = jd_truncate_tweet( trim( $prepend.$sentence2.$append ), $post_info, $shrink, $post_ID,true, $auth );									
 								}
 								$time = ($post_info['wpt_retweet_after'])*(60*60)*$i;
-								wp_schedule_single_event( time()+$time, 'wpt_schedule_tweet_action', array( 'id'=>$auth, 'sentence'=>$retweet, 'rt'=>$i ) );
+								wp_schedule_single_event( time()+$time, 'wpt_schedule_tweet_action', array( 'id'=>$auth, 'sentence'=>$retweet, 'rt'=>$i, 'post_id'=>$post_ID ) );
 								if ( $post_info['wpt_cotweet'] == 1 && $auth_verified ) {
 									$offset = rand(60,240); // delay each co-tweet by 1-4 minutes
-									wp_schedule_single_event( time()+$time+$offset, 'wpt_schedule_tweet_action', array( 'id'=>false, 'sentence'=>$retweet2, 'rt'=>$i ) );
+									wp_schedule_single_event( time()+$time+$offset, 'wpt_schedule_tweet_action', array( 'id'=>false, 'sentence'=>$retweet2, 'rt'=>$i, 'post_id'=>$post_ID ) );
 								}
 								$sendToTwitter = true;
 								if ( $i == 4 ) { break; }
@@ -1002,14 +1010,14 @@ function jd_twit_xmlrpc( $post_ID ) {
 							$sendToTwitter = jd_doTwitterAPIPost( $sentence, $auth, $post_ID );
 							if ( $post_info['wpt_cotweet'] == 1 && $auth_verified ) {
 								$offset = rand(60,240);	// delay co-tweet by 1-4 minutes.
-								wp_schedule_single_event( time()+$offset, 'wpt_schedule_tweet_action', array( 'id'=>false, 'sentence'=>$sentence2, 'rt'=>0 ) );
+								wp_schedule_single_event( time()+$offset, 'wpt_schedule_tweet_action', array( 'id'=>false, 'sentence'=>$sentence2, 'rt'=>0, 'post_id'=>$post_ID ) );
 							}
 						} else {
 							$time = ( (int) $post_info['wpt_delay_tweet'] )*60;
-							wp_schedule_single_event( time()+$time, 'wpt_schedule_tweet_action', array( 'id'=>$auth, 'sentence'=>$sentence, 'rt'=>0 ) );
+							wp_schedule_single_event( time()+$time, 'wpt_schedule_tweet_action', array( 'id'=>$auth, 'sentence'=>$sentence, 'rt'=>0, 'post_id'=>$post_ID ) );
 							if ( $post_info['wpt_cotweet'] == 1 && $auth_verified ) {
 								$offset = rand(60,240);	// delay co-tweet by 1-4 minutes.						
-								wp_schedule_single_event( time()+$time+$offset, 'wpt_schedule_tweet_action', array( 'id'=>false, 'sentence'=>$sentence2, 'rt'=>0 ) );
+								wp_schedule_single_event( time()+$time+$offset, 'wpt_schedule_tweet_action', array( 'id'=>false, 'sentence'=>$sentence2, 'rt'=>0, 'post_id'=>$post_ID ) );
 							}
 							$sendToTwitter = true;
 						}
@@ -1038,10 +1046,10 @@ function jd_twit_xmlrpc( $post_ID ) {
 									$retweet2 = jd_truncate_tweet( trim( $prepend.$sentence2.$append ), $post_info, $shrink, $post_ID,true, $auth );									
 								}
 								$time = ($post_info['wpt_retweet_after'])*(60*60)*$i;
-								wp_schedule_single_event( time()+$time, 'wpt_schedule_tweet_action', array( 'id'=>$auth, 'sentence'=>$retweet, 'rt'=>$i ) );
+								wp_schedule_single_event( time()+$time, 'wpt_schedule_tweet_action', array( 'id'=>$auth, 'sentence'=>$retweet, 'rt'=>$i, 'post_id'=>$post_ID ) );
 								if ( $post_info['wpt_cotweet'] == 1 && $auth_verified ) {
 									$offset = rand(60,240); // delay each co-tweet by 1-4 minutes
-									wp_schedule_single_event( time()+$time+$offset, 'wpt_schedule_tweet_action', array( 'id'=>false, 'sentence'=>$retweet2, 'rt'=>$i ) );
+									wp_schedule_single_event( time()+$time+$offset, 'wpt_schedule_tweet_action', array( 'id'=>false, 'sentence'=>$retweet2, 'rt'=>$i, 'post_id'=>$post_ID ) );
 								}
 								$sendToTwitter = true;
 								if ( $i == 4 ) { break; }
@@ -1104,6 +1112,7 @@ function store_url($post_ID, $url) {
 		case 5:	case 6:	$ext = '_yourls';break;
 		case 7:	$ext = '_supr';	break;
 		case 8:	$ext = '_goo';	break;
+		case 9: $ext = '_tfl'; break;
 		default:$ext = '_ind';
 	}
 	if ( get_post_meta ( $post_ID, "_wp_jd$ext", TRUE ) != $url ) {
@@ -1112,6 +1121,7 @@ function store_url($post_ID, $url) {
 	switch ( $shortener ) {
 		case 0: case 1: case 2: case 7: case 8: $target = jd_expand_url( $url );break;
 		case 5: case 6: $target = jd_expand_yourl( $url, $shortener );break;
+		case 9: $target = $url; 
 		default: $target = $url;
 	}
 	update_post_meta( $post_ID, '_wp_jd_target', $target );
@@ -1178,9 +1188,8 @@ global $post, $jd_plugin_url, $jd_donate_url;
 		$type = $post->post_type;
 		$status = $post->post_status;
 	}
-	if ( get_post_meta ( $post_id, "_jd_post_meta_fixed", true ) != 'true' ) {
-		jd_fix_post_meta( $post_id );
-	}
+	//echo "<pre>"; print_r( get_post_meta ( $post_id, "_jd_post_meta_fixed", true ) ); echo "</pre>"; die;
+	delete_post_meta( $post_id, "_jd_post_meta_fixed" );
 	$jd_twitter = esc_attr( stripcslashes( get_post_meta($post_id, '_jd_twitter', true ) ) );
 	$jd_template = ( $status == 'publish' )?$wpt_settings[$type]['post-edited-text']:$wpt_settings[$type]['post-published-text'];
 	$jd_tweet_this = get_post_meta( $post_id, '_jd_tweet_this', true );
@@ -1206,9 +1215,24 @@ $hidden_fields = '';
 	foreach ( $previous_tweets as $previous_tweet ) {
 		if ( $previous_tweet != '' ) {
 			$hidden_fields .= "<input type='hidden' name='_jd_wp_twitter[]' value='".esc_attr($previous_tweet)."' />";
-			echo "<li>$previous_tweet <a href='http://twitter.com/intent/tweet?text=$previous_tweet'>Retweet this</a></li>";
+			echo "<li>$previous_tweet <a href='http://twitter.com/intent/tweet?text=".urlencode($previous_tweet)."'>Retweet this</a></li>";
 		}
 	}
+?>
+</ul>
+<p class='error'><strong><?php _e('Failed Tweets','wp-to-twitter'); ?>:</strong></p>
+<ul>
+<?php
+	$list = false;
+	$failed_tweets = get_post_meta( $post_id, '_wpt_failed' );
+	foreach ( $failed_tweets as $failed_tweet ) {
+		if ( !empty($failed_tweet) ) {
+			$ft = $failed_tweet['sentence'];
+			$list = true;
+			echo "<li>$ft <a href='http://twitter.com/intent/tweet?text=".urlencode($ft)."'>Tweet this</a></li>";
+		}
+	}
+	if ( !$list ) { echo "<li>".__('No failed tweets on this post.','wp-to-twitter')."</li>"; }
 ?>
 </ul>
 <?php echo "<div>".$hidden_fields."</div>"; } ?>
@@ -1289,7 +1313,7 @@ function jd_add_twitter_outer_box() {
 		}
 	}
 }
-
+/* This function upgrades post meta from a format not used since July 2010, prior to converting to OAuth. 
 function jd_fix_post_meta( $post_id ) {
 	$oldmeta = array('jd_tweet_this','jd_twitter','wp_jd_clig','wp_jd_bitly','wp_jd_wp','wp_jd_yourls','wp_jd_url','wp_jd_target','jd_wp_twitter');
 	foreach ($oldmeta as $value) {
@@ -1298,9 +1322,9 @@ function jd_fix_post_meta( $post_id ) {
 		delete_post_meta( $post_id, $value );
 	}
 	if ( $post_id != 0 ) {
-	add_post_meta( $post_id, "_jd_post_meta_fixed",'true' );
+		add_post_meta( $post_id, "_jd_post_meta_fixed",'true' );
 	}
-}
+} */
 
 function wpt_admin_scripts( $hook ) {
     if ( $hook == 'post-new.php' || $hook == 'post.php' ) {
@@ -1337,9 +1361,6 @@ function post_jd_twitter( $id ) {
 	if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) { return $id; }
 	if ( isset($_POST['_inline_edit']) ) { return $id; }
 	// update meta data to new format
-	if ( get_post_meta ( $id, "_jd_post_meta_fixed", true ) != 'true' ) {
-		jd_fix_post_meta( $id );
-	}
 	if ( isset( $_POST['_yourls_keyword'] ) ) {
 		$yourls = $_POST[ '_yourls_keyword' ];
 		update_post_meta( $id, '_yourls_keyword', $yourls );			
