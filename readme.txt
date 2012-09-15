@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 2.9.2 (partial)
-Tested up to: 3.4.1
+Tested up to: 3.4.2
 License: GPLv2 or later
 Stable tag: trunk
 
@@ -59,6 +59,12 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.4.10 =
+
+* Bug fix: Error in truncation routine left tweets 2 characters too long when truncating.
+* Change: minor tweak to administrative UI.
+* Added: check of read-write status of application when posting.
 
 = 2.4.9 =
 

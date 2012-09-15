@@ -196,7 +196,7 @@ function wpt_update_settings() {
 		
 	if ( isset( $_POST['submit-type'] ) && $_POST['submit-type'] == 'advanced' ) {
 		update_option( 'jd_tweet_default', ( isset( $_POST['jd_tweet_default'] ) )?$_POST['jd_tweet_default']:0 );
-		update_option( 'jd_tweet_default', ( isset( $_POST['jd_tweet_default'] ) )?$_POST['jd_tweet_default']:0 );		
+		update_option( 'jd_tweet_defaultedit', ( isset( $_POST['jd_tweet_default_edit'] ) )?$_POST['jd_tweet_default_edit']:0 );		
 		update_option( 'wpt_inline_edits', ( isset( $_POST['wpt_inline_edits'] ) )?$_POST['wpt_inline_edits']:0 );		
 		update_option( 'jd_twit_remote',( isset( $_POST['jd_twit_remote'] ) )?$_POST['jd_twit_remote']:0 );
 		update_option( 'jd_twit_custom_url', $_POST['jd_twit_custom_url'] );
@@ -464,7 +464,22 @@ function wpt_update_settings() {
 	<?php $nonce = wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, false).wp_referer_field(false);  echo "<div>$nonce</div>"; ?>
 	<div>	
 		<input type="submit" name="submit" value="<?php _e("Save WP->Twitter Options", 'wp-to-twitter'); ?>" class="button-primary button-side" />	
-			<?php 
+			<fieldset>	
+			<legend><?php _e("Choose your short URL service (account settings below)",'wp-to-twitter' ); ?></legend>
+			<p>
+			<select name="jd_shortener" id="jd_shortener">
+				<option value="3" <?php jd_checkSelect('jd_shortener','3'); ?>><?php _e("Don't shorten URLs.", 'wp-to-twitter'); ?></option>
+				<option value="7" <?php jd_checkSelect('jd_shortener','7'); ?>><?php _e("Use Su.pr for my URL shortener.", 'wp-to-twitter'); ?></option> 
+				<option value="2" <?php jd_checkSelect('jd_shortener','2'); ?>><?php _e("Use Bit.ly for my URL shortener.", 'wp-to-twitter'); ?></option>
+				<option value="8" <?php jd_checkSelect('jd_shortener','8'); ?>><?php _e("Use Goo.gl as a URL shortener.", 'wp-to-twitter'); ?></option> 				
+				<option value="5" <?php jd_checkSelect('jd_shortener','5'); ?>><?php _e("YOURLS (installed on this server)", 'wp-to-twitter'); ?></option>
+				<option value="6" <?php jd_checkSelect('jd_shortener','6'); ?>><?php _e("YOURLS (installed on a remote server)", 'wp-to-twitter'); ?></option>		
+				<option value="4" <?php jd_checkSelect('jd_shortener','4'); ?>><?php _e("Use WordPress as a URL shortener.", 'wp-to-twitter'); ?></option> 
+				<?php if ( function_exists( 'twitter_link' ) ) { ?><option value="9" <?php jd_checkSelect('jd_shortener','9'); ?>><?php _e("Use Twitter Friendly Links.", 'wp-to-twitter'); ?></option><?php } ?>
+			</select>
+			</p>
+			</fieldset>
+		<?php 
 			$post_types = get_post_types( array('public'=>true), 'names' );
 			$wpt_settings = get_option('wpt_post_types');
 
@@ -509,21 +524,7 @@ function wpt_update_settings() {
 				<label for="newlink-published-text"><?php _e("Text for new link updates:", 'wp-to-twitter'); ?></label> <input type="text" name="newlink-published-text" id="newlink-published-text" size="60" maxlength="120" value="<?php echo ( esc_attr( stripslashes( get_option( 'newlink-published-text' ) ) ) ); ?>" /><br /><small><?php _e('Available shortcodes: <code>#url#</code>, <code>#title#</code>, and <code>#description#</code>.','wp-to-twitter'); ?></small>
 			</p>
 			</fieldset>
-			<fieldset>	
-			<legend><?php _e("Choose your short URL service (account settings below)",'wp-to-twitter' ); ?></legend>
-			<p>
-			<select name="jd_shortener" id="jd_shortener">
-				<option value="3" <?php jd_checkSelect('jd_shortener','3'); ?>><?php _e("Don't shorten URLs.", 'wp-to-twitter'); ?></option>
-				<option value="7" <?php jd_checkSelect('jd_shortener','7'); ?>><?php _e("Use Su.pr for my URL shortener.", 'wp-to-twitter'); ?></option> 
-				<option value="2" <?php jd_checkSelect('jd_shortener','2'); ?>><?php _e("Use Bit.ly for my URL shortener.", 'wp-to-twitter'); ?></option>
-				<option value="8" <?php jd_checkSelect('jd_shortener','8'); ?>><?php _e("Use Goo.gl as a URL shortener.", 'wp-to-twitter'); ?></option> 				
-				<option value="5" <?php jd_checkSelect('jd_shortener','5'); ?>><?php _e("YOURLS (installed on this server)", 'wp-to-twitter'); ?></option>
-				<option value="6" <?php jd_checkSelect('jd_shortener','6'); ?>><?php _e("YOURLS (installed on a remote server)", 'wp-to-twitter'); ?></option>		
-				<option value="4" <?php jd_checkSelect('jd_shortener','4'); ?>><?php _e("Use WordPress as a URL shortener.", 'wp-to-twitter'); ?></option> 
-				<?php if ( function_exists( 'twitter_link' ) ) { ?><option value="9" <?php jd_checkSelect('jd_shortener','9'); ?>><?php _e("Use Twitter Friendly Links.", 'wp-to-twitter'); ?></option><?php } ?>
-			</select>
-			</p>
-			</fieldset>
+
 				<div>
 		<input type="hidden" name="submit-type" value="options" />
 		</div>
@@ -537,6 +538,7 @@ function wpt_update_settings() {
 <div class="postbox">
 <h3><?php _e('<abbr title="Uniform Resource Locator">URL</abbr> Shortener Account Settings','wp-to-twitter'); ?></h3>
 	<div class="inside">
+		<?php if ( get_option('jd_shortener') == 7 ) { ?>
 		<div class="panel">
 		<h4 class="supr"><span><?php _e("Your Su.pr account details", 'wp-to-twitter'); ?> <?php _e('(optional)','wp-to-twitter'); ?></span></h4>
 	<form method="post" action="">
@@ -557,62 +559,66 @@ function wpt_update_settings() {
 	</div>
 	</form>
 	</div>
+	<?php } else if ( get_option('jd_shortener') == 2 ) { ?>
 	<div class="panel">
-<h4 class="bitly"><span><?php _e("Your Bit.ly account details", 'wp-to-twitter'); ?></span></h4>
-	<form method="post" action="">
-	<div>
-		<p>
-		<label for="bitlylogin"><?php _e("Your Bit.ly username:", 'wp-to-twitter'); ?></label>
-		<input type="text" name="bitlylogin" id="bitlylogin" value="<?php echo ( esc_attr( get_option( 'bitlylogin' ) ) ) ?>" />
-		<br /><small><?php _e('This must be a standard Bit.ly account. Your Twitter or Facebook log-in will not work.','wp-to-twitter'); ?></small></p>	
-		<p>
-		<label for="bitlyapi"><?php _e("Your Bit.ly <abbr title='application programming interface'>API</abbr> Key:", 'wp-to-twitter'); ?></label>
-		<input type="text" name="bitlyapi" id="bitlyapi" size="40" value="<?php echo ( esc_attr( get_option( 'bitlyapi' ) ) ) ?>" />
-		</p>
-
+	<h4 class="bitly"><span><?php _e("Your Bit.ly account details", 'wp-to-twitter'); ?></span></h4>
+		<form method="post" action="">
 		<div>
-		<input type="hidden" name="submit-type" value="bitlyapi" />
+			<p>
+			<label for="bitlylogin"><?php _e("Your Bit.ly username:", 'wp-to-twitter'); ?></label>
+			<input type="text" name="bitlylogin" id="bitlylogin" value="<?php echo ( esc_attr( get_option( 'bitlylogin' ) ) ) ?>" />
+			<br /><small><?php _e('This must be a standard Bit.ly account. Your Twitter or Facebook log-in will not work.','wp-to-twitter'); ?></small></p>	
+			<p>
+			<label for="bitlyapi"><?php _e("Your Bit.ly <abbr title='application programming interface'>API</abbr> Key:", 'wp-to-twitter'); ?></label>
+			<input type="text" name="bitlyapi" id="bitlyapi" size="40" value="<?php echo ( esc_attr( get_option( 'bitlyapi' ) ) ) ?>" />
+			</p>
+			<p><a href="http://bitly.com/a/your_api_key"><?php _e('View your Bit.ly username and API key','wp-to-twitter'); ?></a></p>
+			<div>
+			<input type="hidden" name="submit-type" value="bitlyapi" />
+			</div>
+		<?php $nonce = wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, false).wp_referer_field(false);  echo "<div>$nonce</div>"; ?>	
+			<p><input type="submit" name="submit" value="<?php _e('Save Bit.ly API Key','wp-to-twitter'); ?>" class="button-primary" /> <input type="submit" name="clear" value="<?php _e('Clear Bit.ly API Key','wp-to-twitter'); ?>" /><br /><small><?php _e("A Bit.ly API key and username is required to shorten URLs via the Bit.ly API and WP to Twitter.", 'wp-to-twitter' ); ?></small></p>
 		</div>
-	<?php $nonce = wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, false).wp_referer_field(false);  echo "<div>$nonce</div>"; ?>	
-		<p><input type="submit" name="submit" value="<?php _e('Save Bit.ly API Key','wp-to-twitter'); ?>" class="button-primary" /> <input type="submit" name="clear" value="<?php _e('Clear Bit.ly API Key','wp-to-twitter'); ?>" /><br /><small><?php _e("A Bit.ly API key and username is required to shorten URLs via the Bit.ly API and WP to Twitter.", 'wp-to-twitter' ); ?></small></p>
+		</form>	
 	</div>
-	</form>	
-</div>
-<div class="panel">
-<h4 class="yourls"><span><?php _e("Your YOURLS account details", 'wp-to-twitter'); ?></span></h4>
-	<form method="post" action="">
-	<div>
-		<p>
-		<label for="yourlspath"><?php _e('Path to your YOURLS config file (Local installations)','wp-to-twitter'); ?></label> <input type="text" id="yourlspath" name="yourlspath" size="60" value="<?php echo ( esc_attr( get_option( 'yourlspath' ) ) ); ?>"/>
-		<small><?php _e('Example:','wp-to-twitter'); ?> <code>/home/username/www/www/yourls/includes/config.php</code></small>
-		</p>				
-		<p>
-		<label for="yourlsurl"><?php _e('URI to the YOURLS API (Remote installations)','wp-to-twitter'); ?></label> <input type="text" id="yourlsurl" name="yourlsurl" size="60" value="<?php echo ( esc_attr( get_option( 'yourlsurl' ) ) ); ?>"/>
-		<small><?php _e('Example:','wp-to-twitter'); ?> <code>http://domain.com/yourls-api.php</code></small>
-		</p>
-		<p>
-		<label for="yourlslogin"><?php _e("Your YOURLS username:", 'wp-to-twitter'); ?></label>
-		<input type="text" name="yourlslogin" id="yourlslogin" size="30" value="<?php echo ( esc_attr( get_option( 'yourlslogin' ) ) ) ?>" />
-		</p>	
-		<p>
-		<label for="yourlsapi"><?php _e("Your YOURLS password:", 'wp-to-twitter'); ?> <?php if ( get_option( 'yourlsapi' ) != '') { _e("<em>Saved</em>",'wp-to-twitter'); } ?></label>
-		<input type="password" name="yourlsapi" id="yourlsapi" size="30" value="" />
-		</p>
-		<p>
-		<input type="radio" name="jd_keyword_format" id="jd_keyword_id" value="1" <?php jd_checkSelect( 'jd_keyword_format',1,'checkbox' ); ?> /> 		<label for="jd_keyword_id"><?php _e("Post ID for YOURLS url slug.",'wp-to-twitter'); ?></label><br />
-		<input type="radio" name="jd_keyword_format" id="jd_keyword" value="2" <?php jd_checkSelect( 'jd_keyword_format',2,'checkbox' ); ?> /> 		<label for="jd_keyword"><?php _e("Custom keyword for YOURLS url slug.",'wp-to-twitter'); ?></label><br />
-		<input type="radio" name="jd_keyword_format" id="jd_keyword_default" value="0" <?php jd_checkSelect( 'jd_keyword_format',0,'checkbox' ); ?> /> <label for="jd_keyword_default"><?php _e("Default: sequential URL numbering.",'wp-to-twitter'); ?></label>
-		</p>
+	<?php } else if ( get_option('jd_shortener') == 5 || get_option('jd_shortener') == 6 ) { ?>
+	<div class="panel">
+	<h4 class="yourls"><span><?php _e("Your YOURLS account details", 'wp-to-twitter'); ?></span></h4>
+		<form method="post" action="">
 		<div>
-		<input type="hidden" name="submit-type" value="yourlsapi" />
+			<p>
+			<label for="yourlspath"><?php _e('Path to your YOURLS config file (Local installations)','wp-to-twitter'); ?></label> <input type="text" id="yourlspath" name="yourlspath" size="60" value="<?php echo ( esc_attr( get_option( 'yourlspath' ) ) ); ?>"/>
+			<small><?php _e('Example:','wp-to-twitter'); ?> <code>/home/username/www/www/yourls/includes/config.php</code></small>
+			</p>				
+			<p>
+			<label for="yourlsurl"><?php _e('URI to the YOURLS API (Remote installations)','wp-to-twitter'); ?></label> <input type="text" id="yourlsurl" name="yourlsurl" size="60" value="<?php echo ( esc_attr( get_option( 'yourlsurl' ) ) ); ?>"/>
+			<small><?php _e('Example:','wp-to-twitter'); ?> <code>http://domain.com/yourls-api.php</code></small>
+			</p>
+			<p>
+			<label for="yourlslogin"><?php _e("Your YOURLS username:", 'wp-to-twitter'); ?></label>
+			<input type="text" name="yourlslogin" id="yourlslogin" size="30" value="<?php echo ( esc_attr( get_option( 'yourlslogin' ) ) ) ?>" />
+			</p>	
+			<p>
+			<label for="yourlsapi"><?php _e("Your YOURLS password:", 'wp-to-twitter'); ?> <?php if ( get_option( 'yourlsapi' ) != '') { _e("<em>Saved</em>",'wp-to-twitter'); } ?></label>
+			<input type="password" name="yourlsapi" id="yourlsapi" size="30" value="" />
+			</p>
+			<p>
+			<input type="radio" name="jd_keyword_format" id="jd_keyword_id" value="1" <?php jd_checkSelect( 'jd_keyword_format',1,'checkbox' ); ?> /> 		<label for="jd_keyword_id"><?php _e("Post ID for YOURLS url slug.",'wp-to-twitter'); ?></label><br />
+			<input type="radio" name="jd_keyword_format" id="jd_keyword" value="2" <?php jd_checkSelect( 'jd_keyword_format',2,'checkbox' ); ?> /> 		<label for="jd_keyword"><?php _e("Custom keyword for YOURLS url slug.",'wp-to-twitter'); ?></label><br />
+			<input type="radio" name="jd_keyword_format" id="jd_keyword_default" value="0" <?php jd_checkSelect( 'jd_keyword_format',0,'checkbox' ); ?> /> <label for="jd_keyword_default"><?php _e("Default: sequential URL numbering.",'wp-to-twitter'); ?></label>
+			</p>
+			<div>
+			<input type="hidden" name="submit-type" value="yourlsapi" />
+			</div>
+		<?php $nonce = wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, false).wp_referer_field(false);  echo "<div>$nonce</div>"; ?>	
+			<p><input type="submit" name="submit" value="<?php _e('Save YOURLS Account Info','wp-to-twitter'); ?>" class="button-primary" /> <input type="submit" name="clear" value="<?php _e('Clear YOURLS password','wp-to-twitter'); ?>" /><br /><small><?php _e("A YOURLS password and username is required to shorten URLs via the remote YOURLS API and WP to Twitter.", 'wp-to-twitter' ); ?></small></p>
 		</div>
-	<?php $nonce = wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, false).wp_referer_field(false);  echo "<div>$nonce</div>"; ?>	
-		<p><input type="submit" name="submit" value="<?php _e('Save YOURLS Account Info','wp-to-twitter'); ?>" class="button-primary" /> <input type="submit" name="clear" value="<?php _e('Clear YOURLS password','wp-to-twitter'); ?>" /><br /><small><?php _e("A YOURLS password and username is required to shorten URLs via the remote YOURLS API and WP to Twitter.", 'wp-to-twitter' ); ?></small></p>
-	</div>
-	</form>		
-	</div>
-	
-</div>
+		</form>		
+		</div>
+	<?php } else { ?>
+	<?php _e('Your shortener does not require any account settings.','wp-to-twitter'); ?>
+	<?php } ?>
+		</div>
 </div>
 </div>
 

@@ -36,7 +36,6 @@ if ( !$auth ) {
 		return false;
 	}
 }
-
 // convert credentials to md5 hash
 function wtt_oauth_credentials_to_hash( $auth=false ) {
 	if ( !$auth ) {

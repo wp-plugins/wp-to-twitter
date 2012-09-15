@@ -33,7 +33,7 @@
 		function calculate(obj){
 			var count = $(obj).val().length;
 			
-			var urlcount = $(obj).val().indexOf('#url#') > -1 ? 14 : 0;
+			var urlcount = $(obj).val().indexOf('#url#') > -1 ? 15 : 0;
 			var titlecount = $(obj).val().indexOf('#title#') > -1 ? ($('#title').val().length-7) : 0;
 			var namecount = $(obj).val().indexOf('#blog#') > -1 ? ($('#wp-admin-bar-site-name').val().length-6) : 0;
 			

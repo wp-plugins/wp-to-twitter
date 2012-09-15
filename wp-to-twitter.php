@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.4.9
+Version: 2.4.10
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -57,7 +57,7 @@ require_once( $wp_plugin_dir . '/wp-to-twitter/wp-to-twitter-manager.php' );
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wpt_version,$jd_plugin_url,$jdwp_api_post_status;
-$wpt_version = "2.4.9";
+$wpt_version = "2.4.10";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
 
@@ -269,9 +269,10 @@ function jd_doTwitterAPIPost( $twit, $auth=false, $id=false ) {
 			$http_code = ($connection)?$connection->http_code:'failed';
 		} else if ( wtt_oauth_test( false ) && ( $connection = wtt_oauth_connection( false ) ) ) {
 			$connection->post( $jdwp_api_post_status, array( 'status' => $twit, 'source' => 'wp-to-twitter'	) );
-			$http_code = ($connection)?$connection->http_code:'failed';		
+			$http_code = ($connection)?$connection->http_code:'failed';	
 		}
 		if ( $connection ) {
+			if ( $connection->http_header['x-access-level'] != 'read-write' ) { $supplement = __('Your Twitter application does not have read and write permissions. Go to <a href="%s">your Twitter apps</a> to modify these settings.','wp-to-twitter'); } else { $supplement = ''; }
 			switch ($http_code) {
 				case '200':
 					$return = true;
@@ -308,6 +309,7 @@ function jd_doTwitterAPIPost( $twit, $auth=false, $id=false ) {
 					$error = __("<strong>Code $http_code</strong>: Twitter did not return a recognized response code.",'wp-to-twitter');
 					break;
 			}
+			$error .= ($supplement != '')?" $supplement":'';
 			// debugging
 			//wp_mail('joe@joedolson.com','Response code',"$http_code $error" );
 			// end debugging
@@ -434,7 +436,7 @@ function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID, $retwe
 		} else {
 			$preferred = $length_array;
 		}
-		$diff = $url_strlen - 19;
+		$diff = $url_strlen - 20;
 		if ( $str_length > ( 140 + $diff ) ) {
 			foreach($preferred AS $key=>$value) {
 				$str_length = mb_strlen( urldecode( fake_normalize( trim( $post_sentence ) ) ),$encoding );
@@ -473,8 +475,8 @@ function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID, $retwe
 		// this is needed in case a tweet needs to be truncated outright and the truncation values aren't in the above.
 		// 1) removes URL 2) checks length of remainder 3) Replaces URL
 		$temp_sentence = str_ireplace( $thisposturl, '#url#', $post_sentence );
-		if ( mb_strlen( fake_normalize( $temp_sentence ) ) > 127 ) { 
-			$post_sentence = trim(mb_substr( $temp_sentence,0,127,$encoding ));
+		if ( mb_strlen( fake_normalize( $temp_sentence ) ) > 125 ) { 
+			$post_sentence = trim(mb_substr( $temp_sentence,0,125,$encoding ));
 			$post_sentence = ( strpos($post_sentence,'#url#') === false )?$post_sentence .' '. $thisposturl:str_ireplace( '#url#',$thisposturl,$post_sentence );
 		}
 	}
