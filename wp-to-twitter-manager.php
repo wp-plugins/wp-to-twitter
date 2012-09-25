@@ -38,7 +38,7 @@ function jd_check_functions() {
 		} else if ( $shortener == 2 ) {
 			$error = htmlentities( get_option('wp_bitly_error') );
 		} else {
-			$error = _('No error information is available for your shortener.','wp-to-twitter');
+			$error = __('No error information is available for your shortener.','wp-to-twitter');
 		}	
 		$message .= __("<li class=\"error\"><strong>WP to Twitter was unable to contact your selected URL shortening service.</strong></li>",'wp-to-twitter');
 		$message .= "<li><code>$error</code></li>";
@@ -144,7 +144,7 @@ function wpt_update_settings() {
 		update_option( 'wp_url_failure','0' );
 		// Default publishing options.
 		update_option( 'jd_tweet_default', '0' );
-		update_option( 'je_tweet_default_edit','0' );
+		update_option( 'jd_tweet_default_edit','0' );
 		update_option( 'wpt_inline_edits', '0' );
 		// Note that default options are set.
 		update_option( 'twitterInitialised', '1' );	
@@ -196,7 +196,7 @@ function wpt_update_settings() {
 		
 	if ( isset( $_POST['submit-type'] ) && $_POST['submit-type'] == 'advanced' ) {
 		update_option( 'jd_tweet_default', ( isset( $_POST['jd_tweet_default'] ) )?$_POST['jd_tweet_default']:0 );
-		update_option( 'jd_tweet_defaultedit', ( isset( $_POST['jd_tweet_default_edit'] ) )?$_POST['jd_tweet_default_edit']:0 );		
+		update_option( 'jd_tweet_default_edit', ( isset( $_POST['jd_tweet_default_edit'] ) )?$_POST['jd_tweet_default_edit']:0 );		
 		update_option( 'wpt_inline_edits', ( isset( $_POST['wpt_inline_edits'] ) )?$_POST['wpt_inline_edits']:0 );		
 		update_option( 'jd_twit_remote',( isset( $_POST['jd_twit_remote'] ) )?$_POST['jd_twit_remote']:0 );
 		update_option( 'jd_twit_custom_url', $_POST['jd_twit_custom_url'] );
@@ -493,14 +493,15 @@ function wpt_update_settings() {
 						}
 				?>
 			<fieldset class='wpt_types'>
-			<legend><?php _e("Settings for type '$type'",'wp-to-twitter' ); ?></legend>
+			
+			<legend><?php printf(__('Settings for type "%1$s"','wp-to-twitter'),$type); ?></legend>
 			<p>
 				<input type="checkbox" name="wpt_post_types[<?php echo $type; ?>][post-published-update]" id="<?php echo $type; ?>-post-published-update" value="1" <?php echo jd_checkCheckbox('wpt_post_types',$type,'post-published-update')?> />
-				<label for="<?php echo $type; ?>-post-published-update"><strong><?php _e("Update when $word $type is published", 'wp-to-twitter'); ?></strong></label> <label for="<?php echo $type; ?>-post-published-text"><br /><?php _e("Text for new $type updates:", 'wp-to-twitter'); ?></label><br /><input type="text" name="wpt_post_types[<?php echo $type; ?>][post-published-text]" id="<?php echo $type; ?>-post-published-text" size="60" maxlength="120" value="<?php if ( isset( $wpt_settings[$type] ) ) { echo esc_attr( stripslashes( $wpt_settings[$type]['post-published-text'] ) ); } ?>" />
+				<label for="<?php echo $type; ?>-post-published-update"><strong><?php printf(__('Update when %1$s %2$s is published','wp-to-twitter'),$word, $type); ?></strong></label> <label for="<?php echo $type; ?>-post-published-text"><br /><?php printf(__('Text for new %1$s updates','wp-to-twitter'),$type); ?></label><br /><input type="text" name="wpt_post_types[<?php echo $type; ?>][post-published-text]" id="<?php echo $type; ?>-post-published-text" size="60" maxlength="120" value="<?php if ( isset( $wpt_settings[$type] ) ) { echo esc_attr( stripslashes( $wpt_settings[$type]['post-published-text'] ) ); } ?>" />
 			</p>
 			<p>
 				<input type="checkbox" name="wpt_post_types[<?php echo $type; ?>][post-edited-update]" id="<?php echo $type; ?>-post-edited-update" value="1" <?php echo jd_checkCheckbox('wpt_post_types',$type,'post-edited-update')?> />
-				<label for="<?php echo $type; ?>-post-edited-update"><strong><?php _e("Update when $word $type is edited", 'wp-to-twitter'); ?></strong></label><br /><label for="<?php echo $type; ?>-post-edited-text"><?php _e("Text for $type editing updates:", 'wp-to-twitter'); ?></label><br /><input type="text" name="wpt_post_types[<?php echo $type; ?>][post-edited-text]" id="<?php echo $type; ?>-post-edited-text" size="60" maxlength="120" value="<?php if ( isset( $wpt_settings[$type] ) ) { echo esc_attr( stripslashes( $wpt_settings[$type]['post-edited-text'] ) ); } ?>" />	
+				<label for="<?php echo $type; ?>-post-edited-update"><strong><?php printf(__('Update when %1$s %2$s is edited','wp-to-twitter'),$word, $type); ?></strong></label><br /><label for="<?php echo $type; ?>-post-edited-text"><?php printf(__('Text for %1$s editing updates','wp-to-twitter'),$type); ?></label><br /><input type="text" name="wpt_post_types[<?php echo $type; ?>][post-edited-text]" id="<?php echo $type; ?>-post-edited-text" size="60" maxlength="120" value="<?php if ( isset( $wpt_settings[$type] ) ) { echo esc_attr( stripslashes( $wpt_settings[$type]['post-edited-text'] ) ); } ?>" />	
 			</p>
 			</fieldset>
 			<?php

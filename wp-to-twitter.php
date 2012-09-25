@@ -260,6 +260,7 @@ function jd_doTwitterAPIPost( $twit, $auth=false, $id=false ) {
 
 	$check = ( !$auth )?get_option('jd_last_tweet'):get_user_meta( $auth, 'wpt_last_tweet', true ); // get user's last tweet
 	if ( $check == $twit || $twit == '' || !$twit ) {
+		//wp_mail( 'joe@joedolson.com','JD matched twit check',"$twit, $auth, $id" ); // DEBUG
 		wpt_saves_error( $id, $auth, $twit, __('This tweet is identical to another Tweet recently sent to this account.','wp-tweets-pro'), '403', time() );
 		return true;
 	} else {
@@ -482,6 +483,7 @@ function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID, $retwe
 	}
 	return $post_sentence;
 }
+
 function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='false' ) {
 		// filter link before sending to shortener or adding analytics
 		$thispostlink = apply_filters('wpt_shorten_link',$thispostlink,$post_ID );
@@ -538,9 +540,10 @@ function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='fa
 			case 1:
 			$shrink = urldecode($thispostlink);
 			case 4:
+				
 				$shrink = urldecode($thispostlink);				
 				if ( function_exists('wp_get_shortlink') ) { // use wp_get_shortlink if available
-					$shrink = wp_get_shortlink( $post_ID );
+					$shrink = ( $post_ID != false )?wp_get_shortlink( $post_ID ):$thispostlink;
 				} 
 			break;
 			case 2: // updated to v3 3/31/2010
@@ -789,7 +792,7 @@ function jd_twit( $post_ID ) {
 	} else {
 		if ( isset($_POST['_inline_edit']) ) { $is_inline_edit = true; }
 	}
-	//wp_mail( 'joe@joedolson.com','JD Tweet This',"Tweet this: $jd_tweet_this" );
+	//wp_mail( 'joe@joedolson.com','JD Tweet This',"Tweet this: $jd_tweet_this" ); // DEBUG
 	if ( $jd_tweet_this != "no" ) {
 		$post_info = jd_post_info( $post_ID );
 		$auth = $post_info['authId'];
@@ -858,7 +861,7 @@ function jd_twit( $post_ID ) {
 					if ( function_exists( 'wpt_pro_exists' ) ) {
 						$user = get_userdata( $auth );
 						$auth_verified = wtt_oauth_test( $auth,'verify' );
-						if ( $post_info['wpt_delay_tweet'] == 0 || $post_info['wpt_no_delay'] == 'on' ) {
+						if ( $post_info['wpt_delay_tweet'] == 0 || $post_info['wpt_delay_tweet'] == '' || $post_info['wpt_no_delay'] == 'on' ) {
 							$sendToTwitter = jd_doTwitterAPIPost( $sentence, $auth, $post_ID );
 							if ( $post_info['wpt_cotweet'] == 1 && $auth_verified ) {
 								$offset = rand(60,240);	// delay co-tweet by 1-4 minutes.
@@ -867,10 +870,13 @@ function jd_twit( $post_ID ) {
 						} else {
 							$time = ( (int) $post_info['wpt_delay_tweet'] )*60;
 							wp_schedule_single_event( time()+$time, 'wpt_schedule_tweet_action', array( 'id'=>$auth, 'sentence'=>$sentence, 'rt'=>0, 'post_id'=>$post_ID ) );
+							//wp_mail( 'joe@joedolson.com','JD Tweet',print_r( array( 'id'=>$auth, 'sentence'=>$sentence, 'rt'=>0, 'post_id'=>$post_ID ),1) ); // DEBUG
+							
 							if ( $post_info['wpt_cotweet'] == 1 && $auth_verified ) {
 								$offset = rand(60,240);	// delay co-tweet by 1-4 minutes.						
 								wp_schedule_single_event( time()+$time+$offset, 'wpt_schedule_tweet_action', array( 'id'=>false, 'sentence'=>$sentence2, 'rt'=>0, 'post_id'=>$post_ID ) );
-							}
+								//wp_mail( 'joe@joedolson.com','JD CoTweet',print_r($post_info,1) ); // DEBU
+								}
 							$sendToTwitter = true;
 						}
 						if ( $post_info['wpt_retweet_after'] != 0 && $post_info['wpt_no_repost'] != 'on' ) {
@@ -1008,7 +1014,7 @@ function jd_twit_xmlrpc( $post_ID ) {
 					if ( function_exists( 'wpt_pro_exists' ) ) {
 						$user = get_userdata( $auth );
 						$auth_verified = wtt_oauth_test( $auth,'verify' );
-						if ( $post_info['wpt_delay_tweet'] == 0 || $post_info['wpt_no_delay'] == 'on' ) {
+						if ( $post_info['wpt_delay_tweet'] == 0 || $post_info['wpt_delay_tweet'] == '' || $post_info['wpt_no_delay'] == 'on' ) {
 							$sendToTwitter = jd_doTwitterAPIPost( $sentence, $auth, $post_ID );
 							if ( $post_info['wpt_cotweet'] == 1 && $auth_verified ) {
 								$offset = rand(60,240);	// delay co-tweet by 1-4 minutes.
@@ -1195,7 +1201,10 @@ global $post, $jd_plugin_url, $jd_donate_url;
 	$jd_twitter = esc_attr( stripcslashes( get_post_meta($post_id, '_jd_twitter', true ) ) );
 	$jd_template = ( $status == 'publish' )?$wpt_settings[$type]['post-edited-text']:$wpt_settings[$type]['post-published-text'];
 	$jd_tweet_this = get_post_meta( $post_id, '_jd_tweet_this', true );
-	if ( $jd_tweet_this == '' ) { $jd_tweet_this = (get_option( 'jd_tweet_default' ) == '1' )?'no':'yes'; } // JCD TODO
+	if ( $jd_tweet_this == '' ) { 
+		$jd_tweet_this = (get_option( 'jd_tweet_default' ) == '1' )?'no':'yes'; 
+	}
+	if ( isset($_GET['action']) && $_GET['action'] == 'edit' && get_option( 'jd_tweet_default_edit' ) == '1' ) { $jd_tweet_this = 'no'; }
 	$jd_short = get_post_meta( $post_id, '_wp_jd_clig', true );
 	$sht = "Cli.gs";
 		if ( $jd_short == "" ) {$jd_short = get_post_meta( $post_id, '_wp_jd_supr', true );	$sht = "Su.pr";	}
@@ -1329,9 +1338,10 @@ function jd_fix_post_meta( $post_id ) {
 } */
 
 function wpt_admin_scripts( $hook ) {
-    if ( $hook == 'post-new.php' || $hook == 'post.php' ) {
+global $current_screen;
+	if ( $current_screen->base == 'post' ) {
 		wp_enqueue_script(  'charCount', plugins_url( 'wp-to-twitter/js/jquery.charcount.js'), array('jquery') );
-    }
+	}
 }
 add_action( 'admin_enqueue_scripts', 'wpt_admin_scripts', 10, 1 );
 
@@ -1378,8 +1388,6 @@ function post_jd_twitter( $id ) {
 	if ( isset( $_POST[ '_jd_tweet_this' ] ) ) {
 		$jd_tweet_this = ( $_POST[ '_jd_tweet_this' ] == 'no')?'no':'yes';
 		update_post_meta( $id, '_jd_tweet_this', $jd_tweet_this );
-	//wp_mail( 'joe@joedolson.com','JD Tweet This a',"Tweet this: $jd_tweet_this" );
-		
 	} else {
 		if ( isset($_POST['_wpnonce'] ) ) {
 			$jd_tweet_default = ( get_option( 'jd_tweet_default' ) == 1 )?'no':'yes';
@@ -1416,7 +1424,9 @@ function jd_twitter_profile() {
 		</table>
 		<?php if ( function_exists('wpt_schedule_tweet') ) { ?>
 		<?php if ( function_exists('wtt_connect_oauth') ) { wtt_connect_oauth( $user_edit ); } ?>
-		<?php if ( user_can( $user_edit, 'update_core' ) ) { echo "<p><em>".__('Note: if all site administrators have set-up their own Twitter accounts, the primary site account (as set on the settings page) is not required, and won\'t be used.','wp-to-twitter').'</em></p>'; } ?>
+		<?php
+			// if ( user_can( $user_edit, 'update_core' ) ) { echo "<p><em>".__('Note: if all site administrators have set-up their own Twitter accounts, the primary site account (as set on the settings page) is not required, and won\'t be used.','wp-to-twitter').'</em></p>'; } 
+		?>
 		<?php } ?>
 
 <?php
@@ -1448,8 +1458,10 @@ function jd_twitter_save_profile(){
 	} else {
 		$edit_id = $user_ID;
 	}
-	update_user_meta($edit_id ,'wp-to-twitter-enable-user' , $_POST['wp-to-twitter-enable-user'] );
-	update_user_meta($edit_id ,'wp-to-twitter-user-username' , $_POST['wp-to-twitter-user-username'] );
+	$enable = ( isset($_POST['wp-to-twitter-enable-user']) )?$_POST['wp-to-twitter-enable-user']:'';
+	$username = ( isset($_POST['wp-to-twitter-user-username']) )?$_POST['wp-to-twitter-user-username']:'';
+	update_user_meta($edit_id ,'wp-to-twitter-enable-user' , $enable );
+	update_user_meta($edit_id ,'wp-to-twitter-user-username' , $username );
 	//WPT PRO
 	apply_filters( 'wpt_save_user', $edit_id, $_POST );
 }

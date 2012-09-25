@@ -155,6 +155,7 @@ $options = array(
 	'jd_twit_custom_url'=>get_option( 'jd_twit_custom_url' ),
 	
 	'jd_tweet_default'=>get_option( 'jd_tweet_default' ),
+	'jd_tweet_default_edit'=>get_option( 'jd_tweet_default_edit' ),
 	'jd_twit_remote'=>get_option( 'jd_twit_remote' ),
 	
 	'use-twitter-analytics'=>get_option( 'use-twitter-analytics' ),
@@ -355,13 +356,13 @@ $plugins_string
 		<code>".__('From:','wp-to-twitter')." \"$current_user->display_name\" &lt;$current_user->user_email&gt;</code>
 		</p>
 		<p>
-		<input type='checkbox' name='has_read_faq' id='has_read_faq' value='on' /> <label for='has_read_faq'>".__('I have read <a href="http://www.joedolson.com/articles/wp-to-twitter/support-2/">the FAQ for this plug-in</a>.','wp-to-twitter')." <span>(required)</span></label>
-		</p>
-		<p>
-		<input type='checkbox' name='has_donated' id='has_donated' value='on' $checked /> <label for='has_donated'>".__('I have <a href="http://www.joedolson.com/donate.php">made a donation to help support this plug-in</a>.','wp-to-twitter')."</label>
-		</p>
-		<p>
-		<label for='support_request'>Support Request:</label><br /><textarea name='support_request' id='support_request' cols='80' rows='10'>".stripslashes($request)."</textarea>
+		<input type='checkbox' name='has_read_faq' id='has_read_faq' value='on' /> <label for='has_read_faq'>".sprintf(__('I have read <a href="%1$s">the FAQ for this plug-in</a> <span>(required)</span>','wp-to-twitter'),'http://www.joedolson.com/articles/wp-to-twitter/support-2/')."
+        </p>
+        <p>
+        <input type='checkbox' name='has_donated' id='has_donated' value='on' $checked /> <label for='has_donated'>".sprintf(__('I have <a href="%1$s">made a donation to help support this plug-in</a>','wp-to-twitter'),'http://www.joedolson.com/donate.php')."</label>
+        </p>
+        <p>
+        <label for='support_request'>".__('Support Request:','wp-to-twitter')."</label><br /><textarea name='support_request' id='support_request' cols='80' rows='10'>".stripslashes($request)."</textarea>
 		</p>
 		<p>
 		<input type='submit' value='".__('Send Support Request','wp-to-twitter')."' name='wpt_support' class='button-primary' />

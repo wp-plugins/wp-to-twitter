@@ -189,6 +189,8 @@ $nonce = ( !$auth )?wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, fals
 			<h4>'.__('WP to Twitter Set-up','wp-to-twitter').'</h4>
 			<p>'.__('Your server time:','wp-to-twitter').' <code>'.$server_time.'</code> '.__("Twitter's time:").' <code>'.$date.'</code>.'.__( 'If these timestamps are not within 5 minutes of each other, your server will not connect to Twitter.','wp-to-twitter').'</p>
 			'.$errors.'
+			<p>'.__('Your server timezone (should be UTC,GMT,Europe/London or equivalent):','wp-to-twitter').date_default_timezone_get().'</p>
+
 			<p>'.__('<em>Note</em>: you will not add your Twitter user information to WP to Twitter; it is not used in this authentication method.', 'wp-to-twitter').'</p> 
 			</div>
 			'.$form.'

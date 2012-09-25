@@ -36,17 +36,20 @@ Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) for
 
 Translations:
 
-* Italian: Updated by [Gianni Diurno](http://www.gidibao.net) and [Aurelio De Rosa](http://www.audero.it)  [2.4.8]
-* Dutch: [Rashid Niamat](http://niamatmediagroup.nl/) [2.4.6]
-* Brazilian Portugese: [Miriam de Paula](http://wpmidia.com.br) [2.4.4]
-* Lithuanian [Nata Strazda](http://www.designcontest.com) [2.3.8]
-* Simplified Chinese: [HostUCan](http://www.hostucan.com) [2.3.8]
-* Traditional Chinese: [HostUCan](http://www.hostucan.com) [2.3.8]
-* Belarussian: [Alex Alexandrov](http://www.webhostingrating.com) [2.3.8]
-* Ukrainian: [Alyona Lompar](http://www.webhostinggeeks.com) [2.3.3]
+Languages available: [visit the WP to Twitter translations page to see how complete these are](http://translate.joedolson.com/projects/wp-to-twitter).
+
+
+* French: Francois-Xavier Benard
+* Italian: Updated by [Gianni Diurno](http://www.gidibao.net) and [Aurelio De Rosa](http://www.audero.it)
+* Dutch: [Rashid Niamat](http://niamatmediagroup.nl/)
+* Brazilian Portugese: [Miriam de Paula](http://wpmidia.com.br)
+* Lithuanian [Nata Strazda](http://www.designcontest.com)
+* Simplified Chinese: [HostUCan](http://www.hostucan.com)
+* Traditional Chinese: [HostUCan](http://www.hostucan.com)
+* Belarussian: [Alex Alexandrov](http://www.webhostingrating.com)
+* Ukrainian: [Alyona Lompar](http://www.webhostinggeeks.com
 * Spanish: [David Gil P&eacute;rez](http://www.sohelet.com)
 * Russian: [Burkov Boris](http://chernobog.ru)
-* French: [Fr&eacute;d&eacute;ric Million](http://www.traducteurs.com)
 * Estonian: [Raivo Ratsep](http://raivoratsep.com)
 * Romanian: [Jibo](http://jibo.ro)
 * Danish: [Rasmus Himmelstrup](http://seoanalyst.dk)
@@ -59,6 +62,13 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.4.11 =
+
+* Bug fix: Mismatched rules for when to enqueue charCount script and when to insert inline script calling that script.
+* Bug fix: Added long-missing 'do not post Tweets by default when editing' option.
+* Bug fix: 2 bugs when sending test Tweet and using WordPress as a shortening service
+* Translation updated: French
 
 = 2.4.10 =
 

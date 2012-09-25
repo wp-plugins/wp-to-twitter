@@ -28,6 +28,7 @@ delete_option( 'jd_twit_blogroll' );
 
 // Default publishing options.
 delete_option( 'jd_tweet_default' );
+delete_option( 'jd_tweet_default_edit' );
 delete_option( 'wpt_inline_edits' );
 
 // Note that default options are set.
