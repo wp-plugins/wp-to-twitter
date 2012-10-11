@@ -128,6 +128,14 @@ function wpt_update_settings() {
 		$administrator->add_cap('wpt_twitter_oauth');
 		$administrator->add_cap('wpt_twitter_custom');
 		$administrator->add_cap('wpt_twitter_switch');
+		$administrator->add_cap('wpt_can_tweet');
+		$editor = get_role('editor');
+		$editor->add_cap('wpt_can_tweet');
+		$author = get_role('author');
+		$author->add_cap('wpt_can_tweet');
+		$contributor = get_role('contributor');
+		$contributor->add_cap('wpt_can_tweet');
+		update_option('wpt_can_tweet','contributor');
 		update_option('wtt_show_custom_tweet','administrator');
 
 		update_option( 'jd_twit_remote', '0' );
@@ -272,6 +280,26 @@ function wpt_update_settings() {
 			}
 		}
 		update_option( 'wpt_twitter_switch',$wpt_twitter_switch);
+		
+		$wpt_can_tweet = $_POST['wpt_can_tweet'];
+		$prev = get_option('wpt_can_tweet');
+		if ( $wpt_can_tweet != $prev ) {
+			$subscriber = get_role('subscriber'); $subscriber->remove_cap('wpt_can_tweet');
+			$contributor = get_role('contributor'); $contributor->remove_cap('wpt_can_tweet');
+			$author = get_role('author'); $author->remove_cap('wpt_can_tweet');
+			$editor = get_role('editor'); $editor->remove_cap('wpt_can_tweet');
+			switch ( $wpt_can_tweet ) {
+				case 'subscriber': $subscriber->add_cap('wpt_can_tweet'); $contributor->add_cap('wpt_can_tweet'); $author->add_cap('wpt_can_tweet'); $editor->add_cap('wpt_can_tweet');   break;
+				case 'contributor': $contributor->add_cap('wpt_can_tweet'); $author->add_cap('wpt_can_tweet'); $editor->add_cap('wpt_can_tweet');  break;
+				case 'author': $author->add_cap('wpt_can_tweet'); $editor->add_cap('wpt_can_tweet'); break;
+				case 'editor':$editor->add_cap('wpt_can_tweet'); break;
+				default: 
+					$role = get_role( $wpt_can_tweet ); 
+					$role->add_cap('wpt_can_tweet');
+				break;
+			}
+		}
+		update_option( 'wpt_can_tweet',$wpt_can_tweet);		
 		
 		update_option( 'disable_url_failure' , ( isset( $_POST['disable_url_failure'] ) )?$_POST['disable_url_failure']:0 );
 		update_option( 'disable_twitter_failure' , ( isset( $_POST['disable_twitter_failure'] ) )?$_POST['disable_twitter_failure']:0 );
@@ -749,27 +777,34 @@ function wpt_update_settings() {
 		$options = '';
 		$permissions = '';
 		$switcher = '';
+		$can_tweet = '';
 		foreach ( $roles as $role=>$rolename ) {
 			$permissions .= ($role !='subscriber')?"<option value='$role'".wtt_option_selected(get_option('wtt_user_permissions'),$role,'option').">$rolename</option>\n":'';
 			$options .= ($role !='subscriber')?"<option value='$role'".wtt_option_selected(get_option('wtt_show_custom_tweet'),$role,'option').">$rolename</option>\n":'';
-			$switcher .= ($role !='subscriber')?"<option value='$role'".wtt_option_selected(get_option('wpt_twitter_switch'),$role,'option').">$rolename</option>\n":'';			
+			$switcher .= ($role !='subscriber')?"<option value='$role'".wtt_option_selected(get_option('wpt_twitter_switch'),$role,'option').">$rolename</option>\n":'';
+			$can_tweet .= ($role !='subscriber')?"<option value='$role'".wtt_option_selected(get_option('wpt_can_tweet'),$role,'option').">$rolename</option>\n":'';
 		}
 		?>
 		    <p>
-			<label for="wtt_user_permissions"><?php _e('Choose the lowest user group that can add their Twitter information','wp-to-twitter'); ?></label> <select id="wtt_user_permissions" name="wtt_user_permissions">
+			<label for="wtt_user_permissions"><?php _e('The lowest user group that can add their Twitter information','wp-to-twitter'); ?></label> <select id="wtt_user_permissions" name="wtt_user_permissions">
 				<?php echo $permissions; ?>
 			</select> 
 			</p>
 		    <p>
-			<label for="wtt_show_custom_tweet"><?php _e('Choose the lowest user group that can see the Custom Tweet options when posting','wp-to-twitter'); ?></label> <select id="wtt_show_custom_tweet" name="wtt_show_custom_tweet">
+			<label for="wtt_show_custom_tweet"><?php _e('The lowest user group that can see the Custom Tweet options when posting','wp-to-twitter'); ?></label> <select id="wtt_show_custom_tweet" name="wtt_show_custom_tweet">
 				<?php echo $options; ?>
 			</select> 
 			</p>
 			<p>
-			<label for="wpt_twitter_switch"><?php _e('User groups above this can toggle the Tweet/Don\'t Tweet option, but not see other custom tweet options.','wp-to-twitter'); ?></label> <select id="wpt_twitter_switch" name="wpt_twitter_switch">
+			<label for="wpt_twitter_switch"><?php _e('The lowest user group that can toggle the Tweet/Don\'t Tweet option','wp-to-twitter'); ?></label> <select id="wpt_twitter_switch" name="wpt_twitter_switch">
 				<?php echo $switcher; ?>
 			</select> 
 			</p>
+			<p>
+			<label for="wpt_can_tweet"><?php _e('The lowest user group that can send Twitter updates','wp-to-twitter'); ?></label> <select id="wpt_can_tweet" name="wpt_can_tweet">
+				<?php echo $can_tweet; ?>
+			</select> 
+			</p>			
 		</fieldset>
 		<fieldset>
 		<legend><?php _e('Disable Error Messages','wp-to-twitter'); ?></legend>

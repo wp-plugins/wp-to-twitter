@@ -63,6 +63,13 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.4.12 =
+
+* Bug fix: Issues with permissions disallowing some behaviors incorrectly.
+* Bug fix: Stripping of nonalphanumerics in hashtags is now UTF8 friendly.
+* Change: Tweaking of the  meaning of some permissions.
+* Add: permission to disallow a role from Tweeting at all.
+
 = 2.4.11 =
 
 * Bug fix: Mismatched rules for when to enqueue charCount script and when to insert inline script calling that script.

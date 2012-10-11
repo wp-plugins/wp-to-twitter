@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.4.11
+Version: 2.4.12
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -57,9 +57,9 @@ require_once( $wp_plugin_dir . '/wp-to-twitter/wp-to-twitter-manager.php' );
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wpt_version,$jd_plugin_url,$jdwp_api_post_status;
-$wpt_version = "2.4.11";
+$wpt_version = "2.4.12";
 $plugin_dir = basename(dirname(__FILE__));
-load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) );
+load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
 $protocol = ( get_option( 'wpt_http' ) == '1' )?'http:':'https:';
 $jdwp_api_post_status = "$protocol//api.twitter.com/1/statuses/update.json";
@@ -201,8 +201,8 @@ $upgrade = version_compare( $prev_version, "2.3.15","<" );
 		$administrator = get_role('administrator');
 		$administrator->add_cap('wpt_twitter_oauth');
 		$administrator->add_cap('wpt_twitter_custom');
-		$administrator->add_cap('wpt_twitter_switch');
-		switch ( get_option('wtt_user_permissions') ) {
+		$administrator->add_cap('wpt_twitter_switch'); // can toggle tweet/don't tweet
+		switch ( get_option('wtt_user_permissions') ) { // users that can add twitter information
 			case 'subscriber': $subscriber->add_cap('wpt_twitter_oauth'); $contributor->add_cap('wpt_twitter_oauth'); $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth');   break;
 			case 'contributor': $contributor->add_cap('wpt_twitter_oauth'); $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth');  break;
 			case 'author': $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth'); break;
@@ -215,7 +215,7 @@ $upgrade = version_compare( $prev_version, "2.3.15","<" );
 				}
 			break;
 		}
-		switch ( get_option('wtt_show_custom_tweet') ) {
+		switch ( get_option('wtt_show_custom_tweet') ) { // users that can compose a custom tweet
 			case 'subscriber': $subscriber->add_cap('wpt_twitter_custom'); $contributor->add_cap('wpt_twitter_custom'); $author->add_cap('wpt_twitter_custom'); $editor->add_cap('wpt_twitter_custom');   break;
 			case 'contributor': $contributor->add_cap('wpt_twitter_custom'); $author->add_cap('wpt_twitter_custom'); $editor->add_cap('wpt_twitter_custom');  break;
 			case 'author': $author->add_cap('wpt_twitter_custom'); $editor->add_cap('wpt_twitter_custom'); break;
@@ -228,6 +228,18 @@ $upgrade = version_compare( $prev_version, "2.3.15","<" );
 				}
 			break;
 		}
+	}
+	$upgrade = version_compare( $prev_version, "2.4.12","<" );
+	if ( $upgrade ) {
+		$administrator = get_role('administrator');
+			$administrator->add_cap('wpt_can_tweet');
+		$editor = get_role('editor');
+			$editor->add_cap('wpt_can_tweet');
+		$author = get_role('author');
+			$author->add_cap('wpt_can_tweet');
+		$contributor = get_role('contributor');
+			$contributor->add_cap('wpt_can_tweet');
+		update_option('wpt_can_tweet','contributor');
 	}
 	update_option( 'wp_to_twitter_version',$wpt_version );
 }	
@@ -1148,7 +1160,7 @@ function generate_hash_tags( $post_ID ) {
 			$tag = $value->name;
 			$replace = get_option( 'jd_replace_character' );
 			$strip = get_option( 'jd_strip_nonan' );
-			$search = "/[^a-zA-Z0-9]/";
+			$search = "/[^\p{L}\p{N}\s]/u";
 			if ($replace == "[ ]") { $replace = ""; }
 			$tag = str_ireplace( " ",$replace,trim( $tag ) );
 			if ($strip == '1') { $tag = preg_replace( $search, $replace, $tag ); }
@@ -1183,6 +1195,8 @@ function jd_add_twitter_old_box() {
 }
 
 function jd_add_twitter_inner_box() {
+
+if ( current_user_can('wpt_can_tweet') ) {
 global $post, $jd_plugin_url, $jd_donate_url;
 	$post_length = 140;
 	$wpt_settings = get_option('wpt_post_types');
@@ -1259,28 +1273,28 @@ $hidden_fields = '';
 		echo "<label for='yourls_keyword'>".__('YOURLS Custom Keyword','wp-to-twitter')."</label> <input type='text' name='_yourls_keyword' id='yourls_keyword' value='$custom_keyword' />";
 	}
 ?>
+<?php } else { ?>
+<input type="hidden" name='_jd_twitter' value='' />
 <?php } ?>
-<?php if ( current_user_can( 'wpt_twitter_custom' ) || current_user_can( 'wpt_twitter_switch' ) || current_user_can('update_core') ) { ?>
+<?php if ( current_user_can( 'wpt_twitter_switch' ) || current_user_can('update_core') ) { ?>
 <?php
 	// "no" means 'Don't Tweet' (is checked)
 	$nochecked = ( $jd_tweet_this == 'no' )?' checked="checked"':'';
 	$yeschecked = ( $jd_tweet_this == 'yes' )?' checked="checked"':'';
 ?>
 <p><input type="radio" name="_jd_tweet_this" value="no" id="jtn"<?php echo $nochecked; ?> /> <label for="jtn"><?php _e("Don't Tweet this post.", 'wp-to-twitter'); ?></label> <input type="radio" name="_jd_tweet_this" value="yes" id="jty"<?php echo $yeschecked; ?> /> <label for="jty"><?php _e("Tweet this post.", 'wp-to-twitter'); ?></label></p>
+<?php } else { ?>
+	<input type='hidden' name='_jd_tweet_this' value='<?php echo $jd_tweet_this; ?>' />
 <?php } ?>
 <?php /* WPT PRO */ ?>
 <?php 
-if ( function_exists('wpt_pro_exists') ) { 
+if ( function_exists('wpt_pro_exists') && ( current_user_can( 'wpt_twitter_custom' ) || current_user_can( 'update_core' ) ) ) { 
 	wpt_schedule_values( $post_id ); 
 } ?>
 <?php /* WPT PRO */ ?>
-<?php if ( !current_user_can( 'wpt_twitter_custom' ) || !current_user_can( 'wpt_twitter_switch' ) ) { ?>
+<?php if ( !current_user_can( 'wpt_twitter_custom' ) && !current_user_can( 'update_core' ) ) { ?>
 <div>
 <p><?php _e('Access to customizing WP to Twitter values is not allowed for your user role.','wp-to-twitter'); ?></p>
-<?php if ( !current_user_can( 'wpt_twitter_switch' ) ) { ?>
-<input type="hidden" name='_jd_tweet_this' value='<?php echo $jd_tweet_this; ?>' />
-<?php } ?>
-<input type="hidden" name='_jd_twitter' value='' />
 <?php 
 if ( function_exists('wpt_pro_exists') ) { 
 	wpt_schedule_values( $post_id, 'hidden' ); 
@@ -1300,9 +1314,11 @@ if ($post_status == 'publish') {
 }
 ?>
 </p>
+<?php if ( current_user_can( 'wpt_twitter_custom' ) || current_user_can( 'update_core' ) ) { ?>
 <p>
 <?php _e("Twitter posts are a maximum of 140 characters; Twitter counts URLs as 19 characters. Template tags: <code>#url#</code>, <code>#title#</code>, <code>#post#</code>, <code>#category#</code>, <code>#date#</code>, <code>#modified#</code>, <code>#author#</code>, <code>#account#</code>, <code>#tags#</code>, or <code>#blog#</code>.", 'wp-to-twitter') ?> 
 </p>
+<?php } ?>
 <p>
 <?php if ( !function_exists( 'wpt_pro_exists' ) ) { ?>
 <a target="_blank" href="<?php echo admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'); ?>#get-support"><?php _e('Get Support', 'wp-to-twitter', 'wp-to-twitter') ?></a> &bull; <strong><a target="__blank" href="<?php echo $jd_donate_url; ?>"><?php _e('Upgrade to WP Tweets Pro', 'wp-to-twitter', 'wp-to-twitter') ?></a></strong> &raquo;
@@ -1310,7 +1326,11 @@ if ($post_status == 'publish') {
 <a target="_blank" href="<?php echo admin_url('admin.php?page=wp-tweets-pro'); ?>#get-support"><?php _e('Get Support', 'wp-to-twitter', 'wp-to-twitter') ?></a> &raquo;
 <?php } ?>
 </p>
-<?php } 
+<?php 
+	} else { // permissions: this user isn't allowed to Tweet;
+		_e('Your role does not have the ability to Post Tweets from this site.','wp-to-twitter'); ?> <input type='hidden' name='_jd_tweet_this' value='no' /> <?php
+	}
+} 
 function jd_add_twitter_outer_box() {
 	wpt_check_version();
 	$wpt_post_types = get_option('wpt_post_types');
@@ -1324,7 +1344,7 @@ function jd_add_twitter_outer_box() {
 		}
 	}
 }
-/* This function upgrades post meta from a format not used since July 2010, prior to converting to OAuth. 
+/* This function upgraded post meta from a format not used since July 2010, prior to converting to OAuth. 
 function jd_fix_post_meta( $post_id ) {
 	$oldmeta = array('jd_tweet_this','jd_twitter','wp_jd_clig','wp_jd_bitly','wp_jd_wp','wp_jd_yourls','wp_jd_url','wp_jd_target','jd_wp_twitter');
 	foreach ($oldmeta as $value) {
