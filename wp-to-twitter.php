@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.4.12
+Version: 2.4.13
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -57,7 +57,7 @@ require_once( $wp_plugin_dir . '/wp-to-twitter/wp-to-twitter-manager.php' );
 require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
 
 global $wpt_version,$jd_plugin_url,$jdwp_api_post_status;
-$wpt_version = "2.4.12";
+$wpt_version = "2.4.13";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
@@ -229,16 +229,16 @@ $upgrade = version_compare( $prev_version, "2.3.15","<" );
 			break;
 		}
 	}
-	$upgrade = version_compare( $prev_version, "2.4.12","<" );
+	$upgrade = version_compare( $prev_version, "2.4.13","<" );
 	if ( $upgrade ) {
 		$administrator = get_role('administrator');
 			$administrator->add_cap('wpt_can_tweet');
 		$editor = get_role('editor');
-			$editor->add_cap('wpt_can_tweet');
+			if ( is_object( $editor ) ) { $editor->add_cap('wpt_can_tweet'); }
 		$author = get_role('author');
-			$author->add_cap('wpt_can_tweet');
+			if ( is_object( $author ) ) { $author->add_cap('wpt_can_tweet'); }
 		$contributor = get_role('contributor');
-			$contributor->add_cap('wpt_can_tweet');
+			if ( is_object( $contributor ) ) { $contributor->add_cap('wpt_can_tweet'); }
 		update_option('wpt_can_tweet','contributor');
 	}
 	update_option( 'wp_to_twitter_version',$wpt_version );
@@ -369,6 +369,7 @@ function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID, $retwe
 		$post = get_post( $post_ID );
 		$user_account = get_user_meta( $auth,'wtt_twitter_username', true ) ;
 	$author = ( $user_account != '' )?"$user_account":get_the_author_meta( 'display_name',$post->post_author );
+	
 	$tags = generate_hash_tags( $post_ID );
 	$account = "@".get_option('wtt_twitter_username');
 	$date = trim($postinfo['postDate']);
@@ -384,6 +385,7 @@ function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID, $retwe
 			$account = "@$user_account";
 		}
 	}
+	if ( get_user_meta( $auth, 'wpt-remove', true ) == 'on' ) { $account = ''; }
 	if ( !$retweet ) {	
 		if ( get_option( 'jd_twit_prepend' ) != "" && $sentence != '' ) {
 			$sentence = get_option( 'jd_twit_prepend' ) . " " . $sentence;
@@ -1427,6 +1429,7 @@ function jd_twitter_profile() {
 
 		$is_enabled = get_user_meta( $user_edit, 'wp-to-twitter-enable-user',true );
 		$twitter_username = get_user_meta( $user_edit, 'wp-to-twitter-user-username',true );
+		$wpt_remove = get_user_meta( $user_edit, 'wpt-remove', true );
 		?>
 		<h3><?php _e('WP Tweets User Settings', 'wp-to-twitter'); ?></h3>
 		<?php if ( function_exists('wpt_connect_oauth_message') ) { wpt_connect_oauth_message( $user_edit ); } ?>
@@ -1441,6 +1444,10 @@ function jd_twitter_profile() {
 			<th scope="row"><label for="wp-to-twitter-user-username"><?php _e("Your Twitter Username", 'wp-to-twitter'); ?></label></th>
 			<td><input type="text" name="wp-to-twitter-user-username" id="wp-to-twitter-user-username" value="<?php echo esc_attr( $twitter_username ); ?>" /> <?php _e('Enter your own Twitter username.', 'wp-to-twitter'); ?></td>
 		</tr>
+		<tr>
+			<th scope="row"><label for="wpt-remove"><?php _e("Hide account name in Tweets", 'wp-to-twitter'); ?></label></th>
+			<td><input type="checkbox" name="wpt-remove" id="wpt-remove" value="on"<?php if ( $wpt_remove == 'on' ) { echo ' checked="checked"'; } ?> /> <?php _e('Do not display my account in the #account# template tag.', 'wp-to-twitter'); ?></td>
+		</tr>		
 		</table>
 		<?php if ( function_exists('wpt_schedule_tweet') ) { ?>
 		<?php if ( function_exists('wtt_connect_oauth') ) { wtt_connect_oauth( $user_edit ); } ?>
@@ -1480,8 +1487,10 @@ function jd_twitter_save_profile(){
 	}
 	$enable = ( isset($_POST['wp-to-twitter-enable-user']) )?$_POST['wp-to-twitter-enable-user']:'';
 	$username = ( isset($_POST['wp-to-twitter-user-username']) )?$_POST['wp-to-twitter-user-username']:'';
+	$wpt_remove = ( isset($_POST['wpt-remove']) )?'on':'';
 	update_user_meta($edit_id ,'wp-to-twitter-enable-user' , $enable );
 	update_user_meta($edit_id ,'wp-to-twitter-user-username' , $username );
+	update_user_meta($edit_id ,'wpt-remove' , $wpt_remove );
 	//WPT PRO
 	apply_filters( 'wpt_save_user', $edit_id, $_POST );
 }

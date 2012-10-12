@@ -130,11 +130,11 @@ function wpt_update_settings() {
 		$administrator->add_cap('wpt_twitter_switch');
 		$administrator->add_cap('wpt_can_tweet');
 		$editor = get_role('editor');
-		$editor->add_cap('wpt_can_tweet');
+		if ( is_object( $editor ) ) { $editor->add_cap('wpt_can_tweet'); }
 		$author = get_role('author');
-		$author->add_cap('wpt_can_tweet');
+		if ( is_object( $author ) ) { $author->add_cap('wpt_can_tweet'); }
 		$contributor = get_role('contributor');
-		$contributor->add_cap('wpt_can_tweet');
+		if ( is_object( $contributor ) ) { $contributor->add_cap('wpt_can_tweet'); }
 		update_option('wpt_can_tweet','contributor');
 		update_option('wtt_show_custom_tweet','administrator');
 
@@ -229,10 +229,22 @@ function wpt_update_settings() {
 			$author = get_role('author'); $author->remove_cap('wpt_twitter_oauth');
 			$editor = get_role('editor'); $editor->remove_cap('wpt_twitter_oauth');
 			switch ( $wtt_user_permissions ) {
-				case 'subscriber': $subscriber->add_cap('wpt_twitter_oauth'); $contributor->add_cap('wpt_twitter_oauth'); $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth');   break;
-				case 'contributor': $contributor->add_cap('wpt_twitter_oauth'); $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth');  break;
-				case 'author': $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth'); break;
-				case 'editor':$editor->add_cap('wpt_twitter_oauth'); break;
+				case 'subscriber': 
+					if ( is_object( $subscriber ) ) { 
+						$subscriber->add_cap('wpt_twitter_oauth'); $contributor->add_cap('wpt_twitter_oauth'); $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth');   break;
+					}					
+				case 'contributor': 
+					if ( is_object( $contributor ) ) { 
+						$contributor->add_cap('wpt_twitter_oauth'); $author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth');  break;
+					}
+				case 'author': 
+					if ( is_object( $author ) ) { 
+						$author->add_cap('wpt_twitter_oauth'); $editor->add_cap('wpt_twitter_oauth'); break;
+					}
+				case 'editor':
+					if ( is_object( $editor ) ) { 
+						$editor->add_cap('wpt_twitter_oauth'); break;
+					}
 				default: 
 					$role = get_role( $wtt_user_permissions ); 
 					$role->add_cap('wpt_twitter_oauth');
@@ -249,10 +261,22 @@ function wpt_update_settings() {
 			$author = get_role('author'); $author->remove_cap('wpt_twitter_custom');
 			$editor = get_role('editor'); $editor->remove_cap('wpt_twitter_custom');
 			switch ( $wtt_show_custom_tweet ) {
-				case 'subscriber': $subscriber->add_cap('wpt_twitter_custom'); $contributor->add_cap('wpt_twitter_custom'); $author->add_cap('wpt_twitter_custom'); $editor->add_cap('wpt_twitter_custom');   break;
-				case 'contributor': $contributor->add_cap('wpt_twitter_custom'); $author->add_cap('wpt_twitter_custom'); $editor->add_cap('wpt_twitter_custom');  break;
-				case 'author': $author->add_cap('wpt_twitter_custom'); $editor->add_cap('wpt_twitter_custom'); break;
-				case 'editor':$editor->add_cap('wpt_twitter_custom'); break;
+				case 'subscriber': 
+					if ( is_object( $subscriber ) ) { 
+						$subscriber->add_cap('wpt_twitter_custom'); $contributor->add_cap('wpt_twitter_custom'); $author->add_cap('wpt_twitter_custom'); $editor->add_cap('wpt_twitter_custom');   break;
+					}
+				case 'contributor': 
+					if ( is_object( $contributor ) ) { 
+						$contributor->add_cap('wpt_twitter_custom'); $author->add_cap('wpt_twitter_custom'); $editor->add_cap('wpt_twitter_custom');  break;
+					}
+				case 'author': 
+					if ( is_object( $author ) ) { 
+						$author->add_cap('wpt_twitter_custom'); $editor->add_cap('wpt_twitter_custom'); break;
+					}
+				case 'editor':
+					if ( is_object( $editor ) ) { 
+						$editor->add_cap('wpt_twitter_custom'); break;
+					}
 				default: 
 					$role = get_role( $wtt_show_custom_tweet ); 
 					$role->add_cap('wpt_twitter_custom');
@@ -269,10 +293,22 @@ function wpt_update_settings() {
 			$author = get_role('author'); $author->remove_cap('wpt_twitter_switch');
 			$editor = get_role('editor'); $editor->remove_cap('wpt_twitter_switch');
 			switch ( $wpt_twitter_switch ) {
-				case 'subscriber': $subscriber->add_cap('wpt_twitter_switch'); $contributor->add_cap('wpt_twitter_switch'); $author->add_cap('wpt_twitter_switch'); $editor->add_cap('wpt_twitter_switch');   break;
-				case 'contributor': $contributor->add_cap('wpt_twitter_switch'); $author->add_cap('wpt_twitter_switch'); $editor->add_cap('wpt_twitter_switch');  break;
-				case 'author': $author->add_cap('wpt_twitter_switch'); $editor->add_cap('wpt_twitter_switch'); break;
-				case 'editor':$editor->add_cap('wpt_twitter_switch'); break;
+				case 'subscriber': 
+					if ( is_object( $subscriber ) ) { 
+						$subscriber->add_cap('wpt_twitter_switch'); $contributor->add_cap('wpt_twitter_switch'); $author->add_cap('wpt_twitter_switch'); $editor->add_cap('wpt_twitter_switch');   break;
+					}
+				case 'contributor': 
+					if ( is_object( $contributor ) ) { 
+						$contributor->add_cap('wpt_twitter_switch'); $author->add_cap('wpt_twitter_switch'); $editor->add_cap('wpt_twitter_switch');  break;
+					}
+				case 'author': 
+					if ( is_object( $author ) ) { 
+						$author->add_cap('wpt_twitter_switch'); $editor->add_cap('wpt_twitter_switch'); break;
+					}
+				case 'editor':
+					if ( is_object( $editor ) ) { 
+						$editor->add_cap('wpt_twitter_switch'); break;
+					}
 				default: 
 					$role = get_role( $wpt_twitter_switch ); 
 					$role->add_cap('wpt_twitter_switch');
@@ -289,10 +325,22 @@ function wpt_update_settings() {
 			$author = get_role('author'); $author->remove_cap('wpt_can_tweet');
 			$editor = get_role('editor'); $editor->remove_cap('wpt_can_tweet');
 			switch ( $wpt_can_tweet ) {
-				case 'subscriber': $subscriber->add_cap('wpt_can_tweet'); $contributor->add_cap('wpt_can_tweet'); $author->add_cap('wpt_can_tweet'); $editor->add_cap('wpt_can_tweet');   break;
-				case 'contributor': $contributor->add_cap('wpt_can_tweet'); $author->add_cap('wpt_can_tweet'); $editor->add_cap('wpt_can_tweet');  break;
-				case 'author': $author->add_cap('wpt_can_tweet'); $editor->add_cap('wpt_can_tweet'); break;
-				case 'editor':$editor->add_cap('wpt_can_tweet'); break;
+				case 'subscriber': 
+					if ( is_object( $subscriber ) ) { 
+						$subscriber->add_cap('wpt_can_tweet'); $contributor->add_cap('wpt_can_tweet'); $author->add_cap('wpt_can_tweet'); $editor->add_cap('wpt_can_tweet');   break;
+					}
+				case 'contributor': 
+					if ( is_object( $contributor ) ) { 
+						$contributor->add_cap('wpt_can_tweet'); $author->add_cap('wpt_can_tweet'); $editor->add_cap('wpt_can_tweet');  break;
+					}
+				case 'author': 
+					if ( is_object( $author ) ) { 
+						$author->add_cap('wpt_can_tweet'); $editor->add_cap('wpt_can_tweet'); break;
+					}
+				case 'editor':
+					if ( is_object( $editor ) ) { 
+						$editor->add_cap('wpt_can_tweet'); break;
+					}
 				default: 
 					$role = get_role( $wpt_can_tweet ); 
 					$role->add_cap('wpt_can_tweet');

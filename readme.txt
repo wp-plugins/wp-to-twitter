@@ -63,6 +63,11 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.4.13 =
+
+* Issue if standard roles had been removed.
+* Added option to hide account information in Tweets as a user profile setting. (If checked, return #account# as blank for that user.)
+
 = 2.4.12 =
 
 * Bug fix: Issues with permissions disallowing some behaviors incorrectly.
