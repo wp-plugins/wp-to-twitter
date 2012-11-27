@@ -2,8 +2,8 @@
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
-Requires at least: 2.9.2 (partial)
-Tested up to: 3.4.2
+Requires at least: 3.0.6
+Tested up to: 3.5
 License: GPLv2 or later
 Stable tag: trunk
 
@@ -62,6 +62,25 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.5.0 =
+
+* Updated French Translation
+* Fixed issue with multiple-savings of post meta data
+* Added #displayname# template tag.
+* Deprecated support for WordPress versions before 3.0.6.
+* Updated to Twitter API endpoint version 1.1
+* Updated: t.co URLs are now 20 characters. (Were 19.)
+* Change: length of any prepended or appended text is included in character counts.
+* Bug fix: Prepend/Append fields not stripped.
+* Bug fix: undefined variable when Tweeting links
+* Bug fix: truncating of Tweets when no URL shortcode is included.
+* Bug fix: Post had to have a successful previous tweet in order to display failed tweets.
+* Bug fix: if your Twitter application has read/write/dm capabilities, will no longer claim you don't have read/write caps.
+* Improved information in failed tweet listing
+* Clear admin message immediately when clearing errors.
+* Change: test type for default Tweet is positive test if Tweets should be posted by default; negative if not. 
+* Verified: WP 3.5 compatibility.
 
 = 2.4.13 =
 

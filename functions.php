@@ -18,10 +18,10 @@ function jd_remote_json( $url, $array=true ) {
 
 function is_valid_url( $url ) {
     if (is_string($url)) {
-	$url = urldecode($url);
-	return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);	
+		$url = urldecode($url);
+		return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);	
 	} else {
-	return false;
+		return false;
 	}
 }
 // Fetch a remote page. Input url, return content
@@ -315,7 +315,7 @@ $plugins_string
 		$request = ( !empty($_POST['support_request']) )?stripslashes($_POST['support_request']):false;
 		$has_donated = ( $_POST['has_donated'] == 'on')?"Donor":"No donation";
 		$has_read_faq = ( $_POST['has_read_faq'] == 'on')?"Read FAQ":false;
-		if ( function_exists( 'wpt_pro_exists' ) ) { $pro = " PRO"; } else { $pro = ''; }
+		if ( function_exists( 'wpt_pro_exists' ) && wpt_pro_exists() == true ) { $pro = " PRO"; } else { $pro = ''; }
 		$subject = "WP to Twitter$pro support request. $has_donated";
 		$message = $request ."\n\n". $data;
 		$from = "From: \"$current_user->display_name\" <$current_user->user_email>\r\n";
@@ -327,20 +327,20 @@ $plugins_string
 		} else {
 			wp_mail( "plugins@joedolson.com",$subject,$message,$from );
 			if ( $has_donated == 'Donor' || $has_purchased == 'Purchaser' ) {
-				echo "<div class='message updated'><p>".__('Thank you for supporting the continuing development of this plug-in! I\'ll get back to you as soon as I can.','wp-to-twitter')."</p></div>";		
+				echo "<div class='message updated'><p>".sprintf(__('Thank you for supporting the continuing development of this plug-in! I\'ll get back to you as soon as I can. Please ensure that you can receive email at <code>%s</code>.','wp-to-twitter'),$current_user->user_email)."</p></div>";		
 			} else {
-				echo "<div class='message updated'><p>".__('I cannot provide free support, but will treat your request as a bug report, and will incorporate any permanent solutions I discover into the plug-in.','wp-to-twitter')."</p></div>";				
+				echo "<div class='message updated'><p>".sprintf(__("Thanks for using WP to Twitter. Please ensure that you can receive email at <code>%s</code>.",'wp-to-twitter'),$current_user->user_email)."</p></div>";				
 			}
 		}
 	}
-	if ( function_exists( 'wpt_pro_exists' ) ) { $checked="checked='checked'"; } else { $checked=''; }
+	if ( function_exists( 'wpt_pro_exists' ) && wpt_pro_exists() == true ) { $checked="checked='checked'"; } else { $checked=''; }
 		$admin_url = ( is_plugin_active('wp-tweets-pro/wpt-pro-functions.php') )?admin_url('admin.php?page=wp-tweets-pro'):admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php');
 
 	echo "
 	<form method='post' action='$admin_url'>
 		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('wp-to-twitter-nonce')."' /></div>
 		<div>";
-		if ( function_exists( 'wpt_pro_exists' ) ) {
+		if ( function_exists( 'wpt_pro_exists' ) && wpt_pro_exists() == true  ) {
 		echo "
 		<p>".
 		__('Please include your license key in your support request.','wp-to-twitter')
@@ -353,7 +353,7 @@ $plugins_string
 		}
 		echo "
 		<p>
-		<code>".__('From:','wp-to-twitter')." \"$current_user->display_name\" &lt;$current_user->user_email&gt;</code>
+		<code>".__('Reply to:','wp-to-twitter')." \"$current_user->display_name\" &lt;$current_user->user_email&gt;</code>
 		</p>
 		<p>
 		<input type='checkbox' name='has_read_faq' id='has_read_faq' value='on' /> <label for='has_read_faq'>".sprintf(__('I have read <a href="%1$s">the FAQ for this plug-in</a> <span>(required)</span>','wp-to-twitter'),'http://www.joedolson.com/articles/wp-to-twitter/support-2/')."

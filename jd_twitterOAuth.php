@@ -20,7 +20,7 @@ class jd_TwitterOAuth {
   /* Contains the last API call. */
   public $url;
   /* Set up the API root URL. */
-  public $host = "http://api.twitter.com/1/";
+  public $host = "http://api.twitter.com/1.1/";
   /* Set timeout default. */
   public $format = 'json';
   /* Decode returned json data. */
@@ -130,6 +130,16 @@ class jd_TwitterOAuth {
     return $response;
   }
 /**
+* Wrapper for MEDIA requests
+*/
+    function media($url, $parameters = array()) {
+    $response = $this->WPOAuthRequest( $url,$parameters,'MEDIA' );
+    if ($this->format === 'json' && $this->decode_json) {
+      return json_decode($response);
+    }
+    return $response;
+  }
+/**
 * Wrapper for GET requests
 */
     function get($url, $parameters = array()) {
@@ -160,7 +170,12 @@ class jd_TwitterOAuth {
 		$args = wp_parse_args($req->to_postdata());
        	$response = wp_remote_post( $url, array('body'=>$args));
        	break;
-    }
+	case 'MEDIA':
+		$url = $req->get_normalized_http_url();
+		$args = wp_parse_args($req->to_postdata());
+       	$response = wp_remote_post( $url, array( 'headers'=>array('Content-type'=>'multipart/form-data'),'body'=>$args ) );
+       	break;
+    }	
 
 	if ( is_wp_error( $response ) )	return false;
 

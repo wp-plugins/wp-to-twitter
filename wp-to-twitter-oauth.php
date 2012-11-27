@@ -77,7 +77,7 @@ switch ( $post['oauth_settings'] ) {
 				$message = 'failed';
 				if ( $connection = wtt_oauth_connection( $auth ) ) {
 					$protocol = ( get_option( 'wpt_http' ) == '1' )?'http:':'https:';
-					$data = $connection->get($protocol.'//api.twitter.com/1/account/verify_credentials.json');
+					$data = $connection->get($protocol.'//api.twitter.com/1.1/account/verify_credentials.json');
 					if ($connection->http_code == '200') {
 						$error_information = '';
 						$decode = json_decode($data);
@@ -151,7 +151,7 @@ if ( !$auth ) {
 }
 $server_time = date( DATE_COOKIE );
 $protocol = ( get_option( 'wpt_http' ) == '1' )?'http:':'https:';
-$response = wp_remote_get( "$protocol//api.twitter.com/1/" );
+$response = wp_remote_get( "$protocol//api.twitter.com/1.1/" );
 if ( is_wp_error( $response ) ) {
 	$warning = '';
 	$error = $response->errors;
