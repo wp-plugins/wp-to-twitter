@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.5.0
+Version: 2.5.1
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -33,8 +33,9 @@ if ( version_compare( $wp_version , '3.0' , '<' ) && is_ssl() ) {
 } else {
 	$wp_content_url = get_option( 'siteurl' );
 }
-$wp_content_url .= '/wp-content';
-$wp_content_dir = ABSPATH . 'wp-content';
+
+$wp_content_url = content_url();
+$wp_content_dir = str_replace( '/plugins/wp-to-twitter','',plugin_dir_path( __FILE__ ) );
 
 if ( defined('WP_CONTENT_URL') ) {
 	$wp_content_url = constant('WP_CONTENT_URL');
@@ -45,20 +46,17 @@ if ( defined('WP_CONTENT_DIR') ) {
 
 define( 'WPT_DEBUG',false );
 
-$wp_plugin_url = $wp_content_url . '/plugins';
-$wp_plugin_dir = $wp_content_dir . '/plugins';
-$wpmu_plugin_url = $wp_content_url . '/mu-plugins';
-$wpmu_plugin_dir = $wp_content_dir . '/mu-plugins';
+$wp_plugin_url = plugins_url();
 include_once( ABSPATH . 'wp-admin/includes/plugin.php' ); // required in order to access is_plugin_active()
 
 if ( version_compare( phpversion(), '5.0', '<' ) ) {
 	$warning = __('WP to Twitter requires PHP version 5 or above. Please upgrade PHP to run WP to Twitter.','wp-to-twitter' );
 	add_action('admin_notices', create_function( '', "echo \"<div class='error'><p>$warning</p></div>\";" ) );
 } else {
-	require_once( $wp_plugin_dir . '/wp-to-twitter/wp-to-twitter-oauth.php' );
+	require_once( plugin_dir_path(__FILE__).'/wp-to-twitter-oauth.php' );
 }
-require_once( $wp_plugin_dir . '/wp-to-twitter/wp-to-twitter-manager.php' );
-require_once( $wp_plugin_dir . '/wp-to-twitter/functions.php' );
+require_once( plugin_dir_path(__FILE__).'/wp-to-twitter-manager.php' );
+require_once( plugin_dir_path(__FILE__).'/functions.php' );
 
 global $wpt_version,$jd_plugin_url;
 $wpt_version = "2.5.0";
@@ -459,12 +457,11 @@ function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID, $retwe
 	$post_sentence = str_ireplace( '#displayname#', $display_name, $post_sentence );
 	$post_sentence = str_ireplace( '#tags#', $tags, $post_sentence );
 	$post_sentence = str_ireplace( '#modified#', $modified, $post_sentence );
-
 	$url_strlen = mb_strlen( urldecode( fake_normalize( $thisposturl ) ), $encoding );
 	// check total length 
 	$str_length = mb_strlen( urldecode( fake_normalize( $post_sentence ) ), $encoding );
 	if ( $str_length < 140 ) {
-		if ( mb_strlen( fake_normalize ( $post_sentence ) ) > 140 ) { $post_sentence = mb_substr( $post_sentence,0,139,$encoding ); }	
+		if ( mb_strlen( fake_normalize ( $post_sentence ) ) > 140 ) { $post_sentence = mb_substr( $post_sentence,0,140,$encoding ); }
 	} else {
 		// what is the excerpt supposed to be?
 		$length = get_option( 'jd_post_excerpt' );
@@ -496,7 +493,7 @@ function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID, $retwe
 		} else {
 			$preferred = $length_array;
 		}
-		$diff = $url_strlen - 20;
+		$diff = ( ($url_strlen - 20) > 0 )?$url_strlen-20:0;
 		if ( $str_length > ( 140 + $diff ) ) {
 			foreach($preferred AS $key=>$value) {
 				$str_length = mb_strlen( urldecode( fake_normalize( trim( $post_sentence ) ) ),$encoding );
@@ -510,7 +507,6 @@ function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID, $retwe
 					// these elements make no sense if truncated, so remove them entirely.
 						$new_value = '';
 					} else if ( $key == 'tags' ) {
-						// replaced, keeps the tags as such intact.
                         // remove any stray hash characters due to string truncation
                         // $new_value = str_replace( ' # ','',' '.mb_substr( $old_value,0,-( $trim ),$encoding ).' ');                       
                         if (mb_strlen($old_value)-$trim <= 2) {
@@ -528,18 +524,20 @@ function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID, $retwe
 					// put URL back before checking length
 					$post_sentence = str_ireplace( '#url#', $thisposturl, $post_sentence ); 					
 				} else {
-					if ( mb_strlen( fake_normalize ( $post_sentence ),$encoding ) > ( 140 + $diff ) ) { $post_sentence = mb_substr( $post_sentence,0,( 139 + $diff ),$encoding ); }
+					if ( mb_strlen( fake_normalize ( $post_sentence ),$encoding ) > ( 140 + $diff ) ) { $post_sentence = mb_substr( $post_sentence,0,( 140 + $diff ),$encoding ); }
 				}
 			}
 		}
 		// this is needed in case a tweet needs to be truncated outright and the truncation values aren't in the above.
 		// 1) removes URL 2) checks length of remainder 3) Replaces URL
-		$temp_sentence = str_ireplace( $thisposturl, '#url#', $post_sentence );
-		if ( mb_strlen( fake_normalize( $temp_sentence ) ) > 120 && $temp_sentence != $post_sentence ) { 
-			$post_sentence = trim(mb_substr( $temp_sentence,0,120,$encoding ));
-			// it's possible to trim off the #url# part in this process. If that happens, put it back.
-			$sub_sentence = (strpos($sentence, '#url#')===false )?$post_sentence:$post_sentence .' '. $thisposturl;
-			$post_sentence = ( strpos($post_sentence,'#url#') === false )?$sub_sentence:str_ireplace( '#url#',$thisposturl,$post_sentence );
+		if ( mb_strlen( fake_normalize( $post_sentence ) ) > 140 ) {
+			$temp_sentence = str_ireplace( $thisposturl, '#url#', $post_sentence );
+			if ( mb_strlen( fake_normalize( $temp_sentence ) ) > 120 && $temp_sentence != $post_sentence ) { 
+				$post_sentence = trim(mb_substr( $temp_sentence,0,120,$encoding ));
+				// it's possible to trim off the #url# part in this process. If that happens, put it back.
+				$sub_sentence = (strpos($sentence, '#url#')===false )?$post_sentence:$post_sentence .' '. $thisposturl;
+				$post_sentence = ( strpos($post_sentence,'#url#') === false )?$sub_sentence:str_ireplace( '#url#',$thisposturl,$post_sentence );
+			}
 		}
 	}
 	return mb_substr( $post_sentence,0,140,$encoding ); // final truncation to ensure an appropriate length.
@@ -1663,7 +1661,6 @@ function jd_addTwitterAdminPages() {
 }
 add_action( 'admin_head', 'jd_addTwitterAdminStyles' );
 function jd_addTwitterAdminStyles() {
-global $wp_plugin_url, $wp_plugin_dir;
 	if ( isset($_GET['page']) && ( 1==1 || $_GET['page'] == "wp-to-twitter" || $_GET['page'] == "wp-to-twitter/wp-to-twitter.php" || $_GET['page'] == "wp-tweets-pro" || $_GET['page'] == "wp-to-twitter-schedule" || $_GET['page'] == "wp-to-twitter-tweets" || $_GET['page'] == "wp-to-twitter-errors" ) ) {
 		echo '<link type="text/css" rel="stylesheet" href="'.plugins_url('/wp-to-twitter/styles.css').'" />';
 	}

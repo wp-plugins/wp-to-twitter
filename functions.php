@@ -248,10 +248,7 @@ get_currentuserinfo();
 	$charset = get_bloginfo('charset');
 	// server
 	$php_version = phpversion();
-	
-	$curl_init = ( function_exists('curl_init') )?'yes':'no';
-	$curl_exec = ( function_exists('curl_exec') )?'yes':'no';
-	
+
 	// theme data
 	if ( function_exists( 'wp_get_theme' ) ) {
 	$theme = wp_get_theme();
@@ -283,7 +280,7 @@ get_currentuserinfo();
 ================ Installation Data ====================
 ==WP to Twitter==
 Version: $version
-Twitter username: $wtt_twitter_username
+Twitter username: http://twitter.com/$wtt_twitter_username
 $license
 
 ==WordPress:==
@@ -297,8 +294,6 @@ Charset: $charset
 PHP Version: $php_version
 Server Software: $_SERVER[SERVER_SOFTWARE]
 User Agent: $_SERVER[HTTP_USER_AGENT]
-cURL Init: $curl_init
-cURL Exec: $curl_exec
 
 ==Theme:==
 Name: $theme_name

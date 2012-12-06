@@ -28,7 +28,7 @@ if ( !$auth ) {
 	$ots = get_user_meta( $auth,'oauth_token_secret',true);
 }
 	if ( !empty( $ack ) && !empty( $acs ) && !empty( $ot ) && !empty( $ots ) ) {	
-		require_once( WP_PLUGIN_DIR . '/wp-to-twitter/jd_twitterOAuth.php' );
+		require_once( plugin_dir_path(__FILE__).'/jd_twitterOAuth.php' );
 		$connection = new jd_TwitterOAuth( $ack,$acs,$ot,$ots );
 		$connection->useragent = 'WP to Twitter http://www.joedolson.com/articles/wp-to-twitter';
 		return $connection;

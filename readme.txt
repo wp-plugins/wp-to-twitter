@@ -36,24 +36,13 @@ Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) for
 
 Translations:
 
-Languages available: [visit the WP to Twitter translations page to see how complete these are](http://translate.joedolson.com/projects/wp-to-twitter).
+Visit the [WP to Twitter translations page](http://translate.joedolson.com/projects/wp-to-twitter) to see how complete these are.
 
+Languages available (in order of completeness):
+French, Italian, Dutch, Chinese, Portuguese, Japanese, Romanian, Danish, Estonian, Russian, Lithuanian, Belarusian, Ukrainian, German, Irish, Spanish, Turkish, Persian
 
-* French: Francois-Xavier Benard
-* Italian: Updated by [Gianni Diurno](http://www.gidibao.net) and [Aurelio De Rosa](http://www.audero.it)
-* Dutch: [Rashid Niamat](http://niamatmediagroup.nl/)
-* Brazilian Portugese: [Miriam de Paula](http://wpmidia.com.br)
-* Lithuanian [Nata Strazda](http://www.designcontest.com)
-* Simplified Chinese: [HostUCan](http://www.hostucan.com)
-* Traditional Chinese: [HostUCan](http://www.hostucan.com)
-* Belarussian: [Alex Alexandrov](http://www.webhostingrating.com)
-* Ukrainian: [Alyona Lompar](http://www.webhostinggeeks.com
-* Spanish: [David Gil P&eacute;rez](http://www.sohelet.com)
-* Russian: [Burkov Boris](http://chernobog.ru)
-* Estonian: [Raivo Ratsep](http://raivoratsep.com)
-* Romanian: [Jibo](http://jibo.ro)
-* Danish: [Rasmus Himmelstrup](http://seoanalyst.dk)
-* Japanese: [kndb](http://blog.layer8.sh/)
+Translator Credits (in no particular order)*:
+[Ale Gonzalez](http://60rpm.tv/i), [Outshine Solutions](http://outshinesolutions.com), [Jakob Smith](http://www.omkalfatring.dk/),, [globus2008](http://wordpress.org/support/profile/globus2008), Frederic Escallier, Luud Heck, Wim Strijbos, [Daisuke Abe](http://www.alter-ego.jp/), [Alex](http://blog.sotvoril.ru/), Mehmet Ko&ccedil;ali, Uwe Jonas, Florian Edelmann, Efva Nyberg, [Sabir Musta](http://mustaphasabir.altervista.org), Massimo Sgobino, Leonardo Kfoury, Alexandre Carvalho, Amir Khalilnejad, [Aurelio De Rosa](http://www.audero.it/), Bayram Dede, Dani Locasati, Dario Nunez, Dirk Ginader, Evren Erten, Fl&aacute;vio Pereira, Francois-Xavier Benard, [Gianni Diurno](http://www.gidibao.net), Giksi, Heinz Ochsner,  Kazuyuki Kumai, Liam Boogar, Maks, Mano, Massimo Sgobino, Mohsen Aghaei, Oscar, [Rashid Niamat](http://niamatmediagroup.nl/), Stefan Wikstrom, Thomas Meyer, Vedar Ozdemir, [Vikas Arora](http://www.wiznicworld.com), [Miriam de Paula](http://wpmidia.com.br), [Miriam de Paula](http://wpmidia.com.br), [HostUCan](http://www.hostucan.com), [Alex Alexandrov](http://www.webhostingrating.com), [Alyona Lompar](http://www.webhostinggeeks.com), [David Gil P&eacute;rez](http://www.sohelet.com), [Burkov Boris](http://chernobog.ru), [Raivo Ratsep](http://raivoratsep.com), [Jibo](http://jibo.ro), [Rasmus Himmelstrup](http://seoanalyst.dk), [kndb](http://blog.layer8.sh/)
 
 Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
 
@@ -62,6 +51,12 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.5.1 =
+
+* Removed hardcoding of /wp-content/
+* Fixed truncation bug causing Tweets to be truncated when unnecessary.
+* Improved error messages.
 
 = 2.5.0 =
 
@@ -746,4 +741,4 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
-* 2.4.8 Broken #account# template tag.
+* 2.5.1 Should fix problem with some unnecessary truncation of Tweets.

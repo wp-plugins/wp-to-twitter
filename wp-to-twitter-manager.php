@@ -175,7 +175,7 @@ function wpt_update_settings() {
 		} else if ( $oauth_message == "failed" ) {
 			print('
 				<div id="message" class="updated fade">
-					<p>'.__('WP to Twitter failed to connect with Twitter. Try enabling OAuth debugging.', 'wp-to-twitter').'</p>
+					<p>'.__('WP to Twitter failed to connect with Twitter. Try <a href="#wpt_http">switching to an HTTP connection</a>.', 'wp-to-twitter').'</p>
 				</div>
 
 			');
