@@ -243,7 +243,7 @@ get_currentuserinfo();
 	// send fields for all plugins
 	$wp_version = get_bloginfo('version');
 	$home_url = home_url();
-	$wp_url = get_bloginfo('wpurl');
+	$wp_url = site_url();
 	$language = get_bloginfo('language');
 	$charset = get_bloginfo('charset');
 	// server

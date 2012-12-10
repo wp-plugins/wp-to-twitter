@@ -524,7 +524,7 @@ function wpt_update_settings() {
 <h2><?php _e("WP to Twitter Options", 'wp-to-twitter'); ?></h2>
 <div id="wpt_settings_page" class="postbox-container" style="width: 70%">
 
-<?php $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . PLUGINDIR . '/' . dirname( plugin_basename(__FILE__) ); ?>
+<?php $wp_to_twitter_directory = get_bloginfo( 'wpurl' ) . '/' . WP_PLUGIN_DIR . '/' . dirname( plugin_basename(__FILE__) ); ?>
 		
 <div class="metabox-holder">
 
@@ -645,7 +645,7 @@ function wpt_update_settings() {
 			<p>
 			<label for="bitlylogin"><?php _e("Your Bit.ly username:", 'wp-to-twitter'); ?></label>
 			<input type="text" name="bitlylogin" id="bitlylogin" value="<?php echo ( esc_attr( get_option( 'bitlylogin' ) ) ) ?>" />
-			<br /><small><?php _e('This must be a standard Bit.ly account. Your Twitter or Facebook log-in will not work.','wp-to-twitter'); ?></small></p>	
+			<br /><small><a href="http://bitly.com/a/your_api_key"><?php _e('Get your Bit.ly API information.','wp-to-twitter'); ?></a></small></p>	
 			<p>
 			<label for="bitlyapi"><?php _e("Your Bit.ly <abbr title='application programming interface'>API</abbr> Key:", 'wp-to-twitter'); ?></label>
 			<input type="text" name="bitlyapi" id="bitlyapi" size="40" value="<?php echo ( esc_attr( get_option( 'bitlyapi' ) ) ) ?>" />

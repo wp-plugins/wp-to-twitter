@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.5.1
+Version: 2.5.2
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -59,7 +59,7 @@ require_once( plugin_dir_path(__FILE__).'/wp-to-twitter-manager.php' );
 require_once( plugin_dir_path(__FILE__).'/functions.php' );
 
 global $wpt_version,$jd_plugin_url;
-$wpt_version = "2.5.0";
+$wpt_version = "2.5.2";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
@@ -462,6 +462,7 @@ function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID, $retwe
 	$str_length = mb_strlen( urldecode( fake_normalize( $post_sentence ) ), $encoding );
 	if ( $str_length < 140 ) {
 		if ( mb_strlen( fake_normalize ( $post_sentence ) ) > 140 ) { $post_sentence = mb_substr( $post_sentence,0,140,$encoding ); }
+		return $post_sentence;
 	} else {
 		// what is the excerpt supposed to be?
 		$length = get_option( 'jd_post_excerpt' );
@@ -537,10 +538,15 @@ function jd_truncate_tweet( $sentence, $postinfo, $thisposturl, $post_ID, $retwe
 				// it's possible to trim off the #url# part in this process. If that happens, put it back.
 				$sub_sentence = (strpos($sentence, '#url#')===false )?$post_sentence:$post_sentence .' '. $thisposturl;
 				$post_sentence = ( strpos($post_sentence,'#url#') === false )?$sub_sentence:str_ireplace( '#url#',$thisposturl,$post_sentence );
+			} else {
+				return $post_sentence; // only longer if URL is included, therefore fine.
 			}
+			return $post_sentence; // has been shortened due to too much text.
+		} else {
+			return $post_sentence; // was never a problem, but got this far anyway.
 		}
 	}
-	return mb_substr( $post_sentence,0,140,$encoding ); // final truncation to ensure an appropriate length.
+	return $post_sentence; // catch all, should never happen. But no reason not to include it.
 }
 
 function jd_shorten_link( $thispostlink, $thisposttitle, $post_ID, $testmode='false' ) {
@@ -1325,7 +1331,6 @@ global $post, $jd_plugin_url, $jd_donate_url;
 		$type = $post->post_type;
 		$status = $post->post_status;
 	}
-	delete_post_meta( $post_id, "_jd_post_meta_fixed" );
 	$jd_twitter = esc_attr( stripcslashes( get_post_meta($post_id, '_jd_twitter', true ) ) );
 	$jd_template = ( $status == 'publish' )?$wpt_settings[$type]['post-edited-text']:$wpt_settings[$type]['post-published-text'];
 	$jd_tweet_this = get_post_meta( $post_id, '_jd_tweet_this', true );
@@ -1684,12 +1689,12 @@ if ( get_option( 'jd_individual_twitter_users')=='1') {
 
 if ( get_option( 'disable_url_failure' ) != '1' ) {
 	if ( get_option( 'wp_url_failure' ) == '1' && !( isset($_POST['submit-type']) && $_POST['submit-type'] == 'clear-error' ) ) {
-		add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } echo '<div class=\"error\"><p>';_e('There\'s been an error shortening your URL! <a href=\"".get_bloginfo('wpurl')."/wp-admin/options-general.php?page=wp-to-twitter/wp-to-twitter.php\">Visit your WP to Twitter settings page</a> to get more information and to clear this error message.','wp-to-twitter'); echo '</p></div>';" ) );
+		add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } echo '<div class=\"error\"><p>';_e('There\'s been an error shortening your URL! <a href=\"".site_url()."/wp-admin/options-general.php?page=wp-to-twitter/wp-to-twitter.php\">Visit your WP to Twitter settings page</a> to get more information and to clear this error message.','wp-to-twitter'); echo '</p></div>';" ) );
 	}
 }
 if ( get_option( 'disable_twitter_failure' ) != '1' ) {
 	if ( get_option( 'wp_twitter_failure' ) == '1' && !( isset($_POST['submit-type']) && $_POST['submit-type'] == 'clear-error' ) ) {
-		add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } echo '<div class=\"error\"><p>';_e('There\'s been an error posting your Twitter status! <a href=\"".get_bloginfo('wpurl')."/wp-admin/options-general.php?page=wp-to-twitter/wp-to-twitter.php\">Visit your WP to Twitter settings page</a> to get more information and to clear this error message.','wp-to-twitter'); echo '</p></div>';" ) );
+		add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } echo '<div class=\"error\"><p>';_e('There\'s been an error posting your Twitter status! <a href=\"".site_url()."/wp-admin/options-general.php?page=wp-to-twitter/wp-to-twitter.php\">Visit your WP to Twitter settings page</a> to get more information and to clear this error message.','wp-to-twitter'); echo '</p></div>';" ) );
 	}
 }
 

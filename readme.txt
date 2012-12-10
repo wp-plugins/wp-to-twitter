@@ -52,6 +52,11 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.5.2 =
+
+* Another bug fix to truncating. 
+* Updated Italian translation.
+
 = 2.5.1 =
 
 * Removed hardcoding of /wp-content/
@@ -741,4 +746,4 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
-* 2.5.1 Should fix problem with some unnecessary truncation of Tweets.
+* 2.5.2 Should fix problem with some unnecessary truncation of Tweets.
