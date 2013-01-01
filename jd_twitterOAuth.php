@@ -168,12 +168,12 @@ class jd_TwitterOAuth {
 	case 'POST':
 		$url = $req->get_normalized_http_url();
 		$args = wp_parse_args($req->to_postdata());
-       	$response = wp_remote_post( $url, array('body'=>$args));
+       	$response = wp_remote_post( $url, array('body'=>$args,'timeout' => 30));
        	break;
 	case 'MEDIA':
 		$url = $req->get_normalized_http_url();
 		$args = wp_parse_args($req->to_postdata());
-       	$response = wp_remote_post( $url, array( 'headers'=>array('Content-type'=>'multipart/form-data'),'body'=>$args ) );
+       	$response = wp_remote_post( $url, array( 'headers'=>array('Content-type'=>'multipart/form-data'),'body'=>$args,'timeout' => 30 ) );
        	break;
     }	
 

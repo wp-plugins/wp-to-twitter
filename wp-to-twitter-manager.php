@@ -29,8 +29,7 @@ function jd_check_functions() {
 	$testurl =  get_bloginfo( 'url' );
 	$shortener = get_option( 'jd_shortener' );
 	$title = urlencode( 'Your blog home' );
-	$shrink = jd_shorten_link( $testurl, $title, false, 'true' );
-	$api_url = $jdwp_api_post_status;
+	$shrink = apply_filters( 'wptt_shorten_link', $testurl, $title, false, true );
 	$yourls_URL = "";
 	if ($shrink == FALSE) {
 		if ($shortener == 1) {
@@ -49,7 +48,7 @@ function jd_check_functions() {
 	//check twitter credentials
 	if ( wtt_oauth_test() ) {
 		$rand = rand(1000000,9999999);
-		$testpost = jd_doTwitterAPIPost( "This is a test of WP to Twitter. $shrink ($rand)" );
+		$testpost = jd_doTwitterAPIPost( "This is a test of WP->Twitter. $shrink ($rand)" );
 			if ($testpost) {
 				$message .= __("<li><strong>WP to Twitter successfully submitted a status update to Twitter.</strong></li>",'wp-to-twitter'); 
 			} else {
@@ -541,21 +540,19 @@ function wpt_update_settings() {
 	<?php $nonce = wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, false).wp_referer_field(false);  echo "<div>$nonce</div>"; ?>
 	<div>	
 		<input type="submit" name="submit" value="<?php _e("Save WP->Twitter Options", 'wp-to-twitter'); ?>" class="button-primary button-side" />	
-			<fieldset>	
-			<legend><?php _e("Choose your short URL service (account settings below)",'wp-to-twitter' ); ?></legend>
-			<p>
+			<p>	
+			<label><?php _e("Choose a short URL service (account settings below)",'wp-to-twitter' ); ?></label>
 			<select name="jd_shortener" id="jd_shortener">
 				<option value="3" <?php echo jd_checkSelect('jd_shortener','3'); ?>><?php _e("Don't shorten URLs.", 'wp-to-twitter'); ?></option>
-				<option value="7" <?php echo jd_checkSelect('jd_shortener','7'); ?>><?php _e("Use Su.pr for my URL shortener.", 'wp-to-twitter'); ?></option> 
-				<option value="2" <?php echo jd_checkSelect('jd_shortener','2'); ?>><?php _e("Use Bit.ly for my URL shortener.", 'wp-to-twitter'); ?></option>
-				<option value="8" <?php echo jd_checkSelect('jd_shortener','8'); ?>><?php _e("Use Goo.gl as a URL shortener.", 'wp-to-twitter'); ?></option> 				
-				<option value="5" <?php echo jd_checkSelect('jd_shortener','5'); ?>><?php _e("YOURLS (installed on this server)", 'wp-to-twitter'); ?></option>
-				<option value="6" <?php echo jd_checkSelect('jd_shortener','6'); ?>><?php _e("YOURLS (installed on a remote server)", 'wp-to-twitter'); ?></option>		
-				<option value="4" <?php echo jd_checkSelect('jd_shortener','4'); ?>><?php _e("Use WordPress as a URL shortener.", 'wp-to-twitter'); ?></option> 
+				<option value="7" <?php echo jd_checkSelect('jd_shortener','7'); ?>>Su.pr</option> 
+				<option value="2" <?php echo jd_checkSelect('jd_shortener','2'); ?>>Bit.ly</option>
+				<option value="8" <?php echo jd_checkSelect('jd_shortener','8'); ?>>Goo.gl</option> 				
+				<option value="5" <?php echo jd_checkSelect('jd_shortener','5'); ?>><?php _e("YOURLS (on this server)", 'wp-to-twitter'); ?></option>
+				<option value="6" <?php echo jd_checkSelect('jd_shortener','6'); ?>><?php _e("YOURLS (on a remote server)", 'wp-to-twitter'); ?></option>		
+				<option value="4" <?php echo jd_checkSelect('jd_shortener','4'); ?>>WordPress</option> 
 				<?php if ( function_exists( 'twitter_link' ) ) { ?><option value="9" <?php echo jd_checkSelect('jd_shortener','9'); ?>><?php _e("Use Twitter Friendly Links.", 'wp-to-twitter'); ?></option><?php } ?>
 			</select>
 			</p>
-			</fieldset>
 		<?php 
 			$post_types = get_post_types( array('public'=>true), 'names' );
 			$wpt_settings = get_option('wpt_post_types');
@@ -592,7 +589,7 @@ function wpt_update_settings() {
 				<label for="comment-published-update"><strong><?php _e("Update Twitter when new comments are posted", 'wp-to-twitter'); ?></strong></label><br />				
 				<label for="comment-published-text"><?php _e("Text for new comments:", 'wp-to-twitter'); ?></label> <input type="text" name="comment-published-text" id="comment-published-text" size="60" maxlength="120" value="<?php echo ( esc_attr( stripslashes( get_option( 'comment-published-text' ) ) ) ); ?>" />
 			</p>
-			<p><?php _e('In addition to the above short tags, comment templates can use <code>#commenter#</code> to post the commenter\'s provided name in the Tweet. <em>Use this feature at your own risk</em>, as it will let anybody who can post a comment on your site post a phrase in your Twitter stream.','wp-to-twitter'); ?>
+			<p><?php _e('In addition to standard template tags, comments can use <code>#commenter#</code> to post the commenter\'s name in the Tweet. <em>Use this at your own risk</em>, as it lets anybody who can post a comment on your site post a phrase in your Twitter stream.','wp-to-twitter'); ?>
 			</fieldset>					
 			<fieldset>
 			<legend><?php _e('Settings for Links','wp-to-twitter'); ?></legend>
@@ -927,6 +924,10 @@ function wpt_sidebar() {
 			<h3><strong><?php _e('WP to Twitter Support','wp-to-twitter'); ?></strong></h3>			
 			<?php } ?>
 			<div class="inside resources">
+			<p>
+			<a href="https://twitter.com/intent/tweet?screen_name=joedolson&text=WP%20to%20Twitter" class="twitter-mention-button" data-size="large" data-related="joedolson">Tweet to @joedolson</a>
+			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+			</p>
 			<ul>
 			<li><a href="?page=wp-to-twitter/wp-to-twitter.php&amp;export=settings"><?php _e("View Settings",'wp-to-twitter'); ?></a> / 
 			<?php if ( function_exists( 'wpt_pro_exists' ) ) { $support = admin_url('admin.php?page=wp-tweets-pro'); } else { $support = admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php');} ?>

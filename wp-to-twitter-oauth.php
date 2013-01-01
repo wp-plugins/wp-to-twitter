@@ -1,6 +1,4 @@
 <?php
-// WPT PRO: Apply contextual usage so that all functions can be used by independent users. //
-
 // function to test credentials
 function wtt_oauth_test( $auth=false, $context='' ) {
 	if ( !$auth ) {
