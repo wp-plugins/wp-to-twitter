@@ -52,6 +52,10 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.5.9 =
+
+* Using tag slug instead of tag name is a problem for languages with characters outside of [RFC 1738](http://www.faqs.org/rfcs/rfc1738.html) URL specs. Transformed into selectable option, default off.
+
 = 2.5.8 =
 
 * WP to Twitter now uses tag slug instead of tag name to convert tags into hashtags. Allows you to customize the hashtag sent for each tag.
