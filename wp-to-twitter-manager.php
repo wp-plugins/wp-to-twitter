@@ -651,10 +651,8 @@ function wpt_update_settings() {
 		<?php
 		global $wp_roles;
 		$roles = $wp_roles->get_names();
-		$options = '';
-		$permissions = '';
-		$switcher = '';
-		$can_tweet = '';
+		$roles = array_map( 'translate_user_role', $roles );
+		$options = $permissions = $switcher = $can_tweet = '';
 		foreach ( $roles as $role=>$rolename ) {
 			$permissions .= ($role !='subscriber')?"<option value='$role'".wtt_option_selected(get_option('wtt_user_permissions'),$role,'option').">$rolename</option>\n":'';
 			$options .= ($role !='subscriber')?"<option value='$role'".wtt_option_selected(get_option('wtt_show_custom_tweet'),$role,'option').">$rolename</option>\n":'';

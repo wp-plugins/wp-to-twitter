@@ -147,8 +147,8 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 				break;
 				case 8:
 				// Goo.gl
-					$url = "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyBSnqQOg3vX1gwR7y2l-40yEG9SZiaYPUQ";
 					$link = urldecode($url);
+					$url = "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyBSnqQOg3vX1gwR7y2l-40yEG9SZiaYPUQ";					
 					$body = "{'longUrl':'$link'}";
 					//$body = json_encode($data);
 					$json = jd_fetch_url( $url, 'POST', $body, 'Content-Type: application/json' );

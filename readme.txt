@@ -51,6 +51,11 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.6.1 =
+
+* Bug in Goo.gl URL shortening. Incorrect URL posted.
+* Translatable role names for Permissions.
+
 = 2.6.0 =
 
 * Support for new features in WP Tweets PRO 1.4.0.
