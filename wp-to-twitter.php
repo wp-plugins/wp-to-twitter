@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.6.1
+Version: 2.6.2
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -49,7 +49,7 @@ require_once( plugin_dir_path(__FILE__).'/wp-to-twitter-manager.php' );
 require_once( plugin_dir_path(__FILE__).'/wpt-functions.php' );
 
 global $wpt_version,$jd_plugin_url;
-$wpt_version = "2.6.1";
+$wpt_version = "2.6.2";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
@@ -577,7 +577,7 @@ function jd_post_info( $post_ID ) {
 	$values['postinfo'] = $post;
 	$values['authId'] = $post->post_author;
 		$postdate = $post->post_date;
-		$altformat = "Y-m-d H:i:00";	
+		$altformat = "Y-m-d H:i:s";	
 		$dateformat = (get_option('jd_date_format')=='')?get_option('date_format'):get_option('jd_date_format');
 		$thisdate = mysql2date( $dateformat,$postdate );
 		$altdate = mysql2date( $altformat, $postdate );

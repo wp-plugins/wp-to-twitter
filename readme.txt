@@ -51,10 +51,15 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.6.2 =
+
+* Bug fix: Rapidly-posted edits processed as new posts.
+* Bug fix: URL shortener error produced on https when no shortener chosen.
+
 = 2.6.1 =
 
-* Bug in Goo.gl URL shortening. Incorrect URL posted.
 * Translatable role names for Permissions.
+* Bug fix: Goo.gl URL shortening. Incorrect URL posted.
 
 = 2.6.0 =
 

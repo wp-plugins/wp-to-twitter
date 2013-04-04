@@ -69,8 +69,8 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 					$shrink = urldecode($url);				
 					if ( function_exists('wp_get_shortlink') ) { // use wp_get_shortlink if available
 						$shrink = ( $post_ID != false )?wp_get_shortlink( $post_ID ):$url;
-					} 
-				break;
+					}
+					break;
 				case 2: // updated to v3 3/31/2010
 				$decoded = jd_remote_json( "http://api.bitly.com/v3/shorten?longUrl=".$url."&login=".$bitlylogin."&apiKey=".$bitlyapi."&format=json" );
 				$error = '';
@@ -86,7 +86,7 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 					update_option( 'wp_bitly_error',"JSON result could not be decoded");
 					}	
 					if ( !is_valid_url($shrink) ) { $shrink = false; update_option( 'wp_bitly_error',$error ); }
-				break;
+					break;
 				case 5:
 					// local YOURLS installation
 					$url = urldecode($url);
@@ -126,7 +126,7 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 					} else {
 						$shrink = false;
 					}	
-				break;
+					break;
 				case 7:
 					if ( $suprapi != '') {
 						$decoded = jd_remote_json( "http://su.pr/api/shorten?longUrl=".$url."&login=".$suprlogin."&apiKey=".$suprapi );
@@ -144,7 +144,7 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 						update_option( 'wp_supr_error',"JSON result could not be decoded");
 					}	
 					if ( !is_valid_url($shrink) ) { $shrink = false; update_option( 'wp_supr_error',$error ); }
-				break;
+					break;
 				case 8:
 				// Goo.gl
 					$link = urldecode($url);
@@ -156,17 +156,17 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 					//$url = $decoded['id'];
 					$shrink = $decoded->id;
 					if ( !is_valid_url($shrink) ) { $shrink = false; }
-				break;
+					break;
 				case 9:
 				// Twitter Friendly Links
 					$shrink = urldecode($url);
 					if ( function_exists( 'twitter_link' ) ) { // use twitter_link if available
 						$shrink = twitter_link( $post_ID );
 					}
-				break;
+					break;
 			}
 			if ( !$testmode ) {
-				if ( $shrink === false || ( stristr( $shrink, "http://" ) === FALSE )) {
+				if ( $shrink === false || ( filter_var($shrink, FILTER_VALIDATE_URL) === false ) ) { // TEST THIS
 				update_option( 'wp_url_failure','1' );
 				$shrink = urldecode( $url );
 				} else {
