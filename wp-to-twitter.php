@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your chosen URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.6.2
+Version: 2.6.3
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -49,13 +49,13 @@ require_once( plugin_dir_path(__FILE__).'/wp-to-twitter-manager.php' );
 require_once( plugin_dir_path(__FILE__).'/wpt-functions.php' );
 
 global $wpt_version,$jd_plugin_url;
-$wpt_version = "2.6.2";
+$wpt_version = "2.6.3";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
 function wpt_pro_compatibility() {
 	global $wptp_version;
-	$current_wptp_version = '1.4.0';
+	$current_wptp_version = '1.4.1';
 	if ( version_compare( $wptp_version, $current_wptp_version, '<' ) ) {
 		echo "<div class='error notice'><p class='upgrade'>".sprintf( __('The current version of WP Tweets PRO is <strong>%s</strong>. Upgrade for best compatibility!','wp-to-twitter'),$current_wptp_version )."</p></div>";
 	}
@@ -713,6 +713,7 @@ function jd_twit( $post_ID, $type='instant' ) {
 					}
 					if ( $post_type_settings[$post_type]['post-edited-update'] == '1' ) {					
 						$nptext = stripcslashes( $post_type_settings[$post_type]['post-edited-text'] );
+						//$nptext = apply_filters( 'wpt_user_text', $nptext, 'publish', true ); // filters for user accounts automatically.
 						$oldpost = true;
 					}
 				} else {
@@ -721,6 +722,7 @@ function jd_twit( $post_ID, $type='instant' ) {
 					}				
 					if ( $post_type_settings[$post_type]['post-published-update'] == '1' ) {
 						$nptext = stripcslashes( $post_type_settings[$post_type]['post-published-text'] );			
+						//$nptext = apply_filters( 'wpt_user_text', $nptext, 'false', true ); // filters for user accounts automatically.
 						$newpost = true;
 					}
 				}
@@ -992,7 +994,7 @@ function jd_add_twitter_inner_box( $post ) {
 		}
 	?>
 	<?php } else { ?>
-	<input type="hidden" name='_jd_twitter' value='' />
+	<input type="hidden" name='_jd_twitter' value='<?php echo esc_attr($jd_twitter); ?>' />
 	<?php } ?>
 	<?php if ( current_user_can( 'wpt_twitter_switch' ) || current_user_can('update_core') ) { ?>
 	<?php
@@ -1123,7 +1125,7 @@ function post_jd_twitter( $id ) {
 	if ( empty($_POST) || ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) || wp_is_post_revision($id) || isset($_POST['_inline_edit']) ) { return $id; }
 	if ( isset( $_POST['_yourls_keyword'] ) ) {
 		$yourls = $_POST[ '_yourls_keyword' ];
-		update_post_meta( $id, '_yourls_keyword', $yourls );			
+		update_post_meta( $id, '_yourls_keyword', $yourls );
 	}
 	if ( isset( $_POST[ '_jd_twitter' ] ) && $_POST['_jd_twitter'] != '' ) {
 		$jd_twitter = $_POST[ '_jd_twitter' ];

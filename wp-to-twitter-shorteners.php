@@ -17,6 +17,8 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 			$suprlogin = trim ( get_option( 'suprlogin' ) );
 			$bitlyapi =  trim ( get_option( 'bitlyapi' ) );
 			$bitlylogin =  trim ( strtolower( get_option( 'bitlylogin' ) ) );
+			$joturlapi = trim(get_option('joturlapi'));
+			$joturllogin = trim(get_option('joturllogin'));
 			$yourlslogin =  trim ( get_option( 'yourlslogin') );
 			$yourlsapi = stripcslashes( get_option( 'yourlsapi' ) );
 			if ($testmode == false ) {
@@ -164,9 +166,47 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 						$shrink = twitter_link( $post_ID );
 					}
 					break;
+			case 10: // jotURL			
+				//jotURL, added: 2013-04-10
+				$joturl_longurl_params = trim( get_option('joturl_longurl_params') );
+				if ($joturl_longurl_params != '') {
+				   if (strpos($url, "%3F") === FALSE && strpos($url, "?") === FALSE) {
+					  $ct = "?";
+				   } else {
+					  $ct = "&";
+				   }
+				   $url .= $ct . $joturl_longurl_params;
+				   $url = urlencode(urldecode(trim($url))); // prevent double-encoding
+				}
+				//\jotURL
+				$decoded = jd_fetch_url("https://api.joturl.com/a/v1/shorten?url=" . $url . "&login=" . $joturllogin . "&key=" . $joturlapi . "&format=plain");
+				$error = '';
+				if ($decoded !== false) {
+				   $shrink = $decoded;
+				   //jotURL, added: 2013-04-10
+				   $joturl_shorturl_params = trim( get_option('joturl_shorturl_params') );
+				   if ($joturl_shorturl_params != '') {
+					  if (strpos($shrink, "%3F") === FALSE && strpos($shrink, "?") === FALSE) {
+						 $ct = "?";
+					  } else {
+						 $ct = "&";
+					  }
+					  $shrink .= $ct . $joturl_shorturl_params;
+				   }
+					//\jotURL
+				} else {
+				   $error = $decoded;
+				   $shrink = false;
+				   update_option('wp_joturl_error', "JSON result could not be decoded");
+				}
+				if (!is_valid_url($shrink)) {
+				   $shrink = false;
+				   update_option('wp_joturl_error', $error);
+				}
+				break;					
 			}
 			if ( !$testmode ) {
-				if ( $shrink === false || ( filter_var($shrink, FILTER_VALIDATE_URL) === false ) ) { // TEST THIS
+				if ( $shrink === false || ( filter_var($shrink, FILTER_VALIDATE_URL) === false ) ) {
 				update_option( 'wp_url_failure','1' );
 				$shrink = urldecode( $url );
 				} else {
@@ -188,6 +228,7 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 				case 7:	$ext = '_supr';	break;
 				case 8:	$ext = '_goo';	break;
 				case 9: $ext = '_tfl'; break;
+				case 10:$ext = '_joturl'; break;				
 				default:$ext = '_ind';
 			}
 			if ( get_post_meta ( $post_ID, "_wp_jd$ext", TRUE ) != $url ) {
@@ -328,7 +369,24 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 			<p><input type="submit" name="submit" value="<?php _e('Save YOURLS Account Info','wp-to-twitter'); ?>" class="button-primary" /> <input type="submit" name="clear" value="<?php _e('Clear YOURLS password','wp-to-twitter'); ?>" /><br /><small><?php _e("A YOURLS password and username is required to shorten URLs via the remote YOURLS API and WP to Twitter.", 'wp-to-twitter' ); ?></small></p>
 		</div>
 		</form>		
+		</div>		
+    <?php } else if (get_option('jd_shortener') == 10) {   ?>
+	<div class="panel">
+		<h4 class="joturl"><span><?php _e("Your jotURL account details", 'wp-to-twitter'); ?></span></h4>
+		<form method="post" action="">
+		<div><input type='hidden' name='wpt_shortener_update' value='true' /></div>
+		<div>
+		<p><label for="joturllogin"><?php _e("Your jotURL public <abbr title='application programming interface'>API</abbr> key:", 'wp-to-twitter'); ?></label> <input type="text" name="joturllogin" id="joturllogin" value="<?php echo (esc_attr(get_option('joturllogin')))?>" /></p>
+		<p><label for="joturlapi"><?php _e("Your jotURL private <abbr title='application programming interface'>API</abbr> key:", 'wp-to-twitter'); ?></label> <input type="text" name="joturlapi" id="joturlapi" size="40" value="<?php echo (esc_attr(get_option('joturlapi')))?>" /></p>
+		<p><label for="joturl_longurl_params"><?php _e("Parameters to add to the long URL (before shortening):", 'wp-to-twitter'); ?></label> <input type="text" name="joturl_longurl_params" id="joturl_longurl_params" size="40" value="<?php echo (esc_attr(get_option('joturl_longurl_params')))?>" /></p>		<p><label for="joturl_shorturl_params"><?php _e("Parameters to add to the short URL (after shortening):", 'wp-to-twitter'); ?></label> <input type="text" name="joturl_shorturl_params" id="joturl_shorturl_params" size="40" value="<?php echo (esc_attr(get_option('joturl_shorturl_params')))?>" /></p>
+		<p><a href="https://www.joturl.com/reserved/api.html"><?php _e('View your jotURL public and private API key', 'wp-to-twitter'); ?></a></p>
+		<div><input type="hidden" name="submit-type" value="joturlapi" /></div>
+		<?php $nonce = wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, false) . wp_referer_field(false); echo "<div>$nonce</div>"; ?>	
+		<p><input type="submit" name="submit" value="<?php _e('Save jotURL settings', 'wp-to-twitter');	 ?>" class="button-primary" /> <input type="submit" name="clear" value="<?php _e('Clear jotURL settings', 'wp-to-twitter'); ?>" /> <br />
+		<small><?php _e("A jotURL public and private API key is required to shorten URLs via the jotURL API and WP to Twitter.", 'wp-to-twitter'); ?></small></p>
 		</div>
+		</form>
+	</div>
 	<?php } else { ?>
 	<?php _e('Your shortener does not require any account settings.','wp-to-twitter'); ?>
 	<?php } ?>
@@ -416,6 +474,44 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 			} else {
 				$message = __("Bit.ly Login not added - <a href='http://bit.ly/account/'>get one here</a>! ", 'wp-to-twitter');
 			}
+		}
+		if (isset($post['submit-type']) && $post['submit-type'] == 'joturlapi') {
+			if ($post['joturlapi'] != '' && isset($post['submit'])) {
+				update_option('joturlapi', trim($post['joturlapi']));
+				$message = __("jotURL private API Key Updated. ", 'wp-to-twitter');
+			} else if (isset($post['clear'])) {
+				update_option('joturlapi', '');
+				$message = __("jotURL private API Key deleted. You cannot use the jotURL API without a private API key. ", 'wp-to-twitter');
+			} else {
+				$message = __("jotURL private API Key not added - <a href='https://www.joturl.com/reserved/api.html'>get one here</a>! A private API key is required to use the jotURL URL shortening service. ", 'wp-to-twitter');
+			}
+			if ($post['joturllogin'] != '' && isset($post['submit'])) {
+				update_option('joturllogin', trim($post['joturllogin']));
+				$message .= __("jotURL public API Key Updated. ", 'wp-to-twitter');
+			} else if (isset($post['clear'])) {
+				update_option('joturllogin', '');
+				$message = __("jotURL public API Key deleted. You cannot use the jotURL API without providing your public API Key. ", 'wp-to-twitter');
+			} else {
+				$message = __("jotURL public API Key not added - <a href='https://www.joturl.com/reserved/api.html'>get one here</a>! ", 'wp-to-twitter');
+			}
+			if ($post['joturl_longurl_params'] != '' && isset($post['submit'])) {
+				$v = trim($post['joturl_longurl_params']);
+				if (substr($v, 0, 1) == '&' || substr($v, 0, 1) == '?') { $v = substr($v, 1); }
+				update_option('joturl_longurl_params', $v);
+				$message .= __("Long URL parameters added. ", 'wp-to-twitter');
+			} else if (isset($post['clear'])) {
+				update_option('joturl_longurl_params', '');
+				$message = __("Long URL parameters deleted. ", 'wp-to-twitter');
+			}
+			if ($post['joturl_shorturl_params'] != '' && isset($post['submit'])) { 
+				$v = trim($post['joturl_shorturl_params']);
+				if (substr($v, 0, 1) == '&' || substr($v, 0, 1) == '?') {$v = substr($v, 1);}
+				update_option('joturl_shorturl_params', $v);
+				$message .= __("Short URL parameters added. ", 'wp-to-twitter');
+			} else if (isset($post['clear'])) {
+				update_option('joturl_shorturl_params', '');
+				$message = __("Short URL parameters deleted. ", 'wp-to-twitter');
+			}			
 		}	
 		return $message;
 	}
@@ -427,6 +523,10 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 			$message .= __( 'You must add your Bit.ly login and API key in order to shorten URLs with Bit.ly.' , 'wp-to-twitter');
 			$message .= "<br />";
 		}
+		if (get_option('jd_shortener') == 10 && (get_option('joturllogin') == "" || get_option('joturlapi') == "")) {
+			$message .= __('You must add your jotURL public and private API key in order to shorten URLs with jotURL.', 'wp-to-twitter');
+			$message .= "<br />";
+		}		
 		if ( get_option( 'jd_shortener' ) == 6 && ( get_option( 'yourlslogin' ) == "" || get_option( 'yourlsapi' ) == "" || get_option( 'yourlsurl' ) == "" ) ) {
 			$message .= __( 'You must add your YOURLS remote URL, login, and password in order to shorten URLs with a remote installation of YOURLS.' , 'wp-to-twitter');
 			$message .= "<br />";
@@ -450,7 +550,8 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 				<option value="8" <?php echo jd_checkSelect('jd_shortener','8'); ?>>Goo.gl</option> 				
 				<option value="5" <?php echo jd_checkSelect('jd_shortener','5'); ?>><?php _e("YOURLS (on this server)", 'wp-to-twitter'); ?></option>
 				<option value="6" <?php echo jd_checkSelect('jd_shortener','6'); ?>><?php _e("YOURLS (on a remote server)", 'wp-to-twitter'); ?></option>		
-				<option value="4" <?php echo jd_checkSelect('jd_shortener','4'); ?>>WordPress</option> 
+				<option value="4" <?php echo jd_checkSelect('jd_shortener','4'); ?>>WordPress</option>
+				<option value="10" <?php echo jd_checkSelect('jd_shortener', '10'); ?>>jotURL</option>
 				<?php if ( function_exists( 'twitter_link' ) ) { ?><option value="9" <?php echo jd_checkSelect('jd_shortener','9'); ?>><?php _e("Use Twitter Friendly Links.", 'wp-to-twitter'); ?></option><?php } ?>
 			</select>
 			</p>

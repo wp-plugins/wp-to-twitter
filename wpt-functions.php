@@ -57,6 +57,14 @@ if (!function_exists('mb_substr')) {
 	}
 }
 
+// filter_var substitution for PHP <5.2
+if ( !function_exists( 'filter_var' ) ) {
+	function filter_var( $url ) {
+		// this does not emulate filter_var; merely the usage of filter_var in WP to Twitter.
+		return ( stripos( $url, 'https:' ) || stripos( $url, 'http:' ) )?true:false;
+	}
+}
+
 // str_ireplace substitution for PHP4
 if ( !function_exists( 'str_ireplace' ) ) {
 	function str_ireplace( $needle, $str, $haystack ) {

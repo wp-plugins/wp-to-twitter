@@ -23,7 +23,6 @@ Additional features include:
 * Use alternate URLs in place of post permalinks
 * Support for Google Analytics
 * Support for XMLRPC remote clients
-* Support for Google Analytics
 * Limiting Tweeting from specific categories
 
 Any status update longer than 140 characters will be truncated by the plugin. 
@@ -41,7 +40,7 @@ Translations:
 Visit the [WP to Twitter translations page](http://translate.joedolson.com/projects/wp-to-twitter) to see how complete these are.
 
 Languages available (in order of completeness):
-Danish, French, Italian, Catalan, Dutch, Chinese, Portuguese, Japanese, Romanian, Estonian, German, Ukrainian, Russian, Lithuanian, Belarusian, Irish, Spanish, Turkish, Persian
+Italian, French, Danish, Catalan, Dutch, Chinese, Portuguese, Japanese, Romanian, Estonian, Russian, German, Ukrainian, Lithuanian, Belarusian, Irish, Spanish, Turkish, Persian
 
 Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
 
@@ -50,6 +49,12 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.6.3 =
+
+* Bug fix: Fallback function for filter_var in PHP <5.2
+* Added shortener: [JotURL](https://www.joturl.com/), contributed by Massimo Poli
+* Language updates: Italian, Dutch, Russian.
 
 = 2.6.2 =
 
