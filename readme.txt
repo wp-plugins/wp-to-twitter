@@ -50,6 +50,10 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.6.5 =
+
+* Whoops. I left in some debugging. Hurt me more than it hurt you...
+
 = 2.6.4 =
 
 * Bug fix: sslverify=false to fix cURL issue.

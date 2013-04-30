@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.6.4
+Version: 2.6.5
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -49,7 +49,7 @@ require_once( plugin_dir_path(__FILE__).'/wp-to-twitter-manager.php' );
 require_once( plugin_dir_path(__FILE__).'/wpt-functions.php' );
 
 global $wpt_version,$jd_plugin_url;
-$wpt_version = "2.6.4";
+$wpt_version = "2.6.5";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
@@ -466,21 +466,6 @@ function jd_truncate_tweet( $sentence, $postinfo, $post_ID, $retweet=false, $ref
 	$post_sentence = str_ireplace( '#tags#', $tags, $post_sentence );
 	$post_sentence = str_ireplace( '#modified#', $modified, $post_sentence );
 	
-	wp_mail ( 'joe@joedolson.com', 'Shortcode outputs', "
-		#url# $thisposturl
-		#title# $title
-		#blog# $blogname
-		#post# $excerpt
-		#category# $category
-		#cat_desc# $cat_desc
-		#date# $date
-		#author# $author
-		#displayname# $display_name
-		#tags# $tags
-		#modified# $modified
-		#account# $account
-		#@# $uaccount	// $user_account
-	" );
 	$url_strlen = mb_strlen( urldecode( fake_normalize( $thisposturl ) ), $encoding );
 	// check total length 
 	$str_length = mb_strlen( urldecode( fake_normalize( $post_sentence ) ), $encoding );
