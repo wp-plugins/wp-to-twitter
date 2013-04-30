@@ -27,7 +27,7 @@ function is_valid_url( $url ) {
 // Fetch a remote page. Input url, return content
 function jd_fetch_url( $url, $method='GET', $body='', $headers='', $return='body' ) {
 	$request = new WP_Http;
-	$result = $request->request( $url , array( 'method'=>$method, 'body'=>$body, 'headers'=>$headers, 'user-agent'=>'WP to Twitter http://www.joedolson.com/articles/wp-to-twitter/' ) );
+	$result = $request->request( $url , array( 'method'=>$method, 'body'=>$body, 'headers'=>$headers, 'sslverify'=>false, 'user-agent'=>'WP to Twitter http://www.joedolson.com/articles/wp-to-twitter/' ) );
 	// Success?
 	if ( !is_wp_error($result) && isset($result['body']) ) {
 		if ( $result['response']['code'] == 200 ) {
@@ -61,7 +61,7 @@ if (!function_exists('mb_substr')) {
 if ( !function_exists( 'filter_var' ) ) {
 	function filter_var( $url ) {
 		// this does not emulate filter_var; merely the usage of filter_var in WP to Twitter.
-		return ( stripos( $url, 'https:' ) || stripos( $url, 'http:' ) )?true:false;
+		return ( stripos( $url, 'https:' ) !== false || stripos( $url, 'http:' ) !== false )?true:false;
 	}
 }
 
@@ -189,6 +189,7 @@ get_currentuserinfo();
 			}
 		}
 	global $wpt_server_string;
+	$wpt_server_string = strip_tags( $wpt_server_string );
 	$data = "
 ================ Installation Data ====================
 ==WP to Twitter==
@@ -203,6 +204,7 @@ URL: $home_url
 Install: $wp_url
 Language: $language
 Charset: $charset
+Admin Email: $current_user->user_email
 
 ==Extra info:==
 PHP Version: $php_version

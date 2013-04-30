@@ -50,6 +50,13 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.6.4 =
+
+* Bug fix: sslverify=false to fix cURL issue.
+* Bug fix: #@# and #author# reference tags did not always return correct results.
+* Bug fix: charset retrieval incorrect
+* Updated languages: French, Italian, German
+
 = 2.6.3 =
 
 * Bug fix: Fallback function for filter_var in PHP <5.2
