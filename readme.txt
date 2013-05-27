@@ -33,6 +33,7 @@ Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) for
 * Time delayed Tweeting
 * Scheduled Tweet management
 * Co-Tweet to site and author Twitter accounts
+* Preview and Tweet comments
 * [and more!](http://www.joedolson.com/articles/wp-tweets-pro/)
 
 Translations:
@@ -49,6 +50,16 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.6.6 =
+
+* Improved & removed feature: Tweet comments. Moved to WP Tweets PRO.
+* Improved view: post edit screen when Tweeting edits is disabled.
+* Added filter: wpt_custom_shortcode. Args: $post_ID, custom field name. Filter output from [[your_custom_field]].
+* Changed twitter analytics options to radio selector.
+* Bug fix: disable inline edit Tweets did not also disable bulk edit Tweets
+* Bug fix: URL re-fetch issue with jotURL.
+* Updated Italian translation.
 
 = 2.6.5 =
 
@@ -818,4 +829,4 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
-* 2.6.0 Bug fixes, new translations, WP Tweets PRO features.
+* 2.6.6 Tweeting comments improved and moved into WP Tweets PRO upgrade.

@@ -1,4 +1,6 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 // FUNCTION to see if checkboxes should be checked
 function jd_checkCheckbox( $theFieldname,$sub1=false,$sub2='' ) {
 	if ( $sub1 ) {
@@ -113,8 +115,6 @@ function wpt_update_settings() {
 		update_option( 'wpt_post_types', $initial_settings );
 		update_option( 'jd_twit_blogroll', '1');
 		update_option( 'newlink-published-text', 'New link: #title# #url#' );
-		update_option( 'comment-published-update', 0 );
-		update_option( 'comment-published-text', 'New comment: #title# #url#' );				
 		update_option( 'limit_categories','0' );
 		update_option( 'jd_shortener', '1' );
 		update_option( 'jd_strip_nonan', '0' );
@@ -141,7 +141,8 @@ function wpt_update_settings() {
 		// Use Google Analytics with Twitter
 		update_option( 'twitter-analytics-campaign', 'twitter' );
 		update_option( 'use-twitter-analytics', '0' );
-		update_option( 'jd_dynamic_analytics','0' );		
+		update_option( 'jd_dynamic_analytics','0' );
+		update_option( 'no-analytics', 1 );
 		update_option( 'use_dynamic_analytics','category' );			
 		// Use custom external URLs to point elsewhere. 
 		update_option( 'jd_twit_custom_url', 'external_link' );	
@@ -216,8 +217,22 @@ function wpt_update_settings() {
 		update_option( 'jd_replace_character',$_POST['jd_replace_character']);
 		update_option( 'jd_date_format',$_POST['jd_date_format'] );	
 		update_option( 'jd_dynamic_analytics',$_POST['jd-dynamic-analytics'] );		
-		update_option( 'use_dynamic_analytics',( isset( $_POST['use-dynamic-analytics'] ) )?$_POST['use-dynamic-analytics']:0 );		
-		update_option( 'use-twitter-analytics', ( isset( $_POST['use-twitter-analytics'] ) )?$_POST['use-twitter-analytics']:0 );
+		
+		$twitter_analytics = ( isset($_POST['twitter-analytics']) )?$_POST['twitter-analytics']:0;
+		if ( $twitter_analytics == 1 ) {
+			update_option( 'use_dynamic_analytics', 0 );
+			update_option( 'use-twitter-analytics', 1 );
+			update_option( 'no-analytics', 0 );			
+		} else if ( $twitter_analytics == 2 ) {
+			update_option( 'use_dynamic_analytics', 1 );
+			update_option( 'use-twitter-analytics', 0 );
+			update_option( 'no-analytics', 1 );
+		} else {
+			update_option( 'use_dynamic_analytics', 0 );
+			update_option( 'use-twitter-analytics', 0 );
+			update_option( 'no-analytics', 1 );
+		}
+		
 		update_option( 'twitter-analytics-campaign', $_POST['twitter-analytics-campaign'] );
 		update_option( 'jd_individual_twitter_users', ( isset( $_POST['jd_individual_twitter_users']  )? $_POST['jd_individual_twitter_users']:0 ) );
 		$wtt_user_permissions = $_POST['wtt_user_permissions'];
@@ -374,11 +389,7 @@ function wpt_update_settings() {
 		update_option( 'wpt_post_types', $wpt_settings );
 		update_option( 'newlink-published-text', $_POST['newlink-published-text'] );
 		update_option( 'jd_twit_blogroll',(isset($_POST['jd_twit_blogroll']) )?$_POST['jd_twit_blogroll']:"" );
-		update_option( 'comment-published-text', $_POST['comment-published-text'] );
-		update_option( 'comment-published-update',(isset($_POST['comment-published-update']) )?$_POST['comment-published-update']:"" );	
-
-		$message = wpt_select_shortener( $_POST );
-		
+		$message = wpt_select_shortener( $_POST );	
 		$message .= __( 'WP to Twitter Options Updated' , 'wp-to-twitter');
 	}
 
@@ -405,6 +416,7 @@ function wpt_update_settings() {
 ?>
 <div class="wrap" id="wp-to-twitter">
 <?php wpt_marginal_function(); ?>
+<?php wpt_commments_removed(); ?>
 <?php if ( $message ) { ?>
 <div id="message" class="updated fade"><?php echo $message; ?></div>
 <?php } ?>
@@ -482,16 +494,7 @@ function wpt_update_settings() {
 			<?php
 					}
 				} 
-			?>
-			<fieldset class="comments">
-			<legend><?php _e('Settings for Comments','wp-to-twitter'); ?></legend>
-			<p>
-				<input type="checkbox" name="comment-published-update" id="comment-published-update" value="1" <?php echo jd_checkCheckbox('comment-published-update')?> />
-				<label for="comment-published-update"><strong><?php _e("Update Twitter when new comments are posted", 'wp-to-twitter'); ?></strong></label><br />				
-				<label for="comment-published-text"><?php _e("Text for new comments:", 'wp-to-twitter'); ?></label> <input aria-labelledby="comment-published-text-label" type="text" class="wpt-template" name="comment-published-text" id="comment-published-text" size="60" maxlength="120" value="<?php echo ( esc_attr( stripslashes( get_option( 'comment-published-text' ) ) ) ); ?>" />
-			</p>
-			<p id='comment-published-text-label'><?php _e('In addition to standard template tags, comments can use <code>#commenter#</code> to post the commenter\'s name in the Tweet. <em>Use this at your own risk</em>, as it lets anybody who can post a comment on your site post a phrase in your Twitter stream.','wp-to-twitter'); ?>
-			</fieldset>					
+			?>				
 			<fieldset>
 			<legend><?php _e('Settings for Links','wp-to-twitter'); ?></legend>
 			<p>
@@ -618,15 +621,14 @@ function wpt_update_settings() {
 		</fieldset>
 		<fieldset>
 		<legend><?php _e( "Google Analytics Settings",'wp-to-twitter' ); ?></legend>
-				<p><?php _e("You can track the response from Twitter using Google Analytics by defining a campaign identifier here. You can either define a static identifier or a dynamic identifier. Static identifiers don't change from post to post; dynamic identifiers are derived from information relevant to the specific post. Dynamic identifiers will allow you to break down your statistics by an additional variable.","wp-to-twitter"); ?></p>
-				
+				<p><?php _e("You can track the response from Twitter using Google Analytics by defining a campaign identifier here. You can either define a static identifier or a dynamic identifier. Static identifiers don't change from post to post; dynamic identifiers are derived from information relevant to the specific post. Dynamic identifiers will allow you to break down your statistics by an additional variable.","wp-to-twitter"); ?></p>	
 			<p>
-				<input type="checkbox" name="use-twitter-analytics" id="use-twitter-analytics" value="1" <?php echo jd_checkCheckbox('use-twitter-analytics')?> />
+				<input type="radio" name="twitter-analytics" id="use-twitter-analytics" value="1" <?php echo jd_checkCheckbox('use-twitter-analytics')?> />
 				<label for="use-twitter-analytics"><?php _e("Use a Static Identifier with WP-to-Twitter", 'wp-to-twitter'); ?></label><br />
 				<label for="twitter-analytics-campaign"><?php _e("Static Campaign identifier for Google Analytics:", 'wp-to-twitter'); ?></label> <input type="text" name="twitter-analytics-campaign" id="twitter-analytics-campaign" size="40" maxlength="120" value="<?php echo ( esc_attr( get_option( 'twitter-analytics-campaign' ) ) ) ?>" /><br />
 			</p>
 			<p>
-				<input type="checkbox" name="use-dynamic-analytics" id="use-dynamic-analytics" value="1" <?php echo jd_checkCheckbox('use_dynamic_analytics')?> />
+				<input type="radio" name="twitter-analytics" id="use-dynamic-analytics" value="2" <?php echo jd_checkCheckbox('use_dynamic_analytics')?> />
 				<label for="use-dynamic-analytics"><?php _e("Use a dynamic identifier with Google Analytics and WP-to-Twitter", 'wp-to-twitter'); ?></label><br />
 			<label for="jd-dynamic-analytics"><?php _e("What dynamic identifier would you like to use?","wp-to-twitter"); ?></label> 
 				<select name="jd-dynamic-analytics" id="jd-dynamic-analytics">
@@ -635,6 +637,9 @@ function wpt_update_settings() {
 					<option value="post_title"<?php echo jd_checkSelect( 'jd_dynamic_analytics','post_title'); ?>><?php _e("Post Title","wp-to-twitter"); ?></option>
 					<option value="post_author"<?php echo jd_checkSelect( 'jd_dynamic_analytics','post_author'); ?>><?php _e("Author","wp-to-twitter"); ?></option>
 				</select><br />
+			</p>
+			<p>
+				<input type="radio" name="twitter-analytics" id="no-analytics" value="3" <?php echo jd_checkCheckbox('no-analytics'); ?> />	<label for="no-analytics"><?php _e("No Analytics", 'wp-to-twitter'); ?></label>
 			</p>
 		</fieldset>
 		<fieldset id="indauthors">
@@ -783,9 +788,10 @@ function wpt_sidebar() {
 				<strong><a href="http://www.joedolson.com/articles/wp-tweets-pro/"><?php _e('Upgrade to <strong>WP Tweets PRO</strong> for more options!','wp-to-twitter'); ?></a></strong>
 			<p><?php _e('Extra features with the PRO upgrade:','wp-to-twitter'); ?></p>
 			<ul>
-				<li><?php _e('Users can post to their own Twitter accounts','wp-to-twitter'); ?></li>
-				<li><?php _e('Set a timer to send your Tweet minutes or hours after you publish the post','wp-to-twitter'); ?></li>
-				<li><?php _e('Automatically re-send Tweets at an assigned time after publishing','wp-to-twitter'); ?></li>
+				<li><?php _e('Allow users to post to their own Twitter accounts','wp-to-twitter'); ?></li>
+				<li><?php _e('Set a timer to send your Tweet minutes or hours after you publish','wp-to-twitter'); ?></li>
+				<li><?php _e('Automatically re-send Tweets after publishing','wp-to-twitter'); ?></li>
+				<li><?php _e('Send Tweets for approved comments','wp-to-twitter'); ?></li>
 			</ul>
 			
 			</div>

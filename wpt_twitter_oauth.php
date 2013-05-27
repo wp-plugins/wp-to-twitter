@@ -7,7 +7,12 @@
  */
 
 /* Load WPOAuth lib. You can find it at http://WPOAuth.net */
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 require_once('WP_OAuth.php');
+/* Load tmhOAuth for Media uploads: https://github.com/themattharris/tmhOAuth */
+require_once('tmhOAuth/tmhOAuth.php');
+require_once('tmhOAuth/tmhUtilities.php');
 
 if (!class_exists('jd_TwitterOAuth')) {
 
@@ -149,10 +154,56 @@ class jd_TwitterOAuth {
     }
     return $response;
   }  
+  
+ 
+  /**
+   * Handles a status update that includes an image.
+   * @param type $url
+   * @param type $args
+   * @return boolean
+   */
+  function handleMediaRequest($url, $args = array()) {
+		$tmhOAuth = new tmhOAuth(array(
+                'consumer_key'    => $this->consumer->key,
+                'consumer_secret' => $this->consumer->secret,
+                'user_token'      => $this->token->key,
+                'user_secret'     => $this->token->secret,
+        ));
+		$attachment = wpt_post_attachment($args['id']);
+        if ($attachment == null) return false;
+        $img_medium = wp_get_attachment_image_src($attachment,'medium');
+        $image = ".." . wp_make_link_relative($img_medium[0]);         
+        
+        $code = $tmhOAuth->request(
+            'POST',
+             $url,
+             array(
+              'media[]'  => "@{$image};type=image/jpeg;filename={$image}",
+              'status'   => $args['status'],
+             ),
+             true, // use auth
+             true  // multipart
+        );
+        $response = $tmhOAuth->response['response'];
+        if ( is_wp_error( $response ) ) return false;
+		
+        $this->http_code = $code; 
+        $this->last_api_call = $url;
+		$this->format = 'json'; 
+		$this->http_header = $response;
+	return $response;
+  }
+  
   /**
    * Format and sign an WPOAuth / API request
    */
   function WPOAuthRequest($url, $args = array(), $method = NULL) {
+  
+    //Handle media requests using tmhOAuth library.
+    if ($method == 'MEDIA') {
+      return $this->handleMediaRequest($url,$args);
+    }    
+  
     if (empty($method)) $method = empty($args) ? "GET" : "POST";
     $req = WPOAuthRequest::from_consumer_and_token($this->consumer, $this->token, $method, $url, $args);
     $req->sign_request($this->sha1_method, $this->consumer, $this->token);

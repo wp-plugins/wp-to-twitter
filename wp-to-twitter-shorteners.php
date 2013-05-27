@@ -2,9 +2,9 @@
 //jd_shorten_link
 //jd_expand_url
 //jd_expand_yourl
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in replacement.
-
 	add_filter( 'wptt_shorten_link','jd_shorten_link', 10, 4 );
 
 	function jd_shorten_link( $url, $thisposttitle, $post_ID, $testmode=false ) {

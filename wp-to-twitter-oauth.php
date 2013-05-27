@@ -1,4 +1,6 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 // function to test credentials
 function wtt_oauth_test( $auth=false, $context='' ) {
 	if ( !$auth ) {

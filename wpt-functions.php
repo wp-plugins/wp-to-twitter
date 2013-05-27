@@ -2,6 +2,7 @@
 // This file contains secondary functions supporting WP to Twitter
 // These functions don't perform any WP to Twitter actions, but are sometimes called for when 
 // support for primary functions is lacking.
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 if ( version_compare( $wp_version,"2.9.3",">" )) {
 if (!class_exists('WP_Http')) {
@@ -140,6 +141,27 @@ function wpt_date_compare($early,$late) {
 	} else {
 		return 0;
 	}	
+}
+
+/** 
+* Gets the first attachment for the supplied post.
+* 
+* @param type $post_ID The post ID
+* @return An Attachment ID.
+*/
+function wpt_post_attachment($post_ID) {
+	if ( has_post_thumbnail( $post_ID ) ) {
+		$attachment = get_post_thumbnail_id( $post_ID );
+		return $attachment;
+	} else {
+		$args = array( 'post_type' => 'attachment', 'numberposts' => 1, 'post_status' => 'published', 'post_parent' => $post_ID, 'post_mime_type'=>'image' ); 
+		$attachments = get_posts($args);
+		if ($attachments) {
+			return $attachments[0]->ID; //Return the first attachment.
+		} else {
+			return null;
+		}
+	}
 }
 
 function wpt_get_support_form() {
