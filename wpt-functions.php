@@ -162,6 +162,7 @@ function wpt_post_attachment($post_ID) {
 			return null;
 		}
 	}
+	return null; 
 }
 
 function wpt_get_support_form() {

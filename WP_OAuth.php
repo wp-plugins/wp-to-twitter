@@ -467,6 +467,8 @@ class WPOAuthRequest {
    * util function: current timestamp
    */
   private static function generate_timestamp() {
+	// make sure that timestamp is in UTC
+	date_default_timezone_set('UTC');
     return time();
   }
 

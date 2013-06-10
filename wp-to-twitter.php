@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.6.6
+Version: 2.6.7
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -51,7 +51,7 @@ require_once( plugin_dir_path(__FILE__).'/wp-to-twitter-manager.php' );
 require_once( plugin_dir_path(__FILE__).'/wpt-functions.php' );
 
 global $wpt_version,$jd_plugin_url;
-$wpt_version = "2.6.6";
+$wpt_version = "2.6.7";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
@@ -297,19 +297,20 @@ function jd_doTwitterAPIPost( $twit, $auth=false, $id=false, $media=false ) {
 		}
 		if ( wtt_oauth_test( $auth ) && ( $connection = wtt_oauth_connection( $auth ) ) ) {
 			if ( $media ) {
-				$connection->media( $jdwp_api_post_status, array( 'status' => $twit, 'source' => 'wp-to-twitter', 'include_entities' => 'true', 'id'=>$id ) );			
+				$connection->media( $jdwp_api_post_status, array( 'status' => $twit, 'source' => 'wp-to-twitter', 'include_entities' => 'true', 'id'=>$id, 'auth'=>$auth ) );
 			} else {
 				$connection->post( $jdwp_api_post_status, array( 'status' => $twit, 'source' => 'wp-to-twitter', 'include_entities' => 'true' ) );
 			}
 			$http_code = ($connection)?$connection->http_code:'failed';
 		} else if ( wtt_oauth_test( false ) && ( $connection = wtt_oauth_connection( false ) ) ) {
 			if ( $media ) {
-				$connection->media( $jdwp_api_post_status, array( 'status' => $twit, 'source' => 'wp-to-twitter', 'include_entities' => 'true', 'id'=>$id ) );			
+				$connection->media( $jdwp_api_post_status, array( 'status' => $twit, 'source' => 'wp-to-twitter', 'include_entities' => 'true', 'id'=>$id, 'auth'=>$auth ) );				
 			} else {
 				$connection->post( $jdwp_api_post_status, array( 'status' => $twit, 'source' => 'wp-to-twitter', 'include_entities' => 'true'	) );
 			}
 			$http_code = ($connection)?$connection->http_code:'failed';	
 		}
+
 		// DEBUG JCD
 		if ( $connection ) {
 			if ( isset($connection->http_header['x-access-level']) && $connection->http_header['x-access-level'] == 'read' ) { $supplement = sprintf( __('Your Twitter application does not have read and write permissions. Go to <a href="%s">your Twitter apps</a> to modify these settings.','wp-to-twitter'), 'https://dev.twitter.com/apps/' ); } else { $supplement = ''; }
@@ -752,11 +753,14 @@ function jd_twit( $post_ID, $type='instant' ) {
 			$customTweet = ( $cT != '' )?stripcslashes( trim( $cT ) ):'';
 				// if ops is set and equals 'publish', this is being edited. Otherwise, it's a new post.
 				if ( ( $new == 0 && $post_info['postStatus'] != 'future' ) || $is_inline_edit == true ) {
-					// if this is an old post and editing updates are enabled
+					// if this is an old post and editing updates are enabled				
+					if ( get_option( 'jd_tweet_default_edit' ) == 1 ) { 
+						if ( $jd_tweet_this != 'yes' ) return;
+					}				
 					if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
 						wp_mail( WPT_DEBUG_ADDRESS,"jd_twit 4a: Processed as an Edit #$post_ID","Tweet this post: ".$post_info['postTitle']."\n".print_r($post_info,1)." / $type" ); // DEBUG
 					}
-					if ( $post_type_settings[$post_type]['post-edited-update'] == '1' ) {					
+					if ( $post_type_settings[$post_type]['post-edited-update'] == '1' ) {
 						$nptext = stripcslashes( $post_type_settings[$post_type]['post-edited-text'] );
 						//$nptext = apply_filters( 'wpt_user_text', $nptext, 'publish', true ); // filters for user accounts automatically.
 						$oldpost = true;
@@ -914,6 +918,7 @@ function jd_twit_link( $link_ID )  {
 
 function wpt_generate_hash_tags( $post_ID ) {
 	$hashtags = '';
+	$term_meta = 1;
 	$max_tags = get_option( 'jd_max_tags' );
 	$max_characters = get_option( 'jd_max_characters' );
 	$max_characters = ( $max_characters == 0 || $max_characters == "" )?100:$max_characters + 1;
@@ -922,22 +927,31 @@ function wpt_generate_hash_tags( $post_ID ) {
 		if ( $tags > 0 ) {
 		$i = 1;
 			foreach ( $tags as $value ) {
-			if ( get_option('wpt_tag_source') == 'slug' ) {
-				$tag = $value->slug;
-			} else {
-				$tag = $value->name;
-			}
-			$replace = get_option( 'jd_replace_character' );
-			$strip = get_option( 'jd_strip_nonan' );
-			$search = "/[^\p{L}\p{N}\s]/u";
-			if ( $replace == "[ ]" || $replace == "" ) { $replace = ""; }
-			$tag = str_ireplace( " ",$replace,trim( $tag ) );
-			if ($strip == '1') { $tag = preg_replace( $search, $replace, $tag ); }
-				$newtag = "#$tag";
-					if ( mb_strlen( $newtag ) > 2 && (mb_strlen( $newtag ) <= $max_characters) && ($i <= $max_tags) ) {
-					$hashtags .= "$newtag ";
-					$i++;
-					}
+				if ( function_exists( 'wpt_pro_exists' ) ) {
+					$t_id = $value->term_id; 
+					$term_meta = get_option( "wpt_taxonomy_$t_id" );
+				}	
+				if ( get_option('wpt_tag_source') == 'slug' ) {
+					$tag = $value->slug;
+				} else {
+					$tag = $value->name;
+				}
+				$strip = get_option( 'jd_strip_nonan' );
+				$search = "/[^\p{L}\p{N}\s]/u";
+				$replace = get_option( 'jd_replace_character' );				
+				$replace = ( $replace == "[ ]" || $replace == "" )?"":$replace;
+				$tag = str_ireplace( " ",$replace,trim( $tag ) );
+				if ($strip == '1') { $tag = preg_replace( $search, $replace, $tag ); }
+				switch ( $term_meta ) {
+					case 1 : $newtag = "#$tag"; break;
+					case 2 : $newtag = "$$tag"; break;
+					case 3 : $newtag = ''; break;
+					default: $newtag = "#$tag";				
+				}
+				if ( mb_strlen( $newtag ) > 2 && (mb_strlen( $newtag ) <= $max_characters) && ($i <= $max_tags) ) {
+				$hashtags .= "$newtag ";
+				$i++;
+				}
 			}
 		}
 	$hashtags = trim( $hashtags );
@@ -1384,7 +1398,6 @@ function wpt_schedule_promotion() {
 function wpt_dismiss_promotion() {
 	if ( isset($_GET['dismiss']) && $_GET['dismiss'] == 'promotion' ) {
 		update_option( 'wpt_promotion_scheduled', 3 ); 
-		delete_option( 'wpt_promotion_scheduled' );
 	}
 }	
 wpt_dismiss_promotion(); 

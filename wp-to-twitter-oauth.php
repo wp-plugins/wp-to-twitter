@@ -89,6 +89,12 @@ switch ( $post['oauth_settings'] ) {
 				if ( $connection = wtt_oauth_connection( $auth ) ) {
 					$protocol = ( get_option( 'wpt_http' ) == '1' )?'http:':'https:';
 					$data = $connection->get($protocol.'//api.twitter.com/1.1/account/verify_credentials.json');
+					if ( $connection->http_code != '200' ) {
+						$data = json_decode( $data );
+						update_option( 'wpt_error', $data->errors[0]->message );
+					} else {
+						delete_option( 'wpt_error' );
+					}
 					if ($connection->http_code == '200') {
 						$error_information = '';
 						$decode = json_decode($data);
@@ -117,7 +123,7 @@ switch ( $post['oauth_settings'] ) {
 						echo "<pre><strong>Summary Connection Response:</strong><br />";
 							print_r($error_information);
 						echo "<br /><strong>Account Verification Data:</strong><br />";
-							print_r($data);
+							print_r($data);							
 						echo "<br /><strong>Full Connection Response:</strong><br />";
 							print_r($connection);
 						echo "</pre>";

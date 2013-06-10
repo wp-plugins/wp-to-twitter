@@ -436,7 +436,7 @@ class tmhOAuth {
 
     if (!empty($this->custom_headers))
       $this->headers = array_merge((array)$this->headers, (array)$this->custom_headers);
-
+	  	
     return $this->curlit();
   }
 
@@ -606,6 +606,8 @@ class tmhOAuth {
    * @return int the http response code for the request. 0 is returned if a connection could not be made
    */
   private function curlit() {
+	$params = array( 'Just testing' );
+
     $this->response['raw'] = '';
 
     // method handling

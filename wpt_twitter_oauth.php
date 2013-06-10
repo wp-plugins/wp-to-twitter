@@ -11,9 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 require_once('WP_OAuth.php');
 /* Load tmhOAuth for Media uploads: https://github.com/themattharris/tmhOAuth */
-require_once('tmhOAuth/tmhOAuth.php');
-require_once('tmhOAuth/tmhUtilities.php');
-
+if ( !class_exists( 'tmhOAuth' ) ) {
+	require_once('tmhOAuth/tmhOAuth.php');
+	require_once('tmhOAuth/tmhUtilities.php');
+}
 if (!class_exists('jd_TwitterOAuth')) {
 
 /**
@@ -163,17 +164,32 @@ class jd_TwitterOAuth {
    * @return boolean
    */
   function handleMediaRequest($url, $args = array()) {
-		$tmhOAuth = new tmhOAuth(array(
-                'consumer_key'    => $this->consumer->key,
-                'consumer_secret' => $this->consumer->secret,
-                'user_token'      => $this->token->key,
-                'user_secret'     => $this->token->secret,
-        ));
+		$auth = $args['auth'];
+		if ( !$auth ) {
+			$ack = get_option('app_consumer_key');
+			$acs = get_option('app_consumer_secret');
+			$ot = get_option('oauth_token');
+			$ots = get_option('oauth_token_secret');
+		} else {
+			$ack = get_user_meta( $auth,'app_consumer_key',true);
+			$acs = get_user_meta( $auth,'app_consumer_secret',true);
+			$ot = get_user_meta( $auth,'oauth_token',true);
+			$ots = get_user_meta( $auth,'oauth_token_secret',true);
+		} 
+		$connect = array( 'consumer_key'=>$ack, 'consumer_secret'=>$acs, 'user_token'=>$ot, 'user_secret'=>$ots );
+		$tmhOAuth = new tmhOAuth( $connect );
 		$attachment = wpt_post_attachment($args['id']);
+
         if ($attachment == null) return false;
         $img_medium = wp_get_attachment_image_src($attachment,'medium');
-        $image = ".." . wp_make_link_relative($img_medium[0]);         
-        
+		// when performing as a scheduled action, need to include file.php
+		if ( !function_exists( 'get_home_path' ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		}
+		// get_home_path() and make link relative both return slashed, so we have an extra.
+		$subject = get_home_path() . wp_make_link_relative($img_medium[0]);
+        $image = str_replace( '//', '/', $subject );
+
         $code = $tmhOAuth->request(
             'POST',
              $url,
@@ -184,6 +200,7 @@ class jd_TwitterOAuth {
              true, // use auth
              true  // multipart
         );
+
         $response = $tmhOAuth->response['response'];
         if ( is_wp_error( $response ) ) return false;
 		
@@ -220,11 +237,6 @@ class jd_TwitterOAuth {
 		$url = $req->get_normalized_http_url();
 		$args = wp_parse_args($req->to_postdata());
        	$response = wp_remote_post( $url, array('body'=>$args,'timeout' => 30));
-       	break;
-	case 'MEDIA':
-		$url = $req->get_normalized_http_url();
-		$args = wp_parse_args($req->to_postdata());
-       	$response = wp_remote_post( $url, array( 'headers'=>array('Content-type'=>'multipart/form-data'),'body'=>$args,'timeout' => 30 ) );
        	break;
     }	
 

@@ -175,6 +175,7 @@ function wpt_update_settings() {
 			print('
 				<div id="message" class="updated fade">
 					<p>'.__('WP to Twitter failed to connect with Twitter. Try <a href="#wpt_http">switching to an HTTP connection</a>.', 'wp-to-twitter').'</p>
+					<p>'.__('Error:','wp-to-twitter').' '.get_option('wpt_error').'</p>
 				</div>
 
 			');

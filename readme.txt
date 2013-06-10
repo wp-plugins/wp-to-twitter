@@ -51,6 +51,14 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.6.7 =
+
+* Fix tmhOAuth already exists issue.
+* Bug fix: do not Tweet edits unless explicitly directed to, rather than depending on meta data. 
+* Bug fix: Scheduled posts/image uploads (for WP Tweets PRO)
+* Improved error messaging.
+* Misc. minor bug fixes
+
 = 2.6.6 =
 
 * Improved & removed feature: Tweet comments. Moved to WP Tweets PRO.
