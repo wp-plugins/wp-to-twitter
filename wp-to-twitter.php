@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.6.8
+Version: 2.6.9
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -51,7 +51,7 @@ require_once( plugin_dir_path(__FILE__).'/wp-to-twitter-manager.php' );
 require_once( plugin_dir_path(__FILE__).'/wpt-functions.php' );
 
 global $wpt_version,$jd_plugin_url;
-$wpt_version = "2.6.8";
+$wpt_version = "2.6.9";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
@@ -689,7 +689,6 @@ function jd_get_post_meta( $post_ID, $value, $boolean ) {
 }
 
 function wpt_post_with_media( $post_ID ) {
-	return true;
 	if ( !function_exists( 'wpt_pro_exists' ) || get_option( 'wpt_media') != '1' ) { 
 		return false; 
 	} else {

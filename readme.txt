@@ -51,6 +51,10 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.6.9 =
+
+* Error with post_with_media check. All apologies.
+
 = 2.6.8 =
 
 * Filter post_with_media to only handle posts with attached media. (WP Tweets PRO)
