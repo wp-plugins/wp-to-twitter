@@ -51,6 +51,11 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.6.8 =
+
+* Filter post_with_media to only handle posts with attached media. (WP Tweets PRO)
+* Expose past and failed Tweets on edited posts when Tweeting edits disabled.
+
 = 2.6.7 =
 
 * Fix tmhOAuth already exists issue.
