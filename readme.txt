@@ -2,7 +2,7 @@
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
-Requires at least: 3.1.4
+Requires at least: 3.2.1
 Tested up to: 3.5.1
 License: GPLv2 or later
 Stable tag: trunk
@@ -11,7 +11,7 @@ Auto-posts a Twitter update when you update your WordPress blog or blogroll, wit
 
 == Description ==
 
-WP to Twitter automatically posts Tweets from WordPress to Twitter using your URL shortening service to provide a link back to your post from Twitter. 
+WP to Twitter automatically posts Tweets from WordPress to Twitter using your URL shortening service to provide a link back to your post from Twitter. You can also use WP to Twitter to display a feed of recent Tweets using widgets.
 
 Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/)
 
@@ -50,6 +50,17 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.7.0 =
+
+* Bug fix to character counter to adapt to updated t.co lengths.
+* Bug fix to test URL to return unencoded URL. 
+* Bug fix: could not save setting to use dynamic campaign ID with Google Analytics
+* Bug fix: Could not re-order template tag truncation order.
+* Bug fix: Corrected encoding of category names and descriptions.
+* Bug fix: Better handling of wp_get_shortlink for custom post types. (Custom post types don't support wp_get_shortlink)
+* Adds a Twitter Feed widget.
+* Deprecated support for WP 3.1.4.
 
 = 2.6.9 =
 
@@ -840,10 +851,11 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Screenshots ==
 
-1. WP to Twitter main settings page.
+1. WP to Twitter OAuth settings.
 2. WP to Twitter custom Tweet settings.
-3. WP to Twitter user settings.
+3. WP Tweets PRO settings.
+4. Twitter Feed
 
 == Upgrade Notice ==
 
-* 2.6.6 Tweeting comments improved and moved into WP Tweets PRO upgrade.
+* 2.7.0 UI Redesign. Added Twitter Feed widget. Bug fixes.

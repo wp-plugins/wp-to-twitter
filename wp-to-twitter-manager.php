@@ -227,7 +227,7 @@ function wpt_update_settings() {
 		} else if ( $twitter_analytics == 2 ) {
 			update_option( 'use_dynamic_analytics', 1 );
 			update_option( 'use-twitter-analytics', 0 );
-			update_option( 'no-analytics', 1 );
+			update_option( 'no-analytics', 0 );
 		} else {
 			update_option( 'use_dynamic_analytics', 0 );
 			update_option( 'use-twitter-analytics', 0 );
@@ -495,7 +495,7 @@ function wpt_update_settings() {
 			<?php
 					}
 				} 
-			?>				
+			?>
 			<fieldset>
 			<legend><?php _e('Settings for Links','wp-to-twitter'); ?></legend>
 			<p>
@@ -504,7 +504,7 @@ function wpt_update_settings() {
 				<label for="newlink-published-text"><?php _e("Text for new link updates:", 'wp-to-twitter'); ?></label> <input aria-labelledby="newlink-published-text-label" type="text" class="wpt-template" name="newlink-published-text" id="newlink-published-text" size="60" maxlength="120" value="<?php echo ( esc_attr( stripslashes( get_option( 'newlink-published-text' ) ) ) ); ?>" /><br /><span id="newlink-published-text-label"><?php _e('Available shortcodes: <code>#url#</code>, <code>#title#</code>, and <code>#description#</code>.','wp-to-twitter'); ?></span>
 			</p>
 			</fieldset>
-
+			<br class='clear' />
 				<div>
 		<input type="hidden" name="submit-type" value="options" />
 		</div>
@@ -579,7 +579,7 @@ function wpt_update_settings() {
 				);
 			$preferred_order = get_option( 'wpt_truncation_order' );
 			if ( !$preferred_order ) $preferred_order = array();
-			$preferred_order = array_merge( $preferred_order, $default_order );
+			$preferred_order = array_merge( $default_order, $preferred_order );
 			if ( is_array( $preferred_order ) ) { $default_order = $preferred_order; }
 			asort($default_order);
 			foreach ( $default_order as $k=>$v ) {
@@ -589,7 +589,7 @@ function wpt_update_settings() {
 			?>
 			<fieldset>
 			<legend><?php _e('Template tag priority order','wp-to-twitter'); ?></legend>
-			<p style="float: right; width: 80%;"><?php _e('The order in which items will be abbreviated or removed from your Tweet if the Tweet is too long to send to Twitter.','wp-to-twitter'); ?></p>
+			<p><?php _e('The order in which items will be abbreviated or removed from your Tweet if the Tweet is too long to send to Twitter.','wp-to-twitter'); ?></p>
 			<p>
 			<?php echo $inputs; ?>
 			</p>
@@ -695,7 +695,7 @@ function wpt_update_settings() {
 			<li><input type="checkbox" name="wp_debug_oauth" id="wp_debug_oauth" value="1" <?php echo jd_checkCheckbox('wp_debug_oauth')?> />
 				<label for="wp_debug_oauth"><?php _e("Get Debugging Data for OAuth Connection", 'wp-to-twitter'); ?></label></li>
 			<li><input type="checkbox" name="wpt_http" id="wpt_http" value="1" <?php echo jd_checkCheckbox('wpt_http')?> />
-				<label for="wpt_http"><?php _e("Switch to <code>http</code> connection. (Default is https)", 'wp-to-twitter'); ?></label></li>				
+				<label for="wpt_http"><?php _e("Switch to <code>http</code> connection. (Default is https)", 'wp-to-twitter'); ?></label></li>
 			<li><input type="checkbox" name="jd_donations" id="jd_donations" value="1" <?php echo jd_checkCheckbox('jd_donations')?> />
 				<label for="jd_donations"><strong><?php _e("I made a donation, so stop whinging at me, please.", 'wp-to-twitter'); ?></strong></label></li>
 			</ul>
@@ -717,7 +717,7 @@ function wpt_update_settings() {
 			<?php _e('If no categories are checked, limiting by category will be ignored, and all categories will be Tweeted.','wp-to-twitter'); ?>
 			<?php if ( get_option('limit_categories') == '0' ) {	_e('<em>Category limits are disabled.</em>','wp-to-twitter'); } ?>
 			</p>
-	<?php jd_list_categories(); ?>
+			<?php jd_list_categories(); ?>
 
 		</div>
 	</div>

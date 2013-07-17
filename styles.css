@@ -13,6 +13,7 @@ legend {font-weight: 700;font-size: 1.2em;padding: 6px 0;}
 #wp-to-twitter .categories ul { -moz-column-count: 3; -moz-column-gap: 20px; -webkit-column-count: 3; -webkit-column-gap: 20px; margin: 0 0 20px; padding: 0; }
 #wp-to-twitter .categories li { list-style-type: none; margin: 3px 0; padding: 0;}
 #wp-to-twitter .inside .wpt_types { float: left; width: 47%; }
+#wp-to-twitter .inside .clear { display: block; clear: both; }
 #wp-to-twitter .inside .comments { clear: both;}
 #wp-to-twitter .postbox { margin: 10px 10px 0 0;	}
 #wp-to-twitter .meta-box-sortables { min-height: 0; }

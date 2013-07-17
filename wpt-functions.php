@@ -212,7 +212,7 @@ get_currentuserinfo();
 			}
 		}
 	global $wpt_server_string;
-	$wpt_server_string = strip_tags( $wpt_server_string );
+	$wpt_server_string = trim(strip_tags( $wpt_server_string ) );
 	$data = "
 ================ Installation Data ====================
 ==WP to Twitter==
@@ -269,7 +269,6 @@ $plugins_string
 	}
 	if ( function_exists( 'wpt_pro_exists' ) && wpt_pro_exists() == true ) { $checked="checked='checked'"; } else { $checked=''; }
 		$admin_url = ( is_plugin_active('wp-tweets-pro/wpt-pro-functions.php') )?admin_url('admin.php?page=wp-tweets-pro'):admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php');
-
 	echo "
 	<form method='post' action='$admin_url'>
 		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('wp-to-twitter-nonce')."' /></div>
