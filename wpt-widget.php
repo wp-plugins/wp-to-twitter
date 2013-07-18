@@ -5,7 +5,7 @@
 
 function wpt_get_user( $twitter_ID=false ) {
 	if ( !$twitter_ID ) return;
-    $options = array_merge( $options, array('screen_name' => $twitter_ID ) );
+    $options = array('screen_name' => $twitter_ID );
 	$key = get_option('app_consumer_key');
 	$secret = get_option('app_consumer_secret');
 	$token = get_option('oauth_token');

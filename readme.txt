@@ -51,6 +51,11 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.7.1 =
+
+* Cleared un-noticed PHP warnings.
+* Updated .pot language files.
+
 = 2.7.0 =
 
 * Bug fix to character counter to adapt to updated t.co lengths.
