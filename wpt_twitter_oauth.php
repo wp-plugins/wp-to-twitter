@@ -10,11 +10,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 require_once('WP_OAuth.php');
-/* Load tmhOAuth for Media uploads: https://github.com/themattharris/tmhOAuth */
-if ( !class_exists( 'tmhOAuth' ) ) {
-	require_once('tmhOAuth/tmhOAuth.php');
-	require_once('tmhOAuth/tmhUtilities.php');
-}
+
 if (!class_exists('jd_TwitterOAuth')) {
 
 /**
@@ -164,6 +160,12 @@ class jd_TwitterOAuth {
    * @return boolean
    */
   function handleMediaRequest($url, $args = array()) {
+		// JCD TEST THIS
+		/* Load tmhOAuth for Media uploads only when needed: https://github.com/themattharris/tmhOAuth */
+		if ( !class_exists( 'tmhOAuth' ) ) {
+			require_once('tmhOAuth/tmhOAuth.php');
+			require_once('tmhOAuth/tmhUtilities.php');
+		}  
 		$auth = $args['auth'];
 		if ( !$auth ) {
 			$ack = get_option('app_consumer_key');

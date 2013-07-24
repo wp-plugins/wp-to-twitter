@@ -117,7 +117,6 @@ class StormTwitter {
     $secret = $this->defaults['secret'];
     $token = $this->defaults['token'];
     $token_secret = $this->defaults['token_secret'];
-    
     $cachename = $screenname."-".$this->getOptionsHash($options);
     
     $options = array_merge($options, array('screen_name' => $screenname, 'count' => 20));
@@ -150,7 +149,6 @@ class StormTwitter {
         $this->st_last_error = $last_error;
       }
     }
-    
     return $result;
   
   }

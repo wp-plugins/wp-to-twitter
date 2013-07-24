@@ -142,15 +142,17 @@ switch ( $post['oauth_settings'] ) {
 				wp_die('Oops, please try again.');
 			}
 			if ( !$auth ) {
-				update_option('app_consumer_key', '');
-				update_option('app_consumer_secret', '');
-				update_option('oauth_token', '');
-				update_option('oauth_token_secret', '');
+				update_option( 'app_consumer_key', '' );
+				update_option( 'app_consumer_secret', '' );
+				update_option( 'oauth_token', '' );
+				update_option( 'oauth_token_secret', '' );
+				update_option( 'wtt_twitter_username', '' );
 			} else {
 				delete_user_meta( $auth, 'app_consumer_key' );
 				delete_user_meta( $auth, 'app_consumer_secret' );
 				delete_user_meta( $auth, 'oauth_token' );
 				delete_user_meta( $auth, 'oauth_token_secret' );
+				delete_user_meta( $auth, 'wtt_twitter_username' );
 			}
 			$message = "cleared";
 			return $message;

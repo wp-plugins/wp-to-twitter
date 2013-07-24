@@ -51,6 +51,12 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.7.2 =
+
+* Bug fix: Twitter Feed CSS enqueued on all pages, instead of just when activated.
+* Bug fix: test parameters in tmhOAuth caused plug-in conflict.
+* Bug fix: Major issue with WP Tweets PRO if no individual accounts were authorized with Twitter.
+
 = 2.7.1 =
 
 * Cleared un-noticed PHP warnings.

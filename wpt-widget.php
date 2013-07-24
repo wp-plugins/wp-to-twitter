@@ -72,6 +72,7 @@ function widget( $args, $instance ) {
 extract( $args );
 
 wp_enqueue_script( 'twitter-platform', "https://platform.twitter.com/widgets.js" );
+wp_enqueue_style( 'wpt-twitter-feed' );
 
 /** Merge with defaults */
 $instance = wp_parse_args( (array) $instance, $this->defaults );

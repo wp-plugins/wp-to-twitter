@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.7.1
+Version: 2.7.2
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -53,13 +53,13 @@ require_once( plugin_dir_path(__FILE__).'/wpt-feed.php' );
 require_once( plugin_dir_path(__FILE__).'/wpt-widget.php' );
 
 global $wpt_version,$jd_plugin_url;
-$wpt_version = "2.7.1";
+$wpt_version = "2.7.2";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
 function wpt_pro_compatibility() {
 	global $wptp_version;
-	$current_wptp_version = '1.5.3';
+	$current_wptp_version = '1.5.4';
 	if ( version_compare( $wptp_version, $current_wptp_version, '<' ) ) {
 		echo "<div class='error notice'><p class='upgrade'>".sprintf( __('The current version of WP Tweets PRO is <strong>%s</strong>. <a href="http://www.joedolson.com/articles/account/">Upgrade for best compatibility!</a>','wp-to-twitter'),$current_wptp_version )."</p></div>";
 	}
@@ -799,9 +799,9 @@ function jd_twit( $post_ID, $type='instant' ) {
 			if ( $newpost || $oldpost ) {
 				$template = ( $customTweet != "" ) ? $customTweet : $nptext;
 				$sentence = jd_truncate_tweet( $template, $post_info, $post_ID );
-					if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
-						wp_mail( WPT_DEBUG_ADDRESS, "5: Tweet Truncated #$post_ID","Truncated Tweet: $sentence / $type" ); // DEBUG
-					}					
+				if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
+					wp_mail( WPT_DEBUG_ADDRESS, "5: Tweet Truncated #$post_ID","Truncated Tweet: $sentence / $type" ); // DEBUG
+				}
 				if ( function_exists('wpt_pro_exists') && wpt_pro_exists() == true  ) {
 					$sentence2 = jd_truncate_tweet( $template, $post_info, $post_ID, false, $auth );
 				}
@@ -828,7 +828,7 @@ function jd_twit( $post_ID, $type='instant' ) {
 						/* set up basic author/main account values */
 						$auth_verified = wtt_oauth_test( $auth,'verify' );						
 						if ( empty( $wpt_selected_users ) && get_option( 'jd_individual_twitter_users' ) == 1 ) { 
-							$wpt_selected_users = array( $auth ); 
+							$wpt_selected_users = ($auth_verified)? array( $auth ) : array( false ); 
 						}
 						
 						if ( $post_info['wpt_cotweet'] == 1 || get_option( 'jd_individual_twitter_users' ) != 1 ) { 
@@ -836,20 +836,22 @@ function jd_twit( $post_ID, $type='instant' ) {
 						}
 						
 						if ( $post_info['wpt_delay_tweet'] == 0 || $post_info['wpt_delay_tweet'] == '' || $post_info['wpt_no_delay'] == 'on' ) {
-							foreach ( $wpt_selected_users as $author ) {
-								if ( wtt_oauth_test( $author, 'verify' ) ) {
-									$tweet = jd_doTwitterAPIPost( $sentence2, $author, $post_ID, $media );
+							foreach ( $wpt_selected_users as $acct ) {
+								if ( wtt_oauth_test( $acct, 'verify' ) ) {
+									$tweet = jd_doTwitterAPIPost( $sentence2, $acct, $post_ID, $media );
 								}
 							}
 						} else {
-							foreach ( $wpt_selected_users as $auth ) {
-								$offset = rand(60,480); // offset by 1-8 minutes
-								if ( wtt_oauth_test( $auth,'verify' ) ) {
-									$time = apply_filters( 'wpt_schedule_delay',( (int) $post_info['wpt_delay_tweet'] )*60, $auth );
-									wp_schedule_single_event( time()+$time+$offset, 'wpt_schedule_tweet_action', array( 'id'=>$auth, 'sentence'=>$sentence, 'rt'=>0, 'post_id'=>$post_ID ) );
+							foreach ( $wpt_selected_users as $acct ) {
+								if ( $auth != $acct ) {
+									$offset = rand(60,480); // offset by 1-8 minutes for additional users
+								}
+								if ( wtt_oauth_test( $acct,'verify' ) ) {
+									$time = apply_filters( 'wpt_schedule_delay',( (int) $post_info['wpt_delay_tweet'] )*60, $acct );
+									wp_schedule_single_event( time()+$time+$offset, 'wpt_schedule_tweet_action', array( 'id'=>$acct, 'sentence'=>$sentence, 'rt'=>0, 'post_id'=>$post_ID ) );
 									$tweet = true; // if scheduled, return true.
 									if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
-										wp_mail( WPT_DEBUG_ADDRESS, "7: JD Tweet Scheduled for Auth ID #$auth #$post_ID",print_r( array( 'id'=>$auth, 'sentence'=>$sentence, 'rt'=>0, 'post_id'=>$post_ID, 'timestamp'=>time()+$time+$offset, 'current_time'=>time(), 'timezone'=>get_option('gmt_offset') ),1)." / $type" ); // DEBUG
+										wp_mail( WPT_DEBUG_ADDRESS, "7: JD Tweet Scheduled for Auth ID #$acct #$post_ID",print_r( array( 'id'=>$acct, 'sentence'=>$sentence, 'rt'=>0, 'post_id'=>$post_ID, 'timestamp'=>time()+$time+$offset, 'current_time'=>time(), 'timezone'=>get_option('gmt_offset') ),1)." / $type" ); // DEBUG
 									}
 								}
 							}
@@ -860,16 +862,16 @@ function jd_twit( $post_ID, $type='instant' ) {
 							$prepend = ( get_option('wpt_prepend') == 1 )?'':get_option('wpt_prepend_rt');
 							$append = ( get_option('wpt_prepend') != 1 )?'':get_option('wpt_prepend_rt');
 							$first = true;
-							foreach ( $wpt_selected_users as $auth ) {
-								if ( wtt_oauth_test( $auth,'verify' ) ) {
+							foreach ( $wpt_selected_users as $acct ) {
+								if ( wtt_oauth_test( $acct,'verify' ) ) {
 									for ( $i=1;$i<=$repeat;$i++ ) {
-										$retweet = jd_truncate_tweet( trim( $prepend.$template.$append ), $post_info, $post_ID, true, $auth );
+										$retweet = jd_truncate_tweet( trim( $prepend.$template.$append ), $post_info, $post_ID, true, $acct );
 										// add original delay to schedule
 										$delay = ( isset($post_info['wpt_delay_tweet'] ) )?( (int) $post_info['wpt_delay_tweet'] )*60:0;
 										/* Don't delay the first Tweet of the group */
 										$offset = ( $first == true )?0:rand(60,240); // delay each co-tweet by 1-4 minutes
-										$time = apply_filters( 'wpt_schedule_retweet',($post_info['wpt_retweet_after'])*(60*60)*$i, $auth );
-										wp_schedule_single_event( time()+$time+$offset+$delay, 'wpt_schedule_tweet_action', array( 'id'=>$auth, 'sentence'=>$retweet, 'rt'=>$i, 'post_id'=>$post_ID ) );
+										$time = apply_filters( 'wpt_schedule_retweet',($post_info['wpt_retweet_after'])*(60*60)*$i, $acct );
+										wp_schedule_single_event( time()+$time+$offset+$delay, 'wpt_schedule_tweet_action', array( 'id'=>$acct, 'sentence'=>$retweet, 'rt'=>$i, 'post_id'=>$post_ID ) );
 										$tweet = true;
 										if ( $i == 4 ) { break; }
 									}
@@ -1491,7 +1493,6 @@ add_action('wp_enqueue_scripts', 'wpt_stylesheet');
 function wpt_stylesheet() {
 	$file = plugins_url( 'twitter-feed.css',__FILE__);
 	wp_register_style( 'wpt-twitter-feed', $file );
-	wp_enqueue_style( 'wpt-twitter-feed' );
 }
 
 // Add notes about Tweet status to posts admin 
@@ -1521,6 +1522,7 @@ function wpt_css() {
 <style type="text/css">
 th#wpt { width: 60px; } 
 .wpt {text-align:center;}
+.wpt_twitter .authorized { color: green; }
 </style>
 <?php	
 }
