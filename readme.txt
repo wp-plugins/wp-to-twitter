@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 3.2.1
-Tested up to: 3.5.1
+Tested up to: 3.6
 License: GPLv2 or later
 Stable tag: trunk
 
