@@ -51,6 +51,13 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.7.3 =
+
+* Don't display promotional notice if donation option checked.
+* WP Tweets PRO: fix for broken prepend text.
+* WP Tweets PRO: Improved truncating if image uploads enabled.
+* Updated translation: Italian
+
 = 2.7.2 =
 
 * Bug fix: Twitter Feed CSS enqueued on all pages, instead of just when activated.

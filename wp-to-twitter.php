@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.7.2
+Version: 2.7.3
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -53,13 +53,13 @@ require_once( plugin_dir_path(__FILE__).'/wpt-feed.php' );
 require_once( plugin_dir_path(__FILE__).'/wpt-widget.php' );
 
 global $wpt_version,$jd_plugin_url;
-$wpt_version = "2.7.2";
+$wpt_version = "2.7.3";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
 function wpt_pro_compatibility() {
 	global $wptp_version;
-	$current_wptp_version = '1.5.4';
+	$current_wptp_version = '1.5.5';
 	if ( version_compare( $wptp_version, $current_wptp_version, '<' ) ) {
 		echo "<div class='error notice'><p class='upgrade'>".sprintf( __('The current version of WP Tweets PRO is <strong>%s</strong>. <a href="http://www.joedolson.com/articles/account/">Upgrade for best compatibility!</a>','wp-to-twitter'),$current_wptp_version )."</p></div>";
 	}
@@ -413,6 +413,8 @@ function wpt_is_ssl( $url ) {
 }
 
 function jd_truncate_tweet( $sentence, $postinfo, $post_ID, $retweet=false, $ref=false ) {
+	// media file occupies 22 characters, need to account for in shortening.
+	$tweet_length = ( wpt_post_with_media( $post_ID ) ) ? 117 : 139; 
 	$sentence = trim(custom_shortcodes( $sentence, $post_ID ));
 	$post = get_post( $post_ID );
 	
@@ -482,7 +484,7 @@ function jd_truncate_tweet( $sentence, $postinfo, $post_ID, $retweet=false, $ref
 		&& strpos( $sentence, '#cat_desc' ) === false
 	) {
 		// there are no tags in this Tweet. Truncate and return.
-		$post_sentence = mb_substr( $sentence, 0, 139, $encoding ); 
+		$post_sentence = mb_substr( $sentence, 0, $tweet_length, $encoding ); 
 		return $post_sentence;
 	}
 
@@ -512,8 +514,8 @@ function jd_truncate_tweet( $sentence, $postinfo, $post_ID, $retweet=false, $ref
 	$url_strlen = mb_strlen( urldecode( fake_normalize( $thisposturl ) ), $encoding );
 	// check total length 
 	$str_length = mb_strlen( urldecode( fake_normalize( $post_sentence ) ), $encoding );
-	if ( $str_length < 140 ) {
-		if ( mb_strlen( fake_normalize ( $post_sentence ) ) > 140 ) { $post_sentence = mb_substr( $post_sentence,0,139,$encoding ); }
+	if ( $str_length < $tweet_length+1 ) {
+		if ( mb_strlen( fake_normalize ( $post_sentence ) ) > $tweet_length+1 ) { $post_sentence = mb_substr( $post_sentence,0,$tweet_length,$encoding ); }
 		return $post_sentence;
 	} else {
 		// what is the excerpt supposed to be?
@@ -548,11 +550,11 @@ function jd_truncate_tweet( $sentence, $postinfo, $post_ID, $retweet=false, $ref
 			$preferred = $length_array;
 		}
 		$diff = ( ($url_strlen - $tco) > 0 )?$url_strlen-$tco:0;
-		if ( $str_length > ( 140 + $diff ) ) {
+		if ( $str_length > ( $tweet_length+ 1 + $diff ) ) {
 			foreach($preferred AS $key=>$value) {
 				$str_length = mb_strlen( urldecode( fake_normalize( trim( $post_sentence ) ) ),$encoding );
-				if ( $str_length > ( 140 + $diff ) ) {
-					$trim = $str_length - ( 140 + $diff );
+				if ( $str_length > ( $tweet_length + 1 + $diff ) ) {
+					$trim = $str_length - ( $tweet_length + 1 + $diff );
 					$old_value = ${$key};
 					// prevent URL from being modified
 					$post_sentence = str_ireplace( $thisposturl, '#url#', $post_sentence ); 
@@ -577,16 +579,16 @@ function jd_truncate_tweet( $sentence, $postinfo, $post_ID, $retweet=false, $ref
 					// put URL back before checking length
 					$post_sentence = str_ireplace( '#url#', $thisposturl, $post_sentence ); 					
 				} else {
-					if ( mb_strlen( fake_normalize ( $post_sentence ),$encoding ) > ( 140 + $diff ) ) { $post_sentence = mb_substr( $post_sentence,0,( 139 + $diff ),$encoding ); }
+					if ( mb_strlen( fake_normalize ( $post_sentence ),$encoding ) > ( $tweet_length + 1 + $diff ) ) { $post_sentence = mb_substr( $post_sentence,0,( $tweet_length + $diff ),$encoding ); }
 				}
 			}
 		}
 		// this is needed in case a tweet needs to be truncated outright and the truncation values aren't in the above.
 		// 1) removes URL 2) checks length of remainder 3) Replaces URL
-		if ( mb_strlen( fake_normalize( $post_sentence ) ) > 140 ) {
+		if ( mb_strlen( fake_normalize( $post_sentence ) ) > $tweet_length + 1 ) {
 			$temp_sentence = str_ireplace( $thisposturl, '#url#', $post_sentence );
-			if ( mb_strlen( fake_normalize( $temp_sentence ) ) > (140-$tco) && $temp_sentence != $post_sentence ) { 
-				$post_sentence = trim(mb_substr( $temp_sentence,0,(140-$tco),$encoding ));
+			if ( mb_strlen( fake_normalize( $temp_sentence ) ) > ( ( $tweet_length + 1 ) - $tco) && $temp_sentence != $post_sentence ) { 
+				$post_sentence = trim(mb_substr( $temp_sentence,0,( ( $tweet_length + 1 ) -$tco),$encoding ));
 				// it's possible to trim off the #url# part in this process. If that happens, put it back.
 				$sub_sentence = (strpos($sentence, '#url#')===false )?$post_sentence:$post_sentence .' '. $thisposturl;
 				$post_sentence = ( strpos($post_sentence,'#url#') === false )?$sub_sentence:str_ireplace( '#url#',$thisposturl,$post_sentence );
@@ -859,12 +861,24 @@ function jd_twit( $post_ID, $type='instant' ) {
 						/* This cycle handles scheduling the automatic retweets */
 						if ( $post_info['wpt_retweet_after'] != 0 && $post_info['wpt_no_repost'] != 'on' ) {
 							$repeat = $post_info['wpt_retweet_repeat'];
-							$prepend = ( get_option('wpt_prepend') == 1 )?'':get_option('wpt_prepend_rt');
-							$append = ( get_option('wpt_prepend') != 1 )?'':get_option('wpt_prepend_rt');
 							$first = true;
 							foreach ( $wpt_selected_users as $acct ) {
 								if ( wtt_oauth_test( $acct,'verify' ) ) {
 									for ( $i=1;$i<=$repeat;$i++ ) {
+										switch( $i ) {
+											case 1:
+											$prepend = ( get_option('wpt_prepend') == 1 )?'':get_option('wpt_prepend_rt');
+											$append = ( get_option('wpt_prepend') != 1 )?'':get_option('wpt_prepend_rt');
+											break;
+											case 2:
+											$prepend = ( get_option('wpt_prepend') == 1 )?'':get_option('wpt_prepend_rt2');
+											$append = ( get_option('wpt_prepend') != 1 )?'':get_option('wpt_prepend_rt2');
+											break;
+											case 3:
+											$prepend = ( get_option('wpt_prepend') == 1 )?'':get_option('wpt_prepend_rt3');
+											$append = ( get_option('wpt_prepend') != 1 )?'':get_option('wpt_prepend_rt3');
+											break;
+										}
 										$retweet = jd_truncate_tweet( trim( $prepend.$template.$append ), $post_info, $post_ID, true, $acct );
 										// add original delay to schedule
 										$delay = ( isset($post_info['wpt_delay_tweet'] ) )?( (int) $post_info['wpt_delay_tweet'] )*60:0;
@@ -1450,7 +1464,7 @@ wpt_dismiss_promotion();
 
 add_action( 'admin_notices', 'wpt_promotion_notice' );
 function wpt_promotion_notice() {
-	if ( current_user_can( 'activate_plugins' ) && get_option( 'wpt_promotion_scheduled' ) == 2 ) {
+	if ( current_user_can( 'activate_plugins' ) && get_option( 'wpt_promotion_scheduled' ) == 2 && get_option( 'jd_donations' ) != 1 ) {
 		$upgrade = "http://www.joedolson.com/articles/wp-tweets-pro/";
 		$dismiss = admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php&dismiss=promotion');
 		echo "<div class='updated fade'><p>".sprintf( __("I hope you've enjoyed <strong>WP to Twitter</strong>! Take a look at <a href='%s'>upgrading to WP Tweets PRO</a> for advanced Tweeting with WordPress! <a href='%s'>Dismiss</a>",'wp-to-twitter'), $upgrade, $dismiss )."</p></div>";

@@ -68,81 +68,70 @@ $this->WP_Widget( 'wpt-latest-tweets', __( 'WP to Twitter - Latest Tweets', 'wp-
 */
 
 function widget( $args, $instance ) {
-
-extract( $args );
-
-wp_enqueue_script( 'twitter-platform', "https://platform.twitter.com/widgets.js" );
-wp_enqueue_style( 'wpt-twitter-feed' );
-
-/** Merge with defaults */
-$instance = wp_parse_args( (array) $instance, $this->defaults );
-
-echo $before_widget;
-
-if ( $instance['title'] )
-echo $before_title . apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base ) . $after_title;
-echo '<div class="wpt-header">';
-	$user = wpt_get_user( $instance['twitter_id'] );
-	$avatar = $user->profile_image_url_https;
-	$name = $user->name;
-	$verified = $user->verified;
-	$img_alignment = ( is_rtl() )?'wpt-right':'wpt-left';
-	$follow_alignment = ( is_rtl() )?'wpt-left':'wpt-right';
-	$follow_url = esc_url( 'https://twitter.com/'.$instance['twitter_id'] );
-	$follow_button = apply_filters ( 'wpt_follow_button', "<a href='$follow_url' class='twitter-follow-button $follow_alignment' data-width='30px' data-show-screen-name='false' data-size='large' data-show-count='false' data-lang='en'>Follow @$instance[twitter_id]</a>" );
-	echo "<p>
-		$follow_button
-		<img src='$avatar' alt='' class='wpt-twitter-avatar $img_alignment' />
-		<span class='wpt-twitter-name'>$name</span><br />
-		<span class='wpt-twitter-id'><a href='$follow_url'>@$instance[twitter_id]</a></span>
-		</p>";
-echo '</div>';
-echo '<ul>' . "\n";
-
-$options['exclude_replies'] = $instance['twitter_hide_replies'];
-$options['include_rts'] = $instance['twitter_include_rts'];
-$opts['links'] = $instance['link_links'];
-$opts['mentions'] = $instance['link_mentions'];
-$opts['hashtags'] = $instance['link_hashtags'];
-$rawtweets = WPT_getTweets($instance['twitter_num'], $instance['twitter_id'], $options);
-
-if ( isset( $rawtweets['error'] ) ) {
-	echo "<li>".$rawtweets['error']."</li>";
-} else {
-
-	/** Build the tweets array */
-	$tweets = array();
-	foreach ( $rawtweets as $tweet ) {
-
-	if ( is_object( $tweet ) ) {
-		$tweet = json_decode( json_encode( $tweet ), true );
+	extract( $args );
+	wp_enqueue_script( 'twitter-platform', "https://platform.twitter.com/widgets.js" );
+	wp_enqueue_style( 'wpt-twitter-feed' );
+	/** Merge with defaults */
+	$instance = wp_parse_args( (array) $instance, $this->defaults );
+	echo $before_widget;
+	if ( $instance['title'] ) {
+		echo $before_title . apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base ) . $after_title;
 	}
-	if ( $instance['source'] ) {
-		$source = $tweet['source'];
-		$timetweet = sprintf( __( '<a href="%3$s">about %1$s ago</a> via %2$s', 'wp-to-twitter' ), human_time_diff( strtotime( $tweet['created_at'] ) ), $source, "http://twitter.com/$instance[twitter_id]/status/$tweet[id_str]" );
+	echo '<div class="wpt-header">';
+		$user = wpt_get_user( $instance['twitter_id'] );
+		$avatar = $user->profile_image_url_https;
+		$name = $user->name;
+		$verified = $user->verified;
+		$img_alignment = ( is_rtl() )?'wpt-right':'wpt-left';
+		$follow_alignment = ( is_rtl() )?'wpt-left':'wpt-right';
+		$follow_url = esc_url( 'https://twitter.com/'.$instance['twitter_id'] );
+		$follow_button = apply_filters ( 'wpt_follow_button', "<a href='$follow_url' class='twitter-follow-button $follow_alignment' data-width='30px' data-show-screen-name='false' data-size='large' data-show-count='false' data-lang='en'>Follow @$instance[twitter_id]</a>" );
+		echo "<p>
+			$follow_button
+			<img src='$avatar' alt='' class='wpt-twitter-avatar $img_alignment' />
+			<span class='wpt-twitter-name'>$name</span><br />
+			<span class='wpt-twitter-id'><a href='$follow_url'>@$instance[twitter_id]</a></span>
+			</p>";
+	echo '</div>';
+	echo '<ul>' . "\n";
+
+	$options['exclude_replies'] = $instance['twitter_hide_replies'];
+	$options['include_rts'] = $instance['twitter_include_rts'];
+	$opts['links'] = $instance['link_links'];
+	$opts['mentions'] = $instance['link_mentions'];
+	$opts['hashtags'] = $instance['link_hashtags'];
+	$rawtweets = WPT_getTweets($instance['twitter_num'], $instance['twitter_id'], $options);
+
+	if ( isset( $rawtweets['error'] ) ) {
+		echo "<li>".$rawtweets['error']."</li>";
 	} else {
-		$timetweet = sprintf( __( '<a href="%2$s">about %1$s ago</a>', 'wp-to-twitter' ), human_time_diff( strtotime( $tweet['created_at'] ) ), "http://twitter.com/$instance[twitter_id]/status/$tweet[id_str]" );
+		/** Build the tweets array */
+		$tweets = array();
+		foreach ( $rawtweets as $tweet ) {
+
+		if ( is_object( $tweet ) ) {
+			$tweet = json_decode( json_encode( $tweet ), true );
+		}
+		if ( $instance['source'] ) {
+			$source = $tweet['source'];
+			$timetweet = sprintf( __( '<a href="%3$s">about %1$s ago</a> via %2$s', 'wp-to-twitter' ), human_time_diff( strtotime( $tweet['created_at'] ) ), $source, "http://twitter.com/$instance[twitter_id]/status/$tweet[id_str]" );
+		} else {
+			$timetweet = sprintf( __( '<a href="%2$s">about %1$s ago</a>', 'wp-to-twitter' ), human_time_diff( strtotime( $tweet['created_at'] ) ), "http://twitter.com/$instance[twitter_id]/status/$tweet[id_str]" );
+		}
+		$tweet_classes = wpt_generate_classes( $tweet );
+		
+		$intents = ( $instance['intents'] )?"<div class='wpt-intents-border'></div><div class='wpt-intents'><a class='wpt-reply' href='https://twitter.com/intent/tweet?in_reply_to=$tweet[id_str]'><span></span>Reply</a> <a class='wpt-retweet' href='https://twitter.com/intent/retweet?tweet_id=$tweet[id_str]'><span></span>Retweet</a> <a class='wpt-favorite' href='https://twitter.com/intent/favorite?tweet_id=$tweet[id_str]'><span></span>Favorite</a></div>":'';
+		/** Add tweet to array */
+		$tweets[] = '<li class="'.$tweet_classes.'">' . WPT_tweet_linkify( $tweet['text'], $opts ) . "<br /><span class='wpt-tweet-time'>$timetweet</span> $intents</li>\n";
+		}
 	}
-	$tweet_classes = wpt_generate_classes( $tweet );
-	
-	$intents = ( $instance['intents'] )?"<div class='wpt-intents-border'></div><div class='wpt-intents'><a class='wpt-reply' href='https://twitter.com/intent/tweet?in_reply_to=$tweet[id_str]'><span></span>Reply</a> <a class='wpt-retweet' href='https://twitter.com/intent/retweet?tweet_id=$tweet[id_str]'><span></span>Retweet</a> <a class='wpt-favorite' href='https://twitter.com/intent/favorite?tweet_id=$tweet[id_str]'><span></span>Favorite</a></div>":'';
-	
-	/** Add tweet to array */
-	$tweets[] = '<li class="'.$tweet_classes.'">' . WPT_tweet_linkify( $tweet['text'], $opts ) . "<br /><span class='wpt-tweet-time'>$timetweet</span> $intents</li>\n";
+	if ( is_array( $tweets ) ) {
+		foreach( $tweets as $tweet ) {
+			echo $tweet;
+		}
 	}
-}
-
-$time = ( absint( $instance['twitter_duration'] ) * 60 );
-
-
-foreach( $tweets as $tweet )
-echo $tweet;
-
-
-echo '</ul>' . "\n";
-
-echo $after_widget;
-
+	echo '</ul>' . "\n";
+	echo $after_widget;
 }
 
 /**

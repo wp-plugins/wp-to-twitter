@@ -13,6 +13,33 @@ if (!class_exists('WP_Http')) {
 function jd_remote_json( $url, $array=true ) {
 	$input = jd_fetch_url( $url );
 	$obj = json_decode($input, $array );
+	try {
+		if (is_null($array)) {
+			switch ( json_last_error() ) {
+				case JSON_ERROR_DEPTH :
+					$msg = ' - Maximum stack depth exceeded';
+					break;
+				case JSON_ERROR_STATE_MISMATCH :
+					$msg = ' - Underflow or the modes mismatch';
+					break;
+				case JSON_ERROR_CTRL_CHAR :
+					$msg = ' - Unexpected control character found';
+					break;
+				case JSON_ERROR_SYNTAX :
+					$msg = ' - Syntax error, malformed JSON';
+					break;
+				case JSON_ERROR_UTF8 :
+					$msg = ' - Malformed UTF-8 characters, possibly incorrectly encoded';
+					break;
+				default :
+					$msg = ' - Unknown error';
+					break;
+			}
+			throw new Exception($msg);
+		}
+	} catch (Exception $e) {
+		return $e -> getMessage();
+	}	
 	return $obj;
 	// TODO: some error handling ?
 }			
