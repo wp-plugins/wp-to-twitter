@@ -2,10 +2,10 @@
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
-Requires at least: 3.2.1
+Requires at least: 3.3.3
 Tested up to: 3.6
 License: GPLv2 or later
-Stable tag: trunk
+Stable tag: 2.7.3
 
 Auto-posts a Twitter update when you update your WordPress blog or blogroll, with your chosen URL shortening service.
 
@@ -50,6 +50,19 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.7.4 =
+
+* Update API endpoint for Bit.ly
+* Added filter to modify "Tweet this" value during editing, based on $_POST data. ('wpt_tweet_this_edit')
+* Altered order of limits for determining whether to Tweet.
+* Deprecated upgrade routine for versions below 2.2.9. (Upgrade will still work.)
+* Added questions to support request form.
+* Made Twitter Feed available via shortcode [get_tweets id='twitter_username']
+* Debugging improvements.
+* Moved to save_post actions
+* Removed option to disable XMLRPC-based Tweeting.
+* Deprecated support for versions older than 3.3.3.
 
 = 2.7.3 =
 

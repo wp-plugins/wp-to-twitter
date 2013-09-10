@@ -306,6 +306,16 @@ $plugins_string
 		<p>".
 		__('<strong>Please note</strong>: I do keep records of those who have donated, but if your donation came from somebody other than your account at this web site, you must note this in your message.','wp-to-twitter')
 		."</p>";
+		echo "
+		<p>".
+		__("If you're having trouble with WP to Twitter, please try to answer these questions in your message:",'wp-to-twitter')
+		."</p>";
+		echo "<ul>";
+			echo "<li>".__('Did this error happen only once, or repeatedly?','wp-to-twitter')."</li>";
+			echo "<li>".__('What was the Tweet, or an example Tweet, that produced this error?','wp-to-twitter')."</li>";
+			echo "<li>".__('If there was an error message from WP to Twitter, what was it?','wp-to-twitter')."</li>";
+			echo "<li>".__('What is the template you\'re using for your Tweets?','wp-to-twitter')."</li>";
+		echo "</ul>";
 		}
 		echo "
 		<p>
@@ -331,4 +341,14 @@ $plugins_string
 		</div>
 		</div>
 	</form>";
+}
+
+function wpt_is_writable( $file ) {
+	$is_writable = false;
+	if ( function_exists( 'wp_is_writable' ) ) {
+		$is_writable = wp_is_writable( $file );
+	} else {
+		$is_writable = is_writeable( $file );
+	}
+	return $is_writable;
 }
