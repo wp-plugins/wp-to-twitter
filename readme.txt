@@ -58,11 +58,14 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 * Altered order of limits for determining whether to Tweet.
 * Deprecated upgrade routine for versions below 2.2.9. (Upgrade will still work.)
 * Added questions to support request form.
+* Added option to delete Tweet history for a post.
 * Made Twitter Feed available via shortcode [get_tweets id='twitter_username']
 * Debugging improvements.
 * Moved to save_post actions
 * Removed option to disable XMLRPC-based Tweeting.
-* Deprecated support for versions older than 3.3.3.
+* Deprecated support for WP versions older than 3.3.3.
+* Renamed StormTwitter class for better namespacing and because it's substantively changed as I'm using it.
+* Modified Twitter feed caching to save as local file or as transient if file system not available.
 
 = 2.7.3 =
 

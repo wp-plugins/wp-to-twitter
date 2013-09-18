@@ -292,7 +292,7 @@ function WPT_getTweets($count = 20, $username = false, $options = false) {
   if ($config['cache_expire'] < 1) $config['cache_expire'] = 3600;
   $config['directory'] = plugin_dir_path(__FILE__);
   
-  $obj = new StormTwitter($config);
+  $obj = new WPT_TwitterFeed($config);
   $res = $obj->getTweets($count, $username, $options);
   update_option('wpt_tdf_last_error',$obj->st_last_error);
   return $res;

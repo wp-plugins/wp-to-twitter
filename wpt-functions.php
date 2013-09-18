@@ -181,15 +181,21 @@ function wpt_post_attachment($post_ID) {
 		$attachment = get_post_thumbnail_id( $post_ID );
 		return $attachment;
 	} else {
-		$args = array( 'post_type' => 'attachment', 'numberposts' => 1, 'post_status' => 'published', 'post_parent' => $post_ID, 'post_mime_type'=>'image' ); 
+		$args = array( 
+			'post_type' => 'attachment', 
+			'numberposts' => 1, 
+			'post_status' => 'published', 
+			'post_parent' => $post_ID, 
+			'post_mime_type'=>'image' 
+			); 
 		$attachments = get_posts($args);
 		if ($attachments) {
 			return $attachments[0]->ID; //Return the first attachment.
 		} else {
-			return null;
+			return false;
 		}
 	}
-	return null; 
+	return false; 
 }
 
 function wpt_get_support_form() {

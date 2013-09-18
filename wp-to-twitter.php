@@ -31,7 +31,7 @@ $wp_content_dir = str_replace( '/plugins/wp-to-twitter','',plugin_dir_path( __FI
 if ( defined('WP_CONTENT_URL') ) { $wp_content_url = constant('WP_CONTENT_URL');}
 if ( defined('WP_CONTENT_DIR') ) { $wp_content_dir = constant('WP_CONTENT_DIR');}
 
-define( 'WPT_DEBUG',false );
+define( 'WPT_DEBUG',true );
 define( 'WPT_DEBUG_ADDRESS', 'debug@joedolson.com' );
 define( 'WPT_FROM', "From: \"".get_option('blogname')."\" <".get_option('admin_email').">" );
 // define( 'WPT_DEBUG_ADDRESS', 'debug@joedolson.com, yourname@youraddress.com' ); // for multiple recipients.
@@ -285,10 +285,21 @@ function jd_doTwitterAPIPost( $twit, $auth=false, $id=false, $media=false ) {
 		wpt_saves_error( $id, $auth, $twit, __('This tweet was blank and could not be sent to Twitter.','wp-tweets-pro'), '403', time() );
 		return true;	
 	} else {
+		// must be designated as media and have a valid attachment
+		$attachment = ( $media ) ? wpt_post_attachment( $id ) : false;
+		if ( $attachment ) {
+			$meta = wp_get_attachment_metadata($attachment);
+			if ( !isset( $meta['width'], $meta['height'] ) ) {
+				if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
+					wpt_mail( "Image Data Does not Exist for Attachment #$attachment", print_r( $args, 1 ) );
+				}
+				$attachment = false;
+			}
+		}
 		$api = ( get_option( 'wpt_http' ) == '1' )?'http:':'https:';
-		$api .= ( $media )?"//api.twitter.com/1.1/statuses/update_with_media.json":"//api.twitter.com/1.1/statuses/update.json";
+		$api .= ( $media && $attachment )?"//api.twitter.com/1.1/statuses/update_with_media.json":"//api.twitter.com/1.1/statuses/update.json";
 		if ( wtt_oauth_test( $auth ) && ( $connection = wtt_oauth_connection( $auth ) ) ) {
-			if ( $media ) {
+			if ( $media && $attachment ) {
 				$connection->media( $api, array( 'status' => $twit, 'source' => 'wp-to-twitter', 'include_entities' => 'true', 'id'=>$id, 'auth'=>$auth ) );
 			} else {
 				$connection->post( $api, array( 'status' => $twit, 'source' => 'wp-to-twitter', 'include_entities' => 'true' ) );
@@ -302,7 +313,9 @@ function jd_doTwitterAPIPost( $twit, $auth=false, $id=false, $media=false ) {
 			}
 			$http_code = ($connection)?$connection->http_code:'failed';	
 		}
-
+		if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
+			wpt_mail( 'Twitter Connection', print_r( $connection, 1 ) );
+		}
 		if ( $connection ) {
 			if ( isset($connection->http_header['x-access-level']) && $connection->http_header['x-access-level'] == 'read' ) { $supplement = sprintf( __('Your Twitter application does not have read and write permissions. Go to <a href="%s">your Twitter apps</a> to modify these settings.','wp-to-twitter'), 'https://dev.twitter.com/apps/' ); } else { $supplement = ''; }
 			$return = false;
@@ -840,7 +853,7 @@ function jd_twit( $post_ID, $type='instant' ) {
 								wp_schedule_single_event( time()+$time+$offset, 'wpt_schedule_tweet_action', array( 'id'=>$acct, 'sentence'=>$sentence, 'rt'=>0, 'post_id'=>$post_ID ) );
 								$tweet = true; // if scheduled, return true.
 								if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
-									if ( $acct ) { $author_id = "#$acct" } else { $author_id = 'Main'; }
+									if ( $acct ) { $author_id = "#$acct"; } else { $author_id = 'Main'; }
 									wpt_mail(  "7: Tweet Scheduled for Auth ID $author_id #$post_ID",print_r( array( 'id'=>$acct, 'sentence'=>$sentence, 'rt'=>0, 'post_id'=>$post_ID, 'timestamp'=>time()+$time+$offset, 'current_time'=>time(), 'timezone'=>get_option('gmt_offset') ),1)." / $type"); // DEBUG
 								}
 							}
@@ -890,6 +903,9 @@ function jd_twit( $post_ID, $type='instant' ) {
 				}
 			}
 		} else {
+			if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
+				wpt_mail( "3c: Not a Tweeted post type #$post_ID","Post_Info: ".print_r($post_info,1). " / $type" );
+			}		
 			return $post_ID;
 		}
 	}
@@ -1076,7 +1092,7 @@ function jd_add_twitter_inner_box( $post ) {
 				} else {
 					echo "<div class='wptab' id='authors'><p>";
 						if ( function_exists( 'wpt_pro_exists' ) ) { 
-							printf( __( 'WP Tweets PRO 1.5.2 allows you to select Twitter accounts. <a href="%s">Log in and download now!</a>', 'wp-to-twitter' ), 'http://www.joedolson.com/articles/account/' );
+							printf( __( 'WP Tweets PRO 1.5.2+ allows you to select Twitter accounts. <a href="%s">Log in and download now!</a>', 'wp-to-twitter' ), 'http://www.joedolson.com/articles/account/' );
 						} else {
 							printf( __( 'Upgrade to WP Tweets PRO to select Twitter accounts! <a href="%s">Upgrade now!</a>', 'wp-to-twitter' ), 'http://www.joedolson.com/articles/wp-tweets-pro/' );						
 						}
@@ -1124,9 +1140,7 @@ function jd_add_twitter_inner_box( $post ) {
 			<a target="_blank" href="<?php echo admin_url('admin.php?page=wp-tweets-pro'); ?>#get-support"><?php _e('Get Support', 'wp-to-twitter', 'wp-to-twitter') ?></a> &raquo;
 		<?php } ?>
 		</p>
-		<?php 
-		wpt_show_tweets( $previous_tweets, $failed_tweets );
-		?>
+		<?php wpt_show_tweets( $previous_tweets, $failed_tweets ); ?>
 		</div>
 		<?php
 	} else { // permissions: this user isn't allowed to Tweet;
@@ -1137,41 +1151,46 @@ function jd_add_twitter_inner_box( $post ) {
 function wpt_show_tweets( $previous_tweets, $failed_tweets ) {
 	if ( !is_array( $previous_tweets ) && $previous_tweets != '' ) { $previous_tweets = array( 0=>$previous_tweets ); }
 	if ( ! empty( $previous_tweets ) || ! empty( $failed_tweets ) ) { ?>
-	<hr>
-	<p class='error'><em><?php _e('Previous Tweets','wp-to-twitter'); ?>:</em></p>
-	<ul>
-	<?php
-	$hidden_fields = '';
-		if ( is_array( $previous_tweets ) ) {
-			foreach ( $previous_tweets as $previous_tweet ) {
-				if ( $previous_tweet != '' ) {
-					$hidden_fields .= "<input type='hidden' name='_jd_wp_twitter[]' value='".esc_attr($previous_tweet)."' />";
-					echo "<li>$previous_tweet <a href='http://twitter.com/intent/tweet?text=".urlencode($previous_tweet)."'>Retweet this</a></li>";
+		<hr>
+		<p class='error'><em><?php _e('Previous Tweets','wp-to-twitter'); ?>:</em></p>
+		<ul>
+		<?php
+		$has_history = false;
+		$hidden_fields = '';
+			if ( is_array( $previous_tweets ) ) {
+				foreach ( $previous_tweets as $previous_tweet ) {
+					if ( $previous_tweet != '' ) {
+						$has_history = true;
+						$hidden_fields .= "<input type='hidden' name='_jd_wp_twitter[]' value='".esc_attr($previous_tweet)."' />";
+						echo "<li>$previous_tweet <a href='http://twitter.com/intent/tweet?text=".urlencode($previous_tweet)."'>Retweet this</a></li>";
+					}
 				}
 			}
-		}
-	?>
-	</ul>
-	<p class='error'><em><?php _e('Failed Tweets','wp-to-twitter'); ?>:</em></p>
-	<ul>
-	<?php
-		$list = false;
-		if ( is_array( $failed_tweets ) ) {
-			foreach ( $failed_tweets as $failed_tweet ) {
-				if ( !empty($failed_tweet) ) {
-					$ft = $failed_tweet['sentence'];
-					$reason = $failed_tweet['code'];
-					$error = $failed_tweet['error'];
-					$list = true;
-					echo "<li> <code>Error: $reason</code> $ft <a href='http://twitter.com/intent/tweet?text=".urlencode($ft)."'>Tweet this</a><br /><em>$error</em></li>";
+		?>
+		</ul>
+		<p class='error'><em><?php _e('Failed Tweets','wp-to-twitter'); ?>:</em></p>
+		<ul>
+		<?php
+			$list = false;
+			if ( is_array( $failed_tweets ) ) {
+				foreach ( $failed_tweets as $failed_tweet ) {
+					if ( !empty($failed_tweet) ) {
+						$ft = $failed_tweet['sentence'];
+						$reason = $failed_tweet['code'];
+						$error = $failed_tweet['error'];
+						$list = true;
+						echo "<li> <code>Error: $reason</code> $ft <a href='http://twitter.com/intent/tweet?text=".urlencode($ft)."'>Tweet this</a><br /><em>$error</em></li>";
+					}
 				}
 			}
+			if ( !$list ) { echo "<li>".__('No failed tweets on this post.','wp-to-twitter')."</li>"; }
+		?>
+		</ul>
+		<?php
+		echo "<div>".$hidden_fields."</div>";
+		if ( $has_history || $list ) {
+			echo "<p><input type='checkbox' name='wpt_clear_history' id='wptch' value='clear' /> <label for='wptch'>".__('Delete Tweet History', 'wp-to-twitter' )."</label></p>";
 		}
-		if ( !$list ) { echo "<li>".__('No failed tweets on this post.','wp-to-twitter')."</li>"; }
-	?>
-	</ul>
-	<?php
-	echo "<div>".$hidden_fields."</div>";
 	}
 }
 
@@ -1242,11 +1261,15 @@ function post_jd_twitter( $id ) {
 			$update = update_post_meta( $id, '_jd_tweet_this', $jd_tweet_default );
 		}
 	}
+	if ( isset( $_POST['wpt_clear_history'] ) && $_POST['wpt_clear_history'] == 'clear' ) {
+		delete_post_meta( $id, '_wpt_failed' );
+		delete_post_meta( $id, '_jd_wp_twitter' );
+	}
 	// WPT PRO //
 	$update = apply_filters( 'wpt_insert_post', $_POST, $id );
 	// WPT PRO //	
 	// only send debug data if post meta is updated. 
-	if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) && $update == true || is_int( $update ) ) {
+	if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) && ( $update == true || is_int( $update ) ) ) {
 		wpt_mail( "Post Meta Inserted: #$id",print_r($_POST,1) ); // DEBUG
 	}		
 }
