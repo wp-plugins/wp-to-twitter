@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 3.3.3
-Tested up to: 3.6
+Tested up to: 3.6.1
 License: GPLv2 or later
 Stable tag: 2.7.3
 
@@ -66,6 +66,8 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 * Deprecated support for WP versions older than 3.3.3.
 * Renamed StormTwitter class for better namespacing and because it's substantively changed as I'm using it.
 * Modified Twitter feed caching to save as local file or as transient if file system not available.
+* Removed PHP < 5 warning, since I no longer support versions of WordPress that allow PHP 4.
+* #author# Template tag only worked if WP Tweets PRO installed.
 
 = 2.7.3 =
 

@@ -31,7 +31,7 @@ $wp_content_dir = str_replace( '/plugins/wp-to-twitter','',plugin_dir_path( __FI
 if ( defined('WP_CONTENT_URL') ) { $wp_content_url = constant('WP_CONTENT_URL');}
 if ( defined('WP_CONTENT_DIR') ) { $wp_content_dir = constant('WP_CONTENT_DIR');}
 
-define( 'WPT_DEBUG',false );
+define( 'WPT_DEBUG',true );
 define( 'WPT_DEBUG_ADDRESS', 'debug@joedolson.com' );
 define( 'WPT_FROM', "From: \"".get_option('blogname')."\" <".get_option('admin_email').">" );
 // define( 'WPT_DEBUG_ADDRESS', 'debug@joedolson.com, yourname@youraddress.com' ); // for multiple recipients.
@@ -39,13 +39,7 @@ define( 'WPT_FROM', "From: \"".get_option('blogname')."\" <".get_option('admin_e
 $wp_plugin_url = plugins_url();
 include_once( ABSPATH . 'wp-admin/includes/plugin.php' ); // required in order to access is_plugin_active()
 
-if ( version_compare( phpversion(), '5.0', '<' ) ) {
-	$warning = __('WP to Twitter requires PHP version 5 or above. Please upgrade PHP to run WP to Twitter.','wp-to-twitter' );
-	add_action('admin_notices', create_function( '', "echo \"<div class='error'><p>$warning</p></div>\";" ) );
-} else {
-	require_once( plugin_dir_path(__FILE__).'/wp-to-twitter-oauth.php' );
-}
-
+require_once( plugin_dir_path(__FILE__).'/wp-to-twitter-oauth.php' );
 require_once( plugin_dir_path(__FILE__).'/wp-to-twitter-shorteners.php' );
 require_once( plugin_dir_path(__FILE__).'/wp-to-twitter-manager.php' );
 require_once( plugin_dir_path(__FILE__).'/wpt-functions.php' );
@@ -58,8 +52,8 @@ $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
 function wpt_mail( $subject, $body ) {
-	$use_email = true;
-	if ( $use_email == true ) {
+	$use_email = false;
+	if ( $use_email ) {
 		wp_mail( WPT_DEBUG_ADDRESS, $subject, $body, WPT_FROM );
 	} else {
 		$debug = get_option( 'wpt_debug' );
@@ -448,7 +442,7 @@ function jd_truncate_tweet( $sentence, $postinfo, $post_ID, $retweet=false, $ref
 	}
 	$display_name = get_the_author_meta( 'display_name',$post->post_author );	
 	// value of #author#
-	$author = ( $user_account != '' )?"@$user_account":$display_name;	
+	$author = ( $account != '' )?"@$account":$display_name;	
 	// value of #account# 
 	$account = ( $account != '' )?"@$account":'';
 	// value of #@# 
@@ -1472,7 +1466,7 @@ function wpt_future_to_publish( $post ) {
 function wpt_twit( $id ) {
 	if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE || wp_is_post_revision( $id ) ) return;
 	$post = get_post( $id );
-	if ( $post->post_status == 'auto-draft' ) return;
+	if ( $post->post_status == 'auto-draft' || $post->post_status == 'draft' ) return;
 	//$post_type_settings = get_option('wpt_post_types');
 	//if ( is_array( $post_type_settings ) ) {
 		//$post_types = array_keys($post_type_settings);
