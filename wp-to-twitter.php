@@ -31,7 +31,7 @@ $wp_content_dir = str_replace( '/plugins/wp-to-twitter','',plugin_dir_path( __FI
 if ( defined('WP_CONTENT_URL') ) { $wp_content_url = constant('WP_CONTENT_URL');}
 if ( defined('WP_CONTENT_DIR') ) { $wp_content_dir = constant('WP_CONTENT_DIR');}
 
-define( 'WPT_DEBUG',true );
+define( 'WPT_DEBUG',false );
 define( 'WPT_DEBUG_ADDRESS', 'debug@joedolson.com' );
 define( 'WPT_FROM', "From: \"".get_option('blogname')."\" <".get_option('admin_email').">" );
 // define( 'WPT_DEBUG_ADDRESS', 'debug@joedolson.com, yourname@youraddress.com' ); // for multiple recipients.
@@ -52,7 +52,7 @@ $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
 function wpt_mail( $subject, $body ) {
-	$use_email = false;
+	$use_email = true;
 	if ( $use_email ) {
 		wp_mail( WPT_DEBUG_ADDRESS, $subject, $body, WPT_FROM );
 	} else {

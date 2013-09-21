@@ -188,7 +188,7 @@ class jd_TwitterOAuth {
 			require_once( ABSPATH . 'wp-admin/includes/file.php' );
 		}
 		// get_home_path() and make link relative both return slashed, so we have an extra.
-		$subject = get_home_path() . wp_make_link_relative($img_medium[0]);
+		$subject = apply_filters( 'wpt_image_path', get_home_path() . wp_make_link_relative($img_medium[0]) );
         $image = str_replace( '//', '/', $subject );
         $code = $tmhOAuth->request(
             'POST',
