@@ -177,10 +177,16 @@ class jd_TwitterOAuth {
 			$ot = get_user_meta( $auth,'oauth_token',true);
 			$ots = get_user_meta( $auth,'oauth_token_secret',true);
 		}
+		// when performing as a scheduled action, need to include file.php
+		if ( !function_exists( 'get_home_path' ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		}		
 		$connect = array( 'consumer_key'=>$ack, 'consumer_secret'=>$acs, 'user_token'=>$ot, 'user_secret'=>$ots );
 		$tmhOAuth = new tmhOAuth( $connect );
 		$attachment = wpt_post_attachment($args['id']);
-		if ( home_url() == site_url() ) {		
+		// if install is at root, can query src path. Otherwise, need to take full image.
+		$at_root = ( wp_make_link_relative( home_url() ) == home_url() || wp_make_link_relative( home_url() ) == '/' ) ? true : false ;
+		if ( $at_root ) {		
 			$upload = wp_get_attachment_image_src( $attachment, apply_filters( 'wpt_upload_image_size', 'medium' ) );
 			$path = get_home_path() . wp_make_link_relative( $upload[0] );
 			$subject = apply_filters( 'wpt_image_path', $path );
@@ -190,10 +196,6 @@ class jd_TwitterOAuth {
 		}
 		$mime_type = get_post_mime_type( $attachment );
 		if ( !$mime_type ) { $mime_type = 'image/jpeg'; }
-		// when performing as a scheduled action, need to include file.php
-		if ( !function_exists( 'get_home_path' ) ) {
-			require_once( ABSPATH . 'wp-admin/includes/file.php' );
-		}
         $code = $tmhOAuth->request(
             'POST',
              $url,
