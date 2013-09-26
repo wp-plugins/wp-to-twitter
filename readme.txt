@@ -41,7 +41,7 @@ Translations:
 Visit the [WP to Twitter translations page](http://translate.joedolson.com/projects/wp-to-twitter) to see how complete these are.
 
 Languages available (in order of completeness):
-Italian, French, Danish, Catalan, Dutch, Chinese, Portuguese, Japanese, Romanian, Estonian, Russian, German, Ukrainian, Lithuanian, Belarusian, Irish, Spanish, Turkish, Persian
+Italian, French, Danish, Catalan, Dutch, Portuguese, Chinese, Japanese, Romanian, Estonian, Spanish, German, Russian, Swedish, Irish, Ukrainian, Lithuanian, Belarusian, Turkish, Persian
 
 Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
 
@@ -68,6 +68,7 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 * Modified Twitter feed caching to save as local file or as transient if file system not available.
 * Removed PHP < 5 warning, since I no longer support versions of WordPress that allow PHP 4.
 * #author# Template tag only worked if WP Tweets PRO installed.
+* Updated Portuguese Brazilian & added Swedish translations. (Partial)
 
 = 2.7.3 =
 
