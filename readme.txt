@@ -51,6 +51,10 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.7.5 =
+
+* Setting a post to 'pending' or any custom status caused a Tweet to be published in 2.7.4
+
 = 2.7.4 =
 
 * Update API endpoint for Bit.ly

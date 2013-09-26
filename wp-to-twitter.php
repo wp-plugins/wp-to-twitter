@@ -1466,7 +1466,7 @@ function wpt_future_to_publish( $post ) {
 function wpt_twit( $id ) {
 	if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE || wp_is_post_revision( $id ) ) return;
 	$post = get_post( $id );
-	if ( $post->post_status == 'auto-draft' || $post->post_status == 'draft' ) return;
+	if ( $post->post_status != 'publish' ) return; // is there any reason to accept any other status?
 	//$post_type_settings = get_option('wpt_post_types');
 	//if ( is_array( $post_type_settings ) ) {
 		//$post_types = array_keys($post_type_settings);
