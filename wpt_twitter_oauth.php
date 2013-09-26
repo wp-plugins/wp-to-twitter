@@ -179,17 +179,21 @@ class jd_TwitterOAuth {
 		}
 		$connect = array( 'consumer_key'=>$ack, 'consumer_secret'=>$acs, 'user_token'=>$ot, 'user_secret'=>$ots );
 		$tmhOAuth = new tmhOAuth( $connect );
-		$attachment = wpt_post_attachment($args['id']);		
-        $img_medium = wp_get_attachment_image_src( $attachment, apply_filters( 'wpt_upload_image_size', 'medium' ) );
+		$attachment = wpt_post_attachment($args['id']);
+		if ( home_url() == site_url() ) {		
+			$upload = wp_get_attachment_image_src( $attachment, apply_filters( 'wpt_upload_image_size', 'medium' ) );
+			$path = get_home_path() . wp_make_link_relative( $upload[0] );
+			$subject = apply_filters( 'wpt_image_path', $path );
+			$image = str_replace( '//', '/', $subject );
+		} else {
+			$image = get_attached_file( $attachment );
+		}
 		$mime_type = get_post_mime_type( $attachment );
 		if ( !$mime_type ) { $mime_type = 'image/jpeg'; }
 		// when performing as a scheduled action, need to include file.php
 		if ( !function_exists( 'get_home_path' ) ) {
 			require_once( ABSPATH . 'wp-admin/includes/file.php' );
 		}
-		// get_home_path() and make link relative both return slashed, so we have an extra.
-		$subject = apply_filters( 'wpt_image_path', get_home_path() . wp_make_link_relative($img_medium[0]) );
-        $image = str_replace( '//', '/', $subject );
         $code = $tmhOAuth->request(
             'POST',
              $url,
@@ -201,10 +205,10 @@ class jd_TwitterOAuth {
              true  // multipart
         );
 		if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
-			 $debug = array(
+			$debug = array(
 				'media[]'  => "@{$image};type={$mime_type};filename={$image}",
-				'status'   => $args['status'],
-             );
+				'status'   => $args['status']
+			);
 			 wpt_mail( "Media Submitted - Post ID #$args[id]", print_r( $debug, 1 ) );
 		}
         $response = $tmhOAuth->response['response'];	
