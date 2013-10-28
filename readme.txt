@@ -5,7 +5,7 @@ Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, l
 Requires at least: 3.3.3
 Tested up to: 3.7.0
 License: GPLv2 or later
-Stable tag: 2.7.5
+Stable tag: 2.7.6
 
 Auto-posts a Twitter update when you update your WordPress blog or blogroll, with your chosen URL shortening service.
 
@@ -56,6 +56,7 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 * Added citation for StormTwitter feed source.
 * Reverted use of 'extract()' due to very obscure bug.
 * New feature for WP Tweets PRO: custom templates for re-posts
+* Update Dutch translation.
 
 = 2.7.5 =
 
