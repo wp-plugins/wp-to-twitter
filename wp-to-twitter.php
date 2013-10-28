@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.7.4
+Version: 2.7.6
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -31,7 +31,7 @@ $wp_content_dir = str_replace( '/plugins/wp-to-twitter','',plugin_dir_path( __FI
 if ( defined('WP_CONTENT_URL') ) { $wp_content_url = constant('WP_CONTENT_URL');}
 if ( defined('WP_CONTENT_DIR') ) { $wp_content_dir = constant('WP_CONTENT_DIR');}
 
-define( 'WPT_DEBUG',false );
+define( 'WPT_DEBUG', false );
 define( 'WPT_DEBUG_ADDRESS', 'debug@joedolson.com' );
 define( 'WPT_FROM', "From: \"".get_option('blogname')."\" <".get_option('admin_email').">" );
 // define( 'WPT_DEBUG_ADDRESS', 'debug@joedolson.com, yourname@youraddress.com' ); // for multiple recipients.
@@ -47,7 +47,7 @@ require_once( plugin_dir_path(__FILE__).'/wpt-feed.php' );
 require_once( plugin_dir_path(__FILE__).'/wpt-widget.php' );
 
 global $wpt_version,$jd_plugin_url;
-$wpt_version = "2.7.4";
+$wpt_version = "2.7.6";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
@@ -64,7 +64,7 @@ function wpt_mail( $subject, $body ) {
 
 function wpt_pro_compatibility() {
 	global $wptp_version;
-	$current_wptp_version = '1.5.6';
+	$current_wptp_version = '1.5.8';
 	if ( version_compare( $wptp_version, $current_wptp_version, '<' ) ) {
 		echo "<div class='error notice'><p class='upgrade'>".sprintf( __('The current version of WP Tweets PRO is <strong>%s</strong>. <a href="http://www.joedolson.com/articles/account/">Upgrade for best compatibility!</a>','wp-to-twitter'),$current_wptp_version )."</p></div>";
 	}
@@ -409,26 +409,24 @@ function wpt_is_ssl( $url ) {
 	if ( stripos( $url, 'https' ) ) { return true; } else { return false; }
 }
 
-function jd_truncate_tweet( $sentence, $postinfo, $post_ID, $retweet=false, $ref=false ) {
+function jd_truncate_tweet( $sentence, $post, $post_ID, $retweet=false, $ref=false ) {
 	// media file occupies 22 characters, need to account for in shortening.
 	$tweet_length = ( wpt_post_with_media( $post_ID ) ) ? 117 : 139; 
 	$sentence = trim(custom_shortcodes( $sentence, $post_ID ));
-	$post = get_post( $post_ID );
-	extract( $postinfo );
-	$shrink = ( $shortUrl != '' )?$shortUrl:apply_filters( 'wptt_shorten_link', $postLink, $postTitle, $post_ID, false );
+	$shrink = ( $post['shortUrl'] != '' )?$post['shortUrl']:apply_filters( 'wptt_shorten_link', $post['postLink'], $post['postTitle'], $post_ID, false );
 	// generate all template variable values
-	$auth = $authId;
-	$title = trim( apply_filters( 'wpt_status', $postTitle, $post_ID, 'title' ) );
-	$blogname = trim($blogTitle);
-	$excerpt = trim( apply_filters( 'wpt_status', $postExcerpt, $post_ID, 'post' ) );
+	$auth = $post['authId'];
+	$title = trim( apply_filters( 'wpt_status', $post['postTitle'], $post_ID, 'title' ) );
+	$blogname = trim($post['blogTitle']);
+	$excerpt = trim( apply_filters( 'wpt_status', $post['postExcerpt'], $post_ID, 'post' ) );
 	$thisposturl = trim($shrink);
-	$category = trim($category);
-	$cat_desc = trim($cat_desc);
+	$category = trim($post['category']);
+	$cat_desc = trim($post['cat_desc']);
 	$user_account = get_user_meta( $auth,'wtt_twitter_username', true ) ;
 	$tags = wpt_generate_hash_tags( $post_ID );
 	$account = get_option('wtt_twitter_username');
-	$date = trim($postDate);
-	$modified = trim($postModified);
+	$date = trim($post['postDate']);
+	$modified = trim($post['postModified']);
 	if ( get_option( 'jd_individual_twitter_users' ) == 1 ) {
 		if ( $user_account == '' ) {
 			if ( get_user_meta( $auth, 'wp-to-twitter-enable-user',true ) == 'mainAtTwitter' ) {
@@ -440,7 +438,7 @@ function jd_truncate_tweet( $sentence, $postinfo, $post_ID, $retweet=false, $ref
 			$account = "$user_account";
 		}
 	}
-	$display_name = get_the_author_meta( 'display_name',$post->post_author );	
+	$display_name = get_the_author_meta( 'display_name', $auth );	
 	// value of #author#
 	$author = ( $account != '' )?"@$account":$display_name;	
 	// value of #account# 
@@ -874,7 +872,11 @@ function jd_twit( $post_ID, $type='instant' ) {
 										$append = ( get_option('wpt_prepend') != 1 )?'':get_option('wpt_prepend_rt3');
 										break;
 									}
-									$retweet = jd_truncate_tweet( trim( $prepend.$template.$append ), $post_info, $post_ID, true, $acct );
+									if ( get_option( 'wpt_custom_type' ) == 'template' ) {
+										$retweet = jd_truncate_tweet( trim( $prepend.$append ), $post_info, $post_ID, true, $acct );
+									} else {
+										$retweet = jd_truncate_tweet( trim( $prepend.$template.$append ), $post_info, $post_ID, true, $acct );
+									}
 									// add original delay to schedule
 									$delay = ( isset($post_info['wpt_delay_tweet'] ) )?( (int) $post_info['wpt_delay_tweet'] )*60:0;
 									/* Don't delay the first Tweet of the group */
@@ -1385,7 +1387,7 @@ function jd_addTwitterAdminPages() {
 add_action( 'admin_head', 'jd_addTwitterAdminStyles' );
 function jd_addTwitterAdminStyles() {
 	if ( isset($_GET['page']) && ( $_GET['page'] == "wp-to-twitter" || $_GET['page'] == "wp-to-twitter/wp-to-twitter.php" || $_GET['page'] == "wp-tweets-pro" || $_GET['page'] == "wp-to-twitter-schedule" || $_GET['page'] == "wp-to-twitter-tweets" || $_GET['page'] == "wp-to-twitter-errors" ) ) {
-		echo '<link type="text/css" rel="stylesheet" href="'.plugins_url('/wp-to-twitter/styles.css').'" />';
+		wp_enqueue_style( 'wpt-styles', plugins_url( '/wp-to-twitter/styles.css' ) );
 	}
 }
 
@@ -1467,13 +1469,7 @@ function wpt_twit( $id ) {
 	if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE || wp_is_post_revision( $id ) ) return;
 	$post = get_post( $id );
 	if ( $post->post_status != 'publish' ) return; // is there any reason to accept any other status?
-	//$post_type_settings = get_option('wpt_post_types');
-	//if ( is_array( $post_type_settings ) ) {
-		//$post_types = array_keys($post_type_settings);
-		//if ( in_array( $post->post_type, $post_types ) ) {
-			wpt_twit_instant( $id );
-		//}
-	//}
+	wpt_twit_instant( $id );
 }
 add_action( 'xmlrpc_publish_post', 'wpt_twit_xmlrpc' ); 
 add_action( 'publish_phone', 'wpt_twit_xmlrpc' );	
@@ -1532,7 +1528,6 @@ function wpt_stylesheet() {
 	$file = plugins_url( 'twitter-feed.css',__FILE__);
 	wp_register_style( 'wpt-twitter-feed', $file );
 }
-
 /*
 // Add notes about Tweet status to posts admin 
 function wpt_column($cols) {
@@ -1554,18 +1549,17 @@ function wpt_return_value($value, $column_name, $id) {
 	}
 	return $value;
 }
-
+*/
 // Output CSS for width of new column
 function wpt_css() {
 ?>
 <style type="text/css">
 th#wpt { width: 60px; } 
-.wpt {text-align:center;}
 .wpt_twitter .authorized { color: green; }
 </style>
 <?php	
 }
-
+/*
 // Actions/Filters for various tables and the css output
 add_action('admin_init', 'wpt_add');
 function wpt_add() {

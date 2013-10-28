@@ -761,7 +761,7 @@ function wpt_sidebar() {
 			<a href="<?php echo $support; ?>#get-support"><?php _e("Get Support",'wp-to-twitter'); ?></a>
 			<?php if ( get_option('jd_donations') != 1 && !function_exists( 'wpt_pro_exists' )  ) { ?>
 			<div>
-			<p><?php _e('<a href="http://www.joedolson.com/donate.php">Make a donation today!</a> Every donation counts - donate $2, $10, or $100 and help me keep this plug-in running!','wp-to-twitter'); ?></p>
+			<p><?php _e('<a href="http://www.joedolson.com/donate.php">Make a donation today!</a> Every donation counts - donate $5, $20, or $100 and help me keep this plug-in running!','wp-to-twitter'); ?></p>
 			<p class='flattr'><a href="http://flattr.com/thing/559528/WP-to-Twitter"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr WP to Twitter" /></a></p>			
 			<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 				<div>
@@ -793,7 +793,12 @@ function wpt_sidebar() {
 			</div>
 		</div>
 	</div>
-	<?php } ?>
+	<?php 
+	} else { 
+		if ( function_exists( 'wpt_notes' ) ) { 
+			wpt_notes(); 
+		}
+	} ?>
 	<div class="ui-sortable meta-box-sortables">
 		<div class="postbox">
 		<h3><?php _e('Shortcodes','wp-to-twitter'); ?></h3>

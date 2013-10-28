@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 3.3.3
-Tested up to: 3.6.1
+Tested up to: 3.7.0
 License: GPLv2 or later
 Stable tag: 2.7.5
 
@@ -50,6 +50,12 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.7.6 =
+
+* Added citation for StormTwitter feed source.
+* Reverted use of 'extract()' due to very obscure bug.
+* New feature for WP Tweets PRO: custom templates for re-posts
 
 = 2.7.5 =
 
@@ -100,7 +106,7 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 * Bug fix: Could not re-order template tag truncation order.
 * Bug fix: Corrected encoding of category names and descriptions.
 * Bug fix: Better handling of wp_get_shortlink for custom post types. (Custom post types don't support wp_get_shortlink)
-* Adds a Twitter Feed widget.
+* Adds a Twitter Feed widget. Original code source from StormTwitter feed by [Liam Gladdy](http://www.stormconsultancy.co.uk/blog/development/tools-plugins/oauth-twitter-feed-for-developers-library-and-wordpress-plugin/)
 * Deprecated support for WP 3.1.4.
 
 = 2.6.9 =
@@ -899,4 +905,4 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
-* 2.7.0 UI Redesign. Added Twitter Feed widget. Bug fixes.
+* 2.7.6 New WP Tweets PRO feature; bug fixes.
