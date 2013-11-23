@@ -64,7 +64,7 @@ function wpt_twitter_feed( $instance ) {
 	$return .= '</div>';
 	$return .= '<ul>' . "\n";
 
-	$options['exclude_replies'] = $instance['twitter_hide_replies'];
+	$options['exclude_replies'] = ( isset( $instance['twitter_hide_replies'] ) ) ? $instance['twitter_hide_replies'] : false;
 	$options['include_rts'] = $instance['twitter_include_rts'];
 	$opts['links'] = $instance['link_links'];
 	$opts['mentions'] = $instance['link_mentions'];

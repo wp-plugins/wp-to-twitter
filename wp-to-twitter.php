@@ -965,6 +965,7 @@ function wpt_generate_hash_tags( $post_ID ) {
 				$replace = get_option( 'jd_replace_character' );				
 				$replace = ( $replace == "[ ]" || $replace == "" )?"":$replace;
 				$tag = str_ireplace( " ",$replace,trim( $tag ) );
+				$tag = preg_replace( '/[\/]/',$replace,$tag ); // remove forward slashes.
 				if ($strip == '1') { $tag = preg_replace( $search, $replace, $tag ); }
 				switch ( $term_meta ) {
 					case 1 : $newtag = "#$tag"; break;
@@ -973,8 +974,8 @@ function wpt_generate_hash_tags( $post_ID ) {
 					default: $newtag = "#$tag";				
 				}
 				if ( mb_strlen( $newtag ) > 2 && (mb_strlen( $newtag ) <= $max_characters) && ($i <= $max_tags) ) {
-				$hashtags .= "$newtag ";
-				$i++;
+					$hashtags .= "$newtag ";
+					$i++;
 				}
 			}
 		}

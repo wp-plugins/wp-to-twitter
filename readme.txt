@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 3.3.3
-Tested up to: 3.7.0
+Tested up to: 3.7.1
 License: GPLv2 or later
 Stable tag: 2.7.6
 
@@ -11,9 +11,9 @@ Auto-posts a Twitter update when you update your WordPress blog or blogroll, wit
 
 == Description ==
 
-WP to Twitter automatically posts Tweets from WordPress to Twitter using your URL shortening service to provide a link back to your post from Twitter. You can also use WP to Twitter to display a feed of recent Tweets using widgets.
+WP to Twitter automatically posts Tweets from WordPress to Twitter using your URL shortening service to provide a link back from Twitter. WP to Twitter will also display a feed of recent Tweets using widgets.
 
-Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/)
+Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) for Tweet scheduling, automatic re-tweeting, and more!
 
 The plugin supports a customizable Tweet template for updating or editing posts and pages, supports your custom post types, and allows you to write a custom Tweet for each post, using a selection of custom template tags to generate the text. 
 
@@ -23,9 +23,9 @@ Additional features include:
 * Use alternate URLs in place of post permalinks
 * Support for Google Analytics
 * Support for XMLRPC remote clients
-* Limiting Tweeting from specific categories
+* Filter Tweeting by category
 
-Any status update longer than 140 characters will be truncated by the plugin. 
+Status updates longer than 140 characters will be truncated. 
 
 Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) for extra features, including:
 
@@ -41,7 +41,7 @@ Translations:
 Visit the [WP to Twitter translations page](http://translate.joedolson.com/projects/wp-to-twitter) to see how complete these are.
 
 Languages available (in order of completeness):
-Italian, French, Danish, Catalan, Dutch, Portuguese, Chinese, Japanese, Romanian, Estonian, Spanish, German, Russian, Swedish, Irish, Ukrainian, Lithuanian, Belarusian, Turkish, Persian
+Italian, French, Dutch, Russian, Danish, Catalan, Portuguese, Chinese, Japanese, Romanian, Estonian, Spanish, German, Swedish, Irish, Ukrainian, Lithuanian, Belarusian, Turkish, Persian
 
 Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
 
@@ -50,6 +50,14 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.7.7 =
+
+* Bug fix: #author# template tag
+* Bug fix: tag filtering error.
+* Bug fix: eliminated one PHP notice.
+* Minor text changes.
+* Updated: Russian translation.
 
 = 2.7.6 =
 

@@ -49,7 +49,7 @@ function jd_check_functions() {
 	//check twitter credentials
 	if ( wtt_oauth_test() ) {
 		$rand = rand(1000000,9999999);
-		$testpost = jd_doTwitterAPIPost( "This is a test of WP->Twitter. $shrink ($rand)" );
+		$testpost = jd_doTwitterAPIPost( "This is a test of WP to Twitter. $shrink ($rand)" );
 			if ($testpost) {
 				$message .= __("<li><strong>WP to Twitter successfully submitted a status update to Twitter.</strong></li>",'wp-to-twitter'); 
 			} else {
@@ -474,32 +474,34 @@ function wpt_update_settings() {
 	<form method="post" action="">
 	<?php $nonce = wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, false).wp_referer_field(false);  echo "<div>$nonce</div>"; ?>
 	<div>	
-		<input type="submit" name="submit" value="<?php _e("Save WP->Twitter Options", 'wp-to-twitter'); ?>" class="button-primary button-side" />	
+		<input type="submit" name="submit" value="<?php _e("Save WP to Twitter Options", 'wp-to-twitter'); ?>" class="button-primary button-side" />	
 		<?php echo apply_filters('wpt_pick_shortener',''); ?>
 		<?php 
 			
-			$post_types = get_post_types( array('public'=>true), 'names' );
+			$post_types = get_post_types( array( 'public'=>true ), 'objects' );
 			$wpt_settings = get_option('wpt_post_types');
 
 				foreach( $post_types as $type ) {
-					if ( $type == 'attachment' || $type == 'nav_menu_item' || $type == 'revision' ) {
+					$name = $type->labels->name;
+					$singular = $type->labels->singular_name;
+					$slug = $type->name;
+					if ( $slug == 'attachment' || $slug == 'nav_menu_item' || $slug == 'revision' ) {
 					
 					} else {
 						$vowels = array( 'a','e','i','o','u' );
 						foreach ( $vowels as $vowel ) {
-							if ( strpos($type, $vowel ) === 0 ) { $word = 'an'; break; } else { $word = 'a'; }
+							if ( strpos($name, $vowel ) === 0 ) { $word = 'an'; break; } else { $word = 'a'; }
 						}
 				?>
 			<fieldset class='wpt_types'>
-			
-			<legend><?php printf(__('Settings for type "%1$s"','wp-to-twitter'),$type); ?></legend>
+			<legend><?php echo $name ?></legend>
 			<p>
-				<input type="checkbox" name="wpt_post_types[<?php echo $type; ?>][post-published-update]" id="<?php echo $type; ?>-post-published-update" value="1" <?php echo jd_checkCheckbox('wpt_post_types',$type,'post-published-update')?> />
-				<label for="<?php echo $type; ?>-post-published-update"><strong><?php printf(__('Update when %1$s %2$s is published','wp-to-twitter'),$word, $type); ?></strong></label> <label for="<?php echo $type; ?>-post-published-text"><br /><?php printf(__('Text for new %1$s updates','wp-to-twitter'),$type); ?></label><br /><input type="text" class="wpt-template" name="wpt_post_types[<?php echo $type; ?>][post-published-text]" id="<?php echo $type; ?>-post-published-text" size="60" maxlength="120" value="<?php if ( isset( $wpt_settings[$type] ) ) { echo esc_attr( stripslashes( $wpt_settings[$type]['post-published-text'] ) ); } ?>" />
+				<input type="checkbox" name="wpt_post_types[<?php echo $slug; ?>][post-published-update]" id="<?php echo $slug; ?>-post-published-update" value="1" <?php echo jd_checkCheckbox('wpt_post_types',$slug,'post-published-update')?> />
+				<label for="<?php echo $slug; ?>-post-published-update"><strong><?php printf(__('Update when %1$s %2$s is published','wp-to-twitter'),$word, $singular); ?></strong></label> <label for="<?php echo $slug; ?>-post-published-text"><br /><?php printf(__('Template for new %1$s updates','wp-to-twitter'),$name); ?></label><br /><input type="text" class="wpt-template" name="wpt_post_types[<?php echo $slug; ?>][post-published-text]" id="<?php echo $slug; ?>-post-published-text" size="60" maxlength="120" value="<?php if ( isset( $wpt_settings[$slug] ) ) { echo esc_attr( stripslashes( $wpt_settings[$slug]['post-published-text'] ) ); } ?>" />
 			</p>
 			<p>
-				<input type="checkbox" name="wpt_post_types[<?php echo $type; ?>][post-edited-update]" id="<?php echo $type; ?>-post-edited-update" value="1" <?php echo jd_checkCheckbox('wpt_post_types',$type,'post-edited-update')?> />
-				<label for="<?php echo $type; ?>-post-edited-update"><strong><?php printf(__('Update when %1$s %2$s is edited','wp-to-twitter'),$word, $type); ?></strong></label><br /><label for="<?php echo $type; ?>-post-edited-text"><?php printf(__('Text for %1$s editing updates','wp-to-twitter'),$type); ?></label><br /><input type="text" class="wpt-template" name="wpt_post_types[<?php echo $type; ?>][post-edited-text]" id="<?php echo $type; ?>-post-edited-text" size="60" maxlength="120" value="<?php if ( isset( $wpt_settings[$type] ) ) { echo esc_attr( stripslashes( $wpt_settings[$type]['post-edited-text'] ) ); } ?>" />	
+				<input type="checkbox" name="wpt_post_types[<?php echo $slug; ?>][post-edited-update]" id="<?php echo $slug; ?>-post-edited-update" value="1" <?php echo jd_checkCheckbox('wpt_post_types',$slug,'post-edited-update')?> />
+				<label for="<?php echo $slug; ?>-post-edited-update"><strong><?php printf(__('Update when %1$s %2$s is edited','wp-to-twitter'),$word, $singular); ?></strong></label><br /><label for="<?php echo $slug; ?>-post-edited-text"><?php printf(__('Template for %1$s editing updates','wp-to-twitter'),$name); ?></label><br /><input type="text" class="wpt-template" name="wpt_post_types[<?php echo $slug; ?>][post-edited-text]" id="<?php echo $slug; ?>-post-edited-text" size="60" maxlength="120" value="<?php if ( isset( $wpt_settings[$slug] ) ) { echo esc_attr( stripslashes( $wpt_settings[$slug]['post-edited-text'] ) ); } ?>" />	
 			</p>
 			</fieldset>
 			<?php
@@ -507,7 +509,7 @@ function wpt_update_settings() {
 				} 
 			?>
 			<fieldset>
-			<legend><?php _e('Settings for Links','wp-to-twitter'); ?></legend>
+			<legend><?php _e('Links','wp-to-twitter'); ?></legend>
 			<p>
 				<input type="checkbox" name="jd_twit_blogroll" id="jd_twit_blogroll" value="1" <?php echo jd_checkCheckbox('jd_twit_blogroll')?> />
 				<label for="jd_twit_blogroll"><strong><?php _e("Update Twitter when you post a Blogroll link", 'wp-to-twitter'); ?></strong></label><br />				
@@ -518,7 +520,7 @@ function wpt_update_settings() {
 				<div>
 		<input type="hidden" name="submit-type" value="options" />
 		</div>
-	<input type="submit" name="submit" value="<?php _e("Save WP->Twitter Options", 'wp-to-twitter'); ?>" class="button-primary" />	
+	<input type="submit" name="submit" value="<?php _e("Save WP to Twitter Options", 'wp-to-twitter'); ?>" class="button-primary" />	
 	</div>
 	</form>
 </div>
@@ -534,7 +536,7 @@ function wpt_update_settings() {
 	<form method="post" action="">
 	<div>		
 	<?php $nonce = wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, false).wp_referer_field(false);  echo "<div>$nonce</div>"; ?>	
-	<input type="submit" name="submit" value="<?php _e("Save Advanced WP->Twitter Options", 'wp-to-twitter'); ?>" class="button-primary button-side" />	
+	<input type="submit" name="submit" value="<?php _e("Save Advanced WP to Twitter Options", 'wp-to-twitter'); ?>" class="button-primary button-side" />	
 		
 			<fieldset>
 				<legend><?php _e('Tags','wp-to-twitter'); ?></legend>
@@ -698,7 +700,7 @@ function wpt_update_settings() {
 		<div>
 		<input type="hidden" name="submit-type" value="advanced" />
 		</div>
-	<input type="submit" name="submit" value="<?php _e("Save Advanced WP->Twitter Options", 'wp-to-twitter'); ?>" class="button-primary" />	
+	<input type="submit" name="submit" value="<?php _e("Save Advanced WP to Twitter Options", 'wp-to-twitter'); ?>" class="button-primary" />	
 	</div>
 	</form>
 </div>

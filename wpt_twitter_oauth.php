@@ -189,11 +189,12 @@ class jd_TwitterOAuth {
 		if ( $at_root ) {		
 			$upload = wp_get_attachment_image_src( $attachment, apply_filters( 'wpt_upload_image_size', 'medium' ) );
 			$path = get_home_path() . wp_make_link_relative( $upload[0] );
-			$subject = apply_filters( 'wpt_image_path', $path );
-			$image = str_replace( '//', '/', $subject );
+			$image = str_replace( '//', '/', $path );
 		} else {
 			$image = get_attached_file( $attachment );
 		}
+		$image = apply_filters( 'wpt_image_path', $image, $args );
+		
 		$mime_type = get_post_mime_type( $attachment );
 		if ( !$mime_type ) { $mime_type = 'image/jpeg'; }
         $code = $tmhOAuth->request(
