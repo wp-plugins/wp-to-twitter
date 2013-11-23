@@ -22,3 +22,4 @@ legend {font-weight: 700;font-size: 1.2em;padding: 6px 0;}
 .wpt_image { padding-left: 20px; background: url(image.png) left 50% no-repeat; display: block; }
 #wpt_license_key { font-size: 1.3em; padding: 5px; letter-spacing: .5px;}
 label[for="wpt_license_key"] { font-size: 1.3em; }
+#wp-to-twitter .wpt-upgrade { background: crimson; color: #fff; text-shadow: #000 0 1px 0; }

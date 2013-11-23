@@ -761,7 +761,7 @@ function wpt_sidebar() {
 			</p>
 			<?php if ( function_exists( 'wpt_pro_exists' ) ) { $support = admin_url('admin.php?page=wp-tweets-pro'); } else { $support = admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'); } ?>
 			<a href="<?php echo $support; ?>#get-support"><?php _e("Get Support",'wp-to-twitter'); ?></a>
-			<?php if ( get_option('jd_donations') != 1 && !function_exists( 'wpt_pro_exists' )  ) { ?>
+			<?php /* if ( get_option('jd_donations') != 1 && !function_exists( 'wpt_pro_exists' )  ) { ?>
 			<div>
 			<p><?php _e('<a href="http://www.joedolson.com/donate.php">Make a donation today!</a> Every donation counts - donate $5, $20, or $100 and help me keep this plug-in running!','wp-to-twitter'); ?></p>
 			<p class='flattr'><a href="http://flattr.com/thing/559528/WP-to-Twitter"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr WP to Twitter" /></a></p>			
@@ -774,21 +774,21 @@ function wpt_sidebar() {
 				</div>
 			</form>
 			</div>
-		<?php } ?>
+		<?php } */ ?>
 			</div>
 		</div>
 	</div>
 	<?php if ( !function_exists( 'wpt_pro_exists' )  ) { ?>
 	<div class="ui-sortable meta-box-sortables">
 		<div class="postbox">
-			<h3><strong><?php _e('Upgrade Now!','wp-to-twitter'); ?></strong></h3>
+			<h3 class='wpt-upgrade'><strong><?php _e('Upgrade Now!','wp-to-twitter'); ?></strong></h3>
 			<div class="inside purchase">
-				<strong><a href="http://www.joedolson.com/articles/wp-tweets-pro/"><?php _e('Upgrade to <strong>WP Tweets PRO</strong> for more options!','wp-to-twitter'); ?></a></strong>
-			<p><?php _e('Extra features with the PRO upgrade:','wp-to-twitter'); ?></p>
+				<strong><a href="http://www.joedolson.com/articles/wp-tweets-pro/"><?php _e('Upgrade to <strong>WP Tweets PRO</strong>!','wp-to-twitter'); ?></a></strong>
+			<p><?php _e('Bonuses in the PRO upgrade:','wp-to-twitter'); ?></p>
 			<ul>
-				<li><?php _e('Allow users to post to their own Twitter accounts','wp-to-twitter'); ?></li>
-				<li><?php _e('Set a timer to send your Tweet minutes or hours after you publish','wp-to-twitter'); ?></li>
-				<li><?php _e('Automatically re-send Tweets after publishing','wp-to-twitter'); ?></li>
+				<li><?php _e('Your authors can post to their own Twitter accounts','wp-to-twitter'); ?></li>
+				<li><?php _e('Delay your Tweets minutes or hours after you publish','wp-to-twitter'); ?></li>
+				<li><?php _e('Automatically schedule Tweets to post again later','wp-to-twitter'); ?></li>
 				<li><?php _e('Send Tweets for approved comments','wp-to-twitter'); ?></li>
 			</ul>
 			
