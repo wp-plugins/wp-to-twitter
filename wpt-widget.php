@@ -47,7 +47,10 @@ function wpt_get_twitter_feed( $atts, $content ) {
 
 function wpt_twitter_feed( $instance ) {
 	$return = '<div class="wpt-header">';
-		$user = wpt_get_user( $instance['twitter_id'] );
+		$user = wpt_get_user( $instance['twitter_id'] );		
+		if ( isset($user->errors) && $user->errors[0]->message ) {
+			return __("Error: ",'wp-to-twitter'). $user->errors[0]->message;
+		}
 		$avatar = $user->profile_image_url_https;
 		$name = $user->name;
 		$verified = $user->verified;

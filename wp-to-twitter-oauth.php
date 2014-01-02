@@ -210,7 +210,8 @@ $nonce = ( !$auth )?wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, fals
 	
 		$submit = ( !$auth )?'<p class="submit"><input type="submit" name="submit" class="button-primary" value="'.__('Connect to Twitter', 'wp-to-twitter').'" /></p>':'';
 		print('	
-			<h3>'.__('Connect to Twitter','wp-to-twitter').'</h3>
+			<div class="handlediv"><span class="screen-reader-text">Click to toggle</span></div>
+			<h3 class="hndle"><span>'.__('Connect to Twitter','wp-to-twitter').'</span></h3>
 			<div class="inside '.$class.'">
 			<div class="notes">
 			<h4>'.__('WP to Twitter Set-up','wp-to-twitter').'</h4>
@@ -286,8 +287,9 @@ $nonce = ( !$auth )?wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, fals
 			$diff = __( 'WP to Twitter could not contact Twitter\'s remote server. Here is the error triggered: ','wp-to-twitter' ).$errors;
 		}
 
-		print('	
-			<h3>'.__('Disconnect from Twitter','wp-to-twitter').'</h3>
+		print('
+			<div class="handlediv"><span class="screen-reader-text">Click to toggle</span></div>
+			<h3 class="hndle"><span>'.__('Disconnect from Twitter','wp-to-twitter').'</span></h3>
 			<div class="inside '.$class.'">
 			'.$form.'
 				<div id="wtt_authentication_display">

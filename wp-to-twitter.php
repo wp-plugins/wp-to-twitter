@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.7.7
+Version: 2.8.0
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -47,7 +47,7 @@ require_once( plugin_dir_path(__FILE__).'/wpt-feed.php' );
 require_once( plugin_dir_path(__FILE__).'/wpt-widget.php' );
 
 global $wpt_version,$jd_plugin_url;
-$wpt_version = "2.7.7";
+$wpt_version = "2.8.0";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
@@ -64,7 +64,7 @@ function wpt_mail( $subject, $body ) {
 
 function wpt_pro_compatibility() {
 	global $wptp_version;
-	$current_wptp_version = '1.5.8';
+	$current_wptp_version = '1.6.0';
 	if ( version_compare( $wptp_version, $current_wptp_version, '<' ) ) {
 		echo "<div class='error notice'><p class='upgrade'>".sprintf( __('The current version of WP Tweets PRO is <strong>%s</strong>. <a href="http://www.joedolson.com/articles/account/">Upgrade for best compatibility!</a>','wp-to-twitter'),$current_wptp_version )."</p></div>";
 	}
@@ -654,7 +654,7 @@ function jd_post_info( $post_ID ) {
 	$post_excerpt = ( trim( $post->post_excerpt ) == "" )?@mb_substr( strip_tags( strip_shortcodes( $post->post_content ) ), 0, $excerpt_length ):@mb_substr( strip_tags( strip_shortcodes( $post->post_excerpt ) ), 0, $excerpt_length );
 	$values['postExcerpt'] = html_entity_decode( $post_excerpt, ENT_COMPAT, $encoding );
 	$thisposttitle =  stripcslashes( strip_tags( $post->post_title ) );
-	if ($thisposttitle == "") {
+	if ( $thisposttitle == "" && isset( $_POST['title'] ) ) {
 		$thisposttitle = stripcslashes( strip_tags( $_POST['title'] ) );
 	}
 	$values['postTitle'] = html_entity_decode( $thisposttitle, ENT_COMPAT, $encoding );
@@ -681,15 +681,19 @@ function wpt_short_url( $post_id ) {
 	return $jd_short;
 }
 
-function wpt_post_with_media( $post_ID ) {
+function wpt_post_with_media( $post_ID, $post_info=array() ) {
+	$return = false;
+	if ( isset( $post_info['wpt_image'] ) && $post_info['wpt_image'] == 1 ) return $return;
+	
 	if ( !function_exists( 'wpt_pro_exists' ) || get_option( 'wpt_media') != '1' ) { 
-		return false; 
+		$return = false; 
 	} else {
 		if ( has_post_thumbnail( $post_ID ) || wpt_post_attachment( $post_ID ) ) {
-			return true;
+			$return = true;
 		}
 	}
-	return false; 
+	return apply_filters( 'wpt_upload_media', $return, $post_ID );
+
 }
 
 function wpt_category_limit( $post_type, $post_info, $post_ID ) {
@@ -707,7 +711,8 @@ function wpt_category_limit( $post_type, $post_info, $post_ID ) {
 		wpt_mail(  "3b: Category limits applied #$post_ID", print_r($post_info['categoryIds'],1));
 	}
 	$continue = ( get_option('limit_categories') == '0' )?true:$continue;
-	return $continue;
+	$args = array( 'type'=>$post_type, 'info'=>$post_info, 'id'=>$post_ID );
+	return apply_filters( 'wpt_filter_terms', $continue, $args );
 }
 
 function jd_twit( $post_ID, $type='instant' ) {
@@ -734,7 +739,7 @@ function jd_twit( $post_ID, $type='instant' ) {
 	}
 	if ( $test ) { // test switch: depend on default settings.
 		$post_info = jd_post_info( $post_ID );
-		$media = wpt_post_with_media( $post_ID );
+		$media = wpt_post_with_media( $post_ID, $post_info );
 		if ( function_exists( 'wpt_pro_exists' ) && wpt_pro_exists() == true ) {
 			$auth = ( get_option( 'wpt_cotweet_lock' ) == 'false' || !get_option('wpt_cotweet_lock') )?$post_info['authId']:get_option('wpt_cotweet_lock');
 		} else {
@@ -942,7 +947,7 @@ function jd_twit_link( $link_ID )  {
 
 function wpt_generate_hash_tags( $post_ID ) {
 	$hashtags = '';
-	$term_meta = 1;
+	$term_meta = $t_id = false;
 	$max_tags = get_option( 'jd_max_tags' );
 	$max_characters = get_option( 'jd_max_characters' );
 	$max_characters = ( $max_characters == 0 || $max_characters == "" )?100:$max_characters + 1;
@@ -971,7 +976,7 @@ function wpt_generate_hash_tags( $post_ID ) {
 					case 1 : $newtag = "#$tag"; break;
 					case 2 : $newtag = "$$tag"; break;
 					case 3 : $newtag = ''; break;
-					default: $newtag = "#$tag";				
+					default: $newtag = apply_filters( 'wpt_tag_default', "#", $t_id ).$tag;
 				}
 				if ( mb_strlen( $newtag ) > 2 && (mb_strlen( $newtag ) <= $max_characters) && ($i <= $max_tags) ) {
 					$hashtags .= "$newtag ";
@@ -1071,31 +1076,34 @@ function jd_add_twitter_inner_box( $post ) {
 		} 
 		?>
 		<div class='wpt-options'>
+			<?php 
+				if ( $is_pro == 'pro' ) { $pro_active = " class='active'"; $free_active = ''; } else { $free_active = " class='active'"; $pro_active = ''; } 
+			?>
 			<ul class='tabs'>
-				<li><a href='#authors' class="active">Tweet to</a></li>
+				<li><a href='#authors'<?php echo $pro_active; ?>>Tweet to</a></li>
 				<li><a href='#custom'>Options</a></li>
-				<li><a href='#notes'>Notes</a></li>
+				<li><a href='#notes'<?php echo $free_active; ?>>Notes</a></li>
 			</ul>
 			<?php
 		/* WPT PRO OPTIONS */ 
 		if ( current_user_can( 'edit_others_posts' ) ) {
+			echo "<div class='wptab' id='authors'>";		
 			if ( get_option( 'jd_individual_twitter_users' ) == 1 ) {
 				$selected = ( get_post_meta( $post_id, '_wpt_authorized_users', true ) )?get_post_meta( $post_id, '_wpt_authorized_users', true ):array();
 				if ( function_exists( 'wpt_authorized_users' ) ) {
-					echo "<div class='wptab' id='authors'>";
 					echo wpt_authorized_users( $selected );
 					do_action( 'wpt_authors_tab', $post_id, $selected );
-					echo "</div>";
 				} else {
-					echo "<div class='wptab' id='authors'><p>";
+					echo "<p>";
 						if ( function_exists( 'wpt_pro_exists' ) ) { 
 							printf( __( 'WP Tweets PRO 1.5.2+ allows you to select Twitter accounts. <a href="%s">Log in and download now!</a>', 'wp-to-twitter' ), 'http://www.joedolson.com/articles/account/' );
 						} else {
 							printf( __( 'Upgrade to WP Tweets PRO to select Twitter accounts! <a href="%s">Upgrade now!</a>', 'wp-to-twitter' ), 'http://www.joedolson.com/articles/wp-tweets-pro/' );						
 						}
-					echo "</p></div>";				
+					echo "</p>";				
 				}
 			}
+			echo "</div>";
 		} 
 		?>
 		<div class='wptab' id='custom'><?php
@@ -1196,27 +1204,36 @@ global $current_screen;
 	if ( $current_screen->base == 'post' || $current_screen->id == 'wp-tweets-pro_page_wp-to-twitter-schedule' ) {
 		wp_enqueue_script(  'charCount', plugins_url( 'wp-to-twitter/js/jquery.charcount.js'), array('jquery') );
 	}
+	//echo $current_screen->id;
+	if ( $current_screen->id == 'settings_page_wp-to-twitter/wp-to-twitter' || $current_screen->id == 'toplevel_page_wp-tweets-pro'  ) {
+		wp_register_script( 'wpt.tabs', plugins_url( 'js/tabs.js', __FILE__ ), array( 'jquery' ) );
+		wp_enqueue_script( 'wpt.tabs' );
+		wp_localize_script( 'wpt.tabs', 'firstItem', 'wpt_post' );
+		wp_enqueue_script( 'dashboard' );		
+	}
 }
 add_action( 'admin_enqueue_scripts', 'wpt_admin_scripts', 10, 1 );
 
 function wpt_admin_script( $hook ) {
 global $current_screen;
 if ( $current_screen->base == 'post' || $current_screen->id == 'wp-tweets-pro_page_wp-to-twitter-schedule' ) {
-	wp_register_style( 'wpt-post-styles', plugins_url('post-styles.css',__FILE__) );
+	wp_register_style( 'wpt-post-styles', plugins_url('css/post-styles.css',__FILE__) );
 	wp_enqueue_style('wpt-post-styles');
 	if ( $current_screen->base == 'post' ) {
 		$allowed = 140 - mb_strlen( get_option('jd_twit_prepend').get_option('jd_twit_append') );
 	} else {
 		$allowed = ( wpt_is_ssl( home_url() ) )?137:138;		
 	}
+	if ( function_exists( 'wpt_pro_exists' ) ) { $first = '#authors'; } else { $first = '#notes'; }
+	// yuck, this is ugly. I should do something about it. Like localize, man.
 	echo "
 <script type='text/javascript'>
 	jQuery(document).ready(function(\$){	
 		\$('#jtw').charCount( { allowed: $allowed, counterText: '".__('Characters left: ','wp-to-twitter')."' } );
 	});
 	jQuery(document).ready(function(\$){
-		\$('#side-sortables .tabs a[href=\"#authors\"]').addClass('active');
-		\$('#side-sortables .wptab').not('#authors').hide();
+		\$('#side-sortables .tabs a[href=\"$first\"]').addClass('active');
+		\$('#side-sortables .wptab').not('$first').hide();
 		\$('#side-sortables .tabs a').on('click',function(e) {
 			e.preventDefault();
 			\$('#side-sortables .tabs a').removeClass('active');
@@ -1228,7 +1245,7 @@ if ( $current_screen->base == 'post' || $current_screen->id == 'wp-tweets-pro_pa
 	});
 </script>
 <style type='text/css'>
-#wp2t h3 span { padding-left: 30px; background: url(".plugins_url('wp-to-twitter/twitter-bird-light-bgs.png').") left 50% no-repeat; }
+#wp2t h3 span { padding-left: 30px; background: url(".plugins_url('wp-to-twitter/images/twitter-bird-light-bgs.png').") left 50% no-repeat; }
 </style>";
 	}
 }
@@ -1341,42 +1358,6 @@ function jd_twitter_save_profile(){
 	update_user_meta($edit_id ,'wpt-remove' , $wpt_remove );
 	//WPT PRO
 	apply_filters( 'wpt_save_user', $edit_id, $_POST );
-}
-
-function jd_list_categories() {
-	$selected = "";
-	$categories = get_categories('hide_empty=0');
-	$nonce = wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, false).wp_referer_field(false);
-	$input = "<form action=\"\" method=\"post\">
-	<div>$nonce</div>
-	<fieldset><legend>".__('Check off categories to tweet','wp-to-twitter')."</legend>";
-	$input .= '
-	<p>
-	<input type="checkbox" name="jd_twit_cats" id="jd_twit_cats" value="1"'.jd_checkCheckbox('jd_twit_cats').' />
-	<label for="jd_twit_cats">'.__("Do not tweet posts in checked categories (Reverses default behavior)", 'wp-to-twitter').'</label>
-	</p>';
-	$input .= "
-	<ul>\n";
-	$tweet_categories =  get_option( 'tweet_categories' );
-		foreach ($categories AS $cat) {
-			if (is_array($tweet_categories)) {
-				if ( in_array( $cat->term_id,$tweet_categories ) ) {
-					$selected = " checked=\"checked\"";
-				} else {
-					$selected = "";
-				}
-			}
-			$input .= '		<li><input'.$selected.' type="checkbox" name="categories[]" value="'.$cat->term_id.'" id="'.$cat->category_nicename.'" /> <label for="'.$cat->category_nicename.'">'.$cat->name."</label></li>\n";
-		}
-	$input .= "	</ul>
-	</fieldset>
-	<p>".__('Limits are exclusive. If a post is in one category which should be posted and one category that should not, it will not be posted.','wp-to-twitter')."</p>
-	<div>
-	<input type=\"hidden\" name=\"submit-type\" value=\"setcategories\" />
-	<input type=\"submit\" name=\"submit\" class=\"button-primary\" value=\"".__('Set Categories','wp-to-twitter')."\" />
-	</div>
-	</form>";
-	echo $input;
 }
 
 // Add the administrative settings to the "Settings" menu.
@@ -1526,7 +1507,7 @@ add_action( 'admin_menu', 'jd_addTwitterAdminPages' );
 /* Enqueue styles for Twitter feed */
 add_action('wp_enqueue_scripts', 'wpt_stylesheet');
 function wpt_stylesheet() {
-	$file = plugins_url( 'twitter-feed.css',__FILE__);
+	$file = plugins_url( 'css/twitter-feed.css',__FILE__);
 	wp_register_style( 'wpt-twitter-feed', $file );
 }
 /*

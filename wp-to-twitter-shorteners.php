@@ -291,7 +291,8 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 	?>
 <div class="ui-sortable meta-box-sortables">
 <div class="postbox">
-<h3><?php _e('<abbr title="Uniform Resource Locator">URL</abbr> Shortener Account Settings','wp-to-twitter'); ?></h3>
+	<div class="handlediv"><span class="screen-reader-text">Click to toggle</span></div>
+	<h3 class='hndle'><span><?php _e('<abbr title="Uniform Resource Locator">URL</abbr> Shortener Account Settings','wp-to-twitter'); ?></span></h3>
 	<div class="inside">
 		<?php if ( get_option('jd_shortener') == 7 ) { ?>
 		<div class="panel">

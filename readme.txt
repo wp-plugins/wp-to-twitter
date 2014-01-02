@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 3.3.3
-Tested up to: 3.7.1
+Tested up to: 3.8.0
 License: GPLv2 or later
 Stable tag: 2.7.7
 
@@ -23,7 +23,6 @@ Additional features include:
 * Use alternate URLs in place of post permalinks
 * Support for Google Analytics
 * Support for XMLRPC remote clients
-* Filter Tweeting by category
 
 Status updates longer than 140 characters will be truncated. 
 
@@ -34,7 +33,8 @@ Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) for
 * Scheduled Tweet management
 * Co-Tweet to site and author Twitter accounts
 * Preview and Tweet comments
-* [and more!](http://www.joedolson.com/articles/wp-tweets-pro/)
+* Filter Tweets by taxonomy (categories, tags, or custom taxonomies)
+* [...and more!](http://www.joedolson.com/articles/wp-tweets-pro/)
 
 Translations:
 
@@ -50,6 +50,15 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.8.0 =
+
+* Removed category filtering in favor of WP Tweets PRO update allowing filtering on all taxonomies.
+* UI updates.
+* Added wpt_tag_default filter to choose the default hashtag symbol.
+* Miscellaneous PHP notice eliminations.
+* File reorganization.
+* Bug fix: Twitter feed widget errors if not authenticated.
 
 = 2.7.7 =
 
@@ -914,4 +923,4 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
-* 2.7.6 New WP Tweets PRO feature; bug fixes.
+* 2.8.0 - Removed category filtering. Existing category filters will still work, but are deprecated in favor of taxonomy filters in WP Tweets PRO.

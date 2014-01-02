@@ -75,11 +75,27 @@ function jd_check_functions() {
 
 function wpt_update_settings() {
 	wpt_check_version();
+
 	if ( !empty($_POST) ) {
 		$nonce=$_REQUEST['_wpnonce'];
 		if (! wp_verify_nonce($nonce,'wp-to-twitter-nonce') ) die("Security check failed");  
 	}
-	
+	/*
+	if ( isset($_POST['setpostboxes'] ) && $_POST['setpostboxes'] == 'update' ) {
+		$postboxes = get_option( 'wpt-postboxes' );
+		$open = ( isset( $_POST['postbox-open'] ) ) ? $_POST['postbox-open'] : '';
+		$closed = ( isset( $_POST['postbox-closed'] ) ) ? $_POST['postbox-closed'] : '';
+		if ( !is_array( $open ) || !in_array( $open, $postboxes['open'] ) ) {
+			$postboxes['open'][] = $open;
+			unset($postboxes['open'][$open]);
+		}
+		if ( !is_array( $closed ) || !in_array( $closed, $postboxes['open'] ) ) {		
+			$postboxes['closed'][] = $closed;
+			unset($postboxes['closed'][$closed]);
+		}
+		update_option( 'wpt-postboxes', $postboxes );
+	}
+	*/
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'clear-error' ) {
 		update_option( 'wp_twitter_failure','0' );
 		update_option( 'wp_url_failure','0' );
@@ -362,19 +378,18 @@ function wpt_update_settings() {
 				break;
 			}
 		}
-		update_option( 'wpt_can_tweet',$wpt_can_tweet);		
-		
+		update_option( 'wpt_can_tweet',$wpt_can_tweet);	
 		update_option( 'disable_url_failure' , ( isset( $_POST['disable_url_failure'] ) )?$_POST['disable_url_failure']:0 );
 		update_option( 'disable_twitter_failure' , ( isset( $_POST['disable_twitter_failure'] ) )?$_POST['disable_twitter_failure']:0 );
 		update_option( 'disable_oauth_notice' , ( isset( $_POST['disable_oauth_notice'] ) )?$_POST['disable_oauth_notice']:0 );
 		update_option( 'wp_debug_oauth' , ( isset( $_POST['wp_debug_oauth'] ) )?$_POST['wp_debug_oauth']:0 );
 		update_option( 'wpt_http' , ( isset( $_POST['wpt_http'] ) )?$_POST['wpt_http']:0 );
-		
 		update_option( 'jd_donations' , ( isset( $_POST['jd_donations'] ) )?$_POST['jd_donations']:0 );
 		$wpt_truncation_order = $_POST['wpt_truncation_order'];
 		update_option( 'wpt_truncation_order', $wpt_truncation_order );
 		$message .= __( 'WP to Twitter Advanced Options Updated' , 'wp-to-twitter');
 	}
+	
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'options' ) {
 		// UPDATE OPTIONS
 		$wpt_settings = get_option('wpt_post_types');
@@ -392,24 +407,13 @@ function wpt_update_settings() {
 		update_option( 'jd_twit_blogroll',(isset($_POST['jd_twit_blogroll']) )?$_POST['jd_twit_blogroll']:"" );
 		$message = wpt_select_shortener( $_POST );	
 		$message .= __( 'WP to Twitter Options Updated' , 'wp-to-twitter');
+		$message = apply_filters( 'wpt_settings', $message, $_POST );
 	}
-
-	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'setcategories' ) {
-		if ( isset($_POST['jd_twit_cats']) ) { update_option('jd_twit_cats',1); } else { update_option('jd_twit_cats',0); }
-		if ( is_array($_POST['categories'])) {
-			$categories = $_POST['categories'];
-			update_option('limit_categories','1');
-			update_option('tweet_categories',$categories);
-			$message = __("Category limits updated.",'wp-to-twitter');
-		} else {
-			update_option('limit_categories','0');
-			update_option('tweet_categories','');
-			$message = __("Category limits unset.",'wp-to-twitter');
-		}
-	}
+	
 	if ( isset($_POST['wpt_shortener_update']) && $_POST['wpt_shortener_update'] == 'true' ) {
 		$message = wpt_shortener_update( $_POST );
 	}
+	
 	// Check whether the server has supported for needed functions.
 	if (  isset($_POST['submit-type']) && $_POST['submit-type'] == 'check-support' ) {
 		$message = jd_check_functions();
@@ -463,14 +467,12 @@ function wpt_update_settings() {
 <div class="metabox-holder">
 
 <?php if (function_exists('wtt_connect_oauth') ) { wtt_connect_oauth(); } ?>
-
 <?php if (function_exists( 'wpt_pro_functions' ) ) { wpt_pro_functions(); } ?>
 <div class="ui-sortable meta-box-sortables">
 <div class="postbox">
-	
-	<h3><?php _e('Basic Settings','wp-to-twitter'); ?></h3>
-	<div class="inside">
-	
+	<div class="handlediv"><span class="screen-reader-text">Click to toggle</span></div>
+	<h3 class='hndle'><span><?php _e('Status Update Templates','wp-to-twitter'); ?></span></h3>
+	<div class="inside wpt-settings">
 	<form method="post" action="">
 	<?php $nonce = wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, false).wp_referer_field(false);  echo "<div>$nonce</div>"; ?>
 	<div>	
@@ -480,21 +482,33 @@ function wpt_update_settings() {
 			
 			$post_types = get_post_types( array( 'public'=>true ), 'objects' );
 			$wpt_settings = get_option('wpt_post_types');
-
+			$tabs = "<ul class='tabs'>";
 				foreach( $post_types as $type ) {
 					$name = $type->labels->name;
 					$singular = $type->labels->singular_name;
 					$slug = $type->name;
 					if ( $slug == 'attachment' || $slug == 'nav_menu_item' || $slug == 'revision' ) {
-					
+					} else {				
+						$tabs .= "<li><a href='#wpt_$slug'>$name</a></li>";
+					}
+				}
+			$tabs .= "<li><a href='#wpt_links'>".__('Links','wp-to-twitter')."</a></li>
+			</ul>";
+			echo $tabs;
+				foreach( $post_types as $type ) {
+					$name = $type->labels->name;
+					$singular = $type->labels->singular_name;
+					$slug = $type->name;
+					if ( $slug == 'attachment' || $slug == 'nav_menu_item' || $slug == 'revision' ) {
 					} else {
 						$vowels = array( 'a','e','i','o','u' );
 						foreach ( $vowels as $vowel ) {
 							if ( strpos($name, $vowel ) === 0 ) { $word = 'an'; break; } else { $word = 'a'; }
 						}
 				?>
-			<fieldset class='wpt_types'>
-			<legend><?php echo $name ?></legend>
+			<div class='wptab wpt_types wpt_<?php echo $slug; ?>' id='wpt_<?php echo $slug; ?>'>
+			<fieldset>
+			<legend><span><?php echo $name ?></span></legend>
 			<p>
 				<input type="checkbox" name="wpt_post_types[<?php echo $slug; ?>][post-published-update]" id="<?php echo $slug; ?>-post-published-update" value="1" <?php echo jd_checkCheckbox('wpt_post_types',$slug,'post-published-update')?> />
 				<label for="<?php echo $slug; ?>-post-published-update"><strong><?php printf(__('Update when %1$s %2$s is published','wp-to-twitter'),$word, $singular); ?></strong></label> <label for="<?php echo $slug; ?>-post-published-text"><br /><?php printf(__('Template for new %1$s updates','wp-to-twitter'),$name); ?></label><br /><input type="text" class="wpt-template" name="wpt_post_types[<?php echo $slug; ?>][post-published-text]" id="<?php echo $slug; ?>-post-published-text" size="60" maxlength="120" value="<?php if ( isset( $wpt_settings[$slug] ) ) { echo esc_attr( stripslashes( $wpt_settings[$slug]['post-published-text'] ) ); } ?>" />
@@ -504,18 +518,22 @@ function wpt_update_settings() {
 				<label for="<?php echo $slug; ?>-post-edited-update"><strong><?php printf(__('Update when %1$s %2$s is edited','wp-to-twitter'),$word, $singular); ?></strong></label><br /><label for="<?php echo $slug; ?>-post-edited-text"><?php printf(__('Template for %1$s editing updates','wp-to-twitter'),$name); ?></label><br /><input type="text" class="wpt-template" name="wpt_post_types[<?php echo $slug; ?>][post-edited-text]" id="<?php echo $slug; ?>-post-edited-text" size="60" maxlength="120" value="<?php if ( isset( $wpt_settings[$slug] ) ) { echo esc_attr( stripslashes( $wpt_settings[$slug]['post-edited-text'] ) ); } ?>" />	
 			</p>
 			</fieldset>
+			<?php if ( function_exists( 'wpt_list_terms' ) ) { wpt_list_terms( $slug, $name ); } ?>
+			</div>
 			<?php
 					}
 				} 
 			?>
-			<fieldset>
-			<legend><?php _e('Links','wp-to-twitter'); ?></legend>
-			<p>
-				<input type="checkbox" name="jd_twit_blogroll" id="jd_twit_blogroll" value="1" <?php echo jd_checkCheckbox('jd_twit_blogroll')?> />
-				<label for="jd_twit_blogroll"><strong><?php _e("Update Twitter when you post a Blogroll link", 'wp-to-twitter'); ?></strong></label><br />				
-				<label for="newlink-published-text"><?php _e("Text for new link updates:", 'wp-to-twitter'); ?></label> <input aria-labelledby="newlink-published-text-label" type="text" class="wpt-template" name="newlink-published-text" id="newlink-published-text" size="60" maxlength="120" value="<?php echo ( esc_attr( stripslashes( get_option( 'newlink-published-text' ) ) ) ); ?>" /><br /><span id="newlink-published-text-label"><?php _e('Available shortcodes: <code>#url#</code>, <code>#title#</code>, and <code>#description#</code>.','wp-to-twitter'); ?></span>
-			</p>
-			</fieldset>
+			<div class='wptab wpt_types wpt_links' id="wpt_links">
+				<fieldset>
+				<legend><span><?php _e('Links','wp-to-twitter'); ?></span></legend>
+				<p>
+					<input type="checkbox" name="jd_twit_blogroll" id="jd_twit_blogroll" value="1" <?php echo jd_checkCheckbox('jd_twit_blogroll')?> />
+					<label for="jd_twit_blogroll"><strong><?php _e("Update Twitter when you post a Blogroll link", 'wp-to-twitter'); ?></strong></label><br />				
+					<label for="newlink-published-text"><?php _e("Text for new link updates:", 'wp-to-twitter'); ?></label> <input aria-labelledby="newlink-published-text-label" type="text" class="wpt-template" name="newlink-published-text" id="newlink-published-text" size="60" maxlength="120" value="<?php echo ( esc_attr( stripslashes( get_option( 'newlink-published-text' ) ) ) ); ?>" /><br /><span id="newlink-published-text-label"><?php _e('Available shortcodes: <code>#url#</code>, <code>#title#</code>, and <code>#description#</code>.','wp-to-twitter'); ?></span>
+				</p>
+				</fieldset>
+			</div>
 			<br class='clear' />
 				<div>
 		<input type="hidden" name="submit-type" value="options" />
@@ -531,7 +549,8 @@ function wpt_update_settings() {
 
 <div class="ui-sortable meta-box-sortables">
 <div class="postbox">
-	<h3><?php _e('Advanced Settings','wp-to-twitter'); ?></h3>
+	<div class="handlediv"><span class="screen-reader-text">Click to toggle</span></div>
+	<h3 class='hndle'><span><?php _e('Advanced Settings','wp-to-twitter'); ?></span></h3>
 	<div class="inside">
 	<form method="post" action="">
 	<div>		
@@ -706,22 +725,10 @@ function wpt_update_settings() {
 </div>
 </div>
 </div>
-<div class="ui-sortable meta-box-sortables">
-	<div class="postbox categories">
-	<h3><?php _e('Limit Updating Categories','wp-to-twitter'); ?></h3>
-		<div class="inside">
-			<p>
-			<?php _e('If no categories are checked, limiting by category will be ignored, and all categories will be Tweeted.','wp-to-twitter'); ?>
-			<?php if ( get_option('limit_categories') == '0' ) {	_e('<em>Category limits are disabled.</em>','wp-to-twitter'); } ?>
-			</p>
-			<?php jd_list_categories(); ?>
-
-		</div>
-	</div>
-</div>
 
 	<div class="postbox" id="get-support">
-	<h3><?php _e('Get Plug-in Support','wp-to-twitter'); ?></h3>
+	<div class="handlediv"><span class="screen-reader-text">Click to toggle</span></div>
+	<h3 class='hndle'><span><?php _e('Get Plug-in Support','wp-to-twitter'); ?></span></h3>
 		<div class="inside">
 			<?php wpt_get_support_form(); ?>
 		</div>
@@ -749,10 +756,11 @@ function wpt_sidebar() {
 <div class="metabox-holder">
 	<div class="ui-sortable meta-box-sortables">
 		<div class="postbox">
+			<div class="handlediv"><span class="screen-reader-text">Click to toggle</span></div>
 			<?php if (  !function_exists( 'wpt_pro_exists' ) ) { ?>
-			<h3><strong><?php _e('Support WP to Twitter','wp-to-twitter'); ?></strong></h3>
+			<h3 class='hndle'><span><strong><?php _e('Support WP to Twitter','wp-to-twitter'); ?></strong></span></h3>
 			<?php } else { ?>
-			<h3><strong><?php _e('WP to Twitter Support','wp-to-twitter'); ?></strong></h3>			
+			<h3 class='hndle'><span><strong><?php _e('WP to Twitter Support','wp-to-twitter'); ?></strong></span></h3>			
 			<?php } ?>
 			<div class="inside resources">
 			<p>
@@ -761,10 +769,9 @@ function wpt_sidebar() {
 			</p>
 			<?php if ( function_exists( 'wpt_pro_exists' ) ) { $support = admin_url('admin.php?page=wp-tweets-pro'); } else { $support = admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'); } ?>
 			<a href="<?php echo $support; ?>#get-support"><?php _e("Get Support",'wp-to-twitter'); ?></a>
-			<?php /* if ( get_option('jd_donations') != 1 && !function_exists( 'wpt_pro_exists' )  ) { ?>
-			<div>
-			<p><?php _e('<a href="http://www.joedolson.com/donate.php">Make a donation today!</a> Every donation counts - donate $5, $20, or $100 and help me keep this plug-in running!','wp-to-twitter'); ?></p>
-			<p class='flattr'><a href="http://flattr.com/thing/559528/WP-to-Twitter"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr WP to Twitter" /></a></p>			
+			<?php if ( get_option('jd_donations') != 1 && !function_exists( 'wpt_pro_exists' )  ) { ?>
+			<p><?php _e('<a href="http://www.joedolson.com/donate.php">Make a donation today!</a><br />Every donation matters - donate $5, $20, or $100 today!','wp-to-twitter'); ?></p>
+			<div class='donations'>
 			<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 				<div>
 				<input type="hidden" name="cmd" value="_s-xclick" />
@@ -773,23 +780,26 @@ function wpt_sidebar() {
 				<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
 				</div>
 			</form>
+			<a href="http://flattr.com/thing/559528/WP-to-Twitter"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr WP to Twitter" /></a>				
 			</div>
-		<?php } */ ?>
+		<?php } ?>
 			</div>
 		</div>
 	</div>
 	<?php if ( !function_exists( 'wpt_pro_exists' )  ) { ?>
 	<div class="ui-sortable meta-box-sortables">
 		<div class="postbox">
-			<h3 class='wpt-upgrade'><strong><?php _e('Upgrade Now!','wp-to-twitter'); ?></strong></h3>
+			<div class="handlediv"><span class="screen-reader-text">Click to toggle</span></div>
+			<h3 class='wpt-upgrade hndle'><span><strong><?php _e('Upgrade Now!','wp-to-twitter'); ?></strong></span></h3>
 			<div class="inside purchase">
 				<strong><a href="http://www.joedolson.com/articles/wp-tweets-pro/"><?php _e('Upgrade to <strong>WP Tweets PRO</strong>!','wp-to-twitter'); ?></a></strong>
 			<p><?php _e('Bonuses in the PRO upgrade:','wp-to-twitter'); ?></p>
 			<ul>
-				<li><?php _e('Your authors can post to their own Twitter accounts','wp-to-twitter'); ?></li>
-				<li><?php _e('Delay your Tweets minutes or hours after you publish','wp-to-twitter'); ?></li>
+				<li><?php _e('Authors can post to their own Twitter accounts','wp-to-twitter'); ?></li>
+				<li><?php _e('Delay Tweets minutes or hours after you publish','wp-to-twitter'); ?></li>
 				<li><?php _e('Automatically schedule Tweets to post again later','wp-to-twitter'); ?></li>
 				<li><?php _e('Send Tweets for approved comments','wp-to-twitter'); ?></li>
+				<li><?php _e('Filter Tweets by category, tag, or custom taxonomy','wp-to-twitter'); ?></li>
 			</ul>
 			
 			</div>
@@ -798,12 +808,13 @@ function wpt_sidebar() {
 	<?php 
 	} else { 
 		if ( function_exists( 'wpt_notes' ) ) { 
-			wpt_notes(); 
+			wpt_notes();
 		}
 	} ?>
 	<div class="ui-sortable meta-box-sortables">
 		<div class="postbox">
-		<h3><?php _e('Shortcodes','wp-to-twitter'); ?></h3>
+			<div class="handlediv"><span class="screen-reader-text">Click to toggle</span></div>
+			<h3 class='hndle'><span><?php _e('Shortcodes','wp-to-twitter'); ?></span></h3>
 		<div class="inside">
 			<p><?php _e("Available in post update templates:", 'wp-to-twitter'); ?></p>
 			<ul>
@@ -829,5 +840,12 @@ function wpt_sidebar() {
 		</div>
 	</div>
 </div>
+<?php /* 
+<form class='set-postboxes' method='POST' action=''>
+<input type='hidden' name='_wpnonce' value='<?php echo wp_create_nonce('wp-to-twitter-nonce'); ?>' />
+<input type='hidden' name='postbox-closed' />
+<input type='hidden' name='postbox-open' />
+<input type='hidden' name='setpostboxes' value='update' />
+</form> */ ?>
 <?php 
 }
