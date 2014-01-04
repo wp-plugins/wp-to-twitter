@@ -758,6 +758,11 @@ function jd_twit( $post_ID, $type='instant' ) {
 				return false;
 			}
 		}
+		/* Filter Tweet based on POST data -- allows custom filtering of unknown plug-ins, etc. */
+		$filter = apply_filters( 'wpt_filter_post_data', false, $_POST );
+		if ( $filter ) {
+			return false;
+		}
 		$post_type = $post_info['postType'];
 		if ( $type == 'future' || get_post_meta( $post_ID, 'wpt_publishing' ) == 'future' ) { 
 			$new = 1; // if this is a future action, then it should be published regardless of relationship
@@ -832,8 +837,10 @@ function jd_twit( $post_ID, $type='instant' ) {
 						$wpt_selected_users = ($auth_verified)? array( $auth ) : array( false ); 
 					}
 					if ( $post_info['wpt_cotweet'] == 1 || get_option( 'jd_individual_twitter_users' ) != 1 ) { 
-						$wpt_selected_users[] = false; 
+						$wpt_selected_users['main'] = false; 
 					}
+					// filter selected users before using
+					$wpt_selected_users = apply_filters( 'wpt_filter_users', $wpt_selected_users, $post_info );
 					if ( $post_info['wpt_delay_tweet'] == 0 || $post_info['wpt_delay_tweet'] == '' || $post_info['wpt_no_delay'] == 'on' ) {
 						foreach ( $wpt_selected_users as $acct ) {
 							if ( wtt_oauth_test( $acct, 'verify' ) ) {
@@ -844,6 +851,8 @@ function jd_twit( $post_ID, $type='instant' ) {
 						foreach ( $wpt_selected_users as $acct ) {
 							if ( $auth != $acct ) {
 								$offset = rand(60,480); // offset by 1-8 minutes for additional users
+							} else {
+								$offset = 0;
 							}
 							if ( wtt_oauth_test( $acct,'verify' ) ) {
 								$time = apply_filters( 'wpt_schedule_delay',( (int) $post_info['wpt_delay_tweet'] )*60, $acct );
@@ -1533,11 +1542,12 @@ function wpt_return_value($value, $column_name, $id) {
 }
 */
 // Output CSS for width of new column
+add_action('admin_head', 'wpt_css');
 function wpt_css() {
 ?>
 <style type="text/css">
 th#wpt { width: 60px; } 
-.wpt_twitter .authorized { color: green; }
+.wpt_twitter .authorized { padding: 1px 3px; border-radius: 3px; background: #070; color: #fff; }
 </style>
 <?php	
 }
