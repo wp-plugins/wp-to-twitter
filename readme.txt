@@ -54,7 +54,9 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 = 2.8.0 =
 
 * Removed category filtering in favor of WP Tweets PRO update allowing filtering on all taxonomies.
+* Removed obsolete functions handling older WP versions.
 * UI updates.
+* Updated fallbacks for multibyte string functions.
 * Added wpt_tag_default filter to choose the default hashtag symbol.
 * Miscellaneous PHP notice eliminations.
 * File reorganization.

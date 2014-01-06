@@ -2,9 +2,9 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 // FUNCTION to see if checkboxes should be checked
-function jd_checkCheckbox( $theFieldname,$sub1=false,$sub2='' ) {
+function jd_checkCheckbox( $field,$sub1=false,$sub2='' ) {
 	if ( $sub1 ) {
-		$setting = get_option($theFieldname);
+		$setting = get_option($field);
 		if ( isset( $setting[$sub1] ) ) {
 			$value = ( $sub2 != '' )?$setting[$sub1][$sub2]:$setting[$sub1];
 		} else {
@@ -14,13 +14,13 @@ function jd_checkCheckbox( $theFieldname,$sub1=false,$sub2='' ) {
 			return 'checked="checked"';
 		}
 	}
-	if( get_option( $theFieldname ) == '1'){
+	if( get_option( $field ) == '1'){
 		return 'checked="checked"';
 	}
 }
 
-function jd_checkSelect( $theFieldname, $theValue, $type='select' ) {
-	if( get_option( $theFieldname ) == $theValue ) {
+function jd_checkSelect( $field, $value, $type='select' ) {
+	if( get_option( $field ) == $value ) {
 		return ( $type == 'select' )?'selected="selected"':'checked="checked"';
 	}
 }
@@ -80,22 +80,7 @@ function wpt_update_settings() {
 		$nonce=$_REQUEST['_wpnonce'];
 		if (! wp_verify_nonce($nonce,'wp-to-twitter-nonce') ) die("Security check failed");  
 	}
-	/*
-	if ( isset($_POST['setpostboxes'] ) && $_POST['setpostboxes'] == 'update' ) {
-		$postboxes = get_option( 'wpt-postboxes' );
-		$open = ( isset( $_POST['postbox-open'] ) ) ? $_POST['postbox-open'] : '';
-		$closed = ( isset( $_POST['postbox-closed'] ) ) ? $_POST['postbox-closed'] : '';
-		if ( !is_array( $open ) || !in_array( $open, $postboxes['open'] ) ) {
-			$postboxes['open'][] = $open;
-			unset($postboxes['open'][$open]);
-		}
-		if ( !is_array( $closed ) || !in_array( $closed, $postboxes['open'] ) ) {		
-			$postboxes['closed'][] = $closed;
-			unset($postboxes['closed'][$closed]);
-		}
-		update_option( 'wpt-postboxes', $postboxes );
-	}
-	*/
+
 	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'clear-error' ) {
 		update_option( 'wp_twitter_failure','0' );
 		update_option( 'wp_url_failure','0' );
@@ -131,7 +116,6 @@ function wpt_update_settings() {
 		update_option( 'wpt_post_types', $initial_settings );
 		update_option( 'jd_twit_blogroll', '1');
 		update_option( 'newlink-published-text', 'New link: #title# #url#' );
-		update_option( 'limit_categories','0' );
 		update_option( 'jd_shortener', '1' );
 		update_option( 'jd_strip_nonan', '0' );
 		update_option('jd_max_tags',3);
@@ -420,7 +404,6 @@ function wpt_update_settings() {
 	}
 ?>
 <div class="wrap" id="wp-to-twitter">
-<?php wpt_marginal_function(); ?>
 <?php wpt_commments_removed(); ?>
 <?php if ( $message ) { ?>
 <div id="message" class="updated fade"><?php echo $message; ?></div>
@@ -479,7 +462,6 @@ function wpt_update_settings() {
 		<input type="submit" name="submit" value="<?php _e("Save WP to Twitter Options", 'wp-to-twitter'); ?>" class="button-primary button-side" />	
 		<?php echo apply_filters('wpt_pick_shortener',''); ?>
 		<?php 
-			
 			$post_types = get_post_types( array( 'public'=>true ), 'objects' );
 			$wpt_settings = get_option('wpt_post_types');
 			$tabs = "<ul class='tabs'>";
@@ -507,6 +489,28 @@ function wpt_update_settings() {
 						}
 				?>
 			<div class='wptab wpt_types wpt_<?php echo $slug; ?>' id='wpt_<?php echo $slug; ?>'>
+			<?php 
+			if ( get_option( 'limit_categories' ) != '0' && $slug == 'post' ) {
+				$falseness = get_option( 'jd_twit_cats' );
+				$categories = get_option( 'tweet_categories' );
+				if ( $falseness == 1 ) { 
+					echo "<p>".__('These categories are currently <strong>excluded</strong> by the deprecated WP to Twitter category filters.','wp-to-twitter' )."</p>"; 
+				} else {
+					echo "<p>".__('These categories are currently <strong>allowed</strong> by the deprecated WP to Twitter category filters.','wp-to-twitter' )."</p>"; 				
+				}
+				echo "<ul>";
+				foreach ( $categories as $cat ) {
+					$category = get_the_category_by_ID( $cat );
+					echo "<li>$category</li>";
+				}
+				echo "</ul>";
+				if ( !function_exists( 'wpt_pro_exists' ) ) {
+					printf( __('<a href="%s">Upgrade to WP Tweets PRO</a> to filter posts in all custom post types on any taxonomy.','wp-to-twitter' ), "https://www.joedolson.com/articles/wp-tweets-pro/" );
+				} else {
+					_e( 'Updating the WP Tweets PRO taxonomy filters will overwrite your old category filters.','wp-to-twitter' );
+				}				
+			}
+			?>
 			<fieldset>
 			<legend><span><?php echo $name ?></span></legend>
 			<p>
@@ -840,12 +844,5 @@ function wpt_sidebar() {
 		</div>
 	</div>
 </div>
-<?php /* 
-<form class='set-postboxes' method='POST' action=''>
-<input type='hidden' name='_wpnonce' value='<?php echo wp_create_nonce('wp-to-twitter-nonce'); ?>' />
-<input type='hidden' name='postbox-closed' />
-<input type='hidden' name='postbox-open' />
-<input type='hidden' name='setpostboxes' value='update' />
-</form> */ ?>
-<?php 
+<?php
 }

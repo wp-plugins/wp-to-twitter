@@ -74,15 +74,42 @@ function jd_fetch_url( $url, $method='GET', $body='', $headers='', $return='body
 }
 
 if (!function_exists('mb_strlen')) {
-	function mb_strlen($data) {
-		return strlen($data);
+	/**
+	 * Fallback implementation of mb_strlen, hardcoded to UTF-8.
+	 * @param string $str
+	 * @param string $enc optional encoding; ignored
+	 * @return int
+	 */
+	function mb_strlen( $str, $enc = '' ) {
+		$counts = count_chars( $str );
+		$total = 0;
+
+		// Count ASCII bytes
+		for( $i = 0; $i < 0x80; $i++ ) {
+			$total += $counts[$i];
+		}
+
+		// Count multibyte sequence heads
+		for( $i = 0xc0; $i < 0xff; $i++ ) {
+			$total += $counts[$i];
+		}
+		return $total;
 	}
 }
 
 if (!function_exists('mb_substr')) {
-	function mb_substr($data,$start,$length = null, $encoding = null) {
-		return substr($data,$start,$length);
-	}
+	function mb_substr( $str, $start, $count = 'end' ) {
+		if ( $start != 0 ) {
+			$split = self::mb_substr_split_unicode( $str, intval( $start ) );
+			$str = substr( $str, $split );
+		}
+
+		if ( $count !== 'end' ) {
+			$split = self::mb_substr_split_unicode( $str, intval( $count ) );
+			$str = substr( $str, 0, $split );
+		}
+		return $str;
+    }
 }
 
 // filter_var substitution for PHP <5.2
@@ -90,6 +117,30 @@ if ( !function_exists( 'filter_var' ) ) {
 	function filter_var( $url ) {
 		// this does not emulate filter_var; merely the usage of filter_var in WP to Twitter.
 		return ( stripos( $url, 'https:' ) !== false || stripos( $url, 'http:' ) !== false )?true:false;
+	}
+}
+
+if ( !function_exists( 'mb_strrpos' ) ) {
+	/**
+	 * Fallback implementation of mb_strrpos, hardcoded to UTF-8.
+	 * @param $haystack String
+	 * @param $needle String
+	 * @param $offset String: optional start position
+	 * @param $encoding String: optional encoding; ignored
+	 * @return int
+	 */
+	function mb_strrpos( $haystack, $needle, $offset = 0, $encoding = '' ) {
+		$needle = preg_quote( $needle, '/' );
+
+		$ar = array();
+		preg_match_all( '/' . $needle . '/u', $haystack, $ar, PREG_OFFSET_CAPTURE, $offset );
+
+		if( isset( $ar[0] ) && count( $ar[0] ) > 0 &&
+			isset( $ar[0][count( $ar[0] ) - 1][1] ) ) {
+			return $ar[0][count( $ar[0] ) - 1][1];
+		} else {
+			return false;
+		}
 	}
 }
 

@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.7.9
+Version: 2.8.0
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -25,6 +25,7 @@ Author URI: http://www.joedolson.com/
 */
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+apply_filters( 'debug', 'WP to Twitter Init' );
 global $wp_version;
 $wp_content_url = content_url();
 $wp_content_dir = str_replace( '/plugins/wp-to-twitter','',plugin_dir_path( __FILE__ ) );
@@ -47,7 +48,7 @@ require_once( plugin_dir_path(__FILE__).'/wpt-feed.php' );
 require_once( plugin_dir_path(__FILE__).'/wpt-widget.php' );
 
 global $wpt_version,$jd_plugin_url;
-$wpt_version = "2.7.9";
+$wpt_version = "2.8.0";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
@@ -72,16 +73,6 @@ function wpt_pro_compatibility() {
 
 $jd_plugin_url = "http://www.joedolson.com/articles/wp-to-twitter/";
 $jd_donate_url = "http://www.joedolson.com/articles/wp-tweets-pro/";
-
-function wpt_marginal_function() {
-global $wp_version;
-$exit_msg=__('WP to Twitter requires WordPress 3.2.1 or a more recent version <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update WordPress to continue using WP to Twitter with all features!</a>','wp-to-twitter');
-	if ( version_compare( $wp_version,"3.2.1","<" ) ) {
-		if ( is_admin() ) {
-			echo "<div class='error'><p>".($exit_msg)."</p></div>";
-		}
-	}
-}
 
 function wpt_commments_removed() {
 	if ( isset($_GET['dismiss']) ) {
