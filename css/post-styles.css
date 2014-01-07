@@ -7,12 +7,10 @@
 #wp2t .warning{color:#700;}
 #wp2t .exceeded{color:#e00;}
 #wp2t code span { border-bottom: 1px dashed!important; cursor: pointer; }
-#wp2t strong:first-child { border: 1px dashed; display: block; width: 25%; float: right; padding: 10px; background: #ffd; font-size: 1.2em; line-height: 1.4; text-align:center; border-radius: 6px; }
 #wp2t .jtw { margin-right: 33%; width: 66.666666%; }
 #wp2t .disabled { font-weight: 700; background: #ffc; padding: 5px; font-size: 1.2em; }
 #side-sortables #wp2t .jtw {margin: 0;width: 100%; }
 #side-sortables #wp2t .jtw textarea { height: 120px; }
-#side-sortables #wp2t strong:first-child { width: 92%; float: none; margin: 0 auto 5px; padding: 0 0 5px;  }
 #wp2t .wpt_auth_users { margin: 0; padding: 0; }
 #wp2t .wpt_auth_users select { width: 100%; max-height: 21em; }
 #side-sortables #wp2t .wpt_auth_users select { width: 98%; max-height: 120px; }

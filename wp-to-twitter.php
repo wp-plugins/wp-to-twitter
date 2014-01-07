@@ -1224,7 +1224,13 @@ if ( $current_screen->base == 'post' || $current_screen->id == 'wp-tweets-pro_pa
 	} else {
 		$allowed = ( wpt_is_ssl( home_url() ) )?137:138;		
 	}
-	if ( function_exists( 'wpt_pro_exists' ) ) { $first = '#authors'; } else { $first = '#notes'; }
+	if ( function_exists( 'wpt_pro_exists' ) && get_option( 'jd_individual_twitter_users' ) == 1 ) { 
+		$first = '#authors'; 
+	} else if ( function_exists( 'wpt_pro_exists' ) ) { 
+		$first = '#custom';
+	} else {
+		$first = '#notes'; 
+	}
 	// yuck, this is ugly. I should do something about it. Like localize, man.
 	echo "
 <script type='text/javascript'>
