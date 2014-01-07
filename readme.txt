@@ -5,13 +5,17 @@ Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, l
 Requires at least: 3.3.3
 Tested up to: 3.8.0
 License: GPLv2 or later
-Stable tag: 2.7.7
+Stable tag: 2.8.0
 
 Auto-posts a Twitter update when you update your WordPress blog or blogroll, with your chosen URL shortening service.
 
 == Description ==
 
-WP to Twitter automatically posts Tweets from WordPress to Twitter using your URL shortening service to provide a link back from Twitter. WP to Twitter will also display a feed of recent Tweets using widgets.
+WP to Twitter posts Tweets from WordPress to Twitter. 
+
+You can shorten URLs using a variety of common URL shorteners, or just leave Twitter to do it for you using their t.co service. 
+
+You can also use WP to Twitter display a feed of recent Tweets using widgets. Display Tweets from any account just by entering that account's Twitter ID! 
 
 Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) for Tweet scheduling, automatic re-tweeting, and more!
 
@@ -35,6 +39,8 @@ Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) for
 * Preview and Tweet comments
 * Filter Tweets by taxonomy (categories, tags, or custom taxonomies)
 * [...and more!](http://www.joedolson.com/articles/wp-tweets-pro/)
+
+Want to stay up to date on WP to Twitter? [Follow me on Twitter!](https://twitter.com/joedolson)
 
 Translations:
 
