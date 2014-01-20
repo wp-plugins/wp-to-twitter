@@ -144,8 +144,7 @@ class WPT_TwitterFeed {
     if (empty($screenname)) return array('error'=>'Missing Twitter Feed Screen Name - Check Settings');
     
     $connection = new jd_TwitterOAuth($key, $secret, $token, $token_secret);
-	$protocol = ( get_option( 'wpt_http' ) == '1' )?'http:':'https:';	
-    $result = $connection->get($protocol.'//api.twitter.com/1.1/statuses/user_timeline.json', $options);
+    $result = $connection->get( 'https://api.twitter.com/1.1/statuses/user_timeline.json', $options );
 	$result = json_decode( $result );
     if ( is_file($this->getCacheLocation()) ) {
       $cache = json_decode(file_get_contents($this->getCacheLocation()),true);

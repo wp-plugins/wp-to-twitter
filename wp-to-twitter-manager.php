@@ -174,7 +174,7 @@ function wpt_update_settings() {
 		} else if ( $oauth_message == "failed" ) {
 			print('
 				<div id="message" class="updated fade">
-					<p>'.__('WP to Twitter failed to connect with Twitter. Try <a href="#wpt_http">switching to an HTTP connection</a>.', 'wp-to-twitter').'</p>
+					<p>'.__('WP to Twitter failed to connect with Twitter.', 'wp-to-twitter').'</p>
 					<p>'.__('Error:','wp-to-twitter').' '.get_option('wpt_error').'</p>
 				</div>
 
@@ -367,7 +367,6 @@ function wpt_update_settings() {
 		update_option( 'disable_twitter_failure' , ( isset( $_POST['disable_twitter_failure'] ) )?$_POST['disable_twitter_failure']:0 );
 		update_option( 'disable_oauth_notice' , ( isset( $_POST['disable_oauth_notice'] ) )?$_POST['disable_oauth_notice']:0 );
 		update_option( 'wp_debug_oauth' , ( isset( $_POST['wp_debug_oauth'] ) )?$_POST['wp_debug_oauth']:0 );
-		update_option( 'wpt_http' , ( isset( $_POST['wpt_http'] ) )?$_POST['wpt_http']:0 );
 		update_option( 'jd_donations' , ( isset( $_POST['jd_donations'] ) )?$_POST['jd_donations']:0 );
 		$wpt_truncation_order = $_POST['wpt_truncation_order'];
 		update_option( 'wpt_truncation_order', $wpt_truncation_order );
@@ -714,8 +713,6 @@ function wpt_update_settings() {
 			<li><input type="checkbox" name="disable_twitter_failure" id="disable_twitter_failure" value="1" <?php echo jd_checkCheckbox('disable_twitter_failure')?> />	<label for="disable_twitter_failure"><?php _e("Disable global Twitter API error messages.", 'wp-to-twitter'); ?></label></li>
 			<li><input type="checkbox" name="wp_debug_oauth" id="wp_debug_oauth" value="1" <?php echo jd_checkCheckbox('wp_debug_oauth')?> />
 				<label for="wp_debug_oauth"><?php _e("Get Debugging Data for OAuth Connection", 'wp-to-twitter'); ?></label></li>
-			<li><input type="checkbox" name="wpt_http" id="wpt_http" value="1" <?php echo jd_checkCheckbox('wpt_http')?> />
-				<label for="wpt_http"><?php _e("Switch to <code>http</code> connection. (Default is https)", 'wp-to-twitter'); ?></label></li>
 			<li><input type="checkbox" name="jd_donations" id="jd_donations" value="1" <?php echo jd_checkCheckbox('jd_donations')?> />
 				<label for="jd_donations"><strong><?php _e("I made a donation, so stop whinging at me, please.", 'wp-to-twitter'); ?></strong></label></li>
 			</ul>

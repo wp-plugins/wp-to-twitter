@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.8.0
+Version: 2.8.1
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -48,7 +48,7 @@ require_once( plugin_dir_path(__FILE__).'/wpt-feed.php' );
 require_once( plugin_dir_path(__FILE__).'/wpt-widget.php' );
 
 global $wpt_version,$jd_plugin_url;
-$wpt_version = "2.8.0";
+$wpt_version = "2.8.1";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
@@ -281,8 +281,8 @@ function jd_doTwitterAPIPost( $twit, $auth=false, $id=false, $media=false ) {
 				$attachment = false;
 			}
 		}
-		$api = ( get_option( 'wpt_http' ) == '1' )?'http:':'https:';
-		$api .= ( $media && $attachment )?"//api.twitter.com/1.1/statuses/update_with_media.json":"//api.twitter.com/1.1/statuses/update.json";
+		// support for HTTP deprecated as of 1/14/2014 -- https://dev.twitter.com/discussions/24239
+		$api = ( $media && $attachment )?"https://api.twitter.com/1.1/statuses/update_with_media.json":"https://api.twitter.com/1.1/statuses/update.json";
 		if ( wtt_oauth_test( $auth ) && ( $connection = wtt_oauth_connection( $auth ) ) ) {
 			if ( $media && $attachment ) {
 				$connection->media( $api, array( 'status' => $twit, 'source' => 'wp-to-twitter', 'include_entities' => 'true', 'id'=>$id, 'auth'=>$auth ) );
@@ -1513,8 +1513,12 @@ add_action( 'admin_menu', 'jd_addTwitterAdminPages' );
 /* Enqueue styles for Twitter feed */
 add_action('wp_enqueue_scripts', 'wpt_stylesheet');
 function wpt_stylesheet() {
-	$file = plugins_url( 'css/twitter-feed.css',__FILE__);
-	wp_register_style( 'wpt-twitter-feed', $file );
+	$apply = apply_filters( 'wpt_enqueue_feed_styles', true );
+	if ( $apply ) {
+		$file = apply_filters( 'wpt_feed_stylesheet', plugins_url( 'css/twitter-feed.css', __FILE__ ) );
+		wp_register_style( 'wpt-twitter-feed', $file );
+		wp_enqueue_style( 'wpt-twitter-feed' );
+	}
 }
 /*
 // Add notes about Tweet status to posts admin 

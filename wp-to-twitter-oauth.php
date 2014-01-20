@@ -87,8 +87,7 @@ switch ( $post['oauth_settings'] ) {
 				}
 				$message = 'failed';
 				if ( $connection = wtt_oauth_connection( $auth ) ) {
-					$protocol = ( get_option( 'wpt_http' ) == '1' )?'http:':'https:';
-					$data = $connection->get($protocol.'//api.twitter.com/1.1/account/verify_credentials.json');
+					$data = $connection->get('https://api.twitter.com/1.1/account/verify_credentials.json');
 					if ( $connection->http_code != '200' ) {
 						$data = json_decode( $data );
 						update_option( 'wpt_error', $data->errors[0]->message );
@@ -169,8 +168,7 @@ if ( !$auth ) {
 	echo '<div class="postbox">';
 }
 $server_time = date( DATE_COOKIE );
-$protocol = ( get_option( 'wpt_http' ) == '1' )?'http:':'https:';
-$response = wp_remote_get( "$protocol//api.twitter.com/1.1/" );
+$response = wp_remote_get( "https://api.twitter.com/1.1/" );
 if ( is_wp_error( $response ) ) {
 	$warning = '';
 	$error = $response->errors;
@@ -183,7 +181,7 @@ if ( is_wp_error( $response ) ) {
 		}
 		$warning .= "</ul>";
 	}
-	$ssl = __("Connection Problems? Try <a href='#wpt_http'>switching to <code>http</code> queries</a>.",'wp-to-twitter');
+	$ssl = __("Connection Problems? If you're getting an SSL related error, you'll need to contact your host.",'wp-to-twitter');
 	$date = __("There was an error querying Twitter's servers",'wp-to-twitter');
 	$errors = "<p>".$ssl."</p>".$warning;
 } else {

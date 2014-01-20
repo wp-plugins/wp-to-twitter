@@ -47,7 +47,7 @@ Translations:
 Visit the [WP to Twitter translations page](http://translate.joedolson.com/projects/wp-to-twitter) to see how complete these are.
 
 Languages available (in order of completeness):
-Italian, French, Dutch, Russian, Danish, Catalan, Portuguese, Chinese, Japanese, Romanian, Estonian, Spanish, German, Swedish, Irish, Ukrainian, Lithuanian, Belarusian, Turkish, Persian
+Russian, Italian, French, Dutch, Danish, Catalan, Portuguese, Chinese, Japanese, Romanian, Estonian, Spanish, German, Swedish, Irish, Ukrainian, Lithuanian, Belarusian, Turkish, Persian
 
 Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
 
@@ -56,6 +56,16 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.8.1 =
+
+* Bug fix: Twitter feed styles enqueued via script hook instead of style hook do to enqueuing within shortcode.
+* New filter: wpt_feed_stylesheet -- replace URL of feed stylesheet with custom URL.
+* New filter: wpt_enqueue_feed_styles -- return false to disable stylesheet.
+* Removed option to connect to Twitter on HTTP, due to https://dev.twitter.com/discussions/24239
+* Russian translation updated.
+* Dutch translation updated.
+* Spanish translation updated.
 
 = 2.8.0 =
 

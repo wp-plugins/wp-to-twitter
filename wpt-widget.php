@@ -16,7 +16,6 @@ function wpt_get_user( $twitter_ID=false ) {
 	return json_decode($result);
 }
 
-
 add_shortcode( 'get_tweets', 'wpt_get_twitter_feed' );
 function wpt_get_twitter_feed( $atts, $content ) {
 	extract( shortcode_atts( array( 
@@ -160,7 +159,6 @@ function __construct() {
 function widget( $args, $instance ) {
 	extract( $args );
 	wp_enqueue_script( 'twitter-platform', "https://platform.twitter.com/widgets.js" );
-	wp_enqueue_style( 'wpt-twitter-feed' );
 	/** Merge with defaults */
 	$instance = wp_parse_args( (array) $instance, $this->defaults );
 	echo $before_widget;

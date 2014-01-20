@@ -12,15 +12,4 @@ jQuery(document).ready(function($){
 		$(target).show();
 	});
 	}
-	/*
-	$('.handlediv').on( 'click', function(e) {
-		var postbox = $(this).next('.hndle').children().html();
-		if ( $(this).parent().hasClass('closed') ) {
-			$('input[name=postbox-closed]').val(postbox);
-		} else {
-			$('input[name=postbox-open]').val(postbox);			
-		}
-		$('.set-postboxes').submit();
-	});
-	*/
 });
