@@ -2,10 +2,10 @@
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
-Requires at least: 3.3.3
+Requires at least: 3.4.2
 Tested up to: 3.8.0
 License: GPLv2 or later
-Stable tag: 2.8.0
+Stable tag: 2.8.1
 
 Auto-posts a Twitter update when you update your WordPress blog or blogroll, with your chosen URL shortening service.
 
@@ -56,6 +56,10 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.8.2 =
+
+* Deprecated support for WP versions older than 3.4.2
 
 = 2.8.1 =
 
@@ -941,4 +945,4 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
-* 2.8.0 - Removed category filtering. Existing category filters will still work, but are deprecated in favor of taxonomy filters in WP Tweets PRO.
+* 2.8.0 - Removed support for WP 3.4.2

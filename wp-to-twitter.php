@@ -1429,20 +1429,7 @@ function wpt_plugin_update_message() {
 if ( get_option( 'jd_twit_blogroll' ) == '1' ) {
 	add_action( 'add_link', 'jd_twit_link' );
 }
-/*
-$post_type_settings = get_option('wpt_post_types');
-if ( is_array( $post_type_settings ) ) {
-	$post_types = array_keys($post_type_settings);
-	foreach ($post_types as $value ) {
-		// in theory, publish_future_ only runs on scheduled, publish_ runs on all. 
-		if ( version_compare( $wp_version,"3.3.3","<" ) ) { // I've only tested through 3.3.3, but those versions work without this action.
-			add_action( 'publish_future_'.$value, 'wpt_twit_future', 16 ); 
-		}
-		add_action( 'publish_'.$value, 'post_jd_twitter', 10 );
-		add_action( 'publish_'.$value, 'wpt_twit_instant', 16 );	
-	}
-}
-*/
+
 add_action( 'save_post', 'wpt_twit', 16 );
 add_action( 'save_post', 'post_jd_twitter', 10 ); 
 
