@@ -43,7 +43,9 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 					} else {
 						$ct = "&";
 					}
-					$ga = "utm_campaign=$campaign&utm_medium=twitter&utm_source=twitter";
+					$medium = apply_filters( 'wpt_utm_medium', 'twitter' );
+					$source = apply_filters( 'wpt_utm_source', 'twitter' );
+					$ga = "utm_campaign=$campaign&utm_medium=$medium&utm_source=$source";
 					$url .= $ct .= $ga;
 				}
 				$url = urldecode(trim($url)); // prevent double-encoding

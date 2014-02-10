@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 3.4.2
-Tested up to: 3.8.0
+Tested up to: 3.8.1
 License: GPLv2 or later
 Stable tag: 2.8.1
 
@@ -47,7 +47,7 @@ Translations:
 Visit the [WP to Twitter translations page](http://translate.joedolson.com/projects/wp-to-twitter) to see how complete these are.
 
 Languages available (in order of completeness):
-Russian, Italian, French, Dutch, Danish, Catalan, Portuguese, Chinese, Japanese, Romanian, Estonian, Spanish, German, Swedish, Irish, Ukrainian, Lithuanian, Belarusian, Turkish, Persian
+Russian, Dutch, Italian, French, Danish, Catalan, Portuguese, Spanish, Chinese, Japanese, Romanian, Estonian, German, Swedish, Irish, Ukrainian, Lithuanian, Belarusian, Turkish, Persian
 
 Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
 
@@ -59,7 +59,11 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 = 2.8.2 =
 
+* Improve performance by checking against Tweetable post types earlier.
+* Added filters for utm_medium and utm_source in Google Analytics; wpt_utm_medium and wpt_utm_source.
 * Deprecated support for WP versions older than 3.4.2
+* Bug fix: image references in twitter feed CSS.
+* Update Spanish translation.
 
 = 2.8.1 =
 

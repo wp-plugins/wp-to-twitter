@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WP to Twitter package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2014-01-19 17:01:12+0000\n"
+"PO-Revision-Date: 2014-02-10 17:02:28+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -383,163 +383,163 @@ msgstr "WP to Twitter falló al conectar con Twitter. Intenta <a href=\"#wpt_htt
 
 #: wp-to-twitter-shorteners.php:549
 msgid "Choose a short URL service (account settings below)"
-msgstr ""
+msgstr "Elige un servicio de acortamiento de URL (detalles de la cuenta debajo)"
 
 #: wp-to-twitter-shorteners.php:555
 msgid "YOURLS (on this server)"
-msgstr ""
+msgstr "YOURLS (en este servidor)"
 
 #: wp-to-twitter-shorteners.php:556
 msgid "YOURLS (on a remote server)"
-msgstr ""
+msgstr "YOURLS (en un servidor remoto)"
 
 #: wpt-functions.php:348
 msgid "Thank you for supporting the continuing development of this plug-in! I'll get back to you as soon as I can. Please ensure that you can receive email at <code>%s</code>."
-msgstr ""
+msgstr "¡Gracias por apoyar el continuo desarrollo de este plug-in! Te responderé tan pronto como pueda. Por favor asegúrate que puedes recibir e-mails en <code>%s</code>."
 
 #: wpt-functions.php:350
 msgid "Thanks for using WP to Twitter. Please ensure that you can receive email at <code>%s</code>."
-msgstr ""
+msgstr "Gracias por usar WP to Twitter. Por favor asegúrate que puedes recibir e-mails en <code>%s</code>."
 
 #: wpt-functions.php:379
 msgid "Reply to:"
-msgstr ""
+msgstr "Responder a:"
 
 #: wp-to-twitter-manager.php:692
 msgid "The lowest user group that can add their Twitter information"
-msgstr ""
+msgstr "El usuario de grupo más bajo que puede añadir su información de Twitter"
 
 #: wp-to-twitter-manager.php:697
 msgid "The lowest user group that can see the Custom Tweet options when posting"
-msgstr ""
+msgstr "El usuario de grupo más bajo que puede ver el Tweet personalizado al postear"
 
 #: wp-to-twitter-manager.php:702
 msgid "The lowest user group that can toggle the Tweet/Don't Tweet option"
-msgstr ""
+msgstr "El usuario de grupo más bajo que puede manejar la opción Twittear/No Twittear"
 
 #: wp-to-twitter-manager.php:707
 msgid "The lowest user group that can send Twitter updates"
-msgstr ""
+msgstr "El usuario de grupo más bajo que puede enviar actualizaciones de Twitter"
 
 #: wp-to-twitter-manager.php:833
 msgid "<code>#author#</code>: the post author (@reference if available, otherwise display name)"
-msgstr ""
+msgstr "<code>#author#</code>: el autor del post (@referencia si está disponible, si no muestra un nombre)"
 
 #: wp-to-twitter-manager.php:834
 msgid "<code>#displayname#</code>: post author's display name"
-msgstr ""
+msgstr "<code>#displayname#</code>: nombre que muestra el autor del post"
 
 #: wp-to-twitter.php:270
 msgid "This tweet was blank and could not be sent to Twitter."
-msgstr ""
+msgstr "El Tweet estaba en blanco y no se pudo mandar a Twitter"
 
 #: wp-to-twitter.php:327
 msgid "404 Not Found: The URI requested is invalid or the resource requested does not exist."
-msgstr ""
+msgstr "404 No Encontrado: La URI pedida es inválidad o la fuente pedida no existe."
 
 #: wp-to-twitter.php:330
 msgid "406 Not Acceptable: Invalid Format Specified."
-msgstr ""
+msgstr "406 No Aceptable: Formato Especificado Inválido."
 
 #: wp-to-twitter.php:336
 msgid "429 Too Many Requests: You have exceeded your rate limits."
-msgstr ""
+msgstr "429 Demasiadas Solicitudes: Has excedido tu límite."
 
 #: wp-to-twitter.php:348
 msgid "504 Gateway Timeout: The Twitter servers are up, but the request couldn't be serviced due to some failure within our stack. Try again later."
-msgstr ""
+msgstr "504 Tiempo de espera agotado: Los servidores de Twitter están bien, pero tu solicitud no pudo ser atendida por algún fallo nuestro. Inténtalo de nuevo más tarde."
 
 #: wp-to-twitter.php:1049
 msgid "Your prepended Tweet text; not part of your template."
-msgstr ""
+msgstr "El texto antepuesto del Tweet; no parte de tu plantilla."
 
 #: wp-to-twitter.php:1052
 msgid "Your appended Tweet text; not part of your template."
-msgstr ""
+msgstr "El texto anexo del Tweet; no parte de tu plantilla."
 
 #: wp-to-twitter.php:1152
 msgid "Your role does not have the ability to Post Tweets from this site."
-msgstr ""
+msgstr "Tu perfil no tiene la habilidad de publicar Tweets desde este sitio."
 
 #: wp-to-twitter.php:1315
 msgid "Hide account name in Tweets"
-msgstr ""
+msgstr "Esconder el nombre de la cuenta en Twitter"
 
 #: wp-to-twitter.php:1316
 msgid "Do not display my account in the #account# template tag."
-msgstr ""
+msgstr "No mostar mi cuenta en la plantilla de la #cuenta#"
 
 #: wpt-functions.php:382
 msgid "I have read <a href=\"%1$s\">the FAQ for this plug-in</a> <span>(required)</span>"
-msgstr ""
+msgstr "He leído <a href=\"%1$s\">las preguntas frecuentes de este plug-in</a> <span>(requerido)</span>"
 
 #: wpt-functions.php:385
 msgid "I have <a href=\"%1$s\">made a donation to help support this plug-in</a>"
-msgstr ""
+msgstr "He <a href=\"%1$s\">hecho una donación para apoyar este plug-in</a>"
 
 #: wpt-functions.php:388
 msgid "Support Request:"
-msgstr ""
+msgstr "Petición de Soporte:"
 
 #: wp-to-twitter-manager.php:518
 msgid "Update when %1$s %2$s is published"
-msgstr ""
+msgstr "Actualizar cuenta %1$s %2$s sea publicado"
 
 #: wp-to-twitter-manager.php:522
 msgid "Update when %1$s %2$s is edited"
-msgstr ""
+msgstr "Actualiza cuando %1$s %2$s sea editado"
 
 #: wp-to-twitter-oauth.php:220
 msgid "Your server timezone (should be UTC,GMT,Europe/London or equivalent):"
-msgstr ""
+msgstr "El huso horario de tu servidor (debería ser UTC, GMT, Europa/Londres o equivalente):"
 
 #: wp-to-twitter-shorteners.php:559
 msgid "Use Twitter Friendly Links."
-msgstr ""
+msgstr "Usar los enlacesTwitter Friendly"
 
 #: wp-to-twitter-shorteners.php:333
 msgid "View your Bit.ly username and API key"
-msgstr ""
+msgstr "Ver tu nombre de usuario y llave API de Bit.ly"
 
 #: wp-to-twitter-shorteners.php:395
 msgid "Your shortener does not require any account settings."
-msgstr ""
+msgstr "Tu acortador no necesita ninguna otra configuración de cuenta."
 
 #: wp-to-twitter.php:305
 msgid "Your Twitter application does not have read and write permissions. Go to <a href=\"%s\">your Twitter apps</a> to modify these settings."
-msgstr ""
+msgstr "Tu aplicación de Twitter no tiene permisos de lectura y escritura. Ve a <a href=\"%s\">tus aplicaciones de Twitter</a> para modificar esa configuración."
 
 #: wp-to-twitter.php:1176
 msgid "Failed Tweets"
-msgstr ""
+msgstr "Tweets fallidos"
 
 #: wp-to-twitter.php:1191
 msgid "No failed tweets on this post."
-msgstr ""
+msgstr "No hay tweets fallidos en esta publicación."
 
 #: wp-to-twitter-manager.php:839
 msgid "<code>#reference#</code>: Used only in co-tweeting. @reference to main account when posted to author account, @reference to author account in post to main account."
-msgstr ""
+msgstr "<code>#referencia#</code>: Usada solo en co-twiteo. @referencia a cuenta principal cuando se publica a cuenta de autor, @referencia a cuenta de autor cuando se publica a cuenta principal."
 
 #: wp-to-twitter-oauth.php:287
 msgid "WP to Twitter could not contact Twitter's remote server. Here is the error triggered: "
-msgstr ""
+msgstr "WP to Twitter no pudo contactar con el servidor remoto de Twitter: Aquí está el error provocado:"
 
 #: wp-to-twitter.php:255
 msgid "This account is not authorized to post to Twitter."
-msgstr ""
+msgstr "Esta cuenta no está autorizada a publicar en Twitter."
 
 #: wp-to-twitter.php:264
 msgid "This tweet is identical to another Tweet recently sent to this account."
-msgstr ""
+msgstr "Este Tweet es idéntico a otro Tweet recientemente enviado a esta cuenta."
 
 #: wp-to-twitter-shorteners.php:299
 msgid "(optional)"
-msgstr ""
+msgstr "(opcional)"
 
 #: wp-to-twitter-manager.php:638
 msgid "Do not post Tweets by default (editing only)"
-msgstr ""
+msgstr "No publicar Tweets por defecto (solo editando)"
 
 #: wp-to-twitter-manager.php:831
 msgid "<code>#modified#</code>: the post modified date"

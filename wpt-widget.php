@@ -11,8 +11,7 @@ function wpt_get_user( $twitter_ID=false ) {
 	$token = get_option('oauth_token');
 	$token_secret = get_option('oauth_token_secret');	
     $connection = new jd_TwitterOAuth($key, $secret, $token, $token_secret);
-	$protocol = ( get_option( 'wpt_http' ) == '1' )?'http:':'https:';	
-    $result = $connection->get($protocol."//api.twitter.com/1.1/users/show.json?screen_name=$twitter_ID", $options);
+    $result = $connection->get( "https://api.twitter.com/1.1/users/show.json?screen_name=$twitter_ID", $options);
 	return json_decode($result);
 }
 
