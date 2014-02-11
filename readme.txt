@@ -57,6 +57,11 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.8.3 =
+
+* Don't fetch subscribers in user lists.
+* Disables debugging. 
+
 = 2.8.2 =
 
 * Improve performance by checking against Tweetable post types earlier.

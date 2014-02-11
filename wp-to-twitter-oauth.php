@@ -168,7 +168,7 @@ if ( !$auth ) {
 	echo '<div class="postbox">';
 }
 $server_time = date( DATE_COOKIE );
-$response = wp_remote_get( "https://api.twitter.com/1.1/" );
+$response = wp_remote_get( "https://api.twitter.com/1.1/", array( 'timeout'=>1, 'redirection'=>1 ) );
 if ( is_wp_error( $response ) ) {
 	$warning = '';
 	$error = $response->errors;

@@ -343,11 +343,15 @@ $plugins_string
 		} else if ( !$request ) {
 			echo "<div class='message error'><p>".__('Please describe your problem. I\'m not psychic.','wp-to-twitter')."</p></div>";
 		} else {
-			wp_mail( "plugins@joedolson.com",$subject,$message,$from );
-			if ( $has_donated == 'Donor' || $has_purchased == 'Purchaser' ) {
-				echo "<div class='message updated'><p>".sprintf(__('Thank you for supporting the continuing development of this plug-in! I\'ll get back to you as soon as I can. Please ensure that you can receive email at <code>%s</code>.','wp-to-twitter'),$current_user->user_email)."</p></div>";		
+			$sent = wp_mail( "plugins@joedolson.com",$subject,$message,$from );
+			if ( $sent ) {
+				if ( $has_donated == 'Donor' || $has_purchased == 'Purchaser' ) {
+					echo "<div class='message updated'><p>".sprintf(__('Thank you for supporting the continuing development of this plug-in! I\'ll get back to you as soon as I can. Please ensure that you can receive email at <code>%s</code>.','wp-to-twitter'),$current_user->user_email)."</p></div>";		
+				} else {
+					echo "<div class='message updated'><p>".sprintf(__("Thanks for using WP to Twitter. Please ensure that you can receive email at <code>%s</code>.",'wp-to-twitter'),$current_user->user_email)."</p></div>";				
+				}
 			} else {
-				echo "<div class='message updated'><p>".sprintf(__("Thanks for using WP to Twitter. Please ensure that you can receive email at <code>%s</code>.",'wp-to-twitter'),$current_user->user_email)."</p></div>";				
+				echo "<div class='message error'><p>".__( "Sorry! I couldn't send that message. Here's the text of your message:", 'wp-to-twitter' )."</p><pre>$request</pre></div>";
 			}
 		}
 	}
@@ -379,7 +383,7 @@ $plugins_string
 		<code>".__('Reply to:','wp-to-twitter')." \"$current_user->display_name\" &lt;$current_user->user_email&gt;</code>
 		</p>
 		<p>
-		<input type='checkbox' name='has_read_faq' id='has_read_faq' value='on' /> <label for='has_read_faq'>".sprintf(__('I have read <a href="%1$s">the FAQ for this plug-in</a> <span>(required)</span>','wp-to-twitter'),'http://www.joedolson.com/articles/wp-to-twitter/support-2/')."
+		<input type='checkbox' name='has_read_faq' id='has_read_faq' value='on' required='required' aria-required='true' /> <label for='has_read_faq'>".sprintf(__('I have read <a href="%1$s">the FAQ for this plug-in</a> <span>(required)</span>','wp-to-twitter'),'http://www.joedolson.com/articles/wp-to-twitter/support-2/')."
         </p>
         <p>
         <input type='checkbox' name='has_donated' id='has_donated' value='on' $checked /> <label for='has_donated'>".sprintf(__('I have <a href="%1$s">made a donation to help support this plug-in</a>','wp-to-twitter'),'http://www.joedolson.com/donate.php')."</label>

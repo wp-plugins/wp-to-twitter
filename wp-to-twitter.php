@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.8.2
+Version: 2.8.3
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -32,7 +32,7 @@ $wp_content_dir = str_replace( '/plugins/wp-to-twitter','',plugin_dir_path( __FI
 if ( defined('WP_CONTENT_URL') ) { $wp_content_url = constant('WP_CONTENT_URL');}
 if ( defined('WP_CONTENT_DIR') ) { $wp_content_dir = constant('WP_CONTENT_DIR');}
 
-define( 'WPT_DEBUG', true );
+define( 'WPT_DEBUG', false );
 define( 'WPT_DEBUG_ADDRESS', 'debug@joedolson.com' );
 define( 'WPT_FROM', "From: \"".get_option('blogname')."\" <".get_option('admin_email').">" );
 // define( 'WPT_DEBUG_ADDRESS', 'debug@joedolson.com, yourname@youraddress.com' ); // for multiple recipients.
@@ -48,7 +48,7 @@ require_once( plugin_dir_path(__FILE__).'/wpt-feed.php' );
 require_once( plugin_dir_path(__FILE__).'/wpt-widget.php' );
 
 global $wpt_version,$jd_plugin_url;
-$wpt_version = "2.8.2";
+$wpt_version = "2.8.3";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
@@ -707,7 +707,7 @@ function jd_twit( $post_ID, $type='instant' ) {
 	}
 	if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
 		wpt_mail(  "1: JD Tweet This Value: #$post_ID","Tweet this: $jd_tweet_this /". get_option('jd_tweet_default')." / $type"); // DEBUG
-	}	
+	}
 	if ( get_option('jd_tweet_default') == 0 ) { 
 		$test = ( $jd_tweet_this != 'no')?true:false;
 	} else { 
