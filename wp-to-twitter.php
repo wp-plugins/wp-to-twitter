@@ -1420,7 +1420,7 @@ add_action( 'save_post', 'post_jd_twitter', 10 );
 
 function wpt_in_post_type( $id ) {
 	$post_type_settings = get_option('wpt_post_types');
-	$post_types = array_keys($post_type_settings);
+	$post_types = array_keys( $post_type_settings );
 	$type = get_post_type( $id );
 	if ( in_array( $type, $post_types ) ) {
 		if ( $post_type_settings[$type]['post-edited-update'] == '1' || $post_type_settings[$type]['post-published-update'] == '1' ) {
