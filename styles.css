@@ -36,3 +36,11 @@ label[for="wpt_license_key"] { font-size: 1.3em; }
 .notweet { background: #9d1309 url(images/Error.png) right 50% no-repeat; color: #fff; }
 
 .donations * { vertical-align: middle; display: inline-block; }
+
+.jcd-wide { width: 75%; }
+.jcd-narrow { width: 20%; }
+
+@media (max-width: 782px) {
+	.jcd-narrow { width: 100%; }
+	.jcd-wide { width: 100%; }
+}

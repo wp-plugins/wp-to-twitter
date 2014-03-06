@@ -2,7 +2,7 @@
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
-Requires at least: 3.4.2
+Requires at least: 3.5.1
 Tested up to: 3.8.1
 License: GPLv2 or later
 Stable tag: 2.8.3
@@ -56,6 +56,15 @@ Credits:
 Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
 
 == Changelog ==
+
+= 2.8.4 =
+
+* Rewrite Twitter App setup instructions to match re-designed Application Management page at Twitter.
+* Change time query address to main Twitter domain to avoid http_query errors.
+* Re-vamped error message generation.
+* Added notification messages post-publication.
+* Added 'last Tweet' status notification in settings.
+* Added option to disable feed stylesheet if not in use.
 
 = 2.8.3 =
 
@@ -954,4 +963,4 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
-* 2.8.0 - Removed support for WP 3.4.2
+* 2.8.4 - Rewritten application setup instructions due to Twitter UI changes. Bug fixes.

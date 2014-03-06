@@ -58,6 +58,7 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 			// custom word setting
 			$keyword_format = ( get_option( 'jd_keyword_format' ) == '1' )?$post_ID:false;
 			$keyword_format = ( get_option( 'jd_keyword_format' ) == '2' )?get_post_meta( $post_ID,'_yourls_keyword',true ):$keyword_format;
+			$error = '';
 			// Generate and grab the short url
 			switch ( get_option( 'jd_shortener' ) ) {
 				case 0:
@@ -68,7 +69,7 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 				case 4:
 					if ( function_exists('wp_get_shortlink') ) {
 						// wp_get_shortlink doesn't natively support custom post types; but don't return an error in that case.
-						$shrink = ( $post_ID != false )?wp_get_shortlink( $post_ID, 'post' ):$url;
+						$shrink = ( $post_ID != false ) ? wp_get_shortlink( $post_ID, 'post' ) : $url;
 					}
 					if ( !$shrink ) { $shrink = $url; }
 					break;
@@ -76,7 +77,6 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 					$bitlyapi = trim ( get_option( 'bitlyapi' ) );
 					$bitlylogin = trim ( strtolower( get_option( 'bitlylogin' ) ) );				
 					$decoded = jd_remote_json( "https://api-ssl.bitly.com/v3/shorten?longUrl=".$encoded."&login=".$bitlylogin."&apiKey=".$bitlyapi."&format=json" );
-					$error = '';
 					if ($decoded) {
 						if ($decoded['status_code'] != 200) {
 							$shrink = $decoded;
@@ -85,10 +85,9 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 							$shrink = $decoded['data']['url'];		
 						}
 					} else {
-					$shrink = false;
-					update_option( 'wp_bitly_error',"JSON result could not be decoded");
+						$shrink = false;
 					}	
-					if ( !is_valid_url($shrink) ) { $shrink = false; update_option( 'wp_bitly_error',$error ); }
+					if ( !is_valid_url($shrink) ) { $shrink = false; }
 					break;
 				case 5:
 					// local YOURLS installation
@@ -139,7 +138,6 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 					} else {
 						$decoded = jd_remote_json( "http://su.pr/api/shorten?longUrl=".$encoded );
 					}
-					update_option( 'wp_supr_error',"Su.pr API result: $decoded" );
 					if ($decoded['statusCode'] == 'OK') {
 						$page = str_replace("&","&#38;", urldecode($url));
 						$shrink = $decoded['results'][$page]['shortUrl'];
@@ -147,9 +145,8 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 					} else {
 						$shrink = false;
 						$error = $decoded['errorMessage'];
-						update_option( 'wp_supr_error',"JSON result could not be decoded");
 					}	
-					if ( !is_valid_url($shrink) ) { $shrink = false; update_option( 'wp_supr_error',$error ); }
+					if ( !is_valid_url($shrink) ) { $shrink = false; }
 					break;
 				case 8:
 				// Goo.gl
@@ -185,7 +182,6 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 					}
 					//\jotURL
 					$decoded = jd_fetch_url("https://api.joturl.com/a/v1/shorten?url=" . $encoded . "&login=" . $joturllogin . "&key=" . $joturlapi . "&format=plain");
-					$error = '';
 					if ($decoded !== false) {
 					   $shrink = $decoded;
 					   //jotURL, added: 2013-04-10
@@ -202,13 +198,12 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 					} else {
 					   $error = $decoded;
 					   $shrink = false;
-					   update_option('wp_joturl_error', "JSON result could not be decoded");
 					}
 					if (!is_valid_url($shrink)) {
 					   $shrink = false;
-					   update_option('wp_joturl_error', $error);
 					}
-				break;					
+				break;
+				update_option( 'wpt_shortener_status', "$shrink : $error" );
 			}
 			if ( !$testmode ) {
 				if ( $shrink === false || ( filter_var($shrink, FILTER_VALIDATE_URL) === false ) ) {

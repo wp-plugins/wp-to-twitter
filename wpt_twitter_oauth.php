@@ -186,8 +186,14 @@ class jd_TwitterOAuth {
 		$attachment = wpt_post_attachment($args['id']);
 		// if install is at root, can query src path. Otherwise, need to take full image.
 		$at_root = ( wp_make_link_relative( home_url() ) == home_url() || wp_make_link_relative( home_url() ) == '/' ) ? true : false ;
-		if ( $at_root ) {		
-			$upload = wp_get_attachment_image_src( $attachment, apply_filters( 'wpt_upload_image_size', 'medium' ) );
+		if ( $at_root ) {	
+			$image_sizes = get_intermediate_image_sizes();
+			if ( in_array( 'large', $image_sizes ) ) {
+				$size = 'large';
+			} else {
+				$size = array_pop( $image_sizes );
+			}
+			$upload = wp_get_attachment_image_src( $attachment, apply_filters( 'wpt_upload_image_size', $size ) );			
 			$path = get_home_path() . wp_make_link_relative( $upload[0] );
 			$image = str_replace( '//', '/', $path );
 		} else {

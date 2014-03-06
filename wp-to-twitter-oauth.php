@@ -168,7 +168,7 @@ if ( !$auth ) {
 	echo '<div class="postbox">';
 }
 $server_time = date( DATE_COOKIE );
-$response = wp_remote_get( "https://api.twitter.com/1.1/", array( 'timeout'=>1, 'redirection'=>1 ) );
+$response = wp_remote_get( "https://twitter.com/", array( 'timeout'=>1, 'redirection'=>1 ) );
 if ( is_wp_error( $response ) ) {
 	$warning = '';
 	$error = $response->errors;
@@ -217,8 +217,6 @@ $nonce = ( !$auth )?wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, fals
 			'.$errors.'
 			<p>'.__('Your server timezone (should be UTC,GMT,Europe/London or equivalent):','wp-to-twitter').' '.date_default_timezone_get().'</p>
 			</div>
-			'.$form.'
-				<fieldset class="options">
 					<h4>'.__('1. Register this site as an application on ', 'wp-to-twitter') . '<a href="http://dev.twitter.com/apps/new" target="_blank">'.__('Twitter\'s application registration page','wp-to-twitter').'</a></h4>
 						<ul>
 						<li>'.__('If you\'re not currently logged in to Twitter, log-in to the account you want associated with this site' , 'wp-to-twitter').'</li>
@@ -227,21 +225,25 @@ $nonce = ( !$auth )?wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, fals
 						<li>'.__('The WebSite and Callback URL should be ' , 'wp-to-twitter').'<strong>'.  get_bloginfo( 'url' ) .'</strong></li>					
 						</ul>
 					<p><em>'.__('Agree to the Developer Rules of the Road and continue.','wp-to-twitter').'</em></p>
-					<h4>'.__('2. Switch to the "Settings" tab in Twitter apps','wp-to-twitter').'. '.__('<em>Do NOT create your access token yet.</em>','wp-to-twitter').'</h4>
+					<h4>'.__( '2. Switch to the "Permissions" tab in Twitter apps', 'wp-to-twitter' ).'</h4>
 						<ul>
 						<li>'.__('Select "Read and Write" for the Application Type' , 'wp-to-twitter').'</li>
 						<li>'.__('Update the application settings' , 'wp-to-twitter').'</li>
-						<li>'.__('Return to the Details tab and create your access token.','wp-to-twitter').'</li>		
-						</ul>	
-					<p><em>'.__('Once you have registered your site as an application, you will be provided with four keys.' , 'wp-to-twitter').'</em></p>
-					<h4>'.__('3. Copy and paste your consumer key and consumer secret into the fields below' , 'wp-to-twitter').'</h4>
+						</ul>
+					<h4>'.__('3. Switch to the API Keys tab and regenerate your API keys, then create your access token.','wp-to-twitter' ).'</h4>
+						<ul>
+						<li>'.__('Copy your API key and API secret from the top section.' , 'wp-to-twitter').'</li>
+						<li>'.__('Copy your Access token and Access token secret from the bottom section.' , 'wp-to-twitter').'</li>
+						</ul>
+			'.$form.'
+				<fieldset class="options">						
 					<div class="tokens">
 					<p>
-						<label for="wtt_app_consumer_key">'.__('Twitter Consumer Key', 'wp-to-twitter').'</label>
+						<label for="wtt_app_consumer_key">'.__('API Key', 'wp-to-twitter').'</label>
 						<input type="text" size="45" name="wtt_app_consumer_key" id="wtt_app_consumer_key" value="'.$ack.'" />
 					</p>
 					<p>
-						<label for="wtt_app_consumer_secret">'.__('Twitter Consumer Secret', 'wp-to-twitter').'</label>
+						<label for="wtt_app_consumer_secret">'.__('API Secret', 'wp-to-twitter').'</label>
 						<input type="text" size="45" name="wtt_app_consumer_secret" id="wtt_app_consumer_secret" value="'.$acs.'" />
 					</p>
 					</div>

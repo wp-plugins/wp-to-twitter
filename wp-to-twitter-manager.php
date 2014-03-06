@@ -25,6 +25,26 @@ function jd_checkSelect( $field, $value, $type='select' ) {
 	}
 }
 
+function wpt_set_log( $data, $id, $message ) {
+	if ( $id == 'test' ) {
+		$log = update_option( $data, $message );
+	} else {
+		$log = update_post_meta( $id,'_'.$data, $message );
+	}
+	$last = update_option( $data.'_last', array( $id, $message ) );
+}
+
+function wpt_log( $data, $id ) {
+	if ( $id == 'test' ) {
+		$log = get_option( $data );
+	} else if ( $id == 'last' ) {
+		$log = get_option( $data.'_last' );
+	} else {
+		$log = get_post_meta( $id, '_'.$data, true );
+	}
+	return $log;
+}
+
 function jd_check_functions() {
 	$message = "<div class='update'><ul>";
 	// grab or set necessary variables
@@ -32,28 +52,26 @@ function jd_check_functions() {
 	$shortener = get_option( 'jd_shortener' );
 	$title = urlencode( 'Your blog home' );
 	$shrink = apply_filters( 'wptt_shorten_link', $testurl, $title, false, true );
-	if ($shrink == FALSE) {
-		if ($shortener == 1) {
-			$error = htmlentities( get_option('wp_supr_error') );
-		} else if ( $shortener == 2 ) {
-			$error = htmlentities( get_option('wp_bitly_error') );
-		} else {
-			$error = __('No error information is available for your shortener.','wp-to-twitter');
-		}	
+	if ( $shrink == false ) {
+		$error = htmlentities( get_option('wpt_shortener_status') );
 		$message .= __("<li class=\"error\"><strong>WP to Twitter was unable to contact your selected URL shortening service.</strong></li>",'wp-to-twitter');
-		$message .= "<li><code>$error</code></li>";
+		if ( $error != '' ) {
+			$message .= "<li><code>$error</code></li>";
+		} else {
+			$message .= "<li><code>".__('No error message was returned.','wp-to-twitter' )."</code></li>";
+		}
 	} else {
 		$message .= __("<li><strong>WP to Twitter successfully contacted your selected URL shortening service.</strong>  The following link should point to your blog homepage:",'wp-to-twitter');
 		$message .= " <a href='$shrink'>$shrink</a></li>";	
 	}
 	//check twitter credentials
 	if ( wtt_oauth_test() ) {
-		$rand = rand(1000000,9999999);
+		$rand = rand( 1000000,9999999 );
 		$testpost = jd_doTwitterAPIPost( "This is a test of WP to Twitter. $shrink ($rand)" );
-			if ($testpost) {
+			if ( $testpost ) {
 				$message .= __("<li><strong>WP to Twitter successfully submitted a status update to Twitter.</strong></li>",'wp-to-twitter'); 
 			} else {
-				$error = get_option('jd_status_message');
+				$error = wpt_log( 'wpt_status_message', 'test' );
 				$message .=	__("<li class=\"error\"><strong>WP to Twitter failed to submit an update to Twitter.</strong></li>",'wp-to-twitter'); 
 				$message .= "<li class=\"error\">$error</li>";
 				}
@@ -81,20 +99,12 @@ function wpt_update_settings() {
 		if (! wp_verify_nonce($nonce,'wp-to-twitter-nonce') ) die("Security check failed");  
 	}
 
-	if ( isset($_POST['submit-type']) && $_POST['submit-type'] == 'clear-error' ) {
-		update_option( 'wp_twitter_failure','0' );
-		update_option( 'wp_url_failure','0' );
-		update_option( 'jd_status_message','');
-		$message =  __("WP to Twitter Errors Cleared", 'wp-to-twitter');
-	}
-	
 	if ( isset($_POST['oauth_settings'] ) ) {
 		$oauth_message = jd_update_oauth_settings( false, $_POST );
 	}
 
 	$wp_twitter_error = FALSE;
-	$wp_supr_error = FALSE;
-	$wp_bitly_error = FALSE;
+	$wp_shortener_error = FALSE;
 	$message = "";
 
 	// SET DEFAULT OPTIONS
@@ -163,13 +173,12 @@ function wpt_update_settings() {
 	}
 
 // notifications from oauth connection		
-    if ( isset($_POST['oauth_settings'] ) ) {
+    if ( isset( $_POST['oauth_settings'] ) ) {
 		if ( $oauth_message == "success" ) {
 			print('
 				<div id="message" class="updated fade">
 					<p>'.__('WP to Twitter is now connected with Twitter.', 'wp-to-twitter').'</p>
 				</div>
-
 			');
 		} else if ( $oauth_message == "failed" ) {
 			print('
@@ -177,21 +186,18 @@ function wpt_update_settings() {
 					<p>'.__('WP to Twitter failed to connect with Twitter.', 'wp-to-twitter').'</p>
 					<p>'.__('Error:','wp-to-twitter').' '.get_option('wpt_error').'</p>
 				</div>
-
 			');
 		} else if ( $oauth_message == "cleared" ) {
 			print('
 				<div id="message" class="updated fade">
 					<p>'.__('OAuth Authentication Data Cleared.', 'wp-to-twitter').'</p>
 				</div>
-
 			');		
 		} else  if ( $oauth_message == 'nosync' ) {
 			print('
 				<div id="message" class="error fade">
 					<p>'.__('OAuth Authentication Failed. Your server time is not in sync with the Twitter servers. Talk to your hosting service to see what can be done.', 'wp-to-twitter').'</p>
 				</div>
-
 			');
 		} else {
 			print('
@@ -363,11 +369,9 @@ function wpt_update_settings() {
 			}
 		}
 		update_option( 'wpt_can_tweet',$wpt_can_tweet);	
-		update_option( 'disable_url_failure' , ( isset( $_POST['disable_url_failure'] ) )?$_POST['disable_url_failure']:0 );
-		update_option( 'disable_twitter_failure' , ( isset( $_POST['disable_twitter_failure'] ) )?$_POST['disable_twitter_failure']:0 );
-		update_option( 'disable_oauth_notice' , ( isset( $_POST['disable_oauth_notice'] ) )?$_POST['disable_oauth_notice']:0 );
-		update_option( 'wp_debug_oauth' , ( isset( $_POST['wp_debug_oauth'] ) )?$_POST['wp_debug_oauth']:0 );
-		update_option( 'jd_donations' , ( isset( $_POST['jd_donations'] ) )?$_POST['jd_donations']:0 );
+		update_option( 'wpt_permit_feed_styles', ( isset( $_POST['wpt_permit_feed_styles'] ) ) ? 1 : 0 );		
+		update_option( 'wp_debug_oauth' , ( isset( $_POST['wp_debug_oauth'] ) )? 1 : 0 );
+		update_option( 'jd_donations' , ( isset( $_POST['jd_donations'] ) )? 1 : 0 );
 		$wpt_truncation_order = $_POST['wpt_truncation_order'];
 		update_option( 'wpt_truncation_order', $wpt_truncation_order );
 		$message .= __( 'WP to Twitter Advanced Options Updated' , 'wp-to-twitter');
@@ -405,23 +409,28 @@ function wpt_update_settings() {
 <div class="wrap" id="wp-to-twitter">
 <?php wpt_commments_removed(); ?>
 <?php if ( $message ) { ?>
-<div id="message" class="updated fade"><?php echo $message; ?></div>
-<?php } ?>
-<?php if ( get_option( 'wp_twitter_failure' ) != '0' || get_option( 'wp_url_failure' ) == '1' ) { ?>
+<div id="message" class="updated fade"><p><?php echo $message; ?></p></div>
+<?php }
+	$log = wpt_log( 'wpt_status_message', 'last' );
+	if ( !empty( $log ) && is_array( $log ) ) {
+		$post_ID = $log[0];
+		$post = get_post( $post_ID );
+		$title = $post->post_title;
+		$notice = $log[1];
+		echo "<div class='updated fade'><p><strong>".__('Last Tweet','wp-to-twitter')."</strong>: <a href='".get_edit_post_link( $post_ID )."'>$title</a> &raquo; $notice</p></div>";
+	}
+	if ( get_option( 'wp_twitter_failure' ) != '0' || get_option( 'wp_url_failure' ) == '1' ) { ?>
 		<div class="error">
 		<?php if ( get_option( 'wp_twitter_failure' ) == '1' ) {
 			_e("<p>One or more of your last posts has failed to send a status update to Twitter. The Tweet has been saved, and you can re-Tweet it at your leisure.</p>", 'wp-to-twitter');
 		}
-		if ( get_option( 'jd_status_message' ) != '' ) {
-			echo "<p><strong>".get_option( 'jd_status_message' )."</strong></p>";
-		}
 		if ( get_option( 'wp_twitter_failure' ) == '2') {
-			echo "<p>".__("Sorry! I couldn't get in touch with the Twitter servers to post your <strong>new link</strong>! You'll have to post it manually, I'm afraid. ", 'wp-to-twitter')."</p>";
+			echo "<p>".__("Sorry! I couldn't get in touch with the Twitter servers to post your <strong>new link</strong>! You'll have to post it manually.", 'wp-to-twitter')."</p>";
 		}		
 		if ( get_option( 'wp_url_failure' ) == '1' ) {
-		_e("<p>The query to the URL shortener API failed, and your URL was not shrunk. The full post URL was attached to your Tweet. Check with your URL shortening provider to see if there are any known issues.</p>", 'wp-to-twitter');
-		} ?>
-		<?php $admin_url = ( is_plugin_active('wp-tweets-pro/wpt-pro-functions.php') )?admin_url('admin.php?page=wp-tweets-pro'):admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'); ?>
+			_e("<p>The query to the URL shortener API failed, and your URL was not shrunk. The full post URL was attached to your Tweet. Check with your URL shortening provider to see if there are any known issues.</p>", 'wp-to-twitter');
+		} 
+		$admin_url = ( is_plugin_active('wp-tweets-pro/wpt-pro-functions.php') )?admin_url('admin.php?page=wp-tweets-pro'):admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'); ?>
 		<form method="post" action="<?php echo $admin_url; ?>">
 		<div><input type="hidden" name="submit-type" value="clear-error" /></div>
 		<?php $nonce = wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, false).wp_referer_field(false);  echo "<div>$nonce</div>"; ?>	
@@ -432,7 +441,7 @@ function wpt_update_settings() {
 }
 ?>	
 <h2><?php _e("WP to Twitter Options", 'wp-to-twitter'); ?></h2>
-<div id="wpt_settings_page" class="postbox-container" style="width: 70%">
+<div id="wpt_settings_page" class="postbox-container jcd-wide">
 
 <?php 
 	if ( isset($_GET['debug']) && $_GET['debug'] == 'true' ) {
@@ -709,12 +718,9 @@ function wpt_update_settings() {
 		<fieldset>
 		<legend><?php _e('Error Messages and Debugging','wp-to-twitter'); ?></legend>
 			<ul>
-			<li><input type="checkbox" name="disable_url_failure" id="disable_url_failure" value="1" <?php echo jd_checkCheckbox('disable_url_failure')?> />	<label for="disable_url_failure"><?php _e("Disable global URL shortener error messages.", 'wp-to-twitter'); ?></label></li>
-			<li><input type="checkbox" name="disable_twitter_failure" id="disable_twitter_failure" value="1" <?php echo jd_checkCheckbox('disable_twitter_failure')?> />	<label for="disable_twitter_failure"><?php _e("Disable global Twitter API error messages.", 'wp-to-twitter'); ?></label></li>
-			<li><input type="checkbox" name="wp_debug_oauth" id="wp_debug_oauth" value="1" <?php echo jd_checkCheckbox('wp_debug_oauth')?> />
-				<label for="wp_debug_oauth"><?php _e("Get Debugging Data for OAuth Connection", 'wp-to-twitter'); ?></label></li>
-			<li><input type="checkbox" name="jd_donations" id="jd_donations" value="1" <?php echo jd_checkCheckbox('jd_donations')?> />
-				<label for="jd_donations"><strong><?php _e("I made a donation, so stop whinging at me, please.", 'wp-to-twitter'); ?></strong></label></li>
+			<li><input type="checkbox" name="wpt_permit_feed_styles" id="wpt_permit_feed_styles" value="1" <?php echo jd_checkCheckbox('wpt_permit_feed_styles')?> /> <label for="wpt_permit_feed_styles"><?php _e("Disable Twitter Feed Stylesheet", 'wp-to-twitter'); ?></label></li>
+			<li><input type="checkbox" name="wp_debug_oauth" id="wp_debug_oauth" value="1" <?php echo jd_checkCheckbox('wp_debug_oauth')?> /> <label for="wp_debug_oauth"><?php _e("Get Debugging Data for OAuth Connection", 'wp-to-twitter'); ?></label></li>
+			<li><input type="checkbox" name="jd_donations" id="jd_donations" value="1" <?php echo jd_checkCheckbox('jd_donations')?> />	<label for="jd_donations"><strong><?php _e("I made a donation, so stop whinging at me, please.", 'wp-to-twitter'); ?></strong></label></li>
 			</ul>
 		</fieldset>
 		<div>
@@ -753,7 +759,7 @@ function wpt_update_settings() {
 
 function wpt_sidebar() {
 ?>
-<div class="postbox-container" style="width:20%">
+<div class="postbox-container jcd-narrow">
 <div class="metabox-holder">
 	<div class="ui-sortable meta-box-sortables">
 		<div class="postbox">
@@ -765,7 +771,7 @@ function wpt_sidebar() {
 			<?php } ?>
 			<div class="inside resources">
 			<p>
-			<a href="https://twitter.com/intent/tweet?screen_name=joedolson&text=WP%20to%20Twitter%20is%20great!" class="twitter-mention-button" data-size="large" data-related="joedolson">Tweet about WP to Twitter</a>
+			<a href="https://twitter.com/intent/follow?screen_name=joedolson" class="twitter-follow-button" data-size="small" data-related="joedolson">Follow @joedolson</a>
 			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 			</p>
 			<?php if ( function_exists( 'wpt_pro_exists' ) ) { $support = admin_url('admin.php?page=wp-tweets-pro'); } else { $support = admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php'); } ?>
