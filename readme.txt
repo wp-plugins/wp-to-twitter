@@ -57,6 +57,10 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 == Changelog ==
 
+= 2.8.5 =
+
+* Wrapped 5.3+ only function in function_exists
+
 = 2.8.4 =
 
 * Rewrite Twitter App setup instructions to match re-designed Application Management page at Twitter.
