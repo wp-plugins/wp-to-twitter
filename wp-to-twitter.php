@@ -7,7 +7,7 @@ Version: 2.8.5
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
-/*  Copyright 2008-2014  Joseph C Dolson  (email : wp-to-twitter@joedolson.com)
+/*  Copyright 2008-2014  Joseph C Dolson  (email : plugins@joedolson.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -51,17 +51,6 @@ global $wpt_version;
 $wpt_version = "2.8.5";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
-
-function wpt_mail( $subject, $body ) {
-	$use_email = true;
-	if ( $use_email ) {
-		wp_mail( WPT_DEBUG_ADDRESS, $subject, $body, WPT_FROM );
-	} else {
-		$debug = get_option( 'wpt_debug' );
-		$debug[date( 'Y-m-d H:i:s' )] = array( $subject, $body );
-		update_option( 'wpt_debug', $debug );
-	}
-}
 
 function wpt_pro_compatibility() {
 	global $wptp_version;
@@ -1259,7 +1248,7 @@ function post_jd_twitter( $id ) {
 		$yourls = $_POST[ '_yourls_keyword' ];
 		$update = update_post_meta( $id, '_yourls_keyword', $yourls );
 	}
-	if ( isset( $_POST[ '_jd_twitter' ] ) && $_POST['_jd_twitter'] != '' ) {
+	if ( isset( $_POST[ '_jd_twitter' ] ) ) {
 		$jd_twitter = $_POST[ '_jd_twitter' ];
 		$update = update_post_meta( $id, '_jd_twitter', $jd_twitter );
 	} 
@@ -1461,9 +1450,15 @@ function wpt_twit_instant( $id ) {
 		delete_transient( '_wpt_twit_future' );
 		return;
 	}
+	// xmlrpc action has already run for this post.
+	if ( get_transient ( '_wpt_twit_xmlrpc' ) && get_transient( '_wpt_twit_xmlrpc' ) == $id ) {
+		delete_transient( '_wpt_twit_xmlrpc' );
+		return;
+	}	
 	jd_twit( $id, 'instant' );
 }
 function wpt_twit_xmlrpc( $id ) {
+	set_transient( '_wpt_twit_xmlrpc', $id, 10 );
 	if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE || wp_is_post_revision( $id ) || !wpt_in_post_type( $id )  ) { return $id; }
 	jd_twit( $id, 'xmlrpc' );
 }

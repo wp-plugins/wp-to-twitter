@@ -1,15 +1,19 @@
 <?php 
 // This file contains secondary functions supporting WP to Twitter
-// These functions don't perform any WP to Twitter actions, but add 
-// support for primary functions if lacking.
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( version_compare( $wp_version,"2.9.3",">" )) {
-if (!class_exists('WP_Http')) {
-	require_once( ABSPATH.WPINC.'/class-http.php' );
+function wpt_mail( $subject, $body ) {
+	$use_email = true;
+	if ( $use_email ) {
+		wp_mail( WPT_DEBUG_ADDRESS, $subject, $body, WPT_FROM );
+	} else {
+		$debug = get_option( 'wpt_debug' );
+		$debug[date( 'Y-m-d H:i:s' )] = array( $subject, $body );
+		update_option( 'wpt_debug', $debug );
 	}
 }
-	
+
 function jd_remote_json( $url, $array=true ) {
 	$input = jd_fetch_url( $url );
 	$obj = json_decode( $input, $array );
@@ -212,8 +216,9 @@ function wtt_option_selected($field,$value,$type='checkbox') {
 	return $output;
 }
 
-function wpt_date_compare($early,$late) {
-	$firstdate = strtotime($early);
+function wpt_date_compare( $early,$late ) {
+	$modifier = apply_filters( 'wpt_edit_sensitivity', 0 ); // alter time in seconds to modified date.
+	$firstdate = strtotime($early)+$modifier;
 	$lastdate = strtotime($late);
 	if ($firstdate <= $lastdate ) { // if post_modified is before or equal to post_date
 		return 1;

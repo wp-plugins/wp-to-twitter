@@ -249,7 +249,11 @@ if ( !function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in r
 	function jd_expand_url( $short_url ) {
 		$short_url = urlencode( $short_url );
 		$decoded = jd_remote_json("http://api.longurl.org/v2/expand?format=json&url=" . $short_url );
-		$url = $decoded['long-url'];
+		if ( isset( $decoded['long-url'] ) ) {
+			$url = $decoded['long-url'];
+		} else {
+			$url = $short_url;
+		}
 		return $url;
 		//return $short_url;
 	}
