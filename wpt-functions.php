@@ -244,7 +244,7 @@ function wpt_post_attachment($post_ID) {
 			'post_status' => 'published', 
 			'post_parent' => $post_ID, 
 			'post_mime_type'=>'image' 
-			); 
+		);
 		$attachments = get_posts($args);
 		if ($attachments) {
 			return $attachments[0]->ID; //Return the first attachment.
