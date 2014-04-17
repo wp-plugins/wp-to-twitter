@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 3.5.1
-Tested up to: 3.8.1
+Tested up to: 3.9
 License: GPLv2 or later
 Stable tag: 2.8.6
 
@@ -13,22 +13,20 @@ Auto-posts a Twitter update when you update your WordPress blog or blogroll, wit
 
 WP to Twitter posts Tweets from WordPress to Twitter. 
 
-You can shorten URLs using a variety of common URL shorteners, or just leave Twitter to do it for you using their t.co service. 
+Shorten URLs using a variety of popular URL shorteners, or leave Twitter to do it for you using t.co. 
 
-You can also use WP to Twitter display a feed of recent Tweets using widgets. Display Tweets from any account just by entering that account's Twitter ID! 
+Use WP to Twitter display a feed of recent Tweets. Display Tweets from any account by entering that account's Twitter ID! 
 
-Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) for Tweet scheduling, automatic re-tweeting, and more!
+[Upgrade to WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) for Tweet scheduling, automatic re-tweeting, and more!
 
-The plugin supports a customizable Tweet template for updating or editing posts and pages, supports your custom post types, and allows you to write a custom Tweet for each post, using a selection of custom template tags to generate the text. 
+WP to Twitter supports a customizable Tweet template for updating or editing posts and pages, supports custom post types, and allows you to write a custom Tweet for each post, using custom template tags to generate the Tweet copy. 
 
-Additional features include: 
+More features: 
 
 * Use tags as Twitter hashtags
 * Use alternate URLs in place of post permalinks
 * Support for Google Analytics
 * Support for XMLRPC remote clients
-
-Status updates longer than 140 characters will be truncated. 
 
 Upgrade to [WP Tweets Pro](http://www.joedolson.com/articles/wp-tweets-pro/) for extra features, including:
 
@@ -51,11 +49,14 @@ Russian, Dutch, Italian, French, Danish, Catalan, Portuguese, Spanish, Chinese, 
 
 Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
 
-Credits:
-
-Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Baccega](http://www.andreabaccega.com).  Some code previously contributed is no longer in this plug-in. Other bug fixes and related citations can be found in the changelog.
-
 == Changelog ==
+
+= 2.8.7 =
+
+* Updated: Changed URLs to Twitter app creation
+* Bug fix: Error message clean up.
+* Bug fix: if excerpt value was contained in custom Tweet & custom Tweet included line breaks & Tweet > 140 characters, excerpt custom Tweet would have characters missing from the middle of the Tweet.
+* Updated: tested up to value
 
 = 2.8.6 =
 
@@ -929,7 +930,7 @@ Contributions by [Thor Erik](http://www.thorerik.net), Bill Berry and [Andrea Ba
 
 *Bugfix with XMLRPC publishing -- controls to disable XMLRPC publishing now work correctly.
 *Bugfix with error reporting and clearing.
-*Added the option to supply an alternate URL along with your post, to be Tweeted in place of the WP permalink.
+*Added the option to supply an alternate URL along with your post, to be Tweeted in place of the WP permalink. (Courtesy Bill Berry)
 
 = 1.2.5 =
  

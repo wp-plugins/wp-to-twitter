@@ -103,8 +103,6 @@ function wpt_update_settings() {
 		$oauth_message = jd_update_oauth_settings( false, $_POST );
 	}
 
-	$wp_twitter_error = FALSE;
-	$wp_shortener_error = FALSE;
 	$message = "";
 
 	// SET DEFAULT OPTIONS
@@ -157,7 +155,6 @@ function wpt_update_settings() {
 		// Use custom external URLs to point elsewhere. 
 		update_option( 'jd_twit_custom_url', 'external_link' );	
 		// Error checking
-		update_option( 'wp_twitter_failure','0' );
 		update_option( 'wp_url_failure','0' );
 		// Default publishing options.
 		update_option( 'jd_tweet_default', '0' );
@@ -182,9 +179,8 @@ function wpt_update_settings() {
 			');
 		} else if ( $oauth_message == "failed" ) {
 			print('
-				<div id="message" class="updated fade">
-					<p>'.__('WP to Twitter failed to connect with Twitter.', 'wp-to-twitter').'</p>
-					<p>'.__('Error:','wp-to-twitter').' '.get_option('wpt_error').'</p>
+				<div id="message" class="error fade">
+					<p>'.__( 'WP to Twitter failed to connect with Twitter.', 'wp-to-twitter' ).' <strong>'.__('Error:','wp-to-twitter').'</strong> '.get_option( 'wpt_error' ).'</p>
 				</div>
 			');
 		} else if ( $oauth_message == "cleared" ) {
@@ -419,14 +415,12 @@ function wpt_update_settings() {
 		$notice = $log[1];
 		echo "<div class='updated fade'><p><strong>".__('Last Tweet','wp-to-twitter')."</strong>: <a href='".get_edit_post_link( $post_ID )."'>$title</a> &raquo; $notice</p></div>";
 	}
-	if ( get_option( 'wp_twitter_failure' ) != '0' || get_option( 'wp_url_failure' ) == '1' ) { ?>
+	if ( isset( $_POST['submit-type'] ) && $_POST['submit-type'] == 'clear-error' ) {
+		delete_option( 'wp_url_failure' );
+	}
+	if ( get_option( 'wp_url_failure' ) == '1' ) { ?>
 		<div class="error">
-		<?php if ( get_option( 'wp_twitter_failure' ) == '1' ) {
-			_e("<p>One or more of your last posts has failed to send a status update to Twitter. The Tweet has been saved, and you can re-Tweet it at your leisure.</p>", 'wp-to-twitter');
-		}
-		if ( get_option( 'wp_twitter_failure' ) == '2') {
-			echo "<p>".__("Sorry! I couldn't get in touch with the Twitter servers to post your <strong>new link</strong>! You'll have to post it manually.", 'wp-to-twitter')."</p>";
-		}		
+		<?php
 		if ( get_option( 'wp_url_failure' ) == '1' ) {
 			_e("<p>The query to the URL shortener API failed, and your URL was not shrunk. The full post URL was attached to your Tweet. Check with your URL shortening provider to see if there are any known issues.</p>", 'wp-to-twitter');
 		} 

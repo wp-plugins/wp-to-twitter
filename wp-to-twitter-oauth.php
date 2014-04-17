@@ -87,10 +87,12 @@ switch ( $post['oauth_settings'] ) {
 				}
 				$message = 'failed';
 				if ( $connection = wtt_oauth_connection( $auth ) ) {
-					$data = $connection->get('https://api.twitter.com/1.1/account/verify_credentials.json');
+					$data = $connection->get( 'https://api.twitter.com/1.1/account/verify_credentials.json' );
 					if ( $connection->http_code != '200' ) {
 						$data = json_decode( $data );
-						update_option( 'wpt_error', $data->errors[0]->message );
+						$code = "<a href='https://dev.twitter.com/docs/error-codes-responses'>".$data->errors[0]->code."</a>";
+						$error = $data->errors[0]->message;
+						update_option( 'wpt_error', "$code: $error" );
 					} else {
 						delete_option( 'wpt_error' );
 					}
@@ -217,7 +219,7 @@ $nonce = ( !$auth )?wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, fals
 			'.$errors.'
 			<p>'.__('Your server timezone (should be UTC,GMT,Europe/London or equivalent):','wp-to-twitter').' '.date_default_timezone_get().'</p>
 			</div>
-					<h4>'.__('1. Register this site as an application on ', 'wp-to-twitter') . '<a href="http://dev.twitter.com/apps/new" target="_blank">'.__('Twitter\'s application registration page','wp-to-twitter').'</a></h4>
+					<h4>'.__('1. Register this site as an application on ', 'wp-to-twitter') . '<a href="https://apps.twitter.com/app/new/" target="_blank">'.__('Twitter\'s application registration page','wp-to-twitter').'</a></h4>
 						<ul>
 						<li>'.__('If you\'re not currently logged in to Twitter, log-in to the account you want associated with this site' , 'wp-to-twitter').'</li>
 						<li>'.__('Your application name cannot include the word "Twitter."' , 'wp-to-twitter').'</li>
