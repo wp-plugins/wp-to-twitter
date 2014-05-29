@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/articles/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post to your blogroll, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.8.7
+Version: 2.8.8
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -48,15 +48,15 @@ require_once( plugin_dir_path(__FILE__).'/wpt-feed.php' );
 require_once( plugin_dir_path(__FILE__).'/wpt-widget.php' );
 
 global $wpt_version;
-$wpt_version = "2.8.7";
+$wpt_version = "2.8.8";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
 function wpt_pro_compatibility() {
 	global $wptp_version;
-	$current_wptp_version = '1.6.3';
+	$current_wptp_version = '1.7.0';
 	if ( version_compare( $wptp_version, $current_wptp_version, '<' ) ) {
-		echo "<div class='error notice'><p class='upgrade'>".sprintf( __('The current version of WP Tweets PRO is <strong>%s</strong>. <a href="http://www.joedolson.com/articles/account/">Upgrade for best compatibility!</a>','wp-to-twitter'),$current_wptp_version )."</p></div>";
+		echo "<div class='error notice'><p class='upgrade'>".sprintf( __('The current version of WP Tweets PRO is <strong>%s</strong>. <a href="http://www.joedolson.com/articles/account/">Update for best compatibility!</a>','wp-to-twitter'), $current_wptp_version )."</p></div>";
 	}
 }
 
@@ -249,7 +249,7 @@ function jd_doTwitterAPIPost( $twit, $auth=false, $id=false, $media=false ) {
 	// prevent duplicate Tweets
 	if ( $check == $twit ) {
 		if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
-			wpt_mail( "Matched: tweet identical: #$id","$twit, $auth, $id" ); // DEBUG
+			wpt_mail( "Matched: tweet identical: #$id","This Tweet: $twit; Check Tweet: $check; $auth, $id" ); // DEBUG
 		}
 		$error = __( 'This tweet is identical to another Tweet recently sent to this account.','wp-to-twitter' ).' '.__( 'Twitter requires all Tweets to be unique.', 'wp-to-twitter' );
 		wpt_saves_error( $id, $auth, $twit, $error, '403', time() );
@@ -397,7 +397,7 @@ function wpt_is_ssl( $url ) {
 function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet=false, $ref=false ) {
 	// media file occupies 22 characters, need to account for in shortening.
 	$tweet_length = ( wpt_post_with_media( $post_ID ) ) ? 117 : 139; 
-	$tweet = trim(custom_shortcodes( $tweet, $post_ID ));
+	$tweet = trim( custom_shortcodes( $tweet, $post_ID ) );
 	$shrink = ( $post['shortUrl'] != '' )?$post['shortUrl']:apply_filters( 'wptt_shorten_link', $post['postLink'], $post['postTitle'], $post_ID, false );
 	// generate all template variable values
 	$auth = $post['authId'];
@@ -446,6 +446,7 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet=false, $ref=false 
 	if ( $encoding == '' ) { $encoding = 'UTF-8'; } 
 	
 	$has_excerpt_tag = ( strpos( $tweet, '#post#' ) === false ) ? false : true; 
+	$has_title_tag = ( strpos( $tweet, '#title#' ) === false ) ? false : true; 
 	
 	if ( strpos( $tweet, '#url#' ) === false 
 		&& strpos( $tweet, '#title#' ) === false
@@ -519,7 +520,7 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet=false, $ref=false 
 		if ( $str_length > ( $tweet_length+ 1 + $diff ) ) {
 			foreach ( $preferred AS $key=>$value ) {
 				// don't truncate content of post excerpt if excerpt tag not in use
-				if ( !( $key == 'excerpt' && !$has_excerpt_tag ) ) {
+				if ( !( $key == 'excerpt' && !$has_excerpt_tag ) && !( $key == 'title' && !$has_title_tag ) ) {
 					$str_length = mb_strlen( urldecode( fake_normalize( trim( $post_tweet ) ) ),$encoding );
 					if ( $str_length > ( $tweet_length + 1 + $diff ) ) {
 						$trim = $str_length - ( $tweet_length + 1 + $diff );
@@ -536,12 +537,16 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet=false, $ref=false 
 								$new_value = '';
 							} else {
 								$new_value = $old_value;
-								while ((mb_strlen($old_value)-$trim) < mb_strlen($new_value)) {
-									$new_value = trim(mb_substr($new_value,0,mb_strrpos($new_value,'#',$encoding)-1));
+								while ( ( mb_strlen( $old_value )-$trim ) < mb_strlen( $new_value ) ) {
+									$new_value = trim( mb_substr( $new_value, 0, mb_strrpos( $new_value,'#',$encoding )-1 ) );
 								}
 							}
 						} else {
-							$new_value = mb_substr( $old_value,0,-( $trim ),$encoding );					
+							// trim letters
+							$new_value = mb_substr( $old_value,0,-( $trim ),$encoding );
+							// trim rest of last word
+							$last_space = strrpos( $new_value, ' ' );
+							$new_value = mb_substr( $new_value,0, $last_space, $encoding );
 						}
 						$post_tweet = str_ireplace( $old_value,$new_value,$post_tweet );
 						// put URL back before checking length
@@ -693,9 +698,6 @@ function wpt_category_limit( $post_type, $post_info, $post_ID ) {
 }
 
 function jd_twit( $post_ID, $type='instant' ) {
-	if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
-		wpt_mail(  "0: jd_twit running #$post_ID","Post ID: $post_ID / $type"); // DEBUG
-	}	
 	if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE || wp_is_post_revision($post_ID) ) { return $post_ID; }
 	wpt_check_version();
 	$jd_tweet_this = get_post_meta( $post_ID, '_jd_tweet_this', true );
@@ -706,14 +708,14 @@ function jd_twit( $post_ID, $type='instant' ) {
 	} else {
 		if ( isset( $_POST['_inline_edit'] ) || isset( $_REQUEST['bulk_edit'] ) ) { $is_inline_edit = true; }
 	}
-	if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
-		wpt_mail(  "1: JD Tweet This Value: #$post_ID","Tweet this: $jd_tweet_this /". get_option('jd_tweet_default')." / $type"); // DEBUG
-	}
 	if ( get_option('jd_tweet_default') == 0 ) { 
 		$test = ( $jd_tweet_this != 'no' ) ? true : false;
 	} else { 
 		$test = ( $jd_tweet_this == 'yes' ) ? true : false;
 	}
+	if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
+		wpt_mail(  "1: JD Tweet This Value: #$post_ID","Tweet this: $jd_tweet_this /". get_option('jd_tweet_default')." / $type"); // DEBUG
+	}	
 	if ( $test ) { // test switch: depend on default settings.
 		$post_info = jd_post_info( $post_ID );
 		$media = wpt_post_with_media( $post_ID, $post_info );
@@ -771,12 +773,7 @@ function jd_twit( $post_ID, $type='instant' ) {
 				// if this is an old post and editing updates are enabled				
 				if ( get_option( 'jd_tweet_default_edit' ) == 1 ) {
 					$jd_tweet_this = apply_filters( 'wpt_tweet_this_edit', $jd_tweet_this, $_POST );
-					if ( $jd_tweet_this != 'yes' ) {
-						if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
-							wpt_mail(  "3c: Tweet this: not equal to yes","Exit // Post ID: $post_ID"); // DEBUG
-						}
-						return;
-					}
+					if ( $jd_tweet_this != 'yes' ) { return; }
 				}
 				if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
 					wpt_mail(  "4a: Edited post #$post_ID","Tweet this: ".print_r($post_info,1)." / $type"); // DEBUG
@@ -849,31 +846,18 @@ function jd_twit( $post_ID, $type='instant' ) {
 						foreach ( $wpt_selected_users as $acct ) {
 							if ( wtt_oauth_test( $acct,'verify' ) ) {
 								for ( $i=1;$i<=$repeat;$i++ ) {
-									switch( $i ) {
-										case 1:
-										$prepend = ( get_option('wpt_prepend') == 1 )?'':get_option('wpt_prepend_rt');
-										$append = ( get_option('wpt_prepend') != 1 )?'':get_option('wpt_prepend_rt');
-										break;
-										case 2:
-										$prepend = ( get_option('wpt_prepend') == 1 )?'':get_option('wpt_prepend_rt2');
-										$append = ( get_option('wpt_prepend') != 1 )?'':get_option('wpt_prepend_rt2');
-										break;
-										case 3:
-										$prepend = ( get_option('wpt_prepend') == 1 )?'':get_option('wpt_prepend_rt3');
-										$append = ( get_option('wpt_prepend') != 1 )?'':get_option('wpt_prepend_rt3');
-										break;
-									}
-									if ( get_option( 'wpt_custom_type' ) == 'template' ) {
-										$retweet = jd_truncate_tweet( trim( $prepend.$append ), $post_info, $post_ID, true, $acct );
-									} else {
-										$retweet = jd_truncate_tweet( trim( $prepend.$template.$append ), $post_info, $post_ID, true, $acct );
-									}
+									$retweet = apply_filters( 'wpt_set_retweet_text', $template, $i );
+									$retweet = jd_truncate_tweet( $retweet, $post_info, $post_ID, true, $acct );
 									// add original delay to schedule
-									$delay = ( isset($post_info['wpt_delay_tweet'] ) )?( (int) $post_info['wpt_delay_tweet'] )*60:0;
+									$delay = ( isset( $post_info['wpt_delay_tweet'] ) )?( (int) $post_info['wpt_delay_tweet'] )*60:0;
 									/* Don't delay the first Tweet of the group */
 									$offset = ( $first == true )?0:rand(60,240); // delay each co-tweet by 1-4 minutes
-									$time = apply_filters( 'wpt_schedule_retweet',($post_info['wpt_retweet_after'])*(60*60)*$i, $acct, $i, $post_info );
-									wp_schedule_single_event( time()+$time+$offset+$delay, 'wpt_schedule_tweet_action', array( 'id'=>$acct, 'sentence'=>$retweet, 'rt'=>$i, 'post_id'=>$post_ID ) );
+									$time = apply_filters( 'wpt_schedule_retweet',( $post_info['wpt_retweet_after'] )*(60*60)*$i, $acct, $i, $post_info );
+									$scheduled = wp_schedule_single_event( time()+$time+$offset+$delay, 'wpt_schedule_tweet_action', array( 'id'=>$acct, 'sentence'=>$retweet, 'rt'=>$i, 'post_id'=>$post_ID ) );
+									if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
+										if ( $acct ) { $author_id = "#$acct"; } else { $author_id = 'Main'; }
+										wpt_mail(  "7b: Retweet Scheduled for Auth ID $author_id #$post_ID", print_r( array( 'id'=>$acct, 'sentence'=>$retweet, 'rt'=>$i, 'post_id'=>$post_ID, 'timestamp'=>time()+$time+$offset+$delay, 'current_time'=>time(), 'timezone'=>get_option('gmt_offset'), 'scheduled'=>$scheduled, 'timestamp_string'=>date( 'Y-m-d H:i:s',time()+$time+$offset+$delay ),'current_time_string'=>date( 'Y-m-d H:i:s',time() ), ),1 ) ); // DEBUG
+									}									
 									$tweet = true;
 									if ( $i == 4 ) { break; }
 								}
@@ -1043,6 +1027,7 @@ function jd_add_twitter_inner_box( $post ) {
 			?>
 			<p class='template'><?php _e('Your template:','wp-to-twitter'); ?> <code><?php echo stripcslashes( $jd_expanded ); ?></code></p>
 			<?php 
+			echo apply_filters( 'wpt_custom_retweet_fields', '', $post_id );
 			if ( get_option('jd_keyword_format') == 2 ) {
 				$custom_keyword = get_post_meta( $post_id, '_yourls_keyword', true );
 				echo "<label for='yourls_keyword'>".__('YOURLS Custom Keyword','wp-to-twitter')."</label> <input type='text' name='_yourls_keyword' id='yourls_keyword' value='$custom_keyword' />";
@@ -1146,6 +1131,8 @@ function wpt_show_tweets( $previous_tweets, $failed_tweets ) {
 	if ( !is_array( $previous_tweets ) && $previous_tweets != '' ) { $previous_tweets = array( 0=>$previous_tweets ); }
 	if ( ! empty( $previous_tweets ) || ! empty( $failed_tweets ) ) { ?>
 		<hr>
+		<p><span class='dashicons dashicons-plus'></span><a href='#wpt_tweet_history' class='history-toggle'><?php _e('View Tweet History','wp-to-twitter' ); ?></a></p>
+		<div class='history'>
 		<p class='error'><em><?php _e('Previous Tweets','wp-to-twitter'); ?>:</em></p>
 		<ul>
 		<?php
@@ -1175,7 +1162,7 @@ function wpt_show_tweets( $previous_tweets, $failed_tweets ) {
 				}
 			}
 			if ( $list == true ) {
-				"<p class='error'><em>".__('Failed Tweets','wp-to-twitter').":</em></p>
+				echo "<p class='error'><em>".__('Failed Tweets','wp-to-twitter').":</em></p>
 				<ul>$error_list</ul>";
 			}
 		}
@@ -1183,6 +1170,7 @@ function wpt_show_tweets( $previous_tweets, $failed_tweets ) {
 		if ( $has_history || $list ) {
 			echo "<p><input type='checkbox' name='wpt_clear_history' id='wptch' value='clear' /> <label for='wptch'>".__('Delete Tweet History', 'wp-to-twitter' )."</label></p>";
 		}
+		echo "</div>";
 	}
 }
 
@@ -1218,25 +1206,10 @@ if ( $current_screen->base == 'post' || $current_screen->id == 'wp-tweets-pro_pa
 	} else {
 		$first = '#notes'; 
 	}
-	// yuck, this is ugly. I should do something about it. Like localize, man.
+	wp_register_script( 'wpt-base-js', plugins_url( 'js/base.js', __FILE__ ), array( 'jquery' ) );
+	wp_enqueue_script( 'wpt-base-js' );
+	wp_localize_script( 'wpt-base-js', 'wptSettings', array( 'allowed'=>$allowed, 'first'=>$first, 'text'=> __('Characters left: ','wp-to-twitter') ) );
 	echo "
-<script type='text/javascript'>
-	jQuery(document).ready(function(\$){	
-		\$('#jtw').charCount( { allowed: $allowed, counterText: '".__('Characters left: ','wp-to-twitter')."' } );
-	});
-	jQuery(document).ready(function(\$){
-		\$('#side-sortables .tabs a[href=\"$first\"]').addClass('active');
-		\$('#side-sortables .wptab').not('$first').hide();
-		\$('#side-sortables .tabs a').on('click',function(e) {
-			e.preventDefault();
-			\$('#side-sortables .tabs a').removeClass('active');
-			\$(this).addClass('active');
-			var target = $(this).attr('href');
-			\$('#side-sortables .wptab').not(target).hide();
-			\$(target).show();
-		});
-	});
-</script>
 <style type='text/css'>
 #wp2t h3 span { padding-left: 30px; background: url(".plugins_url('wp-to-twitter/images/twitter-bird-light-bgs.png').") left 50% no-repeat; }
 </style>";

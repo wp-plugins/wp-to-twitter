@@ -33,3 +33,48 @@
 .wpt-options .tabs li { display: inline; margin: 0 auto; line-height: 1; }
 .wpt-options .tabs a { display: inline-block; padding: 4px; border-radius: 4px 4px 0 0; border: 1px solid #ccc; background: #f3f3f3; }
 .wpt-options .tabs a.active { border-bottom: 1px solid #fefefe; background: #fefefe; }
+
+.toggle-btn-group { margin: 0 auto;	content: ""; display: table; clear: both; }
+
+.toggle-btn-group label {
+	padding: .25em;
+	float: left;
+	text-align: center;
+	cursor: pointer;
+	background-color: #f3f3f3;
+	border: #aaa 1px solid;
+}
+
+.toggle-btn-group label:first-of-type { border-radius: 0 .5em .5em 0; }
+
+.toggle-btn-group input[type="radio"]:checked+label {
+	background-color: #ddd;
+	border: #000 1px solid;
+}
+
+.toggle-btn-group label:hover, 
+.toggle-btn-group label:focus {
+	background-color: #ddd;
+	border: #000 1px solid;
+}
+
+.toggle-btn-group label:first-of-type { border-radius: .5em 0 0 .5em; }
+
+.toggle-btn-group label:last-of-type {
+	border-top-right-radius: .5em;
+	border-bottom-right-radius: .5em;
+}
+
+.toggle-btn-group label:first-of-type {
+	border-right: 0px solid;
+}
+
+.toggle-btn-group label:last-of-type {
+	border-left: 0px solid;
+}
+
+.toggle-btn-group input {
+	position: absolute!important;
+	clip: rect(1px,1px,1px,1px);
+	overflow: hidden;
+}

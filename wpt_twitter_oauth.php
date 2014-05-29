@@ -208,6 +208,7 @@ class jd_TwitterOAuth {
              $url,
              array(
 				'media[]'  => "@{$image};type={$mime_type};filename={$image}",
+				//'media[]' => file_get_contents($image),
 				'status'   => $args['status'],
              ),
              true, // use auth

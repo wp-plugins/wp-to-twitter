@@ -2,8 +2,8 @@
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
-Requires at least: 3.5.1
-Tested up to: 3.9
+Requires at least: 3.6.1
+Tested up to: 3.9.1
 License: GPLv2 or later
 Stable tag: 2.8.7
 
@@ -45,11 +45,28 @@ Translations:
 Visit the [WP to Twitter translations page](http://translate.joedolson.com/projects/wp-to-twitter) to see how complete these are.
 
 Languages available (in order of completeness):
-Russian, Dutch, Italian, French, Danish, Catalan, Portuguese, Spanish, Chinese, Japanese, Romanian, Estonian, German, Swedish, Irish, Ukrainian, Lithuanian, Belarusian, Turkish, Persian
+Dutch, Russian, French, Italian, Danish, Catalan, Portuguese, Spanish, Chinese, Japanese, Romanian, Estonian, German, Swedish, Irish, Ukrainian, Lithuanian, Belarusian, Turkish, Persian
 
 Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
 
 == Changelog ==
+
+= 2.8.8 =
+
+* Added missing debugging parameter
+* Added alternative contact method for failed support email requests.
+* Updated search target URL for hashtags in Twitter widget
+* Automatic truncation of title/excerpt now trims off entire last word.
+* Localized base tabs script.
+* Bug fix: if post title was contained in custom Tweet & Tweet > 140 characters, title could be removed from Tweet if truncating not altered
+* Bug fix: use reply-to header in support requests.
+* Bug fix: error log not visible in Tweet history for post.
+* UI: Tweet History now collapsed by default.
+* Prep work for WP Tweets PRO 1.7.
+* Added filter to insert HTML before and after Tweet list items in widget.
+* Added link to download PDF user's guide.
+* Deprecated support for WordPress versions 3.5.x
+* French, Dutch translations updated.
 
 = 2.8.7 =
 
