@@ -51,6 +51,14 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 
 == Changelog ==
 
+= 2.9.0 [Forthcoming] =
+
+* Will revamp roles & capabilities model for WP to Twitter
+
+= 2.8.9 =
+
+* Bug fix: Tweet this post toggle incorrectly set when editing an unpublished post with edits default set to not Tweet.
+
 = 2.8.8 =
 
 * Added missing debugging parameter
