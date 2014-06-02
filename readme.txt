@@ -5,7 +5,7 @@ Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, l
 Requires at least: 3.6.1
 Tested up to: 3.9.1
 License: GPLv2 or later
-Stable tag: 2.8.8
+Stable tag: 2.8.9
 
 Auto-posts a Twitter update when you update your WordPress blog or blogroll, with your chosen URL shortening service.
 
@@ -50,10 +50,6 @@ Dutch, Russian, French, Italian, Danish, Catalan, Portuguese, Spanish, Chinese, 
 Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
 
 == Changelog ==
-
-= 2.9.0 [Forthcoming] =
-
-* Will revamp roles & capabilities model for WP to Twitter
 
 = 2.8.9 =
 
@@ -1000,4 +996,4 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
-* 2.8.6 - Miscellaneous bug fixes.
+* 2.8.9 - Minor bug fix.
