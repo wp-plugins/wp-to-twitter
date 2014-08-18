@@ -41,7 +41,7 @@ if ( !$auth ) {
 	if ( !empty( $ack ) && !empty( $acs ) && !empty( $ot ) && !empty( $ots ) ) {	
 		require_once( plugin_dir_path(__FILE__).'wpt_twitter_oauth.php' );
 		$connection = new jd_TwitterOAuth( $ack,$acs,$ot,$ots );
-		$connection->useragent = 'WP to Twitter http://www.joedolson.com/articles/wp-to-twitter';
+		$connection->useragent = 'WP to Twitter http://www.joedolson.com/wp-to-twitter';
 		return $connection;
 	} else {
 		return false;
@@ -282,7 +282,7 @@ $nonce = ( !$auth )?wp_nonce_field('wp-to-twitter-nonce', '_wpnonce', true, fals
 		} else {
 			$submit = '<input type="checkbox" name="oauth_settings" value="wtt_twitter_disconnect" id="disconnect" /> <label for="disconnect">'.__('Disconnect your WordPress and Twitter Account','wp-to-twitter').'</label>';
 		}
-		$warning =  ( get_option('wpt_authentication_missing') )?'<p>'.__('<strong>Troubleshooting tip:</strong> Connected, but getting a error that your Authentication credentials are missing or incorrect? Check that your Access token has read and write permission. If not, you\'ll need to create a new token. <a href="http://www.joedolson.com/articles/wp-to-twitter/support-2/#q1">Read the FAQ</a>','wp-to-twitter').'</p>':'';
+		$warning =  ( get_option('wpt_authentication_missing') )?'<p>'.__('<strong>Troubleshooting tip:</strong> Connected, but getting a error that your Authentication credentials are missing or incorrect? Check that your Access token has read and write permission. If not, you\'ll need to create a new token. <a href="http://www.joedolson.com/wp-to-twitter/support-2/#q1">Read the FAQ</a>','wp-to-twitter').'</p>':'';
 		if ( !is_wp_error( $response ) ) { 
 			$diff = ( abs( time() - strtotime($response['headers']['date']) ) > 300 )?'<p> '.__( 'Your time stamps are more than 5 minutes apart. Your server could lose its connection with Twitter.','wp-to-twitter').'</p>':''; 
 		} else { 

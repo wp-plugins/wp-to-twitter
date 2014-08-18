@@ -162,8 +162,8 @@ class jd_TwitterOAuth {
   function handleMediaRequest($url, $args = array()) {
 		/* Load tmhOAuth for Media uploads only when needed: https://github.com/themattharris/tmhOAuth */
 		if ( !class_exists( 'tmhOAuth' ) ) {
-			require_once('tmhOAuth/tmhOAuth.php');
-			require_once('tmhOAuth/tmhUtilities.php');
+			require_once( plugin_dir_path(__FILE__).'tmhOAuth/tmhOAuth.php' );
+			require_once( plugin_dir_path(__FILE__).'tmhOAuth/tmhUtilities.php' );
 		}  
 		$auth = $args['auth'];
 		if ( !$auth ) {
