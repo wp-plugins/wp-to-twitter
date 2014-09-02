@@ -237,11 +237,11 @@ class jd_TwitterOAuth {
   function WPOAuthRequest($url, $args = array(), $method = NULL) {
   
     //Handle media requests using tmhOAuth library.
-    if ($method == 'MEDIA') {
-		return $this->handleMediaRequest($url,$args);		
+    if ( $method == 'MEDIA' ) {
+		return $this->handleMediaRequest( $url,$args );		
     }    
   
-    if (empty($method)) $method = empty($args) ? "GET" : "POST";
+    if ( empty( $method ) ) $method = empty($args) ? "GET" : "POST";
     $req = WPOAuthRequest::from_consumer_and_token($this->consumer, $this->token, $method, $url, $args);
     $req->sign_request($this->sha1_method, $this->consumer, $this->token);
     

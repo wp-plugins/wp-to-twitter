@@ -334,8 +334,8 @@ $plugins_string
 		$nonce=$_REQUEST['_wpnonce'];
 		if (! wp_verify_nonce($nonce,'wp-to-twitter-nonce') ) die("Security check failed");	
 		$request = ( !empty($_POST['support_request']) )?stripslashes($_POST['support_request']):false;
-		$has_donated = ( $_POST['has_donated'] == 'on')?"Donor":"No donation";
-		$has_read_faq = ( $_POST['has_read_faq'] == 'on')?"Read FAQ":false;
+		$has_donated = ( isset( $_POST['has_donated'] ) ) ? "Donor" : "No donation";
+		$has_read_faq = ( isset( $_POST['has_read_faq'] ) ) ? "Read FAQ" : false;
 		if ( function_exists( 'wpt_pro_exists' ) && wpt_pro_exists() == true ) { $pro = " PRO"; } else { $pro = ''; }
 		$subject = "WP to Twitter$pro support request. $has_donated";
 		$message = $request ."\n\n". $data;
@@ -354,7 +354,7 @@ $plugins_string
 		} else {
 			$sent = wp_mail( "plugins@joedolson.com",$subject,$message,$from );
 			if ( $sent ) {
-				if ( $has_donated == 'Donor' || $has_purchased == 'Purchaser' ) {
+				if ( $has_donated == 'Donor' ) {
 					echo "<div class='message updated'><p>".sprintf(__('Thank you for supporting the continuing development of this plug-in! I\'ll get back to you as soon as I can. Please ensure that you can receive email at <code>%s</code>.','wp-to-twitter'),$current_user->user_email)."</p></div>";		
 				} else {
 					echo "<div class='message updated'><p>".sprintf(__("Thanks for using WP to Twitter. Please ensure that you can receive email at <code>%s</code>.",'wp-to-twitter'),$current_user->user_email)."</p></div>";				

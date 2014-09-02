@@ -289,11 +289,11 @@ function WPT_getTweets($count = 20, $username = false, $options = false) {
   $config['token_secret'] = get_option('oauth_token_secret');
   $config['screenname'] = get_option('wtt_twitter_username');
   $config['cache_expire'] = intval( apply_filters( 'wpt_cache_expire', 3600 ) );
-  if ($config['cache_expire'] < 1) $config['cache_expire'] = 3600;
-  $config['directory'] = plugin_dir_path(__FILE__);
+  if ( $config['cache_expire'] < 1 ) $config['cache_expire'] = 3600;
+  $config['directory'] = plugin_dir_path( __FILE__ );
   
   $obj = new WPT_TwitterFeed($config);
-  $res = $obj->getTweets($count, $username, $options);
+  $res = $obj->getTweets( $count, $username, $options );
   update_option('wpt_tdf_last_error',$obj->st_last_error);
   return $res;
   

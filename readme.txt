@@ -7,7 +7,7 @@ Tested up to: 3.9.2
 License: GPLv2 or later
 Stable tag: 2.9.0
 
-Auto-posts a Twitter update when you update your WordPress blog or blogroll, with your chosen URL shortening service.
+Auto-posts a Twitter update when you update your WordPress blog or add a link, with your chosen URL shortening service.
 
 == Description ==
 
@@ -44,8 +44,8 @@ Translations:
 
 Visit the [WP to Twitter translations page](http://translate.joedolson.com/projects/wp-to-twitter) to see how complete these are.
 
-Languages available (in order of completeness):
-Dutch, Italian, Russian, French, Danish, Catalan, Portuguese, Spanish, Chinese, Japanese, Romanian, Estonian, German, Swedish, Irish, Ukrainian, Lithuanian, Belarusian, Turkish, Persian
+Translations available (in order of completeness):
+Dutch, Italian, Russian, French, Danish, Catalan, Portuguese, Spanish, Chinese, Japanese, Romanian, German, Estonian, Swedish, Irish, Ukrainian, Lithuanian, Belarusian, Turkish
 
 Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
 
@@ -54,6 +54,14 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 = Future =
 
 * Add regex filter to detect URLs typed into Tweet fields for counting/shortening purposes. [todo]
+
+= 2.9.1 =
+
+* Bug fix: too many fallbacks for #author#, display name never shows
+* Bug fix: stripslashes on AJAX tweet
+* Bug fix: prevent PHP warnings on invalid shortener return values
+* Bug fix: [WP Tweets PRO] if images are to be uploaded, but were added to post after publication, they were not tweeted.
+* Updated Dutch, German translations.
 
 = 2.9.0 =
 
