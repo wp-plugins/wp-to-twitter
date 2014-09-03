@@ -55,6 +55,10 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 
 * Add regex filter to detect URLs typed into Tweet fields for counting/shortening purposes. [todo]
 
+= 2.9.2 =
+
+* Bug fix: Accidentally enabled upload images in free edition; feature is problematic without the controls in WP Tweets PRO!
+
 = 2.9.1 =
 
 * Bug fix: too many fallbacks for #author#, display name never shows
