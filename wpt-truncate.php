@@ -23,9 +23,9 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet=false, $ref=false 
 	if ( get_option( 'jd_individual_twitter_users' ) == 1 ) {
 		if ( $user_account == '' ) {
 			if ( get_user_meta( $auth, 'wp-to-twitter-enable-user',true ) == 'mainAtTwitter' ) {
-				$account = stripcslashes( get_user_meta( $auth, 'wp-to-twitter-user-username',true ) );
+				$account = $user_account = stripcslashes( get_user_meta( $auth, 'wp-to-twitter-user-username',true ) );
 			} else if ( get_user_meta( $auth, 'wp-to-twitter-enable-user',true ) == 'mainAtTwitterPlus' ) {
-				$account = stripcslashes( get_user_meta( $auth, 'wp-to-twitter-user-username',true ) . ' @' . get_option( 'wtt_twitter_username' ) );
+				$account = $user_account = stripcslashes( get_user_meta( $auth, 'wp-to-twitter-user-username',true ) . ' @' . get_option( 'wtt_twitter_username' ) );
 			}
 		} else {
 			$account = "$user_account";

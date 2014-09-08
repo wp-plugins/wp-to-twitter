@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post a link, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.9.2
+Version: 2.9.3
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -49,7 +49,7 @@ require_once( plugin_dir_path(__FILE__).'/wpt-feed.php' );
 require_once( plugin_dir_path(__FILE__).'/wpt-widget.php' );
 
 global $wpt_version;
-$wpt_version = "2.9.2";
+$wpt_version = "2.9.3";
 $plugin_dir = basename(dirname(__FILE__));
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
@@ -211,13 +211,6 @@ function jd_doTwitterAPIPost( $twit, $auth=false, $id=false, $media=false ) {
 		return false;	
 	} else {
 		// must be designated as media and have a valid attachment
-		if ( function_exists( 'wpt_pro_exists' ) && wpt_pro_exists() ) {
-			// If media is false, but this post does have an attachment and has been told to upload, then switch to media=true.
-			// This usually means that the media was added after the post was published.
-			if ( !$media && ( wpt_post_attachment( $id ) && ( get_post_meta( $post_ID, '_wpt_image', true ) != 1 ) ) ) {
-				$media = true;
-			}
-		}
 		$attachment = ( $media ) ? wpt_post_attachment( $id ) : false;
 		if ( $attachment ) {
 			$meta = wp_get_attachment_metadata($attachment);

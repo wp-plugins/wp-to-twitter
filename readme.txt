@@ -54,6 +54,14 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 = Future =
 
 * Add regex filter to detect URLs typed into Tweet fields for counting/shortening purposes. [todo]
+* Feature: support for YOURLS signature tokens
+* Feature: Twitter widget support for searches
+
+= 2.9.3 =
+
+* Feature: Use display URL for URLs in Twitter Widget
+* Bug fix: user's Twitter account not assigned to #author# tag
+* Bug fix: reverted bug fix #4 from 2.9.1; didn't accomplish what it was supposed to and caused new issues.
 
 = 2.9.2 =
 

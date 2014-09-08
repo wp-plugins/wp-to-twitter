@@ -5,11 +5,11 @@
 
 function wpt_get_user( $twitter_ID=false ) {
 	if ( !$twitter_ID ) return;
-    $options = array('screen_name' => $twitter_ID );
-	$key = get_option('app_consumer_key');
-	$secret = get_option('app_consumer_secret');
-	$token = get_option('oauth_token');
-	$token_secret = get_option('oauth_token_secret');	
+    $options = array( 'screen_name' => $twitter_ID );
+	$key = get_option( 'app_consumer_key' );
+	$secret = get_option( 'app_consumer_secret' );
+	$token = get_option( 'oauth_token' );
+	$token_secret = get_option( 'oauth_token_secret' );	
     $connection = new jd_TwitterOAuth($key, $secret, $token, $token_secret);
     $result = $connection->get( "https://api.twitter.com/1.1/users/show.json?screen_name=$twitter_ID", $options);
 	return json_decode($result);
@@ -94,7 +94,7 @@ function wpt_twitter_feed( $instance ) {
 		/** Add tweet to array */
 		$before_tweet = apply_filters( 'wpt_before_tweet', '', $tweet );
 		$after_tweet = apply_filters( 'wpt_after_tweet', '', $tweet );
-		$tweets[] = '<li class="'.$tweet_classes.'">'. $before_tweet . WPT_tweet_linkify( $tweet['text'], $opts ) . "<br /><span class='wpt-tweet-time'>$timetweet</span> $intents " . $after_tweet . "</li>\n";
+		$tweets[] = '<li class="'.$tweet_classes.'">'. $before_tweet . WPT_tweet_linkify( $tweet['text'], $opts, $tweet ) . "<br /><span class='wpt-tweet-time'>$timetweet</span> $intents " . $after_tweet . "</li>\n";
 		}
 	}
 	if ( is_array( $tweets ) ) {
@@ -259,7 +259,7 @@ add_action( 'widgets_init', create_function( '', "register_widget('WPT_Latest_Tw
 
 /**
 * Adds links to the contents of a tweet.
-* Forked form genesis_tweet_linkify, removed the taraget = _blank
+* Forked from genesis_tweet_linkify, removed target = _blank
 *
 * Takes the content of a tweet, detects @replies, #hashtags, and
 * http:// links, and links them appropriately.
@@ -272,11 +272,17 @@ add_action( 'widgets_init', create_function( '', "register_widget('WPT_Latest_Tw
 *
 * @return string Linkified tweet content
 */
-function WPT_tweet_linkify( $text, $opts ) {
-	$text = ( $opts['links'] == true )?preg_replace( "#(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t< ]*)#", '\\1<a href="\\2" rel="nofollow">\\2</a>', $text ):$text;
-	$text = ( $opts['links'] == true )?preg_replace( "#(^|[\n ])((www|ftp)\.[^ \"\t\n\r< ]*)#", '\\1<a href="http://\\2" rel="nofollow">\\2</a>', $text ):$text;
-	$text = ( $opts['mentions'] == true )?preg_replace( '/@(\w+)/', '<a href="https://www.twitter.com/\\1" rel="nofollow">@\\1</a>', $text ):$text;
-	$text = ( $opts['hashtags'] == true )?preg_replace( '/#(\w+)/', '<a href="https://twitter.com/search?q=%23\\1" rel="nofollow">#\\1</a>', $text ):$text;
+function WPT_tweet_linkify( $text, $opts, $tweet ) {
+	$text = ( $opts['links'] == true ) ? preg_replace( "#(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t< ]*)#", '\\1<a href="\\2" rel="nofollow">\\2</a>', $text ) : $text;
+	$text = ( $opts['links'] == true ) ? preg_replace( "#(^|[\n ])((www|ftp)\.[^ \"\t\n\r< ]*)#", '\\1<a href="http://\\2" rel="nofollow">\\2</a>', $text ) : $text;
+	$text = ( $opts['mentions'] == true ) ? preg_replace( '/@(\w+)/', '<a href="https://www.twitter.com/\\1" rel="nofollow">@\\1</a>', $text ) : $text;
+	$text = ( $opts['hashtags'] == true ) ? preg_replace( '/#(\w+)/', '<a href="https://twitter.com/search?q=%23\\1" rel="nofollow">#\\1</a>', $text ) : $text;
+	$urls = $tweet['entities']['urls'];
+	if ( is_array( $urls ) ) {
+		foreach ( $urls as $url ) {
+			$text = str_replace( ">$url[url]<", ">$url[display_url]<", $text );
+		}
+	}
 	return $text;
 }
 
