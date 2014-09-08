@@ -5,7 +5,8 @@ Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, l
 Requires at least: 3.7.0
 Tested up to: 3.9.2
 License: GPLv2 or later
-Stable tag: 2.9.2
+Text Domain: wp-to-twitter
+Stable tag: 2.9.3
 
 Auto-posts a Twitter update when you update your WordPress blog or add a link, with your chosen URL shortening service.
 
