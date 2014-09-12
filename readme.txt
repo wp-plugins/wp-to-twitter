@@ -58,6 +58,10 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Feature: support for YOURLS signature tokens
 * Feature: Twitter widget support for searches
 
+= 2.9.4 =
+
+* Security Fix: https://vexatioustendencies.com/wordpress-plugin-vulnerability-dump-part-2/; No thanks to reporter.
+
 = 2.9.3 =
 
 * Feature: Use display URL for URLs in Twitter Widget
@@ -1035,4 +1039,4 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
-* 2.9.0 - Permissions re-vamp; support for custom roles; Add "Tweet Now" button.
+* 2.9.4 - IMPORTANT SECURITY UPDATE - UPGRADE NOW.

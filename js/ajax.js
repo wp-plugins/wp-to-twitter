@@ -25,6 +25,7 @@
 				'tweet_text': text,
 				'tweet_schedule': date + ' ' + time,
 				'tweet_action': tweet_action,
+				'security': wpt_data.security
 			};
 			$.post( ajaxurl, data, function( response ) {
 				$( '.wpt_log' ).text( response ).show( 500 );

@@ -198,7 +198,7 @@ function jd_doTwitterAPIPost( $twit, $auth=false, $id=false, $media=false ) {
 			wpt_mail( "Matched: tweet identical: #$id","This Tweet: $twit; Check Tweet: $check; $auth, $id, $media" ); // DEBUG
 		}
 		$error = __( 'This tweet is identical to another Tweet recently sent to this account.','wp-to-twitter' ).' '.__( 'Twitter requires all Tweets to be unique.', 'wp-to-twitter' );
-		wpt_saves_error( $id, $auth, $twit, $error, '403', time() );
+		wpt_saves_error( $id, $auth, $twit, $error, '403-1', time() );
 		wpt_set_log( 'wpt_status_message', $id, $error );
 		return false;
 	} else if ( $twit == '' || !$twit ) {
@@ -206,7 +206,7 @@ function jd_doTwitterAPIPost( $twit, $auth=false, $id=false, $media=false ) {
 			wpt_mail( "Tweet check: empty sentence: #$id","$twit, $auth, $id, $media"); // DEBUG
 		}
 		$error = __('This tweet was blank and could not be sent to Twitter.','wp-tweets-pro');
-		wpt_saves_error( $id, $auth, $twit, $error, '403', time() );
+		wpt_saves_error( $id, $auth, $twit, $error, '403-2', time() );
 		wpt_set_log( 'wpt_status_message', $id, $error );
 		return false;	
 	} else {
@@ -960,7 +960,11 @@ global $current_screen;
 	}
 	if ( $current_screen->base == 'post' && isset( $_GET['post'] ) && ( current_user_can( 'wpt_tweet_now' ) || current_user_can( 'manage_options' ) ) ) {
 		wp_enqueue_script( 'wpt.ajax', plugins_url( 'js/ajax.js', __FILE__ ), array( 'jquery' ) );
-		wp_localize_script( 'wpt.ajax', 'wpt_data', array( 'post_ID'=>(int) $_GET['post'], 'action'=>'wpt_tweet' ) );
+		wp_localize_script( 'wpt.ajax', 'wpt_data', array( 
+			'post_ID'=>(int) $_GET['post'], 
+			'action'=>'wpt_tweet', 
+			'security' => wp_create_nonce( 'wpt-tweet-nonce' ) 
+		) );
 	}
 	//echo $current_screen->id;
 	if ( $current_screen->id == 'settings_page_wp-to-twitter/wp-to-twitter' || $current_screen->id == 'toplevel_page_wp-tweets-pro'  ) {
@@ -973,6 +977,10 @@ global $current_screen;
 
 add_action( 'wp_ajax_wpt_tweet', 'wpt_ajax_tweet' );
 function wpt_ajax_tweet() {
+	if ( !check_ajax_referer( 'wpt-tweet-nonce', 'security', false ) ) {
+		echo "Invalid Security Check";
+		die;
+	}
 	$action = ( $_POST['tweet_action'] == 'tweet' ) ? 'tweet' : 'schedule';
 	$current_user = wp_get_current_user();
 	if ( function_exists( 'wpt_pro_exists' ) && wpt_pro_exists() ) {
@@ -981,24 +989,28 @@ function wpt_ajax_tweet() {
 		$auth = false;
 		$user_ID = $current_user->ID;
 	}
-	$options = get_option( 'wpt_post_types' );
-	$post_ID = intval( $_POST['tweet_post_id'] );	
-	$type = get_post_type( $post_ID );
-	$default = ( isset( $options[$type]['post-edited-text'] ) ) ? $options[$type]['post-edited-text'] : '';	
-	$sentence = ( isset( $_POST['tweet_text'] ) && trim( $_POST['tweet_text'] ) != '' ) ? $_POST['tweet_text'] : $default;
-	$sentence = stripcslashes( trim( $sentence ) );
-	$sentence = jd_truncate_tweet( $sentence, jd_post_info( $post_ID ), $post_ID, false, $user_ID );
-	$schedule = ( isset( $_POST['tweet_schedule'] ) ) ? strtotime( $_POST['tweet_schedule'] ) : rand( 60,240 );
-	$print_schedule = date_i18n( get_option( 'date_format' ).' @ '.get_option( 'time_format' ), $schedule );
-	$offset = ( 60 * 60 * get_option( 'gmt_offset' ) );
-	$schedule = $schedule - $offset;
-	switch ( $action ) {
-		case 'tweet' :	$return = jd_doTwitterAPIPost( $sentence, $auth, $post_ID ); break;
-		case 'schedule' : $return = wp_schedule_single_event( $schedule, 'wpt_schedule_tweet_action', array( 'id'=>$auth, 'sentence'=>$sentence, 'rt'=>0, 'post_id'=>$post_ID ) );
-		default: $return = false;
+	if ( current_user_can( 'wpt_can_tweet' ) ) {
+		$options = get_option( 'wpt_post_types' );
+		$post_ID = intval( $_POST['tweet_post_id'] );	
+		$type = get_post_type( $post_ID );
+		$default = ( isset( $options[$type]['post-edited-text'] ) ) ? $options[$type]['post-edited-text'] : '';	
+		$sentence = ( isset( $_POST['tweet_text'] ) && trim( $_POST['tweet_text'] ) != '' ) ? $_POST['tweet_text'] : $default;
+		$sentence = stripcslashes( trim( $sentence ) );
+		$sentence = jd_truncate_tweet( $sentence, jd_post_info( $post_ID ), $post_ID, false, $user_ID );
+		$schedule = ( isset( $_POST['tweet_schedule'] ) ) ? strtotime( $_POST['tweet_schedule'] ) : rand( 60,240 );
+		$print_schedule = date_i18n( get_option( 'date_format' ).' @ '.get_option( 'time_format' ), $schedule );
+		$offset = ( 60 * 60 * get_option( 'gmt_offset' ) );
+		$schedule = $schedule - $offset;
+		switch ( $action ) {
+			case 'tweet' :	$return = jd_doTwitterAPIPost( $sentence, $auth, $post_ID ); break;
+			case 'schedule' : $return = wp_schedule_single_event( $schedule, 'wpt_schedule_tweet_action', array( 'id'=>$auth, 'sentence'=>$sentence, 'rt'=>0, 'post_id'=>$post_ID ) );
+			default: $return = false;
+		}
+		$return = ( $action == 'tweet' ) ? wpt_log( 'wpt_status_message', $post_ID ) : "Tweet scheduled: '$sentence' for $print_schedule";
+		echo $return;
+	} else {
+		echo __( 'You are not authorized to perform this action', 'wp-to-twitter' );
 	}
-	$return = ( $action == 'tweet' ) ? wpt_log( 'wpt_status_message', $post_ID ) : "Tweet scheduled: '$sentence' for $print_schedule";
-	echo $return;
 	die;
 }
 
@@ -1142,8 +1154,8 @@ function jd_twitter_save_profile(){
 	} else {
 		$edit_id = $user_ID;
 	}
-	$enable = ( isset($_POST['wp-to-twitter-enable-user']) )?$_POST['wp-to-twitter-enable-user']:'';
-	$username = ( isset($_POST['wp-to-twitter-user-username']) )?$_POST['wp-to-twitter-user-username']:'';
+	$enable = ( isset( $_POST['wp-to-twitter-enable-user'] ) )?$_POST['wp-to-twitter-enable-user']:'';
+	$username = ( isset( $_POST['wp-to-twitter-user-username'] ) )?$_POST['wp-to-twitter-user-username']:'';
 	$wpt_remove = ( isset($_POST['wpt-remove']) )?'on':'';
 	update_user_meta($edit_id ,'wp-to-twitter-enable-user' , $enable );
 	update_user_meta($edit_id ,'wp-to-twitter-user-username' , $username );

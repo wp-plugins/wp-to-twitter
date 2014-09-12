@@ -1,6 +1,15 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+function wpt_check_caps( $role,$cap ) {
+	$role = get_role( $role );
+	if ( $role->has_cap( $cap ) ) { return " checked='checked'"; }
+}
+
+function wpt_cap_checkbox( $role, $cap, $name ) {
+	return "<li><input type='checkbox' id='wpt_caps_{$role}_$cap' name='wpt_caps[$role][$cap]' value='on'".wpt_check_caps($role,$cap)." /> <label for='wpt_caps_{$role}_$cap'>$name</label></li>";
+}
+
 // FUNCTION to see if checkboxes should be checked
 function jd_checkCheckbox( $field,$sub1=false,$sub2='' ) {
 	if ( $sub1 ) {
@@ -407,11 +416,11 @@ function wpt_update_settings() {
 			<legend><span><?php echo $name ?></span></legend>
 			<p>
 				<input type="checkbox" name="wpt_post_types[<?php echo $slug; ?>][post-published-update]" id="<?php echo $slug; ?>-post-published-update" value="1" <?php echo jd_checkCheckbox('wpt_post_types',$slug,'post-published-update')?> />
-				<label for="<?php echo $slug; ?>-post-published-update"><strong><?php printf(__('Update when %1$s %2$s is published','wp-to-twitter'),$word, $singular); ?></strong></label> <label for="<?php echo $slug; ?>-post-published-text"><br /><?php printf(__('Template for new %1$s updates','wp-to-twitter'),$name); ?></label><br /><input type="text" class="wpt-template" name="wpt_post_types[<?php echo $slug; ?>][post-published-text]" id="<?php echo $slug; ?>-post-published-text" size="60" maxlength="120" value="<?php if ( isset( $wpt_settings[$slug] ) ) { echo esc_attr( stripslashes( $wpt_settings[$slug]['post-published-text'] ) ); } ?>" />
+				<label for="<?php echo $slug; ?>-post-published-update"><strong><?php printf(__('Update when %1$s %2$s is published','wp-to-twitter'),$word, $singular); ?></strong></label> <label for="<?php echo $slug; ?>-post-published-text"><br /><?php printf(__('Template for new %1$s updates','wp-to-twitter'),$name); ?></label><br /><textarea class="wpt-template" name="wpt_post_types[<?php echo $slug; ?>][post-published-text]" id="<?php echo $slug; ?>-post-published-text" cols="60" rows="3"><?php if ( isset( $wpt_settings[$slug] ) ) { echo esc_attr( stripslashes( $wpt_settings[$slug]['post-published-text'] ) ); } ?></textarea>
 			</p>
 			<p>
 				<input type="checkbox" name="wpt_post_types[<?php echo $slug; ?>][post-edited-update]" id="<?php echo $slug; ?>-post-edited-update" value="1" <?php echo jd_checkCheckbox('wpt_post_types',$slug,'post-edited-update')?> />
-				<label for="<?php echo $slug; ?>-post-edited-update"><strong><?php printf(__('Update when %1$s %2$s is edited','wp-to-twitter'),$word, $singular); ?></strong></label><br /><label for="<?php echo $slug; ?>-post-edited-text"><?php printf(__('Template for %1$s editing updates','wp-to-twitter'),$name); ?></label><br /><input type="text" class="wpt-template" name="wpt_post_types[<?php echo $slug; ?>][post-edited-text]" id="<?php echo $slug; ?>-post-edited-text" size="60" maxlength="120" value="<?php if ( isset( $wpt_settings[$slug] ) ) { echo esc_attr( stripslashes( $wpt_settings[$slug]['post-edited-text'] ) ); } ?>" />	
+				<label for="<?php echo $slug; ?>-post-edited-update"><strong><?php printf(__('Update when %1$s %2$s is edited','wp-to-twitter'),$word, $singular); ?></strong></label><br /><label for="<?php echo $slug; ?>-post-edited-text"><?php printf(__('Template for %1$s editing updates','wp-to-twitter'),$name); ?></label><br /><textarea class="wpt-template" name="wpt_post_types[<?php echo $slug; ?>][post-edited-text]" id="<?php echo $slug; ?>-post-edited-text" cols="60" rows="3"><?php if ( isset( $wpt_settings[$slug] ) ) { echo esc_attr( stripslashes( $wpt_settings[$slug]['post-edited-text'] ) ); } ?></textarea>	
 			</p>
 			</fieldset>
 			<?php if ( function_exists( 'wpt_list_terms' ) ) { wpt_list_terms( $slug, $name ); } ?>
@@ -566,15 +575,8 @@ function wpt_update_settings() {
 		</fieldset>
 		<div class='wpt-permissions'>
 		<fieldset>
-		<legend><?php _e('Permissions','wp-to-twitter'); ?></legend>
+		<legend><?php _e( 'Permissions','wp-to-twitter' ); ?></legend>
 		<?php 
-		function wpt_check_caps($role,$cap) {
-			$role = get_role($role);
-			if ( $role->has_cap($cap) ) { return " checked='checked'"; }
-		}
-		function wpt_cap_checkbox( $role, $cap, $name ) {
-			return "<li><input type='checkbox' id='wpt_caps_{$role}_$cap' name='wpt_caps[$role][$cap]' value='on'".wpt_check_caps($role,$cap)." /> <label for='wpt_caps_{$role}_$cap'>$name</label></li>";
-		}
 		global $wp_roles;
 		$roles = $wp_roles->get_names();
 		$caps = array( 
