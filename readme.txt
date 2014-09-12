@@ -3,10 +3,10 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate.php
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 3.7.0
-Tested up to: 3.9.2
+Tested up to: 4.0
 License: GPLv2 or later
 Text Domain: wp-to-twitter
-Stable tag: 2.9.3
+Stable tag: 2.9.4
 
 Auto-posts a Twitter update when you update your WordPress blog or add a link, with your chosen URL shortening service.
 
