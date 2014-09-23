@@ -4,13 +4,15 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 function wpt_mail( $subject, $body ) {
-	$use_email = true;
-	if ( $use_email ) {
-		wp_mail( WPT_DEBUG_ADDRESS, $subject, $body, WPT_FROM );
-	} else {
-		$debug = get_option( 'wpt_debug' );
-		$debug[date( 'Y-m-d H:i:s' )] = array( $subject, $body );
-		update_option( 'wpt_debug', $debug );
+	if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
+		$use_email = true;
+		if ( $use_email ) {
+			wp_mail( WPT_DEBUG_ADDRESS, $subject, $body, WPT_FROM );
+		} else {
+			$debug = get_option( 'wpt_debug' );
+			$debug[date( 'Y-m-d H:i:s' )] = array( $subject, $body );
+			update_option( 'wpt_debug', $debug );
+		}
 	}
 }
 
@@ -361,7 +363,7 @@ $plugins_string
 				}
 			} else {
 				echo "<div class='message error'><p>".__( "Sorry! I couldn't send that message. Here's the text of your request:", 'my-calendar' )."</p><p>".sprintf( __('<a href="%s">Contact me here</a>, instead</p>','wp-to-twitter'), 'https://www.joedolson.com/contact/')."<pre>$request</pre></div>";
-			}	
+			}
 		}
 	}
 	if ( function_exists( 'wpt_pro_exists' ) && wpt_pro_exists() == true ) { $checked="checked='checked'"; } else { $checked=''; }
@@ -369,25 +371,15 @@ $plugins_string
 	echo "
 	<form method='post' action='$admin_url'>
 		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('wp-to-twitter-nonce')."' /></div>
-		<div>";
-		if ( function_exists( 'wpt_pro_exists' ) && wpt_pro_exists() == true  ) {
-		} else { 
-		echo "
+		<div>
 		<p>".
-		__('<strong>Please note</strong>: I do keep records of those who have donated, but if your donation came from somebody other than your account at this web site, you must note this in your message.','wp-to-twitter')
-		."</p>";
-		echo "
-		<p>".
-		__("If you're having trouble with WP to Twitter, please try to answer these questions in your message:",'wp-to-twitter')
-		."</p>";
-		echo "<ul>";
-			echo "<li>".__('Did this error happen only once, or repeatedly?','wp-to-twitter')."</li>";
-			echo "<li>".__('What was the Tweet, or an example Tweet, that produced this error?','wp-to-twitter')."</li>";
-			echo "<li>".__('If there was an error message from WP to Twitter, what was it?','wp-to-twitter')."</li>";
-			echo "<li>".__('What is the template you\'re using for your Tweets?','wp-to-twitter')."</li>";
-		echo "</ul>";
-		}
-		echo "
+		__( "If you're having trouble with WP to Twitter, please try to answer these questions in your message:",'wp-to-twitter' )
+		."</p>
+		<ul>
+			<li>".__('What were you doing when the problem occurred?','wp-to-twitter')."</li>
+			<li>".__('What did you expect to happen?','wp-to-twitter')."</li>
+			<li>".__('What happened instead?','wp-to-twitter')."</li>
+		</ul>
 		<p>
 		<code>".__('Reply to:','wp-to-twitter')." \"$current_user->display_name\" &lt;$current_user->user_email&gt;</code>
 		</p>
@@ -398,7 +390,7 @@ $plugins_string
         <input type='checkbox' name='has_donated' id='has_donated' value='on' $checked /> <label for='has_donated'>".sprintf(__('I have <a href="%1$s">made a donation to help support this plug-in</a>','wp-to-twitter'),'http://www.joedolson.com/donate.php')."</label>
         </p>
         <p>
-        <label for='support_request'>".__('Support Request:','wp-to-twitter')."</label><br /><textarea class='support-request' name='support_request' id='support_request' cols='80' rows='10'>".stripslashes($request)."</textarea>
+        <label for='support_request'>".__('Support Request:','wp-to-twitter')."</label><br /><textarea class='support-request' name='support_request' id='support_request' cols='80' rows='10'>".stripslashes( esc_attr( $request ) )."</textarea>
 		</p>
 		<p>
 		<input type='submit' value='".__('Send Support Request','wp-to-twitter')."' name='wpt_support' class='button-primary' />

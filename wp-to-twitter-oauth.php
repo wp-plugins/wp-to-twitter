@@ -41,7 +41,7 @@ if ( !$auth ) {
 	if ( !empty( $ack ) && !empty( $acs ) && !empty( $ot ) && !empty( $ots ) ) {	
 		require_once( plugin_dir_path(__FILE__).'wpt_twitter_oauth.php' );
 		$connection = new jd_TwitterOAuth( $ack,$acs,$ot,$ots );
-		$connection->useragent = 'WP to Twitter http://www.joedolson.com/wp-to-twitter';
+		$connection->useragent = 'WP to Twitter https://www.joedolson.com/wp-to-twitter';
 		return $connection;
 	} else {
 		return false;

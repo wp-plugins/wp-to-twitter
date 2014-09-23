@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet=false, $ref=false ) {
 	// media file occupies 22 characters, need to account for in shortening.
-	$maxlength = apply_filters( 'wpt_max_tweet_length', array( 'with_media' => 117, 'without_media' => 139 ) );
+	$maxlength = apply_filters( 'wpt_max_tweet_length', array( 'with_media' => 116, 'without_media' => 139 ) );
 	$tweet_length = ( wpt_post_with_media( $post_ID ) ) ? $maxlength['with_media'] : $maxlength['without_media'];
 	$tweet = trim( custom_shortcodes( $tweet, $post_ID ) );
 	$shrink = ( $post['shortUrl'] != '' )?$post['shortUrl']:apply_filters( 'wptt_shorten_link', $post['postLink'], $post['postTitle'], $post_ID, false );

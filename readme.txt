@@ -8,26 +8,31 @@ License: GPLv2 or later
 Text Domain: wp-to-twitter
 Stable tag: 2.9.4
 
-Auto-posts a Twitter update when you update your WordPress blog or add a link, with your chosen URL shortening service.
+Posts a Twitter update when you update your WordPress blog or add a link, with your chosen URL shortening service.
 
 == Description ==
 
-WP to Twitter posts Tweets from WordPress to Twitter. 
+= Post Tweets from WordPress to Twitter. =
 
-Shorten URLs using a variety of popular URL shorteners, or leave Twitter to do it for you using t.co. 
+Yep. That's the basic functionality. But it's not the only thing you can do:
 
-Use WP to Twitter display a feed of recent Tweets. Display Tweets from any account by entering that account's Twitter ID! 
-
+* Shorten URLs in your Tweets with popular URL shorteners, or let Twitter to do it with [t.co](http://t.co). 
+* Recent Tweets Widget: Display recent Tweets. Fetch Tweets from your own or any other account.
+* Tweet Search Widget: Display the Tweets resulting from a search.
+ 
 [Upgrade to WP Tweets Pro](http://www.joedolson.com/wp-tweets-pro/) for Tweet scheduling, automatic re-tweeting, and more!
 
-WP to Twitter supports a customizable Tweet template for updating or editing posts and pages, supports custom post types, and allows you to write a custom Tweet for each post, using custom template tags to generate the Tweet copy. 
+WP to Twitter uses a customizable Tweet template for Tweets sent when updating or editing posts and pages or custom post types. You can customize your Tweet for each post, using custom template tags to generate the Tweet. 
 
-More features: 
+= Free Features =
 
-* Use tags as Twitter hashtags
+* Use post tags as Twitter hashtags
 * Use alternate URLs in place of post permalinks
 * Support for Google Analytics
 * Support for XMLRPC remote clients
+* Select from YOURLS, Goo.gl, Bit.ly, jotURL, or Su.pr as external URL shorteners.
+
+= Premium Features =
 
 Upgrade to [WP Tweets Pro](http://www.joedolson.com/wp-tweets-pro/) for extra features, including:
 
@@ -41,12 +46,12 @@ Upgrade to [WP Tweets Pro](http://www.joedolson.com/wp-tweets-pro/) for extra fe
 
 Want to stay up to date on WP to Twitter? [Follow me on Twitter!](https://twitter.com/joedolson)
 
-Translations:
+= Translations =
 
 Visit the [WP to Twitter translations page](http://translate.joedolson.com/projects/wp-to-twitter) to see how complete these are.
 
 Translations available (in order of completeness):
-Dutch, Italian, Russian, French, Danish, Catalan, Portuguese, Spanish, Chinese, Japanese, Romanian, German, Estonian, Swedish, Irish, Ukrainian, Lithuanian, Belarusian, Turkish
+Dutch, Italian, Russian, French, Danish, Catalan, Portuguese, Spanish, Chinese, Japanese, German, Romanian, Estonian, Swedish, Irish, Ukrainian, Lithuanian, Belarusian, Turkish
 
 Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
 
@@ -55,8 +60,15 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 = Future =
 
 * Add regex filter to detect URLs typed into Tweet fields for counting/shortening purposes. [todo]
-* Feature: support for YOURLS signature tokens
-* Feature: Twitter widget support for searches
+
+= 2.9.5 =
+
+* Added test to prevent duplicate sending of Tweets. Any Tweets to the same author sent within 30 seconds are blocked silently.
+* Feature: Add Twitter widget for search API
+* Add support for YOURLS signature tokens
+* Deprecate support for YOURLS access with username/password.
+* Revised debugging setup
+* Translation updated: German
 
 = 2.9.4 =
 
@@ -1026,7 +1038,7 @@ Right here: [WP to Twitter FAQ](http://www.joedolson.com/wp-to-twitter/support-2
 
 = How can I help you make WP to Twitter a better plug-in? =
 
-Writing and maintaining a plug-in is a lot of work. You can help me by providing detailed support requests (which saves me time), or by providing financial support, either via my [plug-in donations page](http://www.joedolson.com/donate.php) or by [upgrading to WP Tweets Pro](http://www.joedolson.com/wp-tweets-pro/). Believe me, any small donation really makes a difference!
+Writing and maintaining a plug-in is a lot of work. You can help me by providing detailed support requests (which saves me time), or by providing financial support, either via my [plug-in donations page](https://www.joedolson.com/donate/) or by [upgrading to WP Tweets Pro](https://www.joedolson.com/wp-tweets-pro/). Believe me, any small donation really makes a difference!
 
 == Screenshots ==
 

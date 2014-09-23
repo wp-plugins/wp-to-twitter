@@ -2,7 +2,7 @@
 #wp-to-twitter .jd-settings {clear: both;}
 #wp-to-twitter form .error p {background: none;border: none;}
 legend { padding: 6px; background: #f3f3f3; width: 100%; border-radius: 3px 0 0 3px; color: #000; }
-#wp-to-twitter .resources {background: url(images/logo.png) 50% 5px no-repeat; padding-top: 70px; text-align: center;}
+#wp-to-twitter .resources {background: url(../images/logo.png) 50% 5px no-repeat; padding-top: 70px; text-align: center;}
 #wp-to-twitter .resources form {margin: 0;}
 .settings {margin: 25px 0;background: #fff;padding: 10px;border: 1px solid #000;}
 #wp-to-twitter .inside em {color: #f33;}
@@ -15,7 +15,7 @@ legend { padding: 6px; background: #f3f3f3; width: 100%; border-radius: 3px 0 0 
 #wp-to-twitter .postbox { margin: 10px 10px 0 0;	}
 #wp-to-twitter .meta-box-sortables { min-height: 0; }
 #wp-to-twitter .wpt-template, #wp-to-twitter .support-request { width: 95%; }
-.wpt_image { padding-left: 20px; background: url(images/image.png) left 50% no-repeat; display: block; }
+.wpt_image { padding-left: 20px; background: url(../images/image.png) left 50% no-repeat; display: block; }
 #wpt_license_key { font-size: 1.3em; padding: 5px; letter-spacing: .5px; }
 #wp-to-twitter input { max-width: 100%; }
 label[for="wpt_license_key"] { font-size: 1.3em; }
@@ -33,8 +33,8 @@ label[for="wpt_license_key"] { font-size: 1.3em; }
 .wpt-permissions legend { background: none; }
 
 .wpt-terms li{ padding: 2px!important; border-radius: 3px; }
-.tweet { background: #070 url(images/Ok.png) right 50% no-repeat; color: #fff; }
-.notweet { background: #9d1309 url(images/Error.png) right 50% no-repeat; color: #fff; }
+.tweet { background: #070 url(../images/Ok.png) right 50% no-repeat; color: #fff; }
+.notweet { background: #9d1309 url(../images/Error.png) right 50% no-repeat; color: #fff; }
 
 .donations * { vertical-align: middle; display: inline-block; }
 

@@ -144,9 +144,9 @@ class jd_TwitterOAuth {
 /**
 * Wrapper for GET requests
 */
-    function get($url, $parameters = array()) {
-    $response = $this->WPOAuthRequest( $url,$parameters,'GET' );
-    if ($this->format === 'json' && $this->decode_json) {
+    function get( $url, $parameters = array() ) {
+    $response = $this->WPOAuthRequest( $url, $parameters, 'GET' );
+    if ( $this->format === 'json' && $this->decode_json ) {
       return json_decode($response);
     }
     return $response;
@@ -214,13 +214,11 @@ class jd_TwitterOAuth {
              true, // use auth
              true  // multipart
         );
-		if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
-			$debug = array(
-				'media[]'  => "@{$image};type={$mime_type};filename={$image}",
-				'status'   => $args['status']
-			);
-			 wpt_mail( "Media Submitted - Post ID #$args[id]", print_r( $debug, 1 ) );
-		}
+		$debug = array(
+			'media[]'  => "@{$image};type={$mime_type};filename={$image}",
+			'status'   => $args['status']
+		);
+		wpt_mail( "Media Submitted - Post ID #$args[id]", print_r( $debug, 1 ) );
         $response = $tmhOAuth->response['response'];	
         if ( is_wp_error( $response ) ) return false;
 		
@@ -238,10 +236,10 @@ class jd_TwitterOAuth {
   
     //Handle media requests using tmhOAuth library.
     if ( $method == 'MEDIA' ) {
-		return $this->handleMediaRequest( $url,$args );		
+		return $this->handleMediaRequest( $url, $args );		
     }    
   
-    if ( empty( $method ) ) $method = empty($args) ? "GET" : "POST";
+    if ( empty( $method ) ) $method = empty( $args ) ? "GET" : "POST";
     $req = WPOAuthRequest::from_consumer_and_token($this->consumer, $this->token, $method, $url, $args);
     $req->sign_request($this->sha1_method, $this->consumer, $this->token);
     

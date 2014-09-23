@@ -286,7 +286,7 @@ function wpt_update_settings() {
 		}
 		update_option( 'wpt_post_types', $wpt_settings );
 		update_option( 'newlink-published-text', $_POST['newlink-published-text'] );
-		update_option( 'jd_twit_blogroll',(isset($_POST['jd_twit_blogroll']) )?$_POST['jd_twit_blogroll']:"" );
+		update_option( 'jd_twit_blogroll',( isset( $_POST['jd_twit_blogroll']) )?$_POST['jd_twit_blogroll']:"" );
 		$message = wpt_select_shortener( $_POST );	
 		$message .= __( 'WP to Twitter Options Updated' , 'wp-to-twitter');
 		$message = apply_filters( 'wpt_settings', $message, $_POST );
@@ -310,9 +310,13 @@ function wpt_update_settings() {
 	if ( !empty( $log ) && is_array( $log ) ) {
 		$post_ID = $log[0];
 		$post = get_post( $post_ID );
-		$title = $post->post_title;
+		if ( is_object( $post ) ) {
+			$title = "<a href='".get_edit_post_link( $post_ID )."'>$post->post_title</a>";
+		} else {
+			$title = __( 'No post associated with this Tweet', 'wp-to-twitter' );
+		}
 		$notice = $log[1];
-		echo "<div class='updated fade'><p><strong>".__('Last Tweet','wp-to-twitter')."</strong>: <a href='".get_edit_post_link( $post_ID )."'>$title</a> &raquo; $notice</p></div>";
+		echo "<div class='updated fade'><p><strong>".__('Last Tweet','wp-to-twitter')."</strong>: $title &raquo; $notice</p></div>";
 	}
 	if ( isset( $_POST['submit-type'] ) && $_POST['submit-type'] == 'clear-error' ) {
 		delete_option( 'wp_url_failure' );
