@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post a link, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.9.5
+Version: 2.9.6
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -49,7 +49,7 @@ require_once( plugin_dir_path( __FILE__ ).'/wpt-feed.php' );
 require_once( plugin_dir_path( __FILE__ ).'/wpt-widget.php' );
 
 global $wpt_version;
-$wpt_version = "2.9.5";
+$wpt_version = "2.9.6";
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
 function wpt_pro_compatibility() {
@@ -194,17 +194,20 @@ function wpt_check_recent_tweet( $id, $auth ) {
 		} else {
 			$transient = get_transient( "_wpt_".$auth."_most_recent_tweet_$id" );
 		}			
-			if ( $transient ) {
-				$expire = apply_filters( 'wpt_recent_tweet_threshold', 30 );
-				return true;
-			} else {
+		if ( $transient ) {
+			return true;
+		} else {
+			$expire = apply_filters( 'wpt_recent_tweet_threshold', 30 );
+			// if expiration is 0, don't set the transient. We don't want permanent transients.
+			if ( $expire !== 0 ) {
 				if ( $auth == false ) {
 					set_transient( "_wpt_most_recent_tweet_$id", true, $expire  );
 				} else {
 					set_transient( "_wpt_".$auth."_most_recent_tweet_$id", true, $expire );
 				}
-				return false;
 			}
+			return false;			
+		}
 	}
 	return false;
 }
@@ -1196,8 +1199,6 @@ if ( get_option( 'jd_individual_twitter_users')=='1') {
 	add_action( 'edit_user_profile', 'wpt_twitter_profile' );
 	add_action( 'profile_update', 'wpt_twitter_save_profile');
 }
-
-$admin_url = ( is_plugin_active('wp-tweets-pro/wpt-pro-functions.php') )?admin_url('admin.php?page=wp-tweets-pro'):admin_url('options-general.php?page=wp-to-twitter/wp-to-twitter.php');
 
 add_action( 'in_plugin_update_message-wp-to-twitter/wp-to-twitter.php', 'wpt_plugin_update_message' );
 function wpt_plugin_update_message() {

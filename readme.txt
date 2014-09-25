@@ -61,6 +61,10 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 
 * Add regex filter to detect URLs typed into Tweet fields for counting/shortening purposes. [todo]
 
+= 2.9.6 =
+
+* Bug fix: Expiration not set on retweets.
+
 = 2.9.5 =
 
 * Added test to prevent duplicate sending of Tweets. Any Tweets to the same author sent within 30 seconds are blocked silently.
