@@ -61,6 +61,7 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 
 * Use apply_filters( 'wpt_tweet_sentence', $tweet, $post_ID ) to pass custom taxonomy Tweet formats
 * Add regex filter to detect URLs typed into Tweet fields for counting/shortening purposes. [todo]
+* Replacement for incoming data that's already encoded; e.g. &apos;
 
 = 2.9.7 =
 
