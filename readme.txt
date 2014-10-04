@@ -59,7 +59,13 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 
 = Future =
 
+* Use apply_filters( 'wpt_tweet_sentence', $tweet, $post_ID ) to pass custom taxonomy Tweet formats
 * Add regex filter to detect URLs typed into Tweet fields for counting/shortening purposes. [todo]
+
+= 2.9.7 =
+
+* Bug fix: In translated context, successful Tweet notices picked up wrong notice class.
+* Extensive code cleanup and reformatting.
 
 = 2.9.6 =
 
