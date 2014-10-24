@@ -796,39 +796,42 @@ function jd_twit( $post_ID, $type = 'instant' ) {
 						foreach ( $wpt_selected_users as $acct ) {
 							if ( wtt_oauth_test( $acct, 'verify' ) ) {
 								for ( $i = 1; $i <= $repeat; $i ++ ) {
-									$retweet = apply_filters( 'wpt_set_retweet_text', $template, $i );
-									$retweet = jd_truncate_tweet( $retweet, $post_info, $post_ID, true, $acct );
-									// add original delay to schedule
-									$delay = ( isset( $post_info['wpt_delay_tweet'] ) ) ? ( (int) $post_info['wpt_delay_tweet'] ) * 60 : 0;
-									/* Don't delay the first Tweet of the group */
-									$offset    = ( $first == true ) ? 0 : rand( 60, 240 ); // delay each co-tweet by 1-4 minutes
-									$time      = apply_filters( 'wpt_schedule_retweet', ( $post_info['wpt_retweet_after'] ) * ( 60 * 60 ) * $i, $acct, $i, $post_info );
-									wp_schedule_single_event( time() + $time + $offset + $delay, 'wpt_schedule_tweet_action', array(
-											'id'       => $acct,
-											'sentence' => $retweet,
-											'rt'       => $i,
-											'post_id'  => $post_ID
-										) );
-									if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
-										if ( $acct ) {
-											$author_id = "#$acct";
-										} else {
-											$author_id = 'Main';
+									$continue = apply_filters( 'wpt_allow_reposts', true, $i, $post_ID );
+									if ( $continue ) {
+										$retweet = apply_filters( 'wpt_set_retweet_text', $template, $i );
+										$retweet = jd_truncate_tweet( $retweet, $post_info, $post_ID, true, $acct );
+										// add original delay to schedule
+										$delay = ( isset( $post_info['wpt_delay_tweet'] ) ) ? ( (int) $post_info['wpt_delay_tweet'] ) * 60 : 0;
+										/* Don't delay the first Tweet of the group */
+										$offset    = ( $first == true ) ? 0 : rand( 60, 240 ); // delay each co-tweet by 1-4 minutes
+										$time      = apply_filters( 'wpt_schedule_retweet', ( $post_info['wpt_retweet_after'] ) * ( 60 * 60 ) * $i, $acct, $i, $post_info );
+										wp_schedule_single_event( time() + $time + $offset + $delay, 'wpt_schedule_tweet_action', array(
+												'id'       => $acct,
+												'sentence' => $retweet,
+												'rt'       => $i,
+												'post_id'  => $post_ID
+											) );
+										if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
+											if ( $acct ) {
+												$author_id = "#$acct";
+											} else {
+												$author_id = 'Main';
+											}
+											wpt_mail( "7b: Retweet Scheduled for Auth ID $author_id #$post_ID", print_r( array(
+														'id'                  => $acct,
+														'sentence'            => $retweet,
+														'rt'                  => $i,
+														'post_id'             => $post_ID,
+														'timestamp'           => time() + $time + $offset + $delay,
+														'current_time'        => time(),
+														'timezone'            => get_option( 'gmt_offset' ),
+														'timestamp_string'    => date( 'Y-m-d H:i:s', time() + $time + $offset + $delay ),
+														'current_time_string' => date( 'Y-m-d H:i:s', time() ),
+													), 1 ) ); // DEBUG
 										}
-										wpt_mail( "7b: Retweet Scheduled for Auth ID $author_id #$post_ID", print_r( array(
-													'id'                  => $acct,
-													'sentence'            => $retweet,
-													'rt'                  => $i,
-													'post_id'             => $post_ID,
-													'timestamp'           => time() + $time + $offset + $delay,
-													'current_time'        => time(),
-													'timezone'            => get_option( 'gmt_offset' ),
-													'timestamp_string'    => date( 'Y-m-d H:i:s', time() + $time + $offset + $delay ),
-													'current_time_string' => date( 'Y-m-d H:i:s', time() ),
-												), 1 ) ); // DEBUG
-									}
-									if ( $i == 4 ) {
-										break;
+										if ( $i == 4 ) {
+											break;
+										}
 									}
 								}
 							}

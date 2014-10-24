@@ -63,6 +63,10 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Add regex filter to detect URLs typed into Tweet fields for counting/shortening purposes. [todo]
 * Replacement for incoming data that's already encoded; e.g. &apos;
 
+= 2.9.8 =
+
+* New filter: wpt_allow_reposts to filter whether a specific post should schedule retweets in WP Tweets PRO.
+
 = 2.9.7 =
 
 * Bug fix: In translated context, successful Tweet notices picked up wrong notice class.
