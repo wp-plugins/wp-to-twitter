@@ -238,6 +238,14 @@ function wtt_option_selected( $field, $value, $type = 'checkbox' ) {
 	return $output;
 }
 
+/**
+ * Compares two dates to identify which is earlier. Used to differentiate between post edits and original publication.
+ * 
+ * @param string $early
+ * @param string $late
+ * 
+ * @return integer 1|0
+ */ 
 function wpt_date_compare( $early, $late ) {
 	$modifier  = apply_filters( 'wpt_edit_sensitivity', 0 ); // alter time in seconds to modified date.
 	$firstdate = strtotime( $early );
@@ -257,7 +265,8 @@ function wpt_date_compare( $early, $late ) {
  * @return mixed boolean|integer Attachment ID.
  */
 function wpt_post_attachment( $post_ID ) {
-	if ( has_post_thumbnail( $post_ID ) ) {
+	$use_featured_image = apply_filters( 'wpt_use_featured_image', true, $post_ID );
+	if ( has_post_thumbnail( $post_ID ) && $use_featured_image ) {
 		$attachment = get_post_thumbnail_id( $post_ID );
 
 		return $attachment;
@@ -267,7 +276,8 @@ function wpt_post_attachment( $post_ID ) {
 			'numberposts'    => 1,
 			'post_status'    => 'published',
 			'post_parent'    => $post_ID,
-			'post_mime_type' => 'image'
+			'post_mime_type' => 'image',
+			'order'          => 'ASC'
 		);
 		$attachments = get_posts( $args );
 		if ( $attachments ) {

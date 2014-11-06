@@ -61,11 +61,16 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 
 * Use apply_filters( 'wpt_tweet_sentence', $tweet, $post_ID ) to pass custom taxonomy Tweet formats
 * Add regex filter to detect URLs typed into Tweet fields for counting/shortening purposes. [todo]
-* Replacement for incoming data that's already encoded; e.g. &apos;
+* Replacement for incoming data that's already encoded? (e.g. &apos;)
 
 = 2.9.8 =
 
-* New filter: wpt_allow_reposts to filter whether a specific post should schedule retweets in WP Tweets PRO.
+* New filter: wpt_allow_reposts to filter whether a specific post should schedule retweets (WP Tweets PRO).
+* Alter image selection criteria to use first uploaded image as the default instead of the last uploaded image (WP Tweets PRO)
+* Pass media data into Tweet Now AJAX function (WP Tweets PRO);
+* Fixed issue with 400 error for "Tweet Now" button for unauthenticated logged-in users (WP Tweets PRO)
+* Add filter to disable use of featured image for uploading (wpt_use_featured_image; returns boolean) (WP Tweets PRO)
+* 
 
 = 2.9.7 =
 

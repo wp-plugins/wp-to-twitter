@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post a link, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.9.6
+Version: 2.9.7
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -55,7 +55,7 @@ require_once( plugin_dir_path( __FILE__ ) . '/wpt-feed.php' );
 require_once( plugin_dir_path( __FILE__ ) . '/wpt-widget.php' );
 
 global $wpt_version;
-$wpt_version = "2.9.6";
+$wpt_version = "2.9.7";
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
 function wpt_pro_compatibility() {
@@ -1257,7 +1257,12 @@ function wpt_ajax_tweet() {
 	$action       = ( $_POST['tweet_action'] == 'tweet' ) ? 'tweet' : 'schedule';
 	$current_user = wp_get_current_user();
 	if ( function_exists( 'wpt_pro_exists' ) && wpt_pro_exists() ) {
-		$auth = $user_ID = $current_user->ID;
+		if ( wtt_oauth_test( $current_user->ID, 'verify' ) ) {
+			$auth = $user_ID = $current_user->ID;
+		} else {
+			$auth    = false;
+			$user_ID = $current_user->ID;
+		}
 	} else {
 		$auth    = false;
 		$user_ID = $current_user->ID;
@@ -1274,9 +1279,11 @@ function wpt_ajax_tweet() {
 		$print_schedule = date_i18n( get_option( 'date_format' ) . ' @ ' . get_option( 'time_format' ), $schedule );
 		$offset         = ( 60 * 60 * get_option( 'gmt_offset' ) );
 		$schedule       = $schedule - $offset;
+		$post_info      = jd_post_info( $post_ID );
+		$media          = wpt_post_with_media( $post_ID, $post_info );
 		switch ( $action ) {
 			case 'tweet' :
-				jd_doTwitterAPIPost( $sentence, $auth, $post_ID );
+				jd_doTwitterAPIPost( $sentence, $auth, $post_ID, $media );
 				break;
 			case 'schedule' :
 				wp_schedule_single_event( $schedule, 'wpt_schedule_tweet_action', array(
