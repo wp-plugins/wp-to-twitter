@@ -1071,4 +1071,4 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
-* 2.9.4 - IMPORTANT SECURITY UPDATE - UPGRADE NOW.
+* 2.9.7 - Changes to fix bugs for WP Tweets PRO users.
