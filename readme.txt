@@ -1,6 +1,6 @@
 === WP to Twitter ===
 Contributors: joedolson
-Donate link: http://www.joedolson.com/donate.php
+Donate link: http://www.joedolson.com/donate/
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 3.7.0
 Tested up to: 4.0
@@ -65,15 +65,16 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 
 = 2.9.8 =
 
+* Feature: Upload images from remote servers (WP Tweets PRO)
+* Updated User's Guide.
+
+= 2.9.7 =
+
 * New filter: wpt_allow_reposts to filter whether a specific post should schedule retweets (WP Tweets PRO).
 * Alter image selection criteria to use first uploaded image as the default instead of the last uploaded image (WP Tweets PRO)
 * Pass media data into Tweet Now AJAX function (WP Tweets PRO);
 * Fixed issue with 400 error for "Tweet Now" button for unauthenticated logged-in users (WP Tweets PRO)
 * Add filter to disable use of featured image for uploading (wpt_use_featured_image; returns boolean) (WP Tweets PRO)
-* 
-
-= 2.9.7 =
-
 * Bug fix: In translated context, successful Tweet notices picked up wrong notice class.
 * Extensive code cleanup and reformatting.
 
@@ -1070,5 +1071,7 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 6. Settings
 
 == Upgrade Notice ==
+
+2.9.8: Updated User's Guide, related tasks.
 
 * 2.9.7 - Changes to fix bugs for WP Tweets PRO users.

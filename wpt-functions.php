@@ -5,8 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
 
-function wpt_mail( $subject, $body ) {
-	if ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) {
+function wpt_mail( $subject, $body, $override=false ) {
+	if ( ( WPT_DEBUG && function_exists( 'wpt_pro_exists' ) ) || $override == true ) {
 		$use_email = true;
 		if ( $use_email ) {
 			wp_mail( WPT_DEBUG_ADDRESS, $subject, $body, WPT_FROM );
@@ -269,7 +269,7 @@ function wpt_post_attachment( $post_ID ) {
 	if ( has_post_thumbnail( $post_ID ) && $use_featured_image ) {
 		$attachment = get_post_thumbnail_id( $post_ID );
 
-		return $attachment;
+		$return = $attachment;
 	} else {
 		$args        = array(
 			'post_type'      => 'attachment',
@@ -281,11 +281,12 @@ function wpt_post_attachment( $post_ID ) {
 		);
 		$attachments = get_posts( $args );
 		if ( $attachments ) {
-			return $attachments[0]->ID; //Return the first attachment.
+			$return = $attachments[0]->ID; //Return the first attachment.
 		} else {
-			return false;
+			$return = false;
 		}
 	}
+	return apply_filters( 'wpt_post_attachment', $return, $post_ID );
 }
 
 function wpt_get_support_form() {

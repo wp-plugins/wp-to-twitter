@@ -247,23 +247,51 @@ if ( ! class_exists( 'jd_TwitterOAuth' ) ) {
 			if ( ! $mime_type ) {
 				$mime_type = 'image/jpeg';
 			}
+			// If images are remote, copy to local so they can be uploaded.	
+			$remote_images = ( get_option( 'wpt_remote_images' ) === 1 ) ? true : false;
+			if ( $remote_images === true ) {
+				$remote_image = wp_remote_get( $upload[0] );
+				$image_data = wp_remote_retrieve_body( $remote_image );
+				$filename = basename( $upload[0] );
+				$upload_dir = wp_upload_dir();
+				if ( wp_mkdir_p( $upload_dir['path'] ) ) {
+					$image = $upload_dir['path'] . '/temp-' . $filename;
+				} else {
+					$image = $upload_dir['basedir'] . '/temp-' . $filename;
+				}
+				if ( strlen( $image_data ) > 0 ) {
+					file_put_contents( $image, $image_data );
+				} else {
+					return false;
+				}
+			}
+			
 			$code  = $tmhOAuth->request(
 				'POST',
 				$url,
 				array(
 					'media[]' => "@{$image};type={$mime_type};filename={$image}",
-					//'media[]' => file_get_contents($image),
 					'status'  => $args['status'],
 				),
 				true, // use auth
 				true  // multipart
 			);
+			
 			$debug = array(
 				'media[]' => "@{$image};type={$mime_type};filename={$image}",
 				'status'  => $args['status']
 			);
+			
 			wpt_mail( "Media Submitted - Post ID #$args[id]", print_r( $debug, 1 ) );
 			$response = $tmhOAuth->response['response'];
+			$full = $tmhOAuth->response;
+			wpt_mail( "Media Posted - Post ID #$args[id]", print_r( $full, 1 ) );
+			
+			// If a local image was created for uploading, delete it.
+			if ( $remote_images === true ) {
+				unlink( $image );
+			}
+
 			if ( is_wp_error( $response ) ) {
 				return false;
 			}

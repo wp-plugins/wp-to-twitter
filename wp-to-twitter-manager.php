@@ -872,7 +872,7 @@ function wpt_sidebar() {
 						$support_url = admin_url( 'options-general.php?page=wp-to-twitter/wp-to-twitter.php' );
 					} ?>
 					<a href="<?php echo $support_url; ?>#get-support"><?php _e( "Get Support", 'wp-to-twitter' ); ?></a> &bull;
-					<a href="https://www.joedolson.com/wp-content/uploads/wp-tweets-pro-users-guide-1.6.0.pdf"><?php _e( 'Read the Manual', 'wp-to-twitter' ); ?></a>
+					<a href="https://www.joedolson.com/wp-content/uploads/wp-tweets-pro-users-guide-1.7.2.pdf"><?php _e( 'Read the Manual', 'wp-to-twitter' ); ?></a>
 					<?php if ( get_option( 'jd_donations' ) != 1 && ! function_exists( 'wpt_pro_exists' ) ) { ?>
 						<p><?php _e( '<a href="http://www.joedolson.com/donate.php">Make a donation today!</a><br />Every donation matters - donate $5, $20, or $100 today!', 'wp-to-twitter' ); ?></p>
 						<div class='donations'>

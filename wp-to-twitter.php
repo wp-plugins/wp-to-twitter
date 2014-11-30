@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post a link, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 2.9.7
+Version: 2.9.8
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -55,12 +55,12 @@ require_once( plugin_dir_path( __FILE__ ) . '/wpt-feed.php' );
 require_once( plugin_dir_path( __FILE__ ) . '/wpt-widget.php' );
 
 global $wpt_version;
-$wpt_version = "2.9.7";
+$wpt_version = "2.9.8";
 load_plugin_textdomain( 'wp-to-twitter', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 
 function wpt_pro_compatibility() {
 	global $wptp_version;
-	$current_wptp_version = '1.7.1';
+	$current_wptp_version = '1.7.2';
 	if ( version_compare( $wptp_version, $current_wptp_version, '<' ) ) {
 		echo "<div class='error notice'><p class='upgrade'>" . sprintf( __( 'The current version of WP Tweets PRO is <strong>%s</strong>. <a href="http://www.joedolson.com/account/">Update for best compatibility!</a>', 'wp-to-twitter' ), $current_wptp_version ) . "</p></div>";
 	}
@@ -476,7 +476,6 @@ function wpt_in_allowed_category( $array ) {
 	$allowed_categories = get_option( 'tweet_categories' );
 	if ( is_array( $array ) && is_array( $allowed_categories ) ) {
 		$common = @array_intersect( $array, $allowed_categories );
-		wpt_mail( 'Category Limits Results: ---', print_r( $common, 1 ) );
 		if ( count( $common ) >= 1 ) {
 			return true;
 		} else {
@@ -1254,7 +1253,7 @@ function wpt_ajax_tweet() {
 		echo "Invalid Security Check";
 		die;
 	}
-	$action       = ( $_POST['tweet_action'] == 'tweet' ) ? 'tweet' : 'schedule';
+	$action       = ( $_REQUEST['tweet_action'] == 'tweet' ) ? 'tweet' : 'schedule';
 	$current_user = wp_get_current_user();
 	if ( function_exists( 'wpt_pro_exists' ) && wpt_pro_exists() ) {
 		if ( wtt_oauth_test( $current_user->ID, 'verify' ) ) {
@@ -1269,13 +1268,13 @@ function wpt_ajax_tweet() {
 	}
 	if ( current_user_can( 'wpt_can_tweet' ) ) {
 		$options        = get_option( 'wpt_post_types' );
-		$post_ID        = intval( $_POST['tweet_post_id'] );
+		$post_ID        = intval( $_REQUEST['tweet_post_id'] );
 		$type           = get_post_type( $post_ID );
 		$default        = ( isset( $options[ $type ]['post-edited-text'] ) ) ? $options[ $type ]['post-edited-text'] : '';
-		$sentence       = ( isset( $_POST['tweet_text'] ) && trim( $_POST['tweet_text'] ) != '' ) ? $_POST['tweet_text'] : $default;
+		$sentence       = ( isset( $_REQUEST['tweet_text'] ) && trim( $_REQUEST['tweet_text'] ) != '' ) ? $_REQUEST['tweet_text'] : $default;
 		$sentence       = stripcslashes( trim( $sentence ) );
 		$sentence       = jd_truncate_tweet( $sentence, jd_post_info( $post_ID ), $post_ID, false, $user_ID );
-		$schedule       = ( isset( $_POST['tweet_schedule'] ) ) ? strtotime( $_POST['tweet_schedule'] ) : rand( 60, 240 );
+		$schedule       = ( isset( $_REQUEST['tweet_schedule'] ) ) ? strtotime( $_REQUEST['tweet_schedule'] ) : rand( 60, 240 );
 		$print_schedule = date_i18n( get_option( 'date_format' ) . ' @ ' . get_option( 'time_format' ), $schedule );
 		$offset         = ( 60 * 60 * get_option( 'gmt_offset' ) );
 		$schedule       = $schedule - $offset;
