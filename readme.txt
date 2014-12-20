@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 3.7.0
-Tested up to: 4.0
+Tested up to: 4.1
 License: GPLv2 or later
 Text Domain: wp-to-twitter
 Stable tag: 2.9.7
