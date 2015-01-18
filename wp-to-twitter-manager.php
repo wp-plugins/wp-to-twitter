@@ -327,7 +327,6 @@ function wpt_update_settings() {
 	}
 	?>
 	<div class="wrap" id="wp-to-twitter">
-	<?php wpt_commments_removed(); ?>
 	<?php if ( $message ) { ?>
 		<div id="message" class="updated fade"><p><?php echo $message; ?></p></div>
 	<?php

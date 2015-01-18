@@ -24,7 +24,7 @@ if ( ! class_exists( 'jd_TwitterOAuth' ) ) {
 		/* Contains the last API call. */
 		public $url;
 		/* Set up the API root URL. */
-		public $host = "http://api.twitter.com/1.1/";
+		public $host = "https://api.twitter.com/1.1/";
 		/* Set timeout default. */
 		public $format = 'json';
 		/* Decode returned json data. */
@@ -38,19 +38,19 @@ if ( ! class_exists( 'jd_TwitterOAuth' ) ) {
 		 * Set API URLS
 		 */
 		function accessTokenURL() {
-			return "http://api.twitter.com/oauth/access_token";
+			return "https://api.twitter.com/oauth/access_token";
 		}
 
 		function authenticateURL() {
-			return "http://api.twitter.com/oauth/authenticate";
+			return "https://api.twitter.com/oauth/authenticate";
 		}
 
 		function authorizeURL() {
-			return "http://api.twitter.com/oauth/authorize";
+			return "https://api.twitter.com/oauth/authorize";
 		}
 
 		function requestTokenURL() {
-			return "http://api.twitter.com/oauth/request_token";
+			return "https://api.twitter.com/oauth/request_token";
 		}
 
 		/**
@@ -186,8 +186,7 @@ if ( ! class_exists( 'jd_TwitterOAuth' ) ) {
 
 			return $response;
 		}
-
-
+		
 		/**
 		 * Handles a status update that includes an image.
 		 *
@@ -198,6 +197,7 @@ if ( ! class_exists( 'jd_TwitterOAuth' ) ) {
 		 */
 		function handleMediaRequest( $url, $args = array() ) {
 			/* Load tmhOAuth for Media uploads only when needed: https://github.com/themattharris/tmhOAuth */
+			/* It's not possible to upload media using WP_HTTP, so this needs to use cURL. */
 			if ( ! class_exists( 'tmhOAuth' ) ) {
 				require_once( plugin_dir_path( __FILE__ ) . 'tmhOAuth/tmhOAuth.php' );
 				require_once( plugin_dir_path( __FILE__ ) . 'tmhOAuth/tmhUtilities.php' );
@@ -225,83 +225,49 @@ if ( ! class_exists( 'jd_TwitterOAuth' ) ) {
 				'user_secret'     => $ots
 			);
 			$tmhOAuth   = new tmhOAuth( $connect );
-			$attachment = wpt_post_attachment( $args['id'] );
-			// if install is at root, can query src path. Otherwise, need to take full image.
-			$at_root = ( wp_make_link_relative( home_url() ) == home_url() || wp_make_link_relative( home_url() ) == '/' ) ? true : false;
-			if ( $at_root ) {
-				$image_sizes = get_intermediate_image_sizes();
-				if ( in_array( 'large', $image_sizes ) ) {
-					$size = 'large';
-				} else {
-					$size = array_pop( $image_sizes );
-				}
-				$upload = wp_get_attachment_image_src( $attachment, apply_filters( 'wpt_upload_image_size', $size ) );
-				$path   = get_home_path() . wp_make_link_relative( $upload[0] );
-				$image  = str_replace( '//', '/', $path );
+			$attachment = $args['media'];
+			
+			$image_sizes = get_intermediate_image_sizes();
+			if ( in_array( 'large', $image_sizes ) ) {
+				$size = 'large';
 			} else {
-				$image = get_attached_file( $attachment );
+				$size = array_pop( $image_sizes );
 			}
-			$image = apply_filters( 'wpt_image_path', $image, $args );
-
+			$upload    = wp_get_attachment_image_src( $attachment, apply_filters( 'wpt_upload_image_size', $size ) );
+			$image_url = $upload[0];
+			$remote    = wp_remote_get( $image_url );
+			$binary    = wp_remote_retrieve_body( $remote );
+			
 			$mime_type = get_post_mime_type( $attachment );
 			if ( ! $mime_type ) {
 				$mime_type = 'image/jpeg';
 			}
-			// If images are remote, copy to local so they can be uploaded.	
-			$remote_images = ( get_option( 'wpt_remote_images' ) === 1 ) ? true : false;
-			if ( $remote_images === true ) {
-				$remote_image = wp_remote_get( $upload[0] );
-				$image_data = wp_remote_retrieve_body( $remote_image );
-				$filename = basename( $upload[0] );
-				$upload_dir = wp_upload_dir();
-				if ( wp_mkdir_p( $upload_dir['path'] ) ) {
-					$image = $upload_dir['path'] . '/temp-' . $filename;
-				} else {
-					$image = $upload_dir['basedir'] . '/temp-' . $filename;
-				}
-				if ( strlen( $image_data ) > 0 ) {
-					file_put_contents( $image, $image_data );
-				} else {
-					return false;
-				}
-			}
-			
+			/* End New */
+
 			$code  = $tmhOAuth->request(
 				'POST',
 				$url,
-				array(
-					'media[]' => "@{$image};type={$mime_type};filename={$image}",
-					'status'  => $args['status'],
-				),
+				array( 'media' => "$binary" ),
 				true, // use auth
 				true  // multipart
 			);
 			
-			$debug = array(
-				'media[]' => "@{$image};type={$mime_type};filename={$image}",
-				'status'  => $args['status']
-			);
-			
-			wpt_mail( "Media Submitted - Post ID #$args[id]", print_r( $debug, 1 ) );
 			$response = $tmhOAuth->response['response'];
 			$full = $tmhOAuth->response;
-			wpt_mail( "Media Posted - Post ID #$args[id]", print_r( $full, 1 ) );
-			
-			// If a local image was created for uploading, delete it.
-			if ( $remote_images === true ) {
-				unlink( $image );
-			}
+			wpt_mail( "Media Posted - Media ID #$args[media]", print_r( $full, 1 ) );
 
 			if ( is_wp_error( $response ) ) {
-				return false;
+				return '';
 			}
 
 			$this->http_code     = $code;
 			$this->last_api_call = $url;
 			$this->format        = 'json';
 			$this->http_header   = $response;
-
-			return $response;
+			$response            = json_decode( $response );
+			$media_id            = $response->media_id_string;
+			
+			return $media_id;
 		}
 
 		/**

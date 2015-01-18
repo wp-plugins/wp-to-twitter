@@ -121,9 +121,10 @@ function jd_update_oauth_settings( $auth = false, $post = false ) {
 							$error_information = __( "WP to Twitter was unable to establish a connection to Twitter.", 'wp-to-twitter' );
 							update_option( 'wpt_curl_error', "$error_information" );
 						} else {
+							$status = ( isset( $connection->http_header['status'] ) ) ? $connection->http_header['status'] : '404';
 							$error_information = array(
 								"http_code" => $connection->http_code,
-								"status"    => $connection->http_header['status']
+								"status"    => $status
 							);
 							$error_code        = __( "Twitter response: http_code $error_information[http_code] - $error_information[status]", 'wp-to-twitter' );
 							update_option( 'wpt_curl_error', $error_code );
@@ -181,7 +182,7 @@ function wtt_connect_oauth( $auth = false ) {
 		echo '<div class="postbox">';
 	}
 	$server_time = date( DATE_COOKIE );
-	$response    = wp_remote_get( "https://twitter.com/", array( 'timeout' => 1, 'redirection' => 1 ) );
+	$response    = wp_remote_get( "https://twitter.com/", array( 'timeout' => 3, 'redirection' => 1 ) );
 	if ( is_wp_error( $response ) ) {
 		$warning = '';
 		$error   = $response->errors;
@@ -196,7 +197,7 @@ function wtt_connect_oauth( $auth = false ) {
 		}
 		$ssl    = __( "Connection Problems? If you're getting an SSL related error, you'll need to contact your host.", 'wp-to-twitter' );
 		$date   = __( "There was an error querying Twitter's servers", 'wp-to-twitter' );
-		$errors = "<p>" . $ssl . "</p>" . $warning;
+		$errors = "<p>" . $ssl . "</p>" .' '. $warning;
 	} else {
 		$date   = date( DATE_COOKIE, strtotime( $response['headers']['date'] ) );
 		$errors = '';

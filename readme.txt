@@ -20,7 +20,7 @@ Yep. That's the basic functionality. But it's not the only thing you can do:
 * Recent Tweets Widget: Display recent Tweets. Fetch Tweets from your own or any other account.
 * Tweet Search Widget: Display the Tweets resulting from a search.
  
-[Upgrade to WP Tweets Pro](http://www.joedolson.com/wp-tweets-pro/) for Tweet scheduling, automatic re-tweeting, and more!
+[Upgrade to WP Tweets Pro](http://www.joedolson.com/wp-tweets-pro/) and schedule Tweets, set up automatic reposts, upload images and more!
 
 WP to Twitter uses a customizable Tweet template for Tweets sent when updating or editing posts and pages or custom post types. You can customize your Tweet for each post, using custom template tags to generate the Tweet. 
 
@@ -42,6 +42,7 @@ Upgrade to [WP Tweets Pro](http://www.joedolson.com/wp-tweets-pro/) for extra fe
 * Co-Tweet to site and author Twitter accounts
 * Preview and Tweet comments
 * Filter Tweets by taxonomy (categories, tags, or custom taxonomies)
+* Upload images to Twitter
 * [...and more!](http://www.joedolson.com/wp-tweets-pro/)
 
 Want to stay up to date on WP to Twitter? [Follow me on Twitter!](https://twitter.com/joedolson)
@@ -59,9 +60,20 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 
 = Future =
 
-* Use apply_filters( 'wpt_tweet_sentence', $tweet, $post_ID ) to pass custom taxonomy Tweet formats
+* Use apply_filters( 'wpt_tweet_sentence', $tweet, $post_ID ) to pass custom taxonomy Tweet formats - Pending WordPress support for taxonomy meta.
 * Add regex filter to detect URLs typed into Tweet fields for counting/shortening purposes. [todo]
-* Replacement for incoming data that's already encoded? (e.g. &apos;)
+
+= 2.9.9 =
+
+* Handles case where post type identification could throw PHP warning if no post types were chosen to be Tweeted.
+* Eliminated outdated compatibility function. 
+* Eliminated old update notices.
+* General code cleanup.
+* Code documentation.
+* Updated media uploading to use Uploads endpoint, replacing deprecated update_with_media endpoint. [WP Tweets PRO]
+* Simplifed short URL storage
+* Decreased widget cache life from 1 hour to 30 minutes.
+* Added fallback Normalizer class for cases when extension is not installed.
 
 = 2.9.8 =
 
