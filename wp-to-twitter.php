@@ -359,6 +359,7 @@ function jd_doTwitterAPIPost( $twit, $auth = false, $id = false, $media = false 
 
 		return false;
 	} else {
+		// if this post has already been tweeted with Media, we can skip the upload phase.
 		$media_id = ( get_post_meta( $id, '_wpt_media_upload', true ) == '' ) ? '' : get_post_meta( $id, '_wpt_media_upload', true );
 		// must be designated as media and have a valid attachment
 		$attachment = ( $media ) ? wpt_post_attachment( $id ) : false;
@@ -380,7 +381,6 @@ function jd_doTwitterAPIPost( $twit, $auth = false, $id = false, $media = false 
 		if ( wtt_oauth_test( $auth ) && ( $connection = wtt_oauth_connection( $auth ) ) ) {
 			if ( $media && $attachment && !$media_id ) {
 				$media_id = $connection->media( $upload_api, array( 'auth'=>$auth, 'media'=>$attachment ) );
-				wp_mail( 'joe@joedolson.com', 'Media ID', print_r( $media_id, 1 ) . "\n\n" . print_r( $connection, 1 ) );
 				if ( $media_id ) {
 					update_post_meta( $id, '_wpt_media_upload', $media_id );
 					$status['media_ids'] = $media_id;
@@ -391,7 +391,6 @@ function jd_doTwitterAPIPost( $twit, $auth = false, $id = false, $media = false 
 		} else if ( wtt_oauth_test( false ) && ( $connection = wtt_oauth_connection( false ) ) ) {
 			if ( $media && $attachment && !$media_id ) {
 				$media_id = $connection->media( $upload_api, array( 'auth'=>$auth, 'media'=>$attachment ) );
-				wp_mail( 'joe@joedolson.com', 'Media ID', print_r( $media_id, 1 ) . "\n\n" . print_r( $connection, 1 ) );
 				
 				if ( $media_id ) {
 					update_post_meta( $id, '_wpt_media_upload', $media_id );
