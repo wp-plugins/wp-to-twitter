@@ -74,6 +74,7 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Simplifed short URL storage
 * Decreased widget cache life from 1 hour to 30 minutes.
 * Added fallback Normalizer class for cases when extension is not installed.
+* Added notes for the 100 HTTP code return error.
 
 = 2.9.8 =
 

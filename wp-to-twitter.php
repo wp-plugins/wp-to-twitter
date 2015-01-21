@@ -360,7 +360,7 @@ function jd_doTwitterAPIPost( $twit, $auth = false, $id = false, $media = false 
 		return false;
 	} else {
 		// if this post has already been tweeted with Media, we can skip the upload phase.
-		$media_id = ( get_post_meta( $id, '_wpt_media_upload', true ) == '' ) ? '' : get_post_meta( $id, '_wpt_media_upload', true );
+		$media_id = false;
 		// must be designated as media and have a valid attachment
 		$attachment = ( $media ) ? wpt_post_attachment( $id ) : false;
 		if ( $attachment ) {
@@ -382,7 +382,6 @@ function jd_doTwitterAPIPost( $twit, $auth = false, $id = false, $media = false 
 			if ( $media && $attachment && !$media_id ) {
 				$media_id = $connection->media( $upload_api, array( 'auth'=>$auth, 'media'=>$attachment ) );
 				if ( $media_id ) {
-					update_post_meta( $id, '_wpt_media_upload', $media_id );
 					$status['media_ids'] = $media_id;
 				}
 			}
@@ -393,7 +392,6 @@ function jd_doTwitterAPIPost( $twit, $auth = false, $id = false, $media = false 
 				$media_id = $connection->media( $upload_api, array( 'auth'=>$auth, 'media'=>$attachment ) );
 				
 				if ( $media_id ) {
-					update_post_meta( $id, '_wpt_media_upload', $media_id );
 					$status['media_ids'] = $media_id;
 				}
 			}			
@@ -412,6 +410,9 @@ function jd_doTwitterAPIPost( $twit, $auth = false, $id = false, $media = false 
 			}
 			$return = false;
 			switch ( $http_code ) {
+				case '100':
+					$error = __( "100 Continue: Twitter received the header of your submission, but your server did not follow through by sending the body of the data.", 'wp-to-twitter' );
+					break;				
 				case '200':
 					$return = true;
 					$error  = __( "200 OK: Success!", 'wp-to-twitter' );
