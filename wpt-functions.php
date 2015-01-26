@@ -219,6 +219,29 @@ if ( ! function_exists( 'mb_substr_replace' ) ) {
 }
 
 /**
+ * This function is obsolete; only exists for people using out of date versions of WP Tweets PRO.
+ */
+function wtt_option_selected( $field, $value, $type = 'checkbox' ) {
+	switch ( $type ) {
+		case 'radio':
+		case 'checkbox':
+			$result = ' checked="checked"';
+			break;
+		case 'option':
+			$result = ' selected="selected"';
+			break;
+		default: $result = ' selected="selected"';
+	}
+	if ( $field == $value ) {
+		$output = $result;
+	} else {
+		$output = '';
+	}
+
+	return $output;
+}
+
+/**
  * Compares two dates to identify which is earlier. Used to differentiate between post edits and original publication.
  * 
  * @param string $early
