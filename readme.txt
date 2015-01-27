@@ -1074,7 +1074,7 @@ Right here: [WP to Twitter FAQ](http://www.joedolson.com/wp-to-twitter/support-2
 
 = How can I help you make WP to Twitter a better plug-in? =
 
-Writing and maintaining a plug-in is a lot of work. You can help me by providing detailed support requests (which saves me time), or by providing financial support, either via my [plug-in donations page](https://www.joedolson.com/donate/) or by [upgrading to WP Tweets Pro](https://www.joedolson.com/wp-tweets-pro/). Believe me, any small donation really makes a difference!
+Writing and maintaining a plug-in is a lot of work. You can help me by providing detailed support requests (which saves me time), or by providing financial support, either via my [plug-in donations page](https://www.joedolson.com/donate/) or by [upgrading to WP Tweets Pro](https://www.joedolson.com/wp-tweets-pro/). Believe me, your donation really makes a difference!
 
 == Screenshots ==
 
@@ -1087,6 +1087,4 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
-2.9.8: Updated User's Guide, related tasks.
-
-* 2.9.7 - Changes to fix bugs for WP Tweets PRO users.
+* 3.0.0 - Changes storage format for short URL post meta. Upgrade cycle may take a while to process all posts.
