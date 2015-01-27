@@ -336,15 +336,13 @@ function wpt_get_support_form() {
 			$plugins_string .= "$plugin_name: $plugin_version; $plugin_uri\n";
 		}
 	}
-	global $wpt_server_string;
-	$wpt_server_string = trim( strip_tags( $wpt_server_string ) );
+
 	$data              = "
 ================ Installation Data ====================
 ==WP to Twitter==
 Version: $version
 Twitter username: http://twitter.com/$wtt_twitter_username
 $license
-$wpt_server_string
 
 ==WordPress:==
 Version: $wp_version

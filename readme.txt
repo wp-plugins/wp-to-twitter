@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links
 Requires at least: 3.7.0
-Tested up to: 4.0
+Tested up to: 4.1
 License: GPLv2 or later
 Text Domain: wp-to-twitter
 Stable tag: 2.9.8
@@ -63,7 +63,7 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Use apply_filters( 'wpt_tweet_sentence', $tweet, $post_ID ) to pass custom taxonomy Tweet formats - Pending WordPress support for taxonomy meta.
 * Add regex filter to detect URLs typed into Tweet fields for counting/shortening purposes. [todo]
 
-= 2.9.9 =
+= 3.0.0 =
 
 * Handles case where post type identification could throw PHP warning if no post types were chosen to be Tweeted.
 * Eliminated outdated compatibility function. 
@@ -75,6 +75,8 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Decreased widget cache life from 1 hour to 30 minutes.
 * Added fallback Normalizer class for cases when extension is not installed.
 * Added notes for the 100 HTTP code return error.
+* Moved Twitter server time check out of basic set-up & set up to only run on demand.
+* Minor design changes.
 
 = 2.9.8 =
 
