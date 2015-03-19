@@ -112,7 +112,7 @@ function jd_check_functions() {
 function wpt_update_settings() {
 	wpt_check_version();
 
-	if ( ! empty( $_POST ) ) {
+	if ( ! empty( $_POST['_wpnonce'] ) ) {
 		$nonce = $_REQUEST['_wpnonce'];
 		if ( ! wp_verify_nonce( $nonce, 'wp-to-twitter-nonce' ) ) {
 			die( "Security check failed" );
@@ -128,7 +128,7 @@ function wpt_update_settings() {
 	$message = "";
 
 	// SET DEFAULT OPTIONS
-	if ( get_option( 'twitterInitialised' ) != '1' ) {
+	if ( get_option( 'wpt_twitter_setup' ) != '1' ) {
 		$initial_settings = array(
 			'post' => array(
 				'post-published-update' => 1,
@@ -187,12 +187,9 @@ function wpt_update_settings() {
 		update_option( 'jd_tweet_default_edit', '0' );
 		update_option( 'wpt_inline_edits', '0' );
 		// Note that default options are set.
-		update_option( 'twitterInitialised', '1' );
+		update_option( 'wpt_twitter_setup', '1' );
 		//YOURLS API
 		update_option( 'jd_keyword_format', '0' );
-	}
-	if ( get_option( 'twitterInitialised' ) == '1' && get_option( 'jd_post_excerpt' ) == "" ) {
-		update_option( 'jd_post_excerpt', 30 );
 	}
 
 // notifications from oauth connection		
@@ -331,6 +328,8 @@ function wpt_update_settings() {
 		<div id="message" class="updated fade"><p><?php echo $message; ?></p></div>
 	<?php
 	}
+	wpt_manual_migrate();
+	
 	$log = wpt_log( 'wpt_status_message', 'last' );
 	if ( ! empty( $log ) && is_array( $log ) ) {
 		$post_ID = $log[0];
@@ -406,16 +405,16 @@ function wpt_update_settings() {
 						<?php
 						$post_types   = get_post_types( array( 'public' => true ), 'objects' );
 						$wpt_settings = get_option( 'wpt_post_types' );
-						$tabs         = "<ul class='tabs'>";
+						$tabs         = "<ul class='tabs' role='tablist'>";
 						foreach ( $post_types as $type ) {
 							$name     = $type->labels->name;
 							$slug     = $type->name;
 							if ( $slug == 'attachment' || $slug == 'nav_menu_item' || $slug == 'revision' ) {
 							} else {
-								$tabs .= "<li><a href='#wpt_$slug'>$name</a></li>";
+								$tabs .= "<li><a href='#wpt_$slug' role='tab' id='tab_wpt_$slug' aria-controls='wpt_$slug'>$name</a></li>";
 							}
 						}
-						$tabs .= "<li><a href='#wpt_links'>" . __( 'Links', 'wp-to-twitter' ) . "</a></li>
+						$tabs .= "<li><a href='#wpt_links' id='tab_wpt_links' aria-controls='wpt_links'>" . __( 'Links', 'wp-to-twitter' ) . "</a></li>
 			</ul>";
 						echo $tabs;
 						foreach ( $post_types as $type ) {
@@ -435,7 +434,8 @@ function wpt_update_settings() {
 									}
 								}
 								?>
-								<div class='wptab wpt_types wpt_<?php echo $slug; ?>' id='wpt_<?php echo $slug; ?>'>
+	
+								<div class='wptab wpt_types wpt_<?php echo $slug; ?>' aria-labelledby='tab_wpt_<?php echo $slug; ?>' role="tabpanel" id='wpt_<?php echo $slug; ?>'>
 									<?php
 									if ( get_option( 'limit_categories' ) != '0' && $slug == 'post' ) {
 										$falseness  = get_option( 'jd_twit_cats' );
@@ -446,9 +446,11 @@ function wpt_update_settings() {
 											echo "<p>" . __( 'These categories are currently <strong>allowed</strong> by the deprecated WP to Twitter category filters.', 'wp-to-twitter' ) . "</p>";
 										}
 										echo "<ul>";
-										foreach ( $categories as $cat ) {
-											$category = get_the_category_by_ID( $cat );
-											echo "<li>$category</li>";
+										if ( is_array( $categories ) ) {
+											foreach ( $categories as $cat ) {
+												$category = get_the_category_by_ID( $cat );
+												echo "<li>$category</li>";
+											}
 										}
 										echo "</ul>";
 										if ( ! function_exists( 'wpt_pro_exists' ) ) {
