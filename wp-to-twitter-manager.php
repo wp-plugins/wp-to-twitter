@@ -514,7 +514,7 @@ function wpt_update_settings() {
 										for="jd_twit_blogroll"><strong><?php _e( "Update Twitter when you post a Blogroll link", 'wp-to-twitter' ); ?></strong></label><br/>
 									<label
 										for="newlink-published-text"><?php _e( "Text for new link updates:", 'wp-to-twitter' ); ?></label>
-									<input aria-labelledby="newlink-published-text-label" type="text"
+									<input aria-describedby="newlink-published-text-label" type="text"
 									       class="wpt-template" name="newlink-published-text"
 									       id="newlink-published-text" size="60" maxlength="120"
 									       value="<?php echo( esc_attr( stripslashes( get_option( 'newlink-published-text' ) ) ) ); ?>"/><br/><span
@@ -578,7 +578,7 @@ function wpt_update_settings() {
 							<p>
 								<label
 									for="jd_max_tags"><?php _e( "Maximum number of tags to include:", 'wp-to-twitter' ); ?></label>
-								<input aria-labelledby="jd_max_characters_label" type="text" name="jd_max_tags"
+								<input aria-describedby="jd_max_characters_label" type="text" name="jd_max_tags"
 								       id="jd_max_tags" value="<?php echo esc_attr( get_option( 'jd_max_tags' ) ); ?>"
 								       size="3"/>
 								<label
@@ -592,7 +592,7 @@ function wpt_update_settings() {
 							<p>
 								<label
 									for="jd_post_excerpt"><?php _e( "Length of post excerpt (in characters):", 'wp-to-twitter' ); ?></label>
-								<input aria-labelledby="jd_post_excerpt_label" type="text" name="jd_post_excerpt"
+								<input aria-describedby="jd_post_excerpt_label" type="text" name="jd_post_excerpt"
 								       id="jd_post_excerpt" size="3" maxlength="3"
 								       value="<?php echo( esc_attr( get_option( 'jd_post_excerpt' ) ) ) ?>"/> (<em
 									id="jd_post_excerpt_label"><?php _e( "Extracted from the post. If you use the 'Excerpt' field, it will be used instead.", 'wp-to-twitter' ); ?></em>)
@@ -601,7 +601,7 @@ function wpt_update_settings() {
 							<p>
 								<label
 									for="jd_date_format"><?php _e( "WP to Twitter Date Formatting:", 'wp-to-twitter' ); ?></label>
-								<input type="text" aria-labelledby="date_format_label" name="jd_date_format"
+								<input type="text" aria-describedby="date_format_label" name="jd_date_format"
 								       id="jd_date_format" size="12" maxlength="12"
 								       value="<?php if ( get_option( 'jd_date_format' ) == '' ) {
 									       echo( esc_attr( stripslashes( get_option( 'date_format' ) ) ) );
@@ -735,7 +735,7 @@ function wpt_update_settings() {
 						<fieldset id="indauthors">
 							<legend><?php _e( 'Author Settings', 'wp-to-twitter' ); ?></legend>
 							<p>
-								<input aria-labelledby="jd_individual_twitter_users_label" type="checkbox"
+								<input aria-describedby="jd_individual_twitter_users_label" type="checkbox"
 								       name="jd_individual_twitter_users" id="jd_individual_twitter_users"
 								       value="1" <?php echo jd_checkCheckbox( 'jd_individual_twitter_users' ) ?> />
 								<label
