@@ -65,6 +65,13 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Use apply_filters( 'wpt_tweet_sentence', $tweet, $post_ID ) to pass custom taxonomy Tweet formats - Pending WordPress support for taxonomy meta.
 * Add regex filter to detect URLs typed into Tweet fields for counting/shortening purposes. [todo]
 
+= 3.0.2 =
+
+* Bug fix: obscure duplicating Tweets issue related to co-Tweeting and media uploads
+* Bug fix: notice thrown if using Yourls and access to Yourls directory blocked at server.
+* Revamped settings page. 
+* Updated user's guide.
+
 = 3.0.1 =
 
 * Changed priority of wpt_twit function on save_post action so that The Events Calendar can send Tweets.

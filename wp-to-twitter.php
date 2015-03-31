@@ -45,11 +45,11 @@ define( 'WPT_FROM', "From: \"" . get_option( 'blogname' ) . "\" <" . get_option(
 $wp_plugin_url = plugins_url();
 include_once( ABSPATH . 'wp-admin/includes/plugin.php' ); // required in order to access is_plugin_active()
 
+require_once( plugin_dir_path( __FILE__ ) . '/wpt-functions.php' );
 require_once( plugin_dir_path( __FILE__ ) . '/wp-to-twitter-oauth.php' );
 require_once( plugin_dir_path( __FILE__ ) . '/wp-to-twitter-shorteners.php' );
 require_once( plugin_dir_path( __FILE__ ) . '/wp-to-twitter-manager.php' );
 require_once( plugin_dir_path( __FILE__ ) . '/wpt-truncate.php' );
-require_once( plugin_dir_path( __FILE__ ) . '/wpt-functions.php' );
 require_once( plugin_dir_path( __FILE__ ) . '/wpt-feed.php' );
 require_once( plugin_dir_path( __FILE__ ) . '/wpt-widget.php' );
 
@@ -366,7 +366,6 @@ function jd_doTwitterAPIPost( $twit, $auth = false, $id = false, $media = false 
 
 		return false;
 	} else {
-		// if this post has already been tweeted with Media, we can skip the upload phase.
 		$media_id = false;
 		// must be designated as media and have a valid attachment
 		$attachment = ( $media ) ? wpt_post_attachment( $id ) : false;
@@ -386,27 +385,19 @@ function jd_doTwitterAPIPost( $twit, $auth = false, $id = false, $media = false 
 				);
 		// support for HTTP deprecated as of 1/14/2014 -- https://dev.twitter.com/discussions/24239
 		if ( wtt_oauth_test( $auth ) && ( $connection = wtt_oauth_connection( $auth ) ) ) {
+			wpt_mail( "First Tweet Attachment", "Auth: $auth", true );
 			if ( $media && $attachment && !$media_id ) {
 				$media_id = $connection->media( $upload_api, array( 'auth'=>$auth, 'media'=>$attachment ) );
 				if ( $media_id ) {
 					$status['media_ids'] = $media_id;
 				}
 			}
-			$connection->post( $api, $status ); 
-			$http_code = ( $connection ) ? $connection->http_code : 'failed';
-		} else if ( wtt_oauth_test( false ) && ( $connection = wtt_oauth_connection( false ) ) ) {
-			if ( $media && $attachment && !$media_id ) {
-				$media_id = $connection->media( $upload_api, array( 'auth'=>$auth, 'media'=>$attachment ) );
-				
-				if ( $media_id ) {
-					$status['media_ids'] = $media_id;
-				}
-			}			
-			$connection->post( $api, $status );
-			$http_code = ( $connection ) ? $connection->http_code : 'failed';
 		}
 		if ( empty( $connection ) ) {
 			$connection = array( 'connection' => 'undefined' );
+		} else {
+			$connection->post( $api, $status );
+			$http_code = ( $connection ) ? $connection->http_code : 'failed';				
 		}
 		wpt_mail( 'Twitter Connection', print_r( $connection, 1 ) . " - $twit, $auth, $id, $media" );
 		if ( $connection ) {
@@ -840,6 +831,9 @@ function jd_twit( $post_ID, $type = 'instant' ) {
 						}
 					} else {
 						foreach ( $wpt_selected_users as $acct ) {
+							if ( $acct == 'main' ) { 
+								$acct = false;
+							}
 							if ( $auth != $acct ) {
 								$offset = rand( 60, 480 ); // offset by 1-8 minutes for additional users
 							} else {
@@ -1258,12 +1252,11 @@ function jd_add_twitter_inner_box( $post ) {
 		<p class="wpt-support">
 			<?php if ( ! function_exists( 'wpt_pro_exists' ) ) { ?>
 				<a target="_blank"
-				   href="<?php echo admin_url( 'options-general.php?page=wp-to-twitter/wp-to-twitter.php' ); ?>#get-support"><?php _e( 'Get Support', 'wp-to-twitter', 'wp-to-twitter' ) ?></a> &bull;
-				<strong><a target="__blank"
-				           href="https://www.joedolson.com/wp-tweets-pro/"><?php _e( 'Go Premium', 'wp-to-twitter', 'wp-to-twitter' ) ?></a></strong> &raquo;
+				   href="<?php echo add_query_arg( 'tab', 'support', admin_url( 'options-general.php?page=wp-to-twitter/wp-to-twitter.php' ) ); ?>#get-support"><?php _e( 'Get Support', 'wp-to-twitter', 'wp-to-twitter' ) ?></a> &bull;
+				<strong><a target="__blank" href="https://www.joedolson.com/wp-tweets-pro/"><?php _e( 'Go Premium', 'wp-to-twitter', 'wp-to-twitter' ) ?></a></strong> &raquo;
 			<?php } else { ?>
 				<a target="_blank"
-				   href="<?php echo admin_url( 'admin.php?page=wp-tweets-pro' ); ?>#get-support"><?php _e( 'Get Support', 'wp-to-twitter', 'wp-to-twitter' ) ?></a> &raquo;
+				   href="<?php echo add_query_arg( 'tab', 'support', admin_url( 'admin.php?page=wp-tweets-pro' ) ); ?>#get-support"><?php _e( 'Get Support', 'wp-to-twitter', 'wp-to-twitter' ) ?></a> &raquo;
 			<?php } ?>
 		</p>
 		<?php wpt_show_tweets( $previous_tweets, $failed_tweets ); ?>
@@ -1812,7 +1805,7 @@ add_action( 'admin_notices', 'wpt_promotion_notice' );
  */
 function wpt_promotion_notice() {
 	if ( current_user_can( 'activate_plugins' ) && get_option( 'wpt_promotion_scheduled' ) == 2 && get_option( 'jd_donations' ) != 1 ) {
-		$upgrade = "http://www.joedolson.com/wp-tweets-pro/";
+		$upgrade = "https://www.joedolson.com/wp-tweets-pro/";
 		$dismiss = admin_url( 'options-general.php?page=wp-to-twitter/wp-to-twitter.php&dismiss=promotion' );
 		echo "<div class='updated fade'><p>" . sprintf( __( "I hope you've enjoyed <strong>WP to Twitter</strong>! Take a look at <a href='%s'>upgrading to WP Tweets PRO</a> for advanced Tweeting with WordPress! <a href='%s'>Dismiss</a>", 'wp-to-twitter' ), $upgrade, $dismiss ) . "</p></div>";
 	}
