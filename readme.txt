@@ -65,6 +65,14 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Use apply_filters( 'wpt_tweet_sentence', $tweet, $post_ID ) to pass custom taxonomy Tweet formats - Pending WordPress support for taxonomy meta.
 * Add regex filter to detect URLs typed into Tweet fields for counting/shortening purposes. [todo]
 
+= 3.0.4 =
+
+* Bug fix: Error with YOURLS url handler. Two reversed variable definitions.
+* Bug fix: Bad URL for testing time check when WP Tweets PRO active.
+* Bug fix: Update could reset some settings to defaults.
+* Grammar fix to one text string. 
+* Minor updates to Spanish & Portuguese translations
+
 = 3.0.3 =
 
 * Update Japanese translation
@@ -1112,4 +1120,4 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
-* 3.0.1 - Fixes issue where upgrade cycle could cause white screen on upgrade.
+* 3.0.4 - Bug producing short URLs with YOURLS. Sorry about all the rapid updates!
