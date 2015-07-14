@@ -69,6 +69,12 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Add regex filter to detect URLs typed into Tweet fields for counting/shortening purposes. [todo]
 * 4.2 added compat function for mb_substr; drop mine when I drop support for 4.1
 
+= 3.1.1 =
+
+* Add post title to Yourls shortener query. Thanks to <a href="https://wordpress.org/support/topic/missing-post-title-on-remote-yourls-call-fix-included?replies=1">the.mnbvcx</a>.
+* Bug fix: Overlooked warning if categories not defined.
+* Updated wp-to-twitter.pot
+
 = 3.1.0 = 
 
 * Moved changelog entries older than 3.0.0 into changelog.txt
