@@ -6,7 +6,7 @@ Requires at least: 3.9.2
 Tested up to: 4.2.2
 License: GPLv2 or later
 Text Domain: wp-to-twitter
-Stable tag: 3.1.0
+Stable tag: 3.1.1
 
 Posts a Twitter update when you update your WordPress blog or add a link, with your chosen URL shortening service.
 
