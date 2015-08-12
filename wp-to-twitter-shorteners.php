@@ -122,8 +122,8 @@ if ( ! function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in 
 							'url'       => $encoded,
 							'action'    => 'shorturl',
 							'keyword'   => $keyword_format,
-							'title'     => $thisposttitle,
-							'format'    => 'json'
+							'format'    => 'json',							
+							'title'     => urlencode( $thisposttitle )
 						), $yourlsurl );
 				} else {
 					$api_url = add_query_arg( array(
@@ -132,15 +132,16 @@ if ( ! function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in 
 							'url'      => $encoded,
 							'action'   => 'shorturl',
 							'keyword'  => $keyword_format,
-							'title'     => $thisposttitle,							
-							'format'   => 'json'
+							'format'   => 'json',							
+							'title'     => urlencode( $thisposttitle )						
 						), $yourlsurl );
 				}
 				$json = jd_remote_json( $api_url, false );
+				wpt_mail( "YOURLS JSON Response", print_r( $json, 1 ) ); // DEBUG YOURLS response
 				if ( is_object( $json ) ) {
 					$shrink = $json->shorturl;
 				} else {
-					$error = "Error code: " . $json->shorturl;
+					$error = "Error code: " . $json->shorturl . ' ' . $json->message;
 					$shrink = false;
 				}
 				break;
@@ -294,7 +295,7 @@ if ( ! function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in 
 			} else {
 				$decoded = jd_remote_json( $yourl_api . "?action=expand&shorturl=$short_url&format=json&username=$user&password=$pass" );
 			}
-			$url = $decoded['longurl'];
+			$url = ( isset( $decoded['longurl'] ) ) ? $decoded['longurl'] : $short_url;
 
 			return $url;
 		} else {

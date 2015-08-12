@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post a link, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 3.1.2
+Version: 3.1.3
 Author: Joseph Dolson
 Author URI: http://www.joedolson.com/
 */
@@ -55,7 +55,7 @@ require_once( plugin_dir_path( __FILE__ ) . '/wpt-widget.php' );
 require_once( plugin_dir_path( __FILE__ ) . '/wpt-rate-limiting.php' );
 
 global $wpt_version;
-$wpt_version = "3.1.2";
+$wpt_version = "3.1.3";
 
 add_action( 'plugins_loaded', 'wpt_load_textdomain' );
 function wpt_load_textdomain() {
@@ -108,11 +108,13 @@ function wptotwitter_activate() {
 		update_option( 'jd_max_characters', 15 );
 		update_option( 'jd_replace_character', '' );
 		$administrator = get_role( 'administrator' );
-		$administrator->add_cap( 'wpt_twitter_oauth' );
-		$administrator->add_cap( 'wpt_twitter_custom' );
-		$administrator->add_cap( 'wpt_twitter_switch' );
-		$administrator->add_cap( 'wpt_can_tweet' );
-		$administrator->add_cap( 'wpt_tweet_now' );
+		if ( is_object( $administrator ) ) {
+			$administrator->add_cap( 'wpt_twitter_oauth' );
+			$administrator->add_cap( 'wpt_twitter_custom' );
+			$administrator->add_cap( 'wpt_twitter_switch' );
+			$administrator->add_cap( 'wpt_can_tweet' );
+			$administrator->add_cap( 'wpt_tweet_now' );
+		}
 		$editor = get_role( 'editor' );
 		if ( is_object( $editor ) ) {
 			$editor->add_cap( 'wpt_can_tweet' );
@@ -1115,21 +1117,14 @@ function wpt_generate_hash_tags( $post_ID ) {
 			$replace = ( $replace == "[ ]" || $replace == "" ) ? "" : $replace;
 			$tag     = str_ireplace( " ", $replace, trim( $tag ) );
 			$tag     = preg_replace( '/[\/]/', $replace, $tag ); // remove forward slashes.
-			if ( $strip == '1' ) {
-				$tag = preg_replace( $search, $replace, $tag );
-			}
+			$tag = ( $strip == '1' ) ? preg_replace( $search, $replace, $tag ) : $tag;
+			
 			switch ( $term_meta ) {
-				case 1 :
-					$newtag = "#$tag";
-					break;
-				case 2 :
-					$newtag = "$$tag";
-					break;
-				case 3 :
-					$newtag = '';
-					break;
-				default:
-					$newtag = apply_filters( 'wpt_tag_default', "#", $t_id ) . $tag;
+				case 1 : $newtag = "#$tag";	break;
+				case 2 : $newtag = "$$tag";	break;
+				case 3 : $newtag = ''; break;
+				case 4 : $newtag = $tag; break;
+				default: $newtag = apply_filters( 'wpt_tag_default', "#", $t_id ) . $tag;
 			}
 			if ( mb_strlen( $newtag ) > 2 && ( mb_strlen( $newtag ) <= $max_characters ) && ( $i <= $max_tags ) ) {
 				$hashtags .= "$newtag ";
@@ -1931,7 +1926,7 @@ add_action( 'admin_notices', 'wpt_migration_notice', 10 );
 function wpt_migration_notice() {
 	if ( current_user_can( 'activate_plugins' ) && get_option( 'wpt_needs_migration' ) == 'true' ) {
 		$update = ( is_plugin_active( 'wp-tweets-pro/wpt-pro-functions.php' ) ) ? admin_url( 'admin.php?page=wp-tweets-pro&action=migration' ) : admin_url( 'options-general.php?page=wp-to-twitter/wp-to-twitter.php&action=migration' );
-		$dismiss = ( is_plugin_active( 'wp-tweets-pro/wpt-pro-functions.php' ) ) ? admin_url( 'admin.php?page=wp-tweets-pro&action=migration' ) : admin_url( 'options-general.php?page=wp-to-twitter/wp-to-twitter.php&action=dismiss' );
+		$dismiss = ( is_plugin_active( 'wp-tweets-pro/wpt-pro-functions.php' ) ) ? admin_url( 'admin.php?page=wp-tweets-pro&action=dismiss' ) : admin_url( 'options-general.php?page=wp-to-twitter/wp-to-twitter.php&action=dismiss' );
 		echo "<div class='updated fade'><p>" . sprintf( __( "WP to Twitter needs to perform an optional database update. It may take a few minutes. <a href='%s'>Update Database</a> or <a href='%s'>Dismiss Notice</a>", 'wp-to-twitter' ), $update, $dismiss ) . "</p></div>";
 	}
 }
