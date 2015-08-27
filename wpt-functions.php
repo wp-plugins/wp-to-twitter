@@ -194,6 +194,19 @@ function wpt_mail( $subject, $body, $override=false ) {
 	}
 }
 
+function wpt_show_debug() {
+	// Nothing triggers this. If you want some debugging information, just add the parameter to the URL.
+	if ( isset( $_GET['debug'] ) && $_GET['debug'] == 'true' ) {
+		$debug = get_option( 'wpt_debug' );
+		echo "<pre>";
+		print_r( $debug );
+		echo "</pre>";
+	}
+	if ( isset( $_GET['debug'] ) && $_GET['debug'] == 'delete' ) {
+		delete_option( 'wpt_debug' );
+	}	
+}
+
 function jd_remote_json( $url, $array = true ) {
 	$input = jd_fetch_url( $url );
 	$obj   = json_decode( $input, $array );

@@ -6,7 +6,7 @@ Requires at least: 3.9.2
 Tested up to: 4.3.0
 License: GPLv2 or later
 Text Domain: wp-to-twitter
-Stable tag: 3.1.3
+Stable tag: 3.1.4
 
 Posts a Twitter update when you update your WordPress blog or add a link, with your chosen URL shortening service.
 
@@ -69,6 +69,21 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Add regex filter to detect URLs typed into Tweet fields for counting/shortening purposes. [todo]
 * 4.2 added compat function for mb_substr; drop mine when I drop support for 4.1
 * WP to Twitter timing bug with images?
+
+= 3.1.5 =
+
+* New filter allows disabling storing short URLs `wpt_store_urls`; return false.
+* Disable migration routine as DB-wide function; handle only on post edit.
+* Eliminate some unused variables.
+* Change primary settings headings to H1 on WP 4.3 and above.
+* Removed collapsible panels in settings. These are irrelevant with tabbed interface.
+* Minor design changes.
+
+= 3.1.4 =
+
+* CSS fix for 4.3 compatibility. 
+* Avoid error if administrator role is missing.
+* Prevent setting rate limiting to 0.
 
 = 3.1.3 =
 

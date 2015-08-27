@@ -244,7 +244,8 @@ if ( ! function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in 
 	}
 
 	function wpt_store_url( $post_ID, $url ) {
-		if ( function_exists( 'jd_shorten_link' ) ) {
+		$store_urls = apply_filters( 'wpt_store_urls', true, $post_ID, $url );
+		if ( function_exists( 'jd_shorten_link' )  && $store_urls ) {
 			$shortener = get_option( 'jd_shortener' );
 			if ( get_post_meta( $post_ID, '_wpt_short_url', true ) != $url ) {
 				update_post_meta( $post_ID, '_wpt_short_url', $url );
@@ -328,8 +329,7 @@ if ( ! function_exists( 'jd_shorten_link' ) ) { // prep work for future plug-in 
 		?>
 		<div class="ui-sortable meta-box-sortables">
 			<div class="postbox">
-				<div class="handlediv"><span class="screen-reader-text">Click to toggle</span></div>
-				<h3 class='hndle'>
+				<h3>
 					<span><?php _e( '<abbr title="Uniform Resource Locator">URL</abbr> Shortener Account Settings', 'wp-to-twitter' ); ?></span>
 				</h3>
 
