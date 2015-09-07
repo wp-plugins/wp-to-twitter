@@ -595,7 +595,7 @@ function jd_doTwitterAPIPost( $twit, $auth = false, $id = false, $media = false 
  * 
  * @return string Normalized text.
  */
-function fake_normalize( $string ) {
+function wpt_normalize( $string ) {
 	if ( version_compare( PHP_VERSION, '5.0.0', '>=' ) && function_exists( 'normalizer_normalize' ) ) {
 		if ( normalizer_is_normalized( $string ) ) {
 			return $string;
