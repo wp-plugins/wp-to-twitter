@@ -70,6 +70,13 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * 4.2 added compat function for mb_substr; drop mine when I drop support for 4.1
 * WP to Twitter timing bug with images?
 
+= 3.1.6 =
+
+* Rewrite: Rewrite Tweet truncation code.
+* Bug fix: Make charcount aware of #longurl#
+* Open up possibility of reposting more than 3 times in WP Tweets PRO through filters.
+* Bug fix: issue with character counting on Scheduled Tweets screen.
+
 = 3.1.5 =
 
 * New filter allows disabling storing short URLs `wpt_store_urls`; return false.

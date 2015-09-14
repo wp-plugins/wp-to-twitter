@@ -994,7 +994,8 @@ function wpt_tweet( $post_ID, $type = 'instant' ) {
 														'current_time_string' => date( 'Y-m-d H:i:s', time() ),
 													), 1 ) ); // DEBUG
 										}
-										if ( $i == 4 ) {
+										$tweet_limit = apply_filters( 'wpt_tweet_repeat_limit', 4, $post_ID );
+										if ( $i == $tweet_limit ) {
 											break;
 										}
 									}
@@ -1799,8 +1800,7 @@ function wpt_twit( $id ) {
 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE || wp_is_post_revision( $id ) || ! wpt_in_post_type( $id ) ) {
 		return;
 	}
-
-	$post = get_post( $id );
+	$post = get_post( $id );	
 	if ( $post->post_status != 'publish' ) {
 		return;
 	} // is there any reason to accept any other status?

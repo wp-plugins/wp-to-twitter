@@ -10,7 +10,8 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet = false, $ref = fa
 	$tweet        = apply_filters( 'wpt_tweet_sentence', $tweet, $post_ID );
 	$tweet        = trim( wpt_custom_shortcodes( $tweet, $post_ID ) );
 	$encoding     = ( get_option( 'blog_charset' ) != 'UTF-8' ) ? get_option( 'blog_charset' ) : 'UTF-8';
-	
+	$diff         = 0;
+
 	if ( !wpt_has_tags( $tweet ) ) {
 		// there are no tags in this Tweet. Truncate and return.
 		$post_tweet = mb_substr( $tweet, 0, $length, $encoding );
@@ -45,6 +46,7 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet = false, $ref = fa
 		$has_long_url    = wpt_has( $tweet, '#longurl#' );
 		
 		$url_strlen = mb_strlen( urldecode( wpt_normalize( $values['url'] ) ), $encoding );		
+		$longurl_strlen = mb_strlen( urldecode( wpt_normalize( $values['longurl'] ) ), $encoding );		
 		/**
 		 * Tweet is too long, so we'll have to truncate that sucker.
 		 */
@@ -58,9 +60,11 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet = false, $ref = fa
 			$preferred = array();
 			foreach ( $order as $k => $v ) {
 				if ( $k == 'excerpt' ) {
+					$k = 'post';
 					$value = $length_array[ 'post' ];
 				} else if ( $k == 'blogname' ) {
-					$value = $length_array[' blog' ];
+					$k = 'blog';
+					$value = $length_array[ 'blog' ];
 				} else {
 					$value = $length_array[ $k ];
 				}
@@ -70,7 +74,11 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet = false, $ref = fa
 		} else {
 			$preferred = $length_array;
 		}
-		$diff = ( ( $url_strlen - $tco ) > 0 ) ? $url_strlen - $tco : 0;
+		if ( $has_short_url ) {
+			$diff = ( ( $url_strlen - $tco ) > 0 ) ? $url_strlen - $tco : 0;
+		} else if ( $has_long_url ) {
+			$diff = ( ( $longurl_strlen - $tco ) > 0 ) ? $longurl_strlen - $tco : 0;			
+		}
 		if ( $str_length > ( $length + 1 + $diff ) ) {
 			foreach ( $preferred AS $key => $value ) {
 				// don't truncate content of post excerpt if excerpt tag not in use
@@ -81,6 +89,7 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet = false, $ref = fa
 						$old_value = $values[$key];
 						// prevent URL from being modified
 						$post_tweet = str_ireplace( array( $values['url'], $values['longurl'] ), array( '#url#', '#longurl#' ), $post_tweet );
+
 						// modify the value and replace old with new
 						if ( $key == 'account' || $key == 'author' || $key == 'category' || $key == 'date' || $key == 'modified' || $key == 'reference' || $key == '@' ) {
 							// these elements make no sense if truncated, so remove them entirely.
@@ -104,7 +113,7 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet = false, $ref = fa
 						}
 						$post_tweet = str_ireplace( $old_value, $new_value, $post_tweet );
 						// put URL back before checking length
-						$post_tweet = str_ireplace( array( '#url#', '#longurl#' ), array( $values['url'], $values['longurl'] ), $post_tweet );
+						$post_tweet = str_ireplace( array( '#url#', '#longurl#' ), array( $values['url'], $values['longurl'] ), $post_tweet );						
 					} else {
 						if ( mb_strlen( wpt_normalize( $post_tweet ), $encoding ) > ( $length + 1 + $diff ) ) {
 							$post_tweet = mb_substr( $post_tweet, 0, ( $length + $diff ), $encoding );
@@ -113,6 +122,7 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet = false, $ref = fa
 				}
 			}
 		}
+		
 		// this is needed in case a tweet needs to be truncated outright and the truncation values aren't in the above.
 		// 1) removes URL 2) checks length of remainder 3) Replaces URL
 		if ( mb_strlen( wpt_normalize( $post_tweet ) ) > $length + 1 ) {
@@ -124,16 +134,21 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet = false, $ref = fa
 				$url = $values['longurl'];
 				$tag = '#longurl#';
 			} else {
-				$post_tweet = mb_substr( $post_tweet, 0, $length, $encoding );
+				$post_tweet = mb_substr( $post_tweet, 0, ( $length + 1 + $diff ), $encoding );
 				$tweet      = true;
 			}
+			
 			if ( !$tweet ) {
 				$temp = str_ireplace( $url, $tag, $post_tweet );
 				if ( mb_strlen( wpt_normalize( $temp ) ) > ( ( $length + 1 ) - ( $tco - strlen( $tag ) ) ) && $temp != $post_tweet ) {
-					$post_tweet   = trim( mb_substr( $temp, 0, ( ( $length + 1 ) - ( $tco - strlen( $tag ) ) ), $encoding ) );
+					if ( stripos( $temp, '#url#' ) === false && stripos( $temp, '#longurl#' ) === false ) {
+						$post_tweet   = trim( mb_substr( $temp, 0, ( $length + 1 ), $encoding ) );
+					} else {
+						$post_tweet   = trim( mb_substr( $temp, 0, ( $length - $tco - 1 ), $encoding ) );					
+					}
 					// it's possible to trim off the #url# part in this process. If that happens, put it back.
-					$sub_sentence = ( !wpt_has( $post_tweet, $tag ) ) ? $post_tweet . ' ' . $tag : $post_tweet;
-					$post_tweet   = ( !wpt_has( $sub_sentence, $tag ) ) ? $sub_sentence : str_ireplace( $url, $tag, $sub_sentence );
+					$sub_sentence = ( !wpt_has( $post_tweet, $tag ) && ( $has_short_url || $has_long_url ) ) ? $post_tweet . ' ' . $tag : $post_tweet;
+					$post_tweet   = str_ireplace( $tag, $url, $sub_sentence );
 				}
 			}
 		}
