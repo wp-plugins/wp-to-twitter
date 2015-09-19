@@ -3,8 +3,10 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post a link, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 3.1.5
+Version: 3.1.6
 Author: Joseph Dolson
+Text Domain: wp-to-twitter
+Domain Path: /lang
 Author URI: http://www.joedolson.com/
 */
 /*  Copyright 2008-2015  Joseph C Dolson  (email : plugins@joedolson.com)
@@ -44,7 +46,7 @@ require_once( plugin_dir_path( __FILE__ ) . '/wpt-widget.php' );
 require_once( plugin_dir_path( __FILE__ ) . '/wpt-rate-limiting.php' );
 
 global $wpt_version;
-$wpt_version = "3.1.5";
+$wpt_version = "3.1.6";
 
 add_action( 'plugins_loaded', 'wpt_load_textdomain' );
 function wpt_load_textdomain() {
@@ -708,11 +710,15 @@ function wpt_post_info( $post_ID ) {
 		$thisposttitle = $_POST['title'];
 	}
 	$thisposttitle = strip_tags( apply_filters( 'the_title', stripcslashes( $thisposttitle ) ) );
-	// These are common sequences that don't get handled by html_entity_decode due to double encoding
+	// These are common sequences that may not be fixed by html_entity_decode due to double encoding
 	$search = array( '&apos;', '&#039;', '&quot;', '&#034;', '&amp;', '&#038;' );
-	$replace = array( "'", '"', '"', '&', '&' );
+	$replace = array( "'", "'", '"', '"', '&', '&' );
+			wp_mail( 'joe@joedolson.com', 'Tweet trim test 8', $thisposttitle );	
 	$thisposttitle = str_replace( $search, $replace, $thisposttitle );	
+			wp_mail( 'joe@joedolson.com', 'Tweet trim test 9', $thisposttitle );
+	
 	$values['postTitle']  = html_entity_decode( $thisposttitle, ENT_QUOTES, $encoding );
+
 
 	$values['postLink']   = wpt_link( $post_ID );
 	$values['blogTitle']  = get_bloginfo( 'name' );
@@ -1288,7 +1294,7 @@ function wpt_add_twitter_inner_box( $post ) {
 					} else {
 						echo "<p>";
 						if ( function_exists( 'wpt_pro_exists' ) ) {
-							printf( __( 'WP Tweets PRO 1.5.2+ allows you to select Twitter accounts. <a href="%s">Log in and download now!</a>', 'wp-to-twitter' ), 'http://www.joedolson.com/account/' );
+							printf( __( 'WP Tweets PRO allows you to select Twitter accounts. <a href="%s">Log in and download now!</a>', 'wp-to-twitter' ), 'http://www.joedolson.com/account/' );
 						} else {
 							printf( __( 'Upgrade to WP Tweets PRO to select Twitter accounts! <a href="%s">Upgrade now!</a>', 'wp-to-twitter' ), 'http://www.joedolson.com/wp-tweets-pro/' );
 						}
@@ -1747,8 +1753,6 @@ function wpt_plugin_update_message() {
 		$data = $response['body'];
 		$bits = explode( '== Upgrade Notice ==', $data );
 		$note = '<div id="wpt-upgrade"><p><strong style="color:#c22;">Upgrade Notes:</strong> ' . nl2br( trim( $bits[1] ) ) . '</p></div>';
-	} else {
-		printf( __( '<br /><strong>Note:</strong> Please review the <a class="thickbox" href="%1$s">changelog</a> before upgrading.', 'wp-to-twitter' ), 'plugin-install.php?tab=plugin-information&amp;plugin=wp-to-twitter&amp;TB_iframe=true&amp;width=640&amp;height=594' );
 	}
 	echo $note;
 }

@@ -3,10 +3,10 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: twitter, microblogging, su.pr, bitly, yourls, redirect, shortener, post, links, social, sharing, media, tweet
 Requires at least: 3.9.8
-Tested up to: 4.3.0
+Tested up to: 4.3.1
 License: GPLv2 or later
 Text Domain: wp-to-twitter
-Stable tag: 3.1.5
+Stable tag: 3.1.6
 
 Posts a Twitter update when you update your WordPress blog or add a link, with your chosen URL shortening service.
 
@@ -70,12 +70,19 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * 4.2 added compat function for mb_substr; drop mine when I drop support for 4.1
 * WP to Twitter timing bug with images?
 
+= 3.1.7 =
+
+* Bug fix: mismatched argument count in replacements caused & to be replaced with null
+* Bug fix: PHP notice on Advanced Settings screen
+* Bug fix: append/prepend fields accidentally eliminated from Tweet output in truncation rewrite
+
 = 3.1.6 =
 
 * Rewrite: Rewrite Tweet truncation code.
 * Bug fix: Make charcount aware of #longurl#
 * Open up possibility of reposting more than 3 times in WP Tweets PRO through filters.
 * Bug fix: issue with character counting on Scheduled Tweets screen.
+* Add textdomain to plug-in header
 
 = 3.1.5 =
 
@@ -217,4 +224,4 @@ Writing and maintaining a plug-in is a lot of work. You can help me by providing
 
 == Upgrade Notice ==
 
-* 3.1.0 - New feature: Rate limiting by category; Staging mode; misc. bug fixes
+* 3.1.6 - Rewritten Tweet truncating functions; minor bug fixes.

@@ -9,13 +9,20 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet = false, $ref = fa
 	$length       = ( wpt_post_with_media( $post_ID, $post ) ) ? $maxlength['with_media'] : $maxlength['without_media'];
 	$tweet        = apply_filters( 'wpt_tweet_sentence', $tweet, $post_ID );
 	$tweet        = trim( wpt_custom_shortcodes( $tweet, $post_ID ) );
-	$encoding     = ( get_option( 'blog_charset' ) != 'UTF-8' ) ? get_option( 'blog_charset' ) : 'UTF-8';
+	$encoding     = ( get_option( 'blog_charset' ) != 'UTF-8' && get_option( 'blog_charset' ) != '' ) ? get_option( 'blog_charset' ) : 'UTF-8';
 	$diff         = 0;
 
+	// Add custom append/prepend fields to Tweet text
+	if ( get_option( 'jd_twit_prepend' ) != "" && $tweet != '' ) {
+		$tweet = stripslashes( get_option( 'jd_twit_prepend' ) ) . " " . $tweet;
+	}
+	if ( get_option( 'jd_twit_append' ) != "" && $tweet != '' ) {
+		$tweet = $tweet . " " . stripslashes( get_option( 'jd_twit_append' ) );
+	}	
+	
+	// there are no tags in this Tweet. Truncate and return.
 	if ( !wpt_has_tags( $tweet ) ) {
-		// there are no tags in this Tweet. Truncate and return.
 		$post_tweet = mb_substr( $tweet, 0, $length, $encoding );
-
 		return apply_filters( 'wpt_custom_truncate', $post_tweet, $tweet, $post_ID, $retweet, 1 );
 	}
 	
@@ -81,7 +88,7 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet = false, $ref = fa
 		}
 		if ( $str_length > ( $length + 1 + $diff ) ) {
 			foreach ( $preferred AS $key => $value ) {
-				// don't truncate content of post excerpt if excerpt tag not in use
+				// don't truncate content of post excerpt or title if those tags not in use
 				if ( ! ( $key == 'excerpt' && ! $has_excerpt_tag ) && ! ( $key == 'title' && ! $has_title_tag ) ) {
 					$str_length = mb_strlen( urldecode( wpt_normalize( trim( $post_tweet ) ) ), $encoding );
 					if ( $str_length > ( $length + 1 + $diff ) ) {
@@ -90,10 +97,14 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet = false, $ref = fa
 						// prevent URL from being modified
 						$post_tweet = str_ireplace( array( $values['url'], $values['longurl'] ), array( '#url#', '#longurl#' ), $post_tweet );
 
-						// modify the value and replace old with new
-						if ( $key == 'account' || $key == 'author' || $key == 'category' || $key == 'date' || $key == 'modified' || $key == 'reference' || $key == '@' ) {
-							// these elements make no sense if truncated, so remove them entirely.
+						/**
+						 * These tag fields should be removed completely, rather than truncated. 
+						 */
+						if ( wpt_remove_tag( $key ) ) {
 							$new_value = '';
+						/**
+						 * These tag fields should have stray characters removed on word boundaries
+						 */
 						} else if ( $key == 'tags' ) {
 							// remove any stray hash characters due to string truncation
 							if ( mb_strlen( $old_value ) - $trim <= 2 ) {
@@ -104,12 +115,19 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet = false, $ref = fa
 									$new_value = trim( mb_substr( $new_value, 0, mb_strrpos( $new_value, '#', $encoding ) - 1 ) );
 								}
 							}
+						/**
+						 * Just flat out truncate everything else cold. 
+						 */
 						} else {
 							// trim letters
 							$new_value = mb_substr( $old_value, 0, - ( $trim ), $encoding );
 							// trim rest of last word
 							$last_space = strrpos( $new_value, ' ' );
-							$new_value  = apply_filters( 'wpt_filter_truncated_value', mb_substr( $new_value, 0, $last_space, $encoding ), $key );
+							$new_value = mb_substr( $new_value, 0, $last_space, $encoding );							
+							/**
+							 * If you want to add something like an ellipsis after truncation, use this filter.
+							 */
+							$new_value  = apply_filters( 'wpt_filter_truncated_value', $new_value, $key, $old_value );
 						}
 						$post_tweet = str_ireplace( $old_value, $new_value, $post_tweet );
 						// put URL back before checking length
@@ -134,7 +152,7 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet = false, $ref = fa
 				$url = $values['longurl'];
 				$tag = '#longurl#';
 			} else {
-				$post_tweet = mb_substr( $post_tweet, 0, ( $length + 1 + $diff ), $encoding );
+				$post_tweet = mb_substr( $post_tweet, 0, ( $length + $diff ), $encoding );
 				$tweet      = true;
 			}
 			
@@ -142,7 +160,7 @@ function jd_truncate_tweet( $tweet, $post, $post_ID, $retweet = false, $ref = fa
 				$temp = str_ireplace( $url, $tag, $post_tweet );
 				if ( mb_strlen( wpt_normalize( $temp ) ) > ( ( $length + 1 ) - ( $tco - strlen( $tag ) ) ) && $temp != $post_tweet ) {
 					if ( stripos( $temp, '#url#' ) === false && stripos( $temp, '#longurl#' ) === false ) {
-						$post_tweet   = trim( mb_substr( $temp, 0, ( $length + 1 ), $encoding ) );
+						$post_tweet   = trim( mb_substr( $temp, 0, $length, $encoding ) );
 					} else {
 						$post_tweet   = trim( mb_substr( $temp, 0, ( $length - $tco - 1 ), $encoding ) );					
 					}
@@ -176,6 +194,22 @@ function wpt_has_tags( $string ) {
 	return false;
 }
 
+function wpt_remove_tag( $key ) {
+	switch( $key ) {
+		case 'account':
+		case 'author':
+		case 'category':
+		case 'date':
+		case 'modified':
+		case 'reference':
+		case '@': $return = true; break;
+		default: $return = false;
+	}
+	
+	return $return;
+	//$key == 'account' || $key == 'author' || $key == 'category' || $key == 'date' || $key == 'modified' || $key == 'reference' || $key == '@'
+}
+
 function wpt_tags() {
 	return apply_filters( 'wpt_tags', array( 'url', 'title', 'blog', 'post', 'category', 'date', 'author', 'displayname', 'tags', 'modified', 'reference', 'account', '@', 'cat_desc', 'longurl' ) );
 }
@@ -187,7 +221,7 @@ function wpt_make_tag( $value ) {
 function wpt_create_values( $post, $post_ID, $ref ) {
 	$shrink       = ( $post['shortUrl'] != '' ) ? $post['shortUrl'] : apply_filters( 'wptt_shorten_link', $post['postLink'], $post['postTitle'], $post_ID, false );
 	// generate template variable values
-	$auth         = $post['authId'];
+	$auth         = $post['authId'];	
 	$title        = trim( apply_filters( 'wpt_status', $post['postTitle'], $post_ID, 'title' ) );
 	$blogname     = trim( $post['blogTitle'] );
 	$excerpt      = trim( apply_filters( 'wpt_status', $post['postExcerpt'], $post_ID, 'post' ) );
@@ -221,12 +255,6 @@ function wpt_create_values( $post, $post_ID, $ref ) {
 
 	if ( get_user_meta( $auth, 'wpt-remove', true ) == 'on' ) {
 		$account = '';
-	}
-	if ( get_option( 'jd_twit_prepend' ) != "" && $tweet != '' ) {
-		$tweet = stripslashes( get_option( 'jd_twit_prepend' ) ) . " " . $tweet;
-	}
-	if ( get_option( 'jd_twit_append' ) != "" && $tweet != '' ) {
-		$tweet = $tweet . " " . stripslashes( get_option( 'jd_twit_append' ) );
 	}
 		
 	if ( function_exists( 'wpt_pro_exists' ) && wpt_pro_exists() == true ) {

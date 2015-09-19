@@ -38,7 +38,7 @@
 			} else {
 				var titlecount = 0;
 			}
-            var namecount    = $(obj).val().indexOf('#blog#') > -1 ? ($('#wp-admin-bar-site-name').val().length - 6) : 0;
+            var namecount    = $(obj).val().indexOf('#blog#') > -1 ? ($('#wp-admin-bar-site-name a').val().length - 6) : 0;
 			var imgcount     = ( $('#wpt_image_yes:checked').length && $( '#remove-post-thumbnail' ).length ) ? 22 : 0;
 			
             var available = options.allowed - ( count + urlcount + longurlcount + titlecount + namecount + imgcount );
