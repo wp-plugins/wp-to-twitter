@@ -713,9 +713,7 @@ function wpt_post_info( $post_ID ) {
 	// These are common sequences that may not be fixed by html_entity_decode due to double encoding
 	$search = array( '&apos;', '&#039;', '&quot;', '&#034;', '&amp;', '&#038;' );
 	$replace = array( "'", "'", '"', '"', '&', '&' );
-			wp_mail( 'joe@joedolson.com', 'Tweet trim test 8', $thisposttitle );	
 	$thisposttitle = str_replace( $search, $replace, $thisposttitle );	
-			wp_mail( 'joe@joedolson.com', 'Tweet trim test 9', $thisposttitle );
 	
 	$values['postTitle']  = html_entity_decode( $thisposttitle, ENT_QUOTES, $encoding );
 
