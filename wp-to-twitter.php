@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post a link, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 3.1.6
+Version: 3.1.7
 Author: Joseph Dolson
 Text Domain: wp-to-twitter
 Domain Path: /lang
@@ -46,7 +46,7 @@ require_once( plugin_dir_path( __FILE__ ) . '/wpt-widget.php' );
 require_once( plugin_dir_path( __FILE__ ) . '/wpt-rate-limiting.php' );
 
 global $wpt_version;
-$wpt_version = "3.1.6";
+$wpt_version = "3.1.7";
 
 add_action( 'plugins_loaded', 'wpt_load_textdomain' );
 function wpt_load_textdomain() {
@@ -713,13 +713,8 @@ function wpt_post_info( $post_ID ) {
 	// These are common sequences that may not be fixed by html_entity_decode due to double encoding
 	$search = array( '&apos;', '&#039;', '&quot;', '&#034;', '&amp;', '&#038;' );
 	$replace = array( "'", "'", '"', '"', '&', '&' );
-			wp_mail( 'joe@joedolson.com', 'Tweet trim test 8', $thisposttitle );	
 	$thisposttitle = str_replace( $search, $replace, $thisposttitle );	
-			wp_mail( 'joe@joedolson.com', 'Tweet trim test 9', $thisposttitle );
-	
 	$values['postTitle']  = html_entity_decode( $thisposttitle, ENT_QUOTES, $encoding );
-
-
 	$values['postLink']   = wpt_link( $post_ID );
 	$values['blogTitle']  = get_bloginfo( 'name' );
 	$values['shortUrl']   = wpt_short_url( $post_ID );
