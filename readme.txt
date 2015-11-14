@@ -70,6 +70,7 @@ Translating my plug-ins is always appreciated. Work on WP to Twitter translation
 = 3.1.8 =
 
 * Bug fix: Add support for calendar picker in WP Tweets Pro
+* New filter on random delay value
 
 = 3.1.7 =
 

@@ -202,7 +202,7 @@ if ( ! class_exists( 'WPOAuthException' ) ) {
 			$ok = openssl_sign( $base_string, $signature, $privatekeyid );
 
 			// Release the key resource
-			openssl__key( $privatekeyid );
+			openssl_free_key( $privatekeyid );
 
 			return base64_encode( $signature );
 		}
@@ -222,7 +222,7 @@ if ( ! class_exists( 'WPOAuthException' ) ) {
 			$ok = openssl_verify( $base_string, $decoded_sig, $publickeyid );
 
 			// Release the key resource
-			openssl__key( $publickeyid );
+			openssl_free_key( $publickeyid );
 
 			return $ok == 1;
 		}

@@ -11,9 +11,9 @@ Author URI: http://www.joedolson.com/
 */
 /*  Copyright 2008-2015  Joseph C Dolson  (email : plugins@joedolson.com)
 
-    This program is  software; you can redistribute it and/or modify
+    This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the  Software Foundation; either version 2 of the License, or
+    the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -22,7 +22,7 @@ Author URI: http://www.joedolson.com/
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the  Software
+    along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -1148,7 +1148,7 @@ function wpt_add_twitter_outer_box() {
  */
 function wpt_add_twitter_inner_box( $post ) {
 	if ( current_user_can( 'wpt_can_tweet' ) ) {
-		$is_pro = ( function_exists( 'wpt_pro_exists' ) ) ? 'pro' : ''; ?>
+		$is_pro = ( function_exists( 'wpt_pro_exists' ) ) ? 'pro' : 'free'; ?>
 		<div class='wp-to-twitter <?php echo $is_pro; ?>'>
 			<?php
 		$tweet_status = '';
@@ -1267,9 +1267,9 @@ function wpt_add_twitter_inner_box( $post ) {
 			<?php
 			if ( $is_pro == 'pro' ) {
 				$pro_active  = " class='active'";
-				$_active = '';
+				$free_active = '';
 			} else {
-				$_active = " class='active'";
+				$free_active = " class='active'";
 				$pro_active  = '';
 			}
 			?>
@@ -1278,7 +1278,7 @@ function wpt_add_twitter_inner_box( $post ) {
 					<li><a href='#authors'<?php echo $pro_active; ?> aria-controls="authors" role="tab" id="tab_authors"><?php _e( 'Tweet to', 'wp-to-twitter' ); ?></a></li>
 				<?php } ?>
 				<li><a href='#custom' aria-controls="custom" role="tab" id="tab_custom"><?php _e( 'Options', 'wp-to-twitter' ); ?></a></li>
-				<li><a href='#notes'<?php echo $_active; ?> aria-controls="notes" role="tab" id="tab_notes"><?php _e( 'Notes', 'wp-to-twitter' ); ?></a></li>
+				<li><a href='#notes'<?php echo $free_active; ?> aria-controls="notes" role="tab" id="tab_notes"><?php _e( 'Notes', 'wp-to-twitter' ); ?></a></li>
 			</ul>
 			<?php
 			/* WPT PRO OPTIONS */
