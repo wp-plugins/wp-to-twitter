@@ -26,7 +26,7 @@ Yep. That's the basic functionality. But it's not the only thing you can do:
 
 WP to Twitter uses a customizable Tweet template for Tweets sent when updating or editing posts and pages or custom post types. You can customize your Tweet for each post, using custom template tags to generate the Tweet. 
 
-=  Features =
+= Free Features =
 
 * Use post tags as Twitter hashtags
 * Use alternate URLs in place of post permalinks
