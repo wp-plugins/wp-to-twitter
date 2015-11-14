@@ -241,7 +241,7 @@ function wpt_update_settings() {
 					</div>
 				</div>
 			<?php
-			} 			
+			}
 		}
 	}
 	if ( $current == 'basic' ) {

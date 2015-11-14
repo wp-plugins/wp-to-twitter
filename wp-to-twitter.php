@@ -3,7 +3,7 @@
 Plugin Name: WP to Twitter
 Plugin URI: http://www.joedolson.com/wp-to-twitter/
 Description: Posts a Tweet when you update your WordPress blog or post a link, using your URL shortening service. Rich in features for customizing and promoting your Tweets.
-Version: 3.1.7
+Version: 3.1.8
 Author: Joseph Dolson
 Text Domain: wp-to-twitter
 Domain Path: /lang
@@ -11,9 +11,9 @@ Author URI: http://www.joedolson.com/
 */
 /*  Copyright 2008-2015  Joseph C Dolson  (email : plugins@joedolson.com)
 
-    This program is free software; you can redistribute it and/or modify
+    This program is  software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
+    the  Software Foundation; either version 2 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -22,7 +22,7 @@ Author URI: http://www.joedolson.com/
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
+    along with this program; if not, write to the  Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -46,7 +46,7 @@ require_once( plugin_dir_path( __FILE__ ) . '/wpt-widget.php' );
 require_once( plugin_dir_path( __FILE__ ) . '/wpt-rate-limiting.php' );
 
 global $wpt_version;
-$wpt_version = "3.1.7";
+$wpt_version = "3.1.8";
 
 add_action( 'plugins_loaded', 'wpt_load_textdomain' );
 function wpt_load_textdomain() {
@@ -929,7 +929,7 @@ function wpt_tweet( $post_ID, $type = 'instant' ) {
 					} else {
 						foreach ( $wpt_selected_users as $acct ) {
 							$acct = ( $acct == 'main' ) ? false : $acct;
-							$offset = ( $auth != $acct ) ? rand( 60, 480 ) : 0;
+							$offset = ( $auth != $acct ) ? apply_filters( 'wpt_random_delay', rand( 60, 480 ) ) : 0;
 							if ( wtt_oauth_test( $acct, 'verify' ) ) {
 								$time      = apply_filters( 'wpt_schedule_delay', ( (int) $post_info['wpt_delay_tweet'] ) * 60, $acct );
 								wp_schedule_single_event( time() + $time + $offset, 'wpt_schedule_tweet_action', array(
@@ -1148,7 +1148,7 @@ function wpt_add_twitter_outer_box() {
  */
 function wpt_add_twitter_inner_box( $post ) {
 	if ( current_user_can( 'wpt_can_tweet' ) ) {
-		$is_pro = ( function_exists( 'wpt_pro_exists' ) ) ? 'pro' : 'free'; ?>
+		$is_pro = ( function_exists( 'wpt_pro_exists' ) ) ? 'pro' : ''; ?>
 		<div class='wp-to-twitter <?php echo $is_pro; ?>'>
 			<?php
 		$tweet_status = '';
@@ -1196,16 +1196,19 @@ function wpt_add_twitter_inner_box( $post ) {
 								class="screen-reader-text"><?php _e( 'Set Date/Time', 'wp-to-twitter' ); ?></span></span>
 					</button>
 					<div id="jts">
-						<label for='wpt_date'><?php _e( 'Date', 'wp-to-twitter' ); ?></label> <input type='date'
-						                                                                             value='<?php echo date( 'Y-m-d', current_time( 'timestamp' ) ); ?>'
-						                                                                             class='date'
-						                                                                             name='wpt_datetime'
-						                                                                             id='wpt_date'/><br/>
-						<label for='wpt_time'><?php _e( 'Time', 'wp-to-twitter' ); ?></label> <input type='text'
-						                                                                             value='<?php echo date_i18n( 'h:s a', current_time( 'timestamp' ) + 3600 ); ?>'
-						                                                                             class='time'
-						                                                                             name='wpt_datetime'
-						                                                                             id='wpt_time'/>
+						<label for='wpt_date'><?php _e( 'Date', 'wp-to-twitter' ); ?></label> 
+						<input type='date'
+							value=''
+							class='date'
+							name='wpt_datetime'
+							id='wpt_date'
+							data-value='<?php echo date( 'Y-m-d', current_time( 'timestamp' ) ); ?>' /><br/>
+						<label for='wpt_time'><?php _e( 'Time', 'wp-to-twitter' ); ?></label> 
+						<input type='text'
+							value='<?php echo date_i18n( 'h:s a', current_time( 'timestamp' ) + 3600 ); ?>'
+							class='time'
+							name='wpt_datetime'
+							id='wpt_time'/>
 					</div>
 				<?php } ?>
 				<div class='wpt_log' aria-live='assertive'></div>
@@ -1264,9 +1267,9 @@ function wpt_add_twitter_inner_box( $post ) {
 			<?php
 			if ( $is_pro == 'pro' ) {
 				$pro_active  = " class='active'";
-				$free_active = '';
+				$_active = '';
 			} else {
-				$free_active = " class='active'";
+				$_active = " class='active'";
 				$pro_active  = '';
 			}
 			?>
@@ -1275,7 +1278,7 @@ function wpt_add_twitter_inner_box( $post ) {
 					<li><a href='#authors'<?php echo $pro_active; ?> aria-controls="authors" role="tab" id="tab_authors"><?php _e( 'Tweet to', 'wp-to-twitter' ); ?></a></li>
 				<?php } ?>
 				<li><a href='#custom' aria-controls="custom" role="tab" id="tab_custom"><?php _e( 'Options', 'wp-to-twitter' ); ?></a></li>
-				<li><a href='#notes'<?php echo $free_active; ?> aria-controls="notes" role="tab" id="tab_notes"><?php _e( 'Notes', 'wp-to-twitter' ); ?></a></li>
+				<li><a href='#notes'<?php echo $_active; ?> aria-controls="notes" role="tab" id="tab_notes"><?php _e( 'Notes', 'wp-to-twitter' ); ?></a></li>
 			</ul>
 			<?php
 			/* WPT PRO OPTIONS */
